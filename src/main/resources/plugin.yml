@@ -1,0 +1,6 @@
+name: Macrocosm
+main: space.maxus.macrocosm.InternalMacrocosmPlugin
+version: 0.1-SNAPSSHOT
+api-version: 1.18
+libraries:
+  - "net.axay:kspigot:1.18.2"
