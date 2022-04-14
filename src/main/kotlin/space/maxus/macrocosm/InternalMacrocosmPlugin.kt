@@ -2,6 +2,7 @@ package space.maxus.macrocosm
 
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.playtimeCommand
 import space.maxus.macrocosm.commands.rankCommand
 import space.maxus.macrocosm.commands.statCommand
@@ -28,6 +29,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     override fun startup() {
         DataListener.joinLeave()
+        server.pluginManager.registerEvents(ChatHandler, this)
         playtimeCommand()
         rankCommand()
         statCommand()
@@ -35,7 +37,8 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     override fun shutdown() {
         Threading.start {
-            for ((_, v) in onlinePlayers) {
+            for ((id, v) in onlinePlayers) {
+                println("Saving data for player $id...")
                 v.storeSelf(Database.statement)
             }
         }

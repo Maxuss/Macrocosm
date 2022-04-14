@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.listeners
 
 import net.axay.kspigot.event.listen
+import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.runnables.async
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -8,6 +9,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.exceptions.DatabaseException
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.players.macrocosm
 
 object DataListener {
     fun joinLeave() {
@@ -24,6 +26,9 @@ object DataListener {
                     player.storeSelf(Database.statement)
                 }
             }
+            val displayName = e.player.macrocosm?.rank?.playerName(e.player.name) ?: e.player.displayName()
+            e.player.playerListName(e.player.name.toComponent().color(e.player.macrocosm?.rank?.color))
+            e.player.displayName(displayName)
         }
 
         listen<PlayerQuitEvent> { e ->

@@ -7,13 +7,14 @@ import space.maxus.macrocosm.text.comp
 
 @Suppress("unused")
 enum class Rank(private val format: Component, val color: TextColor) {
-    NONE(comp(""), NamedTextColor.GRAY),
-    VIP(comp("<green>[VIP]"), NamedTextColor.GREEN),
-    MVP(comp("<aqua>[MVP]"), NamedTextColor.AQUA),
-    ADMIN(comp("<red>[ADMIN]"), NamedTextColor.RED)
+    NONE(comp("<gray>"), NamedTextColor.GRAY),
+    VIP(comp("<green>[VIP] "), NamedTextColor.GREEN),
+    MVP(comp("<aqua>[MVP] "), NamedTextColor.AQUA),
+    ADMIN(comp("<red>[ADMIN] "), NamedTextColor.RED)
     ;
 
-    fun format(name: String, msg: String) = format.append(comp(" $name<white>: $msg"))
+    fun format(name: String, msg: String) = format.append(comp("$name<white>: $msg"))
+    fun playerName(name: String) = format.append(comp(name))
     fun id() = this.ordinal
 
     companion object {

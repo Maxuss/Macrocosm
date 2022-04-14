@@ -22,6 +22,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var lastJoin: Long = Instant.now().toEpochMilli()
     var playtime: Long = 0
     var baseStats: Statistics = Statistics.default()
+    var purse: Float = 0f
+    var bank: Float = 0f
 
     override fun storeSelf(stmt: Statement) {
         val player = paper
@@ -31,7 +33,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
 
-        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime)")
+        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank)")
         var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
         var rightHand = "VALUES ('$ref'"
         for ((k, value) in baseStats.iter()) {
@@ -51,13 +53,17 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if (!res.next())
                 return null
             val rank = Rank.fromId(res.getInt("RANK"))
-            val firstJoin = res.getInt("FIRST_JOIN")
-            val playtime = res.getInt("PLAYTIME")
+            val firstJoin = res.getLong("FIRST_JOIN")
+            val playtime = res.getLong("PLAYTIME")
+            val purse = res.getFloat("PURSE")
+            val bank = res.getFloat("BANK")
             val player = MacrocosmPlayer(id)
             player.rank = rank
-            player.firstJoin = firstJoin.toLong()
+            player.firstJoin = firstJoin
             player.lastJoin = Instant.now().toEpochMilli()
-            player.playtime = playtime.toLong()
+            player.playtime = playtime
+            player.purse = purse
+            player.bank = bank
 
             val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
             if (!stats.next())

@@ -36,7 +36,9 @@ object Database {
                 RANK INT,
                 FIRST_JOIN INT,
                 LAST_JOIN INT,
-                PLAYTIME INT)
+                PLAYTIME INT,
+                PURSE REAL,
+                BANK REAL)
                 """.trimIndent()
             )
             var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
