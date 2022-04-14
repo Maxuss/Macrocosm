@@ -12,8 +12,9 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 object DataListener {
     fun joinLeave() {
         listen<PlayerJoinEvent> { e ->
-            if(Macrocosm.playersLazy.contains(e.player.uniqueId)) {
-                val player = MacrocosmPlayer.readPlayer(e.player.uniqueId) ?: throw DatabaseException("Expected to find player with UUID ${e.player.uniqueId}!")
+            if (Macrocosm.playersLazy.contains(e.player.uniqueId)) {
+                val player = MacrocosmPlayer.readPlayer(e.player.uniqueId)
+                    ?: throw DatabaseException("Expected to find player with UUID ${e.player.uniqueId}!")
                 Macrocosm.onlinePlayers[e.player.uniqueId] = player
             } else {
                 val player = MacrocosmPlayer(e.player.uniqueId)

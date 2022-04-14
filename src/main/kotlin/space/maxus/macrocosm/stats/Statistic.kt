@@ -7,7 +7,14 @@ import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.text.comp
 import java.util.*
 
-enum class Statistic(private val type: StatisticType, private val color: TextColor, private val specialChar: Char, val default: Float = 0f, val percents: Boolean = false, private val hidden: Boolean = false) {
+enum class Statistic(
+    private val type: StatisticType,
+    private val color: TextColor,
+    private val specialChar: Char,
+    val default: Float = 0f,
+    val percents: Boolean = false,
+    private val hidden: Boolean = false
+) {
     STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
     DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
     FEROCITY(StatisticType.OFFENSIVE, NamedTextColor.RED, '⫽', percents = true),
@@ -31,29 +38,30 @@ enum class Statistic(private val type: StatisticType, private val color: TextCol
     ;
 
     override fun toString() =
-        name.lowercase().replace("_", " ").replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        name.lowercase().replace("_", " ")
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     fun formatSimple(num: Float): Component? {
-        if(hidden) return null
+        if (hidden) return null
         return explicitFormatSimple(num)
     }
 
     fun formatFancy(num: Float): Component? {
-        if(hidden) return null
+        if (hidden) return null
         return explicitFormatFancy(num)
     }
 
     fun explicitFormatSimple(num: Float): Component? {
         val number = type.formatSigned(num) ?: return null
         val comp = comp("<dark_gray>$this: </dark_gray>").append(number)
-        if(percents)
+        if (percents)
             comp.append("%".toComponent())
         return comp
     }
 
     fun explicitFormatFancy(num: Float): Component {
         val comp = comp("$specialChar ${name.lowercase()} ").color(color).append(type.format(num))
-        if(percents)
+        if (percents)
             comp.append("%".toComponent())
         return comp
     }

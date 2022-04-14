@@ -21,7 +21,7 @@ enum class StatisticType(val color: TextColor) {
 
     fun formatSigned(num: Float): Component? {
         val formatted = Formatting.withCommas(num.toBigDecimal(), false)
-        val stringified = if(num < 0) "-$formatted" else if(num > 0) "+$formatted" else return null
+        val stringified = if (num < 0) "-$formatted" else if (num > 0) "+$formatted" else return null
 
         return comp(stringified).color(color)
     }

@@ -9,9 +9,8 @@ import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.listeners.DataListener
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import java.util.*
-import kotlin.collections.HashMap
 
-class InternalMacrocosmPlugin: KSpigot() {
+class InternalMacrocosmPlugin : KSpigot() {
     companion object {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
     }
@@ -36,7 +35,7 @@ class InternalMacrocosmPlugin: KSpigot() {
 
     override fun shutdown() {
         Threading.start {
-            for((_, v) in onlinePlayers) {
+            for ((_, v) in onlinePlayers) {
                 v.storeSelf(Database.statement)
             }
         }

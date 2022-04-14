@@ -29,7 +29,8 @@ object Database {
         val st = playerDb.createStatement()
         st.queryTimeout = 30
         if (!firstStart) {
-            st.executeUpdate("""
+            st.executeUpdate(
+                """
                 CREATE TABLE Players(
                 UUID VARCHAR PRIMARY KEY,
                 RANK INT,
@@ -39,7 +40,7 @@ object Database {
                 """.trimIndent()
             )
             var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
-            for(stat in Statistic.values()) {
+            for (stat in Statistic.values()) {
                 statQuery += ", ${stat.name} REAL"
             }
 

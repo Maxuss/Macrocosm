@@ -19,7 +19,7 @@ fun playtimeCommand() = command("playtime") {
         val hours = millis / (60 * 60 * 1000)
         millis -= hours * (60 * 60 * 1000)
         val minutes = millis / (60 * 1000)
-        player.sendMessage(comp("<green>Your playtime is ${if(hours <= 0) "" else "${hours}h "}${minutes}m!"))
+        player.sendMessage(comp("<green>Your playtime is ${if (hours <= 0) "" else "${hours}h "}${minutes}m!"))
     }
 }
 

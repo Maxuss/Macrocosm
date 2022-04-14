@@ -14,7 +14,7 @@ import java.util.*
 val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 
 @Suppress("unused")
-class MacrocosmPlayer(val ref: UUID): DatabaseStore {
+class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     val paper: Player? = Bukkit.getServer().getPlayer(ref)
 
     var rank: Rank = Rank.NONE
@@ -25,7 +25,7 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
 
     override fun storeSelf(stmt: Statement) {
         val player = paper
-        if(player == null) {
+        if (player == null) {
             println("Tried to store offline player $ref")
             return
         }
@@ -34,7 +34,7 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
         stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime)")
         var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
         var rightHand = "VALUES ('$ref'"
-        for((k, value) in baseStats.iter()) {
+        for ((k, value) in baseStats.iter()) {
             leftHand += ", ${k.name}"
             rightHand += ", $value"
         }
@@ -48,7 +48,7 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
         fun readPlayer(id: UUID): MacrocosmPlayer? {
             val stmt = Database.statement
             val res = stmt.executeQuery("SELECT * FROM Players where UUID = '$id'")
-            if(!res.next())
+            if (!res.next())
                 return null
             val rank = Rank.fromId(res.getInt("RANK"))
             val firstJoin = res.getInt("FIRST_JOIN")
@@ -60,7 +60,7 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
             player.playtime = playtime.toLong()
 
             val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
-            if(!stats.next())
+            if (!stats.next())
                 return null
             player.baseStats = Statistics.fromRes(stats)
             stmt.close()
