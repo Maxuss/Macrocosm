@@ -2,12 +2,16 @@ package space.maxus.macrocosm.players
 
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.ranks.Rank
+import space.maxus.macrocosm.stats.Statistics
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+
+val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 
 @Suppress("unused")
 class MacrocosmPlayer(val ref: UUID): DatabaseStore {
@@ -17,6 +21,7 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
     var firstJoin: Long = Instant.now().toEpochMilli()
     var lastJoin: Long = Instant.now().toEpochMilli()
     var playtime: Long = 0
+    var baseStats: Statistics = Statistics.default()
 
     override fun storeSelf(stmt: Statement) {
         val player = paper
@@ -26,7 +31,14 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
         }
         val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
 
-        stmt.executeUpdate("REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime)")
+        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime)")
+        var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
+        var rightHand = "VALUES ('$ref'"
+        for((k, value) in baseStats.iter()) {
+            leftHand += ", ${k.name}"
+            rightHand += ", $value"
+        }
+        stmt.executeUpdate("$leftHand)$rightHand)")
         stmt.close()
     }
 
@@ -46,6 +58,11 @@ class MacrocosmPlayer(val ref: UUID): DatabaseStore {
             player.firstJoin = firstJoin.toLong()
             player.lastJoin = Instant.now().toEpochMilli()
             player.playtime = playtime.toLong()
+
+            val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
+            if(!stats.next())
+                return null
+            player.baseStats = Statistics.fromRes(stats)
             stmt.close()
             return player
         }

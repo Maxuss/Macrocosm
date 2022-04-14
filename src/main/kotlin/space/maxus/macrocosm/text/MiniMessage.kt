@@ -1,4 +1,4 @@
-package space.maxus.macrocosm
+package space.maxus.macrocosm.text
 
 import net.kyori.adventure.text.minimessage.MiniMessage
 

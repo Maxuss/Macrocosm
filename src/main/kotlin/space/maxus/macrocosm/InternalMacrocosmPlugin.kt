@@ -2,6 +2,9 @@ package space.maxus.macrocosm
 
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.commands.playtimeCommand
+import space.maxus.macrocosm.commands.rankCommand
+import space.maxus.macrocosm.commands.statCommand
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.listeners.DataListener
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -26,6 +29,9 @@ class InternalMacrocosmPlugin: KSpigot() {
 
     override fun startup() {
         DataListener.joinLeave()
+        playtimeCommand()
+        rankCommand()
+        statCommand()
     }
 
     override fun shutdown() {

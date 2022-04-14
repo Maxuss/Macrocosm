@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.db
 
+import space.maxus.macrocosm.stats.Statistic
 import java.nio.file.Path
 import java.sql.Connection
 import java.sql.DriverManager
@@ -28,8 +29,8 @@ object Database {
         val st = playerDb.createStatement()
         st.queryTimeout = 30
         if (!firstStart) {
-            st.executeUpdate(
-                """CREATE TABLE Players(
+            st.executeUpdate("""
+                CREATE TABLE Players(
                 UUID VARCHAR PRIMARY KEY,
                 RANK INT,
                 FIRST_JOIN INT,
@@ -37,6 +38,12 @@ object Database {
                 PLAYTIME INT)
                 """.trimIndent()
             )
+            var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
+            for(stat in Statistic.values()) {
+                statQuery += ", ${stat.name} REAL"
+            }
+
+            st.executeUpdate("$statQuery)")
             lockfile.createFile()
         }
         st.close()
