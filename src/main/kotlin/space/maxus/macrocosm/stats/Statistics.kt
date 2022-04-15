@@ -8,6 +8,7 @@ import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
 import java.util.TreeMap
 
+inline fun defaultStats(builder: Statistics.() -> Unit) = Statistics.default().apply(builder)
 inline fun stats(builder: Statistics.() -> Unit) = Statistics.zero().apply(builder)
 
 @Suppress("unused")
@@ -42,6 +43,12 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
             return Statistics(map)
         }
     }
+
+    var trueDamage: Float
+        get() = self[Statistic.TRUE_DAMAGE]!!
+        set(value) {
+            self[Statistic.TRUE_DAMAGE] = value
+        }
 
     var strength: Float
         get() = self[Statistic.STRENGTH]!!
@@ -198,7 +205,10 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         return base
     }
 
-    fun increase(other: Statistics) {
+    fun increase(other: Statistics?) {
+        if(other == null)
+            return
+
         for((stat, _) in self) {
             val otherStat = other.self[stat]!!
             if(otherStat == 0f)

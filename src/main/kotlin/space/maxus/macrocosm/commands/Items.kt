@@ -18,7 +18,7 @@ fun recombobulateCommand() = command("recombobulate") {
             player.sendMessage(comp("<red>Hold the item you want to recombobulate!"))
             return@runs
         }
-        val m = item.macrocosm
+        val m = item.macrocosm!!
         m.upgradeRarity()
         player.inventory.setItemInMainHand(m.build())
     }
@@ -39,7 +39,7 @@ fun reforgeCommand() = command("reforge") {
             }
             val macrocosm = item.macrocosm
             val reforge = getArgument<String>("reforge")
-            macrocosm.reforge(ReforgeRegistry.find(reforge)!!)
+            macrocosm!!.reforge(ReforgeRegistry.find(reforge)!!)
             player.inventory.setItemInMainHand(macrocosm.build())
         }
     }

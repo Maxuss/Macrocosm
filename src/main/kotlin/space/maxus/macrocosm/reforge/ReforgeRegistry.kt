@@ -12,7 +12,7 @@ object ReforgeRegistry {
         return reforge
     }
 
-    fun nameOf(ref: Reforge) = reforges.filter { (_, v) -> v == ref }.map { (k, _) -> k }.first()
+    fun nameOf(ref: Reforge) = reforges.filter { (_, v) -> v == ref }.map { (k, _) -> k }.firstOrNull()
 
     fun find(name: String) = reforges[name]
 }

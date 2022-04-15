@@ -17,7 +17,7 @@ import space.maxus.macrocosm.text.comp
 
 const val MACROCOSM_TAG = "MacrocosmValues"
 
-val ItemStack.macrocosm: MacrocosmItem get() = ItemRegistry.toMacrocosm(this)
+val ItemStack.macrocosm: MacrocosmItem? get() = ItemRegistry.toMacrocosm(this)
 
 interface MacrocosmItem {
     var stats: Statistics
@@ -66,12 +66,15 @@ interface MacrocosmItem {
      **/
     fun alternativeCtor(): ItemStack? = null
 
-    fun parse(from: ItemStack, nbt: CompoundTag): MacrocosmItem
+    fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem
 
     /**
      * Builds this item
      */
-    fun build(): ItemStack {
+    fun build(): ItemStack? {
+        if(base == Material.AIR)
+            return null
+
         val item = alternativeCtor() ?: ItemStack(base, 1)
         item.meta<ItemMeta> {
             // lore
@@ -114,9 +117,13 @@ interface MacrocosmItem {
 
         // reforges
         if(reforge != null)
-            nbt.putString("Reforge", ReforgeRegistry.nameOf(reforge!!))
+            nbt.putString("Reforge", ReforgeRegistry.nameOf(reforge!!) ?: "NULL")
         else
             nbt.putString("Reforge", "NULL")
+
+        // item ID
+
+        nbt.putString("ID", ItemRegistry.nameOf(this) ?: "NULL")
 
         // adding extra nbt
         addExtraNbt(nbt)

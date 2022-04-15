@@ -116,7 +116,7 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override var abilities: MutableList<ItemAbility> = mutableListOf()
-    override fun parse(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
+    override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         rarityUpgraded = nbt.getBoolean("RarityUpgraded")
         if(rarityUpgraded)
             rarity = rarity.next()

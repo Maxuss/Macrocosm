@@ -17,14 +17,15 @@ enum class Statistic(
     private val hidden: Boolean = false,
     private val hiddenFancy: Boolean = false
 ) {
-    DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', hiddenFancy = true),
-    STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
+    DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', 10f, hiddenFancy = true),
+    STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', 10f),
     FEROCITY(StatisticType.OFFENSIVE, NamedTextColor.RED, '⫽', percents = true),
-    CRIT_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☣', percents = true),
+    CRIT_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☣', 10f, percents = true),
     CRIT_DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☠', 100f, true),
     BONUS_ATTACK_SPEED(StatisticType.OFFENSIVE, NamedTextColor.YELLOW, '⚔', percents = true),
     SEA_CREATURE_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.DARK_AQUA, 'α', 5f, true),
-    ABILITY_DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '๑', percents = true),
+    ABILITY_DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '๑', 5f, percents = true),
+    TRUE_DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.WHITE, 'Ϟ'),
 
     HEALTH(StatisticType.DEFENSIVE, NamedTextColor.RED, '❤', 100f),
     DEFENSE(StatisticType.DEFENSIVE, NamedTextColor.GREEN, '❈', 50f),

@@ -1,11 +1,14 @@
 package space.maxus.macrocosm.players
 
+import net.axay.kspigot.extensions.broadcast
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.jetbrains.annotations.NotNull
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.item.ItemRegistry
@@ -13,6 +16,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.text.comp
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
@@ -21,7 +25,7 @@ val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 
 @Suppress("unused")
 class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
-    val paper: Player? = Bukkit.getServer().getPlayer(ref)
+    val paper: Player? get() = Bukkit.getServer().getPlayer(ref)
 
     var rank: Rank = Rank.NONE
     var firstJoin: Long = Instant.now().toEpochMilli()
@@ -30,6 +34,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var baseStats: Statistics = Statistics.default()
     var purse: Float = 0f
     var bank: Float = 0f
+    var currentHealth: Float = 0f
+
+    var onAtsCooldown: Boolean = false
 
     var mainHand: MacrocosmItem?
         get() {
@@ -85,17 +92,55 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
 
+    fun kill(reason: Component? = null) {
+        if(paper == null)
+            return
+
+        purse /= 2f
+
+        if(reason == null) {
+            broadcast(paper!!.displayName().append(comp("<gray> died.")))
+            if(purse > 0f) {
+                paper!!.sendMessage(comp("<red>You died and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
+            } else {
+                paper!!.sendMessage(comp("<red>You died!"))
+            }
+        }
+        else {
+            broadcast(paper!!.displayName().append(comp("<gray> was killed by ").append(reason)))
+            if(purse > 0f) {
+                paper!!.sendMessage(comp("<red>You were killed by ").append(reason).append(comp("<red> and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!")))
+            } else {
+                paper!!.sendMessage(comp("<red>You were killed by ").append(reason).append(comp("<red>!")))
+            }
+        }
+        paper!!.teleport(paper!!.world.spawnLocation)
+        currentHealth = calculateStats()?.health ?: baseStats.health
+    }
+
+    /**
+     * Note that it deals raw damage, and does not reduce it further!
+     */
+    fun damage(amount: Float, source: Component? = null) {
+        if(paper == null)
+            return
+        currentHealth -= amount
+        paper!!.damage(0.0)
+        if(currentHealth <= 0)
+            kill(source)
+    }
+
     fun calculateStats(): Statistics? {
         if(paper == null)
             return null
 
         val cloned = baseStats.clone()
         EquipmentSlot.values().map {
-            val baseItem = paper.inventory.getItem(it)
+            val baseItem = paper!!.inventory.getItem(it)
             if(baseItem.type == Material.AIR)
                 return@map Statistics.zero()
             val item = ItemRegistry.toMacrocosm(baseItem)
-            cloned.increase(item.stats)
+            cloned.increase(item?.stats)
         }
 
         return cloned

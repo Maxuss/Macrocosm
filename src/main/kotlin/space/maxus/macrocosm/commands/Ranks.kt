@@ -28,7 +28,7 @@ fun rankCommand() = command("rank") {
                 player.rank = rank
 
                 val displayName = player.rank.playerName(player.paper?.name ?: "null")
-                player.paper?.playerListName(player.paper.name.toComponent().color(player.rank.color))
+                player.paper?.playerListName(player.paper?.name?.toComponent()?.color(player.rank.color))
                 player.paper?.displayName(displayName)
 
                 this.player.sendMessage(comp("<green>Set rank of player <gold>${player.paper?.name}<green> to $rank"))
