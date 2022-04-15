@@ -41,7 +41,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var mainHand: MacrocosmItem?
         get() {
             val item = paper?.inventory?.itemInMainHand ?: return null
-            if(item.type == Material.AIR)
+            if (item.type == Material.AIR)
                 return null
             return item.macrocosm
         }
@@ -50,7 +50,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var offHand: MacrocosmItem?
         get() {
             val item = paper?.inventory?.itemInOffHand ?: return null
-            if(item.type == Material.AIR)
+            if (item.type == Material.AIR)
                 return null
             return item.macrocosm
         }
@@ -59,7 +59,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var helmet: MacrocosmItem?
         get() {
             val item = paper?.inventory?.helmet ?: return null
-            if(item.type == Material.AIR)
+            if (item.type == Material.AIR)
                 return null
             return item.macrocosm
         }
@@ -68,7 +68,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var chestplate: MacrocosmItem?
         get() {
             val item = paper?.inventory?.chestplate ?: return null
-            if(item.type == Material.AIR)
+            if (item.type == Material.AIR)
                 return null
             return item.macrocosm
         }
@@ -77,7 +77,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var leggings: MacrocosmItem?
         get() {
             val item = paper?.inventory?.leggings ?: return null
-            if(item.type == Material.AIR)
+            if (item.type == Material.AIR)
                 return null
             return item.macrocosm
         }
@@ -86,30 +86,32 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var boots: MacrocosmItem?
         get() {
             val item = paper?.inventory?.boots ?: return null
-            if(item.type == Material.AIR)
+            if (item.type == Material.AIR)
                 return null
             return item.macrocosm
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
 
     fun kill(reason: Component? = null) {
-        if(paper == null)
+        if (paper == null)
             return
 
         purse /= 2f
 
-        if(reason == null) {
+        if (reason == null) {
             broadcast(paper!!.displayName().append(comp("<gray> died.")))
-            if(purse > 0f) {
+            if (purse > 0f) {
                 paper!!.sendMessage(comp("<red>You died and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
             } else {
                 paper!!.sendMessage(comp("<red>You died!"))
             }
-        }
-        else {
+        } else {
             broadcast(paper!!.displayName().append(comp("<gray> was killed by ").append(reason)))
-            if(purse > 0f) {
-                paper!!.sendMessage(comp("<red>You were killed by ").append(reason).append(comp("<red> and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!")))
+            if (purse > 0f) {
+                paper!!.sendMessage(
+                    comp("<red>You were killed by ").append(reason)
+                        .append(comp("<red> and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
+                )
             } else {
                 paper!!.sendMessage(comp("<red>You were killed by ").append(reason).append(comp("<red>!")))
             }
@@ -122,22 +124,22 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
      * Note that it deals raw damage, and does not reduce it further!
      */
     fun damage(amount: Float, source: Component? = null) {
-        if(paper == null)
+        if (paper == null)
             return
         currentHealth -= amount
         paper!!.damage(0.0)
-        if(currentHealth <= 0)
+        if (currentHealth <= 0)
             kill(source)
     }
 
     fun calculateStats(): Statistics? {
-        if(paper == null)
+        if (paper == null)
             return null
 
         val cloned = baseStats.clone()
         EquipmentSlot.values().map {
             val baseItem = paper!!.inventory.getItem(it)
-            if(baseItem.type == Material.AIR)
+            if (baseItem.type == Material.AIR)
                 return@map Statistics.zero()
             val item = ItemRegistry.toMacrocosm(baseItem)
             cloned.increase(item?.stats)

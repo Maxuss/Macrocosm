@@ -9,7 +9,7 @@ import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-object CompoundDataType: PersistentDataType<ByteArray, CompoundTag> {
+object CompoundDataType : PersistentDataType<ByteArray, CompoundTag> {
     override fun getPrimitiveType(): Class<ByteArray> {
         return ByteArray::class.java
     }

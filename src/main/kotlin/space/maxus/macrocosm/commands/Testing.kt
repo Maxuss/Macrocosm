@@ -17,7 +17,7 @@ fun testItemCommand() = command("itemtest") {
 
 fun testStatsCommand() = command("stats") {
     runs {
-        for(comp in player.macrocosm?.calculateStats()?.formatFancy()!!) {
+        for (comp in player.macrocosm?.calculateStats()?.formatFancy()!!) {
             player.sendMessage(comp)
         }
     }

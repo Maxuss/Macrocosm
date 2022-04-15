@@ -23,6 +23,6 @@ enum class StatisticType(val color: TextColor) {
         val formatted = Formatting.stats(num.toBigDecimal(), false)
         val stringified = if (num < 0) formatted else if (num > 0) "+$formatted" else return null
 
-        return if(colored) comp(stringified).color(color) else comp(stringified)
+        return if (colored) comp(stringified).color(color) else comp(stringified)
     }
 }

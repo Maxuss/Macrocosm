@@ -13,12 +13,14 @@ import space.maxus.macrocosm.stats.stats
 import java.util.*
 
 internal fun statsFromMaterial(mat: Material) = stats {
-    when(mat) {
+    when (mat) {
         // weapons
 
         // melee
-        Material.WOODEN_SHOVEL, Material.WOODEN_HOE, Material.WOODEN_PICKAXE, Material.STONE_SHOVEL, Material.STONE_HOE, Material.STONE_PICKAXE -> damage = 5f
-        Material.WOODEN_SWORD, Material.WOODEN_AXE, Material.IRON_PICKAXE, Material.IRON_HOE, Material.IRON_SHOVEL -> damage = 10f
+        Material.WOODEN_SHOVEL, Material.WOODEN_HOE, Material.WOODEN_PICKAXE, Material.STONE_SHOVEL, Material.STONE_HOE, Material.STONE_PICKAXE -> damage =
+            5f
+        Material.WOODEN_SWORD, Material.WOODEN_AXE, Material.IRON_PICKAXE, Material.IRON_HOE, Material.IRON_SHOVEL -> damage =
+            10f
         Material.STONE_SWORD, Material.STONE_AXE, Material.DIAMOND_SHOVEL -> damage = 15f
         Material.IRON_SWORD, Material.IRON_AXE, Material.DIAMOND_HOE, Material.DIAMOND_PICKAXE -> damage = 20f
         Material.DIAMOND_SWORD, Material.DIAMOND_AXE, Material.NETHERITE_SHOVEL -> damage = 40f
@@ -48,7 +50,8 @@ internal fun statsFromMaterial(mat: Material) = stats {
         // armor
         Material.LEATHER_BOOTS, Material.LEATHER_HELMET -> defense = 10f
         Material.CHAINMAIL_BOOTS, Material.CHAINMAIL_HELMET, Material.LEATHER_LEGGINGS -> defense = 15f
-        Material.CHAINMAIL_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.GOLDEN_BOOTS, Material.GOLDEN_LEGGINGS, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_HELMET -> defense = 20f
+        Material.CHAINMAIL_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.GOLDEN_BOOTS, Material.GOLDEN_LEGGINGS, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_HELMET -> defense =
+            20f
         Material.CHAINMAIL_CHESTPLATE, Material.IRON_BOOTS, Material.IRON_HELMET -> defense = 25f
         Material.IRON_LEGGINGS, Material.IRON_CHESTPLATE -> defense = 30f
         Material.DIAMOND_BOOTS, Material.DIAMOND_HELMET -> {
@@ -84,20 +87,20 @@ internal fun statsFromMaterial(mat: Material) = stats {
             magicFind = 1f
         }
 
-        else -> { }
+        else -> {}
     }
 }
 
 internal fun rarityFromMaterial(mat: Material): Rarity {
     val name = mat.name
-    if(name.contains("DIAMOND") || name.contains("EMERALD") || name.contains("END") || name.contains("CANDLE"))
+    if (name.contains("DIAMOND") || name.contains("EMERALD") || name.contains("END") || name.contains("CANDLE"))
         return Rarity.UNCOMMON
-    if(name.contains("NETHERITE"))
+    if (name.contains("NETHERITE"))
         return Rarity.RARE
-    if(name.contains("SKULL") || name.contains("HEAD"))
+    if (name.contains("SKULL") || name.contains("HEAD"))
         return Rarity.EPIC
 
-    return when(mat) {
+    return when (mat) {
         Material.AMETHYST_BLOCK, Material.AMETHYST_CLUSTER -> Rarity.UNCOMMON
         Material.ELYTRA -> Rarity.EPIC
         else -> Rarity.COMMON
@@ -106,11 +109,13 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
 
 class VanillaItem(override val base: Material) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
-    override val name: Component = base.name.lowercase().split("_").joinToString(" ") { str -> str.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(
-            Locale.getDefault()
-        ) else it.toString()
-    } }.toComponent()
+    override val name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->
+        str.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
+    }.toComponent()
 
     override var rarity: Rarity = rarityFromMaterial(base)
     override var rarityUpgraded: Boolean = false
@@ -118,11 +123,11 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
     override var abilities: MutableList<ItemAbility> = mutableListOf()
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         rarityUpgraded = nbt.getBoolean("RarityUpgraded")
-        if(rarityUpgraded)
+        if (rarityUpgraded)
             rarity = rarity.next()
 
         val reforge = nbt.getString("Reforge")
-        if(reforge != "NULL") {
+        if (reforge != "NULL") {
             reforge(ReforgeRegistry.find(reforge)!!)
         }
         return this

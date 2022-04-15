@@ -20,13 +20,13 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
     fun format(upgraded: Boolean) = comp("<bold>")
         .color(color)
         .append(
-            if(upgraded)
+            if (upgraded)
                 comp("<obfuscated>a</obfuscated> $name <obfuscated>a</obfuscated>")
             else
                 name.toComponent()
         ).noitalic()
 
-    fun next() = when(this) {
+    fun next() = when (this) {
         COMMON -> UNCOMMON
         UNCOMMON -> RARE
         RARE -> EPIC

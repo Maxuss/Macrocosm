@@ -8,16 +8,18 @@ import org.bukkit.event.Listener
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.comp
 
-object ChatHandler: Listener {
+object ChatHandler : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun formatRank(e: AsyncChatEvent) {
-        e.renderer { source, _, message, _ -> source.macrocosm?.rank?.format(source.name, message.toLegacyString()) ?: message }
+        e.renderer { source, _, message, _ ->
+            source.macrocosm?.rank?.format(source.name, message.toLegacyString()) ?: message
+        }
     }
 
     @EventHandler
     fun formatEz(e: AsyncChatEvent) {
         val legacy = e.message().toLegacyString()
-        if(!legacy.contains("ez"))
+        if (!legacy.contains("ez"))
             return
         e.message(comp("Nice play!"))
     }

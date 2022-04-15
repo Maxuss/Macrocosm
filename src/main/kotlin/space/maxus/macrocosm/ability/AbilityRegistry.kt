@@ -9,11 +9,11 @@ object AbilityRegistry {
     private val abilities: HashMap<String, ItemAbility> = hashMapOf()
 
     fun register(name: String, ability: ItemAbility): ItemAbility {
-        if(abilities.containsKey(name)) {
+        if (abilities.containsKey(name)) {
             return ability
         }
         abilities[name] = ability
-        if(ability.type == AbilityType.PASSIVE) {
+        if (ability.type == AbilityType.PASSIVE) {
             Bukkit.getServer().pluginManager.registerEvents(ability, Macrocosm)
         }
         return ability

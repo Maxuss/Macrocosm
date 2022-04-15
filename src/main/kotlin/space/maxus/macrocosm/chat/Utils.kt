@@ -12,10 +12,10 @@ fun String.reduceToList(preferredLength: Int = 25): List<String> {
 
     var curLen = 0
     val inter = StringBuilder()
-    for(word in words) {
+    for (word in words) {
         curLen += word.length
         inter.append(word)
-        if(curLen >= preferredLength) {
+        if (curLen >= preferredLength) {
             curLen = 0
             list.add(inter.toString())
             inter.clear()

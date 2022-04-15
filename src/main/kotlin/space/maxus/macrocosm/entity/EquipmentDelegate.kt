@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
-import java.util.UUID
+import java.util.*
 import kotlin.reflect.KProperty
 
 fun equipment(entity: UUID, slot: EquipmentSlot) = EquipmentDelegate(slot, entity)

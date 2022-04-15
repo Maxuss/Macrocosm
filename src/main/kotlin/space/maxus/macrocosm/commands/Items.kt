@@ -14,7 +14,7 @@ fun recombobulateCommand() = command("recombobulate") {
     requires { it.hasPermission(4) }
     runs {
         val item = player.inventory.itemInMainHand
-        if(item.type == Material.AIR) {
+        if (item.type == Material.AIR) {
             player.sendMessage(comp("<red>Hold the item you want to recombobulate!"))
             return@runs
         }
@@ -33,7 +33,7 @@ fun reforgeCommand() = command("reforge") {
 
         runs {
             val item = player.inventory.itemInMainHand
-            if(item.type == Material.AIR) {
+            if (item.type == Material.AIR) {
                 player.sendMessage(comp("<red>Hold the item you want to reforge!"))
                 return@runs
             }

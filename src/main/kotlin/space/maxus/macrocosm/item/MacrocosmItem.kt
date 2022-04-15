@@ -38,7 +38,7 @@ interface MacrocosmItem {
     }
 
     fun reforge(ref: Reforge) {
-        if(reforge != null) {
+        if (reforge != null) {
             stats.decrease(reforge!!.stats(rarity))
         }
         reforge = ref
@@ -46,14 +46,14 @@ interface MacrocosmItem {
     }
 
     fun upgradeRarity(): Boolean {
-        if(rarityUpgraded) {
+        if (rarityUpgraded) {
             return false
         }
 
         val prev = rarity
         rarity = rarity.next()
 
-        if(reforge != null) {
+        if (reforge != null) {
             stats.decrease(reforge!!.stats(prev))
             stats.increase(reforge!!.stats(rarity))
         }
@@ -72,7 +72,7 @@ interface MacrocosmItem {
      * Builds this item
      */
     fun build(): ItemStack? {
-        if(base == Material.AIR)
+        if (base == Material.AIR)
             return null
 
         val item = alternativeCtor() ?: ItemStack(base, 1)
@@ -85,7 +85,7 @@ interface MacrocosmItem {
             lore.add("".toComponent())
 
             // abilities
-            for(ability in abilities) {
+            for (ability in abilities) {
                 lore.addAll(ability.buildLore())
             }
 
@@ -99,7 +99,7 @@ interface MacrocosmItem {
 
             // name
             var display = name
-            if(reforge != null)
+            if (reforge != null)
                 display = comp("${reforge!!.name} ").append(display)
 
             displayName(display.color(rarity.color).noitalic())
@@ -116,7 +116,7 @@ interface MacrocosmItem {
         nbt.putInt("Rarity", rarity.ordinal)
 
         // reforges
-        if(reforge != null)
+        if (reforge != null)
             nbt.putString("Reforge", ReforgeRegistry.nameOf(reforge!!) ?: "NULL")
         else
             nbt.putString("Reforge", "NULL")

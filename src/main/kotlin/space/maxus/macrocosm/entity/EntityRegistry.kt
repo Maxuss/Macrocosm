@@ -10,7 +10,7 @@ object EntityRegistry {
     private val entities: HashMap<String, MacrocosmEntity> = hashMapOf()
 
     fun register(name: String, reforge: MacrocosmEntity): MacrocosmEntity {
-        if(entities.containsKey(name))
+        if (entities.containsKey(name))
             return reforge
         entities[name] = reforge
         return reforge
@@ -22,9 +22,9 @@ object EntityRegistry {
 
     fun toMacrocosm(entity: LivingEntity): MacrocosmEntity {
         val tag = entity.readNbt()
-        if(tag.contains(MACROCOSM_TAG)) {
+        if (tag.contains(MACROCOSM_TAG)) {
             val id = tag.getCompound(MACROCOSM_TAG).getString("ID")
-            if(id != "NULL") {
+            if (id != "NULL") {
                 val e = find(id)!!
                 e.loadChanges(entity)
                 return e

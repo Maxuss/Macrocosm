@@ -21,7 +21,8 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 fun levelFromStats(stats: Statistics, extraWeight: Float = 0f): Int {
-    val weight = (stats.damage + stats.strength + stats.critDamage + stats.defense + stats.health) / 10f + stats.critChance + extraWeight
+    val weight =
+        (stats.damage + stats.strength + stats.critDamage + stats.defense + stats.health) / 10f + stats.critChance + extraWeight
     return max((weight / 100f).roundToInt(), 1)
 }
 
@@ -53,7 +54,7 @@ interface MacrocosmEntity {
 
     fun getId(entity: LivingEntity): String {
         val nbt = entity.readNbt()
-        return if(nbt.contains(MACROCOSM_TAG))
+        return if (nbt.contains(MACROCOSM_TAG))
             nbt.getCompound(MACROCOSM_TAG).getString("ID")
         else
             EntityRegistry.nameOf(this) ?: "NULL"
@@ -86,7 +87,7 @@ interface MacrocosmEntity {
     fun kill()
 
     fun loadChanges(entity: LivingEntity) {
-        if(entity.type != type)
+        if (entity.type != type)
             return
 
         preModify(entity)

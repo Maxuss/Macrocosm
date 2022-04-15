@@ -11,7 +11,7 @@ import space.maxus.macrocosm.item.AbilityType
 import space.maxus.macrocosm.text.comp
 
 @Suppress("unused")
-interface ItemAbility: Listener {
+interface ItemAbility : Listener {
     val name: String
     val description: String
     val type: AbilityType
@@ -31,7 +31,7 @@ interface ItemAbility: Listener {
     fun buildLore(): List<Component> {
         val lore = mutableListOf<Component>()
         lore.add(type.format(name))
-        for(desc in description.reduceToList()) {
+        for (desc in description.reduceToList()) {
             lore.add(comp("<gray>$desc</gray>"))
         }
         lore.add("".toComponent())

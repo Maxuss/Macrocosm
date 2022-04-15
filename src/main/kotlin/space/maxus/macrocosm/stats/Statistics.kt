@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
-import java.util.TreeMap
+import java.util.*
 
 inline fun defaultStats(builder: Statistics.() -> Unit) = Statistics.default().apply(builder)
 inline fun stats(builder: Statistics.() -> Unit) = Statistics.zero().apply(builder)
@@ -18,7 +18,7 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         @JvmStatic
         fun zero(): Statistics {
             val map = TreeMap<Statistic, Float>()
-            for(stat in Statistic.values()) {
+            for (stat in Statistic.values()) {
                 map[stat] = 0f
             }
             return Statistics(map)
@@ -161,8 +161,8 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
 
     fun compound(): CompoundTag {
         val cmp = CompoundTag()
-        for((stat, value) in self) {
-            if(value == 0f)
+        for ((stat, value) in self) {
+            if (value == 0f)
                 continue
             cmp.putFloat(stat.name, value)
         }
@@ -174,18 +174,18 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         var prev: Statistic? = null
         for ((stat, value) in self) {
             val formatted = stat.formatSimple(value) ?: continue
-            if(prev != null) {
-                if(prev.type != stat.type) {
+            if (prev != null) {
+                if (prev.type != stat.type) {
                     base.add(" ".toComponent())
                 }
             }
 
             // reforges
-            if(reforge != null && reforge[stat] != 0f) {
+            if (reforge != null && reforge[stat] != 0f) {
                 val amount = reforge[stat]
                 var reforgeComp = " <blue>("
                 val fmt = Formatting.stats(amount.toBigDecimal(), false)
-                reforgeComp += if(amount < 0) fmt else "+$fmt"
+                reforgeComp += if (amount < 0) fmt else "+$fmt"
                 if (stat.percents)
                     reforgeComp += "%"
                 base.add(formatted.append(comp("$reforgeComp)</blue>")))
@@ -206,21 +206,21 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
     }
 
     fun increase(other: Statistics?) {
-        if(other == null)
+        if (other == null)
             return
 
-        for((stat, _) in self) {
+        for ((stat, _) in self) {
             val otherStat = other.self[stat]!!
-            if(otherStat == 0f)
+            if (otherStat == 0f)
                 continue
             self[stat] = self[stat]!! + otherStat
         }
     }
 
     fun decrease(other: Statistics) {
-        for((stat, _) in self) {
+        for ((stat, _) in self) {
             val otherStat = other.self[stat]!!
-            if(otherStat == 0f)
+            if (otherStat == 0f)
                 continue
             self[stat] = self[stat]!! - otherStat
         }
@@ -228,7 +228,7 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
 
     fun clone(): Statistics {
         val clone = TreeMap<Statistic, Float>()
-        for((stat, value) in self) {
+        for ((stat, value) in self) {
             clone[stat] = value
         }
         return Statistics(clone)

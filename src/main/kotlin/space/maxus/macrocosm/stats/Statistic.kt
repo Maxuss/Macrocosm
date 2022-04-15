@@ -41,7 +41,8 @@ enum class Statistic(
     ;
 
     override fun toString() =
-        name.lowercase().split("_").joinToString(separator = " ") {str -> str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+        name.lowercase().split("_")
+            .joinToString(separator = " ") { str -> str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
 
     fun formatSimple(num: Float): Component? {
         if (hidden) return null

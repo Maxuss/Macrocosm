@@ -13,15 +13,15 @@ import space.maxus.macrocosm.events.PlayerSneak
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
 
-object AbilityTriggers: Listener {
+object AbilityTriggers : Listener {
     @EventHandler
     fun click(e: PlayerInteractEvent) {
-        if(e.item == null || e.item?.type == Material.AIR)
+        if (e.item == null || e.item?.type == Material.AIR)
             return
-        if(e.action.isLeftClick) {
+        if (e.action.isLeftClick) {
             val event = PlayerLeftClick(e.player.macrocosm!!, e.item!!.macrocosm)
             event.callEvent()
-        } else if(e.action.isRightClick) {
+        } else if (e.action.isRightClick) {
             val event = PlayerRightClick(e.player.macrocosm!!, e.item!!.macrocosm)
             event.callEvent()
         }
@@ -29,7 +29,7 @@ object AbilityTriggers: Listener {
 
     @EventHandler
     fun clickEntity(e: PlayerInteractEntityEvent) {
-        if(e.interactItem == null || e.interactItem?.type == Material.AIR)
+        if (e.interactItem == null || e.interactItem?.type == Material.AIR)
             return
         val event = PlayerRightClick(e.player.macrocosm!!, e.interactItem!!.macrocosm)
         event.callEvent()

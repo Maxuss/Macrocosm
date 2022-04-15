@@ -10,13 +10,17 @@ object DamageCalculator {
         val strengthMul = (1 + (stats.strength / 100f))
         val extraMul = (1 + stats.damageBoost)
         val crit = crits(stats)
-        val critMultiplier = 1 + if(crit) (stats.critDamage / 100f) else 0f
+        val critMultiplier = 1 + if (crit) (stats.critDamage / 100f) else 0f
         val trueMultiplier = 1 + (stats.trueDamage / (stats.trueDamage + 100f))
         return Pair(amount * strengthMul * critMultiplier * extraMul * trueMultiplier, crit)
     }
 
     fun calculateStandardReceived(amount: Float, stats: Statistics): Float {
-        val reduction = clamp(stats.damageReduction + (stats.defense / (100 + stats.defense)) + (stats.trueDefense / (stats.trueDefense * 10 + 1000)), 0f, 0.80f)
+        val reduction = clamp(
+            stats.damageReduction + (stats.defense / (100 + stats.defense)) + (stats.trueDefense / (stats.trueDefense * 10 + 1000)),
+            0f,
+            0.80f
+        )
         return amount * (1 - reduction)
     }
 

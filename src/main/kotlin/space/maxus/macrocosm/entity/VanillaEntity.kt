@@ -18,7 +18,7 @@ import java.util.*
 import kotlin.math.max
 
 internal fun statsFromEntity(entity: LivingEntity) = defaultStats {
-    when(entity.type) {
+    when (entity.type) {
         EntityType.ELDER_GUARDIAN -> {
             health = 25000f
             defense = 500f
@@ -155,14 +155,14 @@ internal fun statsFromEntity(entity: LivingEntity) = defaultStats {
             damage = 10f
             magicFind = 500f
         }
-        else -> { }
+        else -> {}
     }
 }
 
 class VanillaEntity(val id: UUID) : MacrocosmEntity {
     companion object {
         fun from(entity: LivingEntity): VanillaEntity {
-            if(entity.readNbt().contains(MACROCOSM_TAG)) {
+            if (entity.readNbt().contains(MACROCOSM_TAG)) {
                 val vanilla = VanillaEntity(entity.uniqueId)
                 val tag = entity.readNbt().getCompound(MACROCOSM_TAG)
                 vanilla.currentHealth = tag.getFloat("CurrentHealth")
@@ -191,24 +191,26 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseStats: Statistics = statsFromEntity(paper!!)
     override var currentHealth: Float = baseStats.health
 
-    override val name: Component = type.name.lowercase().split("_").joinToString(separator = " ") { str -> str.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(
-            Locale.getDefault()
-        ) else it.toString()
-    } }.toComponent()
+    override val name: Component = type.name.lowercase().split("_").joinToString(separator = " ") { str ->
+        str.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
+    }.toComponent()
 
 
     override val type: EntityType
         get() = paper!!.type
 
     override fun damage(amount: Float) {
-        if(paper == null)
+        if (paper == null)
             return
 
         val entity = paper!!
 
         currentHealth -= amount
-        if(currentHealth <= 0) {
+        if (currentHealth <= 0) {
             kill()
             return
         }
@@ -219,7 +221,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
 
     override fun kill() {
         // TODO: item drops
-        if(paper == null)
+        if (paper == null)
             return
         currentHealth = 0f
         loadChanges(paper!!)

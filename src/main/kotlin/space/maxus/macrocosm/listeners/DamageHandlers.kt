@@ -42,11 +42,11 @@ fun summonDamageIndicator(loc: Location, damage: Float, crit: Boolean) {
     val newLocation = Location(loc.world, nx, ny, nz)
 
     val damageDisplay = Formatting.withCommas(damage.roundToInt().toBigDecimal())
-    val display = if(crit) {
+    val display = if (crit) {
         var display = Component.empty()
         var digitIndex = 0
-        for(char in damageDisplay) {
-            if(!char.isDigit()) {
+        for (char in damageDisplay) {
+            if (!char.isDigit()) {
                 display.append(",".toComponent().color(NamedTextColor.GOLD))
                 continue
             }
@@ -77,47 +77,47 @@ fun summonDamageIndicator(loc: Location, damage: Float, crit: Boolean) {
     taskRunLater(30, runnable = stand::remove)
 }
 
-object DamageHandlers: Listener {
+object DamageHandlers : Listener {
     @EventHandler
     fun handleEntityDamage(e: EntityDamageByEntityEvent) {
         e.isCancelled = true
         val damager = e.damager
         val damaged = e.entity
-        if(damaged is ArmorStand) {
-            if(damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "ignore_damage")))
+        if (damaged is ArmorStand) {
+            if (damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "ignore_damage")))
                 return
             damaged.kill()
             return
         }
 
-        if(damager !is LivingEntity || damaged !is LivingEntity)
+        if (damager !is LivingEntity || damaged !is LivingEntity)
             return
 
-        if(damager is Player) {
+        if (damager is Player) {
             val mc = damager.macrocosm!!
-            if(mc.onAtsCooldown)
+            if (mc.onAtsCooldown)
                 return
         }
 
-        val damagerStats = if(damager is Player)
+        val damagerStats = if (damager is Player)
             damager.macrocosm!!.calculateStats()!!
         else
             damager.macrocosm.calculateStats()
 
         // TODO: test this
-        if(damager is Player) {
+        if (damager is Player) {
             damager.macrocosm!!.onAtsCooldown = true
             taskRunLater((((1 - (damagerStats.attackSpeed / 100f))) * 20f).roundToLong()) {
                 damager.macrocosm!!.onAtsCooldown = false
             }
         }
 
-        val damagerName = if(damager is Player)
+        val damagerName = if (damager is Player)
             damager.displayName()
         else
             damager.macrocosm.name
 
-        val damagedStats = if(damaged is Player)
+        val damagedStats = if (damaged is Player)
             damaged.macrocosm!!.calculateStats()!!
         else
             damaged.macrocosm.calculateStats()
@@ -125,7 +125,7 @@ object DamageHandlers: Listener {
         val (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
         val received = DamageCalculator.calculateStandardReceived(damage, damagedStats)
 
-        if(damaged is Player) {
+        if (damaged is Player) {
             damaged.macrocosm!!.damage(received, damagerName)
         } else {
             damaged.macrocosm.damage(received)
