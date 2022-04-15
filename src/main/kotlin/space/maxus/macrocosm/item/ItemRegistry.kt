@@ -12,10 +12,11 @@ object ItemRegistry {
 
     fun find(id: String) = items[id]!!
 
-    fun register(id: String, item: MacrocosmItem) {
+    fun register(id: String, item: MacrocosmItem): MacrocosmItem {
         if(items.containsKey(id))
-            return
+            return item
         items[id] = item
+        return item
     }
 
     fun toMacrocosm(item: ItemStack): MacrocosmItem {

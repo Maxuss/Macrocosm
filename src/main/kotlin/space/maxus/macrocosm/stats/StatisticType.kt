@@ -19,10 +19,10 @@ enum class StatisticType(val color: TextColor) {
         return comp(formatted)
     }
 
-    fun formatSigned(num: Float): Component? {
+    fun formatSigned(num: Float, colored: Boolean = true): Component? {
         val formatted = Formatting.stats(num.toBigDecimal(), false)
         val stringified = if (num < 0) formatted else if (num > 0) "+$formatted" else return null
 
-        return comp(stringified).color(color)
+        return if(colored) comp(stringified).color(color) else comp(stringified)
     }
 }

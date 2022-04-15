@@ -3,6 +3,8 @@ package space.maxus.macrocosm.stats
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
+import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
 import java.util.TreeMap
 
@@ -160,7 +162,7 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         return cmp
     }
 
-    fun formatSimple(): List<Component> {
+    fun formatSimple(reforge: Statistics? = null): List<Component> {
         val base = mutableListOf<Component>()
         var prev: Statistic? = null
         for ((stat, value) in self) {
@@ -170,7 +172,18 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
                     base.add(" ".toComponent())
                 }
             }
-            base.add(formatted.append(" ".toComponent()))
+
+            // reforges
+            if(reforge != null && reforge[stat] != 0f) {
+                val amount = reforge[stat]
+                var reforgeComp = " <blue>("
+                val fmt = Formatting.stats(amount.toBigDecimal(), false)
+                reforgeComp += if(amount < 0) fmt else "+$fmt"
+                if (stat.percents)
+                    reforgeComp += "%"
+                base.add(formatted.append(comp("$reforgeComp)</blue>")))
+            } else
+                base.add(formatted)
             prev = stat
         }
         return base
@@ -185,12 +198,21 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         return base
     }
 
-    fun merge(other: Statistics) {
+    fun increase(other: Statistics) {
         for((stat, _) in self) {
             val otherStat = other.self[stat]!!
             if(otherStat == 0f)
                 continue
             self[stat] = self[stat]!! + otherStat
+        }
+    }
+
+    fun decrease(other: Statistics) {
+        for((stat, _) in self) {
+            val otherStat = other.self[stat]!!
+            if(otherStat == 0f)
+                continue
+            self[stat] = self[stat]!! - otherStat
         }
     }
 

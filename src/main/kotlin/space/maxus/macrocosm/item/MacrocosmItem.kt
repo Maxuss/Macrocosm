@@ -8,10 +8,16 @@ import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.text.comp
 
 const val MACROCOSM_TAG = "MacrocosmValues"
+
+val ItemStack.macrocosm: MacrocosmItem get() = ItemRegistry.toMacrocosm(this)
 
 interface MacrocosmItem {
     var stats: Statistics
@@ -20,6 +26,8 @@ interface MacrocosmItem {
     val base: Material
     var rarity: Rarity
     var rarityUpgraded: Boolean
+    var reforge: Reforge?
+    val abilities: MutableList<ItemAbility>
 
     fun buildLore(lore: MutableList<Component>) {
 
@@ -29,11 +37,26 @@ interface MacrocosmItem {
 
     }
 
+    fun reforge(ref: Reforge) {
+        if(reforge != null) {
+            stats.decrease(reforge!!.stats(rarity))
+        }
+        reforge = ref
+        stats.increase(ref.stats(rarity))
+    }
+
     fun upgradeRarity(): Boolean {
         if(rarityUpgraded) {
             return false
         }
+
+        val prev = rarity
         rarity = rarity.next()
+
+        if(reforge != null) {
+            stats.decrease(reforge!!.stats(prev))
+            stats.increase(reforge!!.stats(rarity))
+        }
         rarityUpgraded = true
         return true
     }
@@ -55,8 +78,13 @@ interface MacrocosmItem {
             val lore = mutableListOf<Component>()
 
             // stats
-            lore.addAll(stats.formatSimple())
-            lore.add(" ".toComponent())
+            lore.addAll(stats.formatSimple(reforge?.stats(rarity)))
+            lore.add("".toComponent())
+
+            // abilities
+            for(ability in abilities) {
+                lore.addAll(ability.buildLore())
+            }
 
             // extra lore
             buildLore(lore)
@@ -67,7 +95,11 @@ interface MacrocosmItem {
             lore(lore)
 
             // name
-            displayName(name.color(rarity.color).noitalic())
+            var display = name
+            if(reforge != null)
+                display = comp("${reforge!!.name} ").append(display)
+
+            displayName(display.color(rarity.color).noitalic())
         }
 
         // NBT
@@ -76,10 +108,16 @@ interface MacrocosmItem {
         // stats
         nbt.put("Stats", stats.compound())
 
-        // upgraded
+        // rarity
         nbt.putBoolean("RarityUpgraded", rarityUpgraded)
-
         nbt.putInt("Rarity", rarity.ordinal)
+
+        // reforges
+        if(reforge != null)
+            nbt.putString("Reforge", ReforgeRegistry.nameOf(reforge!!))
+        else
+            nbt.putString("Reforge", "NULL")
+
         // adding extra nbt
         addExtraNbt(nbt)
 

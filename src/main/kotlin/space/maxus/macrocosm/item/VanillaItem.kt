@@ -5,6 +5,9 @@ import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import java.util.*
@@ -111,11 +114,17 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
 
     override var rarity: Rarity = rarityFromMaterial(base)
     override var rarityUpgraded: Boolean = false
-
+    override var reforge: Reforge? = null
+    override var abilities: MutableList<ItemAbility> = mutableListOf()
     override fun parse(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         rarityUpgraded = nbt.getBoolean("RarityUpgraded")
         if(rarityUpgraded)
             rarity = rarity.next()
+
+        val reforge = nbt.getString("Reforge")
+        if(reforge != "NULL") {
+            reforge(ReforgeRegistry.find(reforge)!!)
+        }
         return this
     }
 }

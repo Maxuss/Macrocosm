@@ -5,6 +5,7 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.listeners.AbilityTriggers
 import space.maxus.macrocosm.listeners.DataListener
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import java.util.*
@@ -28,10 +29,13 @@ class InternalMacrocosmPlugin : KSpigot() {
     override fun startup() {
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this)
+        server.pluginManager.registerEvents(AbilityTriggers, this)
+
         playtimeCommand()
         rankCommand()
         statCommand()
         recombobulateCommand()
+        reforgeCommand()
 
         testItemCommand()
         testStatsCommand()

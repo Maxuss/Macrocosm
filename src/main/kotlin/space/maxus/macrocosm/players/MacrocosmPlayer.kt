@@ -4,10 +4,13 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.jetbrains.annotations.NotNull
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.item.ItemRegistry
+import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.stats.Statistics
 import java.sql.Statement
@@ -28,6 +31,60 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var purse: Float = 0f
     var bank: Float = 0f
 
+    var mainHand: MacrocosmItem?
+        get() {
+            val item = paper?.inventory?.itemInMainHand ?: return null
+            if(item.type == Material.AIR)
+                return null
+            return item.macrocosm
+        }
+        set(@NotNull value) = paper?.inventory?.setItemInMainHand(value!!.build()) ?: Unit
+
+    var offHand: MacrocosmItem?
+        get() {
+            val item = paper?.inventory?.itemInOffHand ?: return null
+            if(item.type == Material.AIR)
+                return null
+            return item.macrocosm
+        }
+        set(@NotNull value) = paper?.inventory?.setItemInOffHand(value!!.build()) ?: Unit
+
+    var helmet: MacrocosmItem?
+        get() {
+            val item = paper?.inventory?.helmet ?: return null
+            if(item.type == Material.AIR)
+                return null
+            return item.macrocosm
+        }
+        set(@NotNull value) = paper?.inventory?.setHelmet(value!!.build()) ?: Unit
+
+    var chestplate: MacrocosmItem?
+        get() {
+            val item = paper?.inventory?.chestplate ?: return null
+            if(item.type == Material.AIR)
+                return null
+            return item.macrocosm
+        }
+        set(@NotNull value) = paper?.inventory?.setChestplate(value!!.build()) ?: Unit
+
+    var leggings: MacrocosmItem?
+        get() {
+            val item = paper?.inventory?.leggings ?: return null
+            if(item.type == Material.AIR)
+                return null
+            return item.macrocosm
+        }
+        set(@NotNull value) = paper?.inventory?.setLeggings(value!!.build()) ?: Unit
+
+    var boots: MacrocosmItem?
+        get() {
+            val item = paper?.inventory?.boots ?: return null
+            if(item.type == Material.AIR)
+                return null
+            return item.macrocosm
+        }
+        set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
+
     fun calculateStats(): Statistics? {
         if(paper == null)
             return null
@@ -38,7 +95,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if(baseItem.type == Material.AIR)
                 return@map Statistics.zero()
             val item = ItemRegistry.toMacrocosm(baseItem)
-            cloned.merge(item.stats)
+            cloned.increase(item.stats)
         }
 
         return cloned
