@@ -2,15 +2,29 @@ package space.maxus.macrocosm.stats
 
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
+import net.minecraft.nbt.CompoundTag
 import java.sql.ResultSet
+import java.util.TreeMap
+
+inline fun stats(builder: Statistics.() -> Unit) = Statistics.zero().apply(builder)
 
 @Suppress("unused")
 @JvmInline
-value class Statistics(private val self: HashMap<Statistic, Float>) {
+value class Statistics(private val self: TreeMap<Statistic, Float>) {
     companion object {
         @JvmStatic
+        fun zero(): Statistics {
+            val map = TreeMap<Statistic, Float>()
+            for(stat in Statistic.values()) {
+                map[stat] = 0f
+            }
+            return Statistics(map)
+        }
+
+
+        @JvmStatic
         fun default(): Statistics {
-            val map = hashMapOf<Statistic, Float>()
+            val map = TreeMap<Statistic, Float>()
             for (stat in Statistic.values()) {
                 map[stat] = stat.default
             }
@@ -19,7 +33,7 @@ value class Statistics(private val self: HashMap<Statistic, Float>) {
 
         @JvmStatic
         fun fromRes(res: ResultSet): Statistics {
-            val map = hashMapOf<Statistic, Float>()
+            val map = TreeMap<Statistic, Float>()
             for (stat in Statistic.values()) {
                 map[stat] = res.getFloat(stat.name)
             }
@@ -136,20 +150,37 @@ value class Statistics(private val self: HashMap<Statistic, Float>) {
 
     fun iter() = self
 
-    fun formatSimple(): Component {
-        val base = Component.empty()
+    fun compound(): CompoundTag {
+        val cmp = CompoundTag()
+        for((stat, value) in self) {
+            if(value == 0f)
+                continue
+            cmp.putFloat(stat.name, value)
+        }
+        return cmp
+    }
+
+    fun formatSimple(): List<Component> {
+        val base = mutableListOf<Component>()
+        var prev: Statistic? = null
         for ((stat, value) in self) {
             val formatted = stat.formatSimple(value) ?: continue
-            base.append(formatted).append("\n".toComponent())
+            if(prev != null) {
+                if(prev.type != stat.type) {
+                    base.add(" ".toComponent())
+                }
+            }
+            base.add(formatted.append(" ".toComponent()))
+            prev = stat
         }
         return base
     }
 
-    fun formatFancy(): Component {
-        val base = Component.empty()
+    fun formatFancy(): List<Component> {
+        val base = mutableListOf<Component>()
         for ((stat, value) in self) {
             val formatted = stat.formatFancy(value) ?: continue
-            base.append(formatted).append("\n".toComponent())
+            base.add(formatted.append("\n".toComponent()))
         }
         return base
     }

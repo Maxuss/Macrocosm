@@ -4,19 +4,20 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.text.comp
 import java.util.*
 
 enum class Statistic(
-    private val type: StatisticType,
+    val type: StatisticType,
     private val color: TextColor,
     private val specialChar: Char,
     val default: Float = 0f,
     val percents: Boolean = false,
     private val hidden: Boolean = false
 ) {
-    STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
     DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
+    STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
     FEROCITY(StatisticType.OFFENSIVE, NamedTextColor.RED, '⫽', percents = true),
     CRIT_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☣', percents = true),
     CRIT_DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☠', 100f, true),
@@ -27,7 +28,7 @@ enum class Statistic(
     HEALTH(StatisticType.DEFENSIVE, NamedTextColor.RED, '❤', 100f),
     DEFENSE(StatisticType.DEFENSIVE, NamedTextColor.GREEN, '❈', 50f),
     TRUE_DEFENSE(StatisticType.DEFENSIVE, NamedTextColor.WHITE, '❂'),
-    SPEED(StatisticType.OFFENSIVE, NamedTextColor.WHITE, '✦', 100f),
+    SPEED(StatisticType.DEFENSIVE, NamedTextColor.WHITE, '✦', 100f),
     INTELLIGENCE(StatisticType.DEFENSIVE, NamedTextColor.AQUA, '✎', 100f),
 
     PET_LUCK(StatisticType.DEFENSIVE, NamedTextColor.LIGHT_PURPLE, '♣', 5f),
@@ -38,8 +39,8 @@ enum class Statistic(
     ;
 
     override fun toString() =
-        name.lowercase().replace("_", " ")
-            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        name.lowercase().split("_")
+            .joinToString(separator = " ") { str -> str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
 
     fun formatSimple(num: Float): Component? {
         if (hidden) return null
@@ -53,16 +54,12 @@ enum class Statistic(
 
     fun explicitFormatSimple(num: Float): Component? {
         val number = type.formatSigned(num) ?: return null
-        val comp = comp("<dark_gray>$this: </dark_gray>").append(number)
-        if (percents)
-            comp.append("%".toComponent())
-        return comp
+        val comp = comp("<gray>$this: </gray>").append(number)
+        return (if (percents) comp.append("%".toComponent().color(type.color)) else comp).noitalic()
     }
 
     fun explicitFormatFancy(num: Float): Component {
         val comp = comp("$specialChar ${name.lowercase()} ").color(color).append(type.format(num))
-        if (percents)
-            comp.append("%".toComponent())
-        return comp
+        return (if (percents) comp.append("%".toComponent().color(type.color)) else comp).noitalic()
     }
 }
