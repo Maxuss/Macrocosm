@@ -15,13 +15,13 @@ enum class StatisticType(val color: TextColor) {
     ;
 
     fun format(num: Float): Component {
-        val formatted = Formatting.withCommas(num.toBigDecimal(), false)
-        return comp(formatted).color(color)
+        val formatted = Formatting.stats(num.toBigDecimal(), false)
+        return comp(formatted)
     }
 
     fun formatSigned(num: Float): Component? {
-        val formatted = Formatting.withCommas(num.toBigDecimal(), false)
-        val stringified = if (num < 0) "-$formatted" else if (num > 0) "+$formatted" else return null
+        val formatted = Formatting.stats(num.toBigDecimal(), false)
+        val stringified = if (num < 0) formatted else if (num > 0) "+$formatted" else return null
 
         return comp(stringified).color(color)
     }

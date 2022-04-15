@@ -18,7 +18,7 @@ interface MacrocosmItem {
 
     val name: Component
     val base: Material
-    val rarity: Rarity
+    var rarity: Rarity
     var rarityUpgraded: Boolean
 
     fun buildLore(lore: MutableList<Component>) {
@@ -29,10 +29,21 @@ interface MacrocosmItem {
 
     }
 
+    fun upgradeRarity(): Boolean {
+        if(rarityUpgraded) {
+            return false
+        }
+        rarity = rarity.next()
+        rarityUpgraded = true
+        return true
+    }
+
     /**
     Constructs base item stack differently, by default returns null
-    **/
+     **/
     fun alternativeCtor(): ItemStack? = null
+
+    fun parse(from: ItemStack, nbt: CompoundTag): MacrocosmItem
 
     /**
      * Builds this item
@@ -68,6 +79,7 @@ interface MacrocosmItem {
         // upgraded
         nbt.putBoolean("RarityUpgraded", rarityUpgraded)
 
+        nbt.putInt("Rarity", rarity.ordinal)
         // adding extra nbt
         addExtraNbt(nbt)
 

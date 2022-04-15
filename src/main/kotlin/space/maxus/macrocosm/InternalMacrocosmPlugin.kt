@@ -3,10 +3,7 @@ package space.maxus.macrocosm
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.ChatHandler
-import space.maxus.macrocosm.commands.playtimeCommand
-import space.maxus.macrocosm.commands.rankCommand
-import space.maxus.macrocosm.commands.statCommand
-import space.maxus.macrocosm.commands.testItemCommand
+import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.listeners.DataListener
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -34,8 +31,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         playtimeCommand()
         rankCommand()
         statCommand()
+        recombobulateCommand()
 
         testItemCommand()
+        testStatsCommand()
     }
 
     override fun shutdown() {

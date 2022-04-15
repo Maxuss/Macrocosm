@@ -1,10 +1,13 @@
 package space.maxus.macrocosm.players
 
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
+import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.stats.Statistics
 import java.sql.Statement
@@ -24,6 +27,22 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var baseStats: Statistics = Statistics.default()
     var purse: Float = 0f
     var bank: Float = 0f
+
+    fun calculateStats(): Statistics? {
+        if(paper == null)
+            return null
+
+        val cloned = baseStats.clone()
+        EquipmentSlot.values().map {
+            val baseItem = paper.inventory.getItem(it)
+            if(baseItem.type == Material.AIR)
+                return@map Statistics.zero()
+            val item = ItemRegistry.toMacrocosm(baseItem)
+            cloned.merge(item.stats)
+        }
+
+        return cloned
+    }
 
     override fun storeSelf(stmt: Statement) {
         val player = paper

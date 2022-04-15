@@ -180,8 +180,25 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         val base = mutableListOf<Component>()
         for ((stat, value) in self) {
             val formatted = stat.formatFancy(value) ?: continue
-            base.add(formatted.append("\n".toComponent()))
+            base.add(formatted)
         }
         return base
+    }
+
+    fun merge(other: Statistics) {
+        for((stat, _) in self) {
+            val otherStat = other.self[stat]!!
+            if(otherStat == 0f)
+                continue
+            self[stat] = self[stat]!! + otherStat
+        }
+    }
+
+    fun clone(): Statistics {
+        val clone = TreeMap<Statistic, Float>()
+        for((stat, value) in self) {
+            clone[stat] = value
+        }
+        return Statistics(clone)
     }
 }

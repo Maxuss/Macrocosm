@@ -14,9 +14,10 @@ enum class Statistic(
     private val specialChar: Char,
     val default: Float = 0f,
     val percents: Boolean = false,
-    private val hidden: Boolean = false
+    private val hidden: Boolean = false,
+    private val hiddenFancy: Boolean = false
 ) {
-    DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
+    DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', hiddenFancy = true),
     STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁'),
     FEROCITY(StatisticType.OFFENSIVE, NamedTextColor.RED, '⫽', percents = true),
     CRIT_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☣', percents = true),
@@ -39,8 +40,7 @@ enum class Statistic(
     ;
 
     override fun toString() =
-        name.lowercase().split("_")
-            .joinToString(separator = " ") { str -> str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+        name.lowercase().split("_").joinToString(separator = " ") {str -> str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
 
     fun formatSimple(num: Float): Component? {
         if (hidden) return null
@@ -48,7 +48,7 @@ enum class Statistic(
     }
 
     fun formatFancy(num: Float): Component? {
-        if (hidden) return null
+        if (hidden || hiddenFancy) return null
         return explicitFormatFancy(num)
     }
 
@@ -59,7 +59,7 @@ enum class Statistic(
     }
 
     fun explicitFormatFancy(num: Float): Component {
-        val comp = comp("$specialChar ${name.lowercase()} ").color(color).append(type.format(num))
-        return (if (percents) comp.append("%".toComponent().color(type.color)) else comp).noitalic()
+        val comp = comp("$specialChar $this ").color(color).append(type.format(num))
+        return (if (percents) comp.append("%".toComponent()) else comp).noitalic()
     }
 }
