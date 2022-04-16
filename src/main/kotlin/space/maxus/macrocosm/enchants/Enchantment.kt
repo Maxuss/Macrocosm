@@ -19,7 +19,7 @@ internal fun colorFromLevel(lvl: Int, max: Int): TextColor {
         NamedTextColor.BLUE
 }
 
-interface Enchantment: Listener {
+interface Enchantment : Listener {
     val name: String
     val levels: IntRange
     val applicable: List<ItemType>

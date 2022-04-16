@@ -23,7 +23,9 @@ interface ItemAbility : Listener {
         for (desc in description.reduceToList()) {
             tmp.add(comp("<gray>$desc</gray>").noitalic())
         }
-        tmp.removeIf { ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty() }
+        tmp.removeIf {
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+        }
         lore.addAll(tmp)
         cost?.buildLore(lore)
 

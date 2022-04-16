@@ -65,7 +65,7 @@ interface MacrocosmItem {
 
     fun specialStats(): SpecialStatistics {
         val base = specialStats.clone()
-        for((ench, level) in enchantments) {
+        for ((ench, level) in enchantments) {
             base.increase(ench.special(level))
         }
         return base
@@ -103,8 +103,8 @@ interface MacrocosmItem {
         }
 
         val enchants = nbt.getCompound("Enchantments")
-        for(k in enchants.allKeys) {
-            if(k == "NULL")
+        for (k in enchants.allKeys) {
+            if (k == "NULL")
                 continue
             enchantments[EnchantmentRegistry.find(k)!!] = enchants.getInt(k)
         }
@@ -112,12 +112,12 @@ interface MacrocosmItem {
     }
 
     fun enchant(enchantment: Enchantment, level: Int): Boolean {
-        if(!enchantment.levels.contains(level) || !enchantment.applicable.contains(type))
+        if (!enchantment.levels.contains(level) || !enchantment.applicable.contains(type))
             return false
         val name = EnchantmentRegistry.nameOf(enchantment)
         enchantments.filter { (ench, _) ->
             ench.conflicts.contains(name)
-        }.forEach {(ench, _) ->
+        }.forEach { (ench, _) ->
             enchantments.remove(ench)
         }
         enchantments[enchantment] = level
@@ -141,8 +141,8 @@ interface MacrocosmItem {
             lore.add("".toComponent())
 
             // enchants
-            if(enchantments.isNotEmpty()) {
-                if(enchantments.size > 6) {
+            if (enchantments.isNotEmpty()) {
+                if (enchantments.size > 6) {
                     val cmp = StringBuilder()
                     enchantments.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
                         cmp.append(", ${MiniMessage.miniMessage().serialize(it)}")
@@ -151,7 +151,7 @@ interface MacrocosmItem {
                     lore.addAll(reduced)
                     lore.add("".toComponent())
                 } else {
-                    for((ench, lvl) in enchantments) {
+                    for ((ench, lvl) in enchantments) {
                         ench.displayFancy(lore, lvl)
                     }
                     lore.add("".toComponent())
@@ -206,7 +206,7 @@ interface MacrocosmItem {
 
         // enchants
         val enchants = CompoundTag()
-        for((ench, level) in enchantments) {
+        for ((ench, level) in enchantments) {
             enchants.putInt(EnchantmentRegistry.nameOf(ench) ?: "NULL", level)
         }
         nbt.put("Enchantments", enchants)

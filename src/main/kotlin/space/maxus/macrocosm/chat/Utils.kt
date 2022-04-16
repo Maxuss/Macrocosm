@@ -32,6 +32,7 @@ fun String.reduceToList(preferredLength: Int = 25): List<String> {
     return list
 }
 
-fun String.capitalized(separator: String = " ") = lowercase().split(" ").joinToString(separator) { str -> str.replaceFirstChar { it.titlecase(Locale.getDefault()) } }
+fun String.capitalized(separator: String = " ") =
+    lowercase().split(" ").joinToString(separator) { str -> str.replaceFirstChar { it.titlecase(Locale.getDefault()) } }
 
 fun String.isBlankOrEmpty() = isBlank() || isEmpty()

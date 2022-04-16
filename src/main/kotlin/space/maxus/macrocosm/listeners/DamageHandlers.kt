@@ -177,7 +177,14 @@ object DamageHandlers : Listener {
         summonDamageIndicator(entity.location, damage, crit)
     }
 
-    fun summonDamageIndicator(loc: Location, damage: Float, crit: Boolean = false, fire: Boolean = false, frost: Boolean = false, electric: Boolean = false) {
+    fun summonDamageIndicator(
+        loc: Location,
+        damage: Float,
+        crit: Boolean = false,
+        fire: Boolean = false,
+        frost: Boolean = false,
+        electric: Boolean = false
+    ) {
         val x: Double = loc.x
         val y: Double = loc.y
         val z: Double = loc.z
@@ -214,11 +221,11 @@ object DamageHandlers : Listener {
                 display = display.append(char.toString().toComponent().color(color))
             }
             comp("<white>✧</white>").append(display).append(comp("<white>✧</white>"))
-        } else if(fire) {
+        } else if (fire) {
             comp("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
-        } else if(frost) {
+        } else if (frost) {
             comp("<white>❄ <aqua>$damageDisplay<white> ❄")
-        } else if(electric) {
+        } else if (electric) {
             comp("<white>\uD83D\uDDF2 <yellow>$damageDisplay<white> \uD83D\uDDF2")
         } else {
             damageDisplay.toComponent().color(NamedTextColor.GRAY)

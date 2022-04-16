@@ -201,8 +201,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
             cloned.increase(item.stats)
             cloned.multiply(1 + item.specialStats.statBoost)
-            if(item.enchantments.isNotEmpty()) {
-                for((ench, level) in item.enchantments) {
+            if (item.enchantments.isNotEmpty()) {
+                for ((ench, level) in item.enchantments) {
                     val base = ench.stats(level)
                     val special = ench.special(level)
                     cloned.increase(base)
@@ -216,19 +216,19 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     fun specialStats(): SpecialStatistics? {
         val stats = SpecialStatistics()
-        if(paper == null)
+        if (paper == null)
             return null
 
         EquipmentSlot.values().forEach {
             val baseItem = paper!!.inventory.getItem(it)
-            if(baseItem.type == Material.AIR)
+            if (baseItem.type == Material.AIR)
                 return@forEach
 
             val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
 
             stats.increase(item.specialStats)
-            if(item.enchantments.isNotEmpty()) {
-                for((ench, level) in item.enchantments) {
+            if (item.enchantments.isNotEmpty()) {
+                for ((ench, level) in item.enchantments) {
                     val special = ench.special(level)
                     stats.increase(special)
                 }

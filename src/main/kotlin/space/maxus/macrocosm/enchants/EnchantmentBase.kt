@@ -30,10 +30,10 @@ abstract class EnchantmentBase(
 ) : Enchantment {
     protected fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot): Pair<Boolean, Int> {
         val item = player.paper!!.inventory.getItem(slot)
-        if(item.type == Material.AIR)
+        if (item.type == Material.AIR)
             return Pair(false, -1)
         val enchants = item.macrocosm?.enchantments
-        if(enchants?.contains(this) != true)
+        if (enchants?.contains(this) != true)
             return Pair(false, -1)
         return Pair(true, enchants[this]!!)
     }
@@ -57,8 +57,15 @@ abstract class EnchantmentBase(
         special.multiply(multiplier * level)
         val mm = MiniMessage.miniMessage()
         val basePlaceholders = base.iter().map { (k, v) ->
-            Placeholder.parsed(k.name.lowercase(), mm.serialize(
-                if(!k.hidden) { k.type.formatSigned(v) ?: comp("0").color(k.type.color) } else { k.type.formatSigned(v * 100, true) ?: comp("0").color(k.type.color) }))
+            Placeholder.parsed(
+                k.name.lowercase(), mm.serialize(
+                    if (!k.hidden) {
+                        k.type.formatSigned(v) ?: comp("0").color(k.type.color)
+                    } else {
+                        k.type.formatSigned(v * 100, true) ?: comp("0").color(k.type.color)
+                    }
+                )
+            )
         }.toMutableList()
         val specPlaceholders = special.map().map { (k, v) ->
             Placeholder.unparsed(k.name.lowercase(), Formatting.stats(v.toBigDecimal(), false))
@@ -66,7 +73,9 @@ abstract class EnchantmentBase(
         basePlaceholders.addAll(specPlaceholders)
         val arr = basePlaceholders.toTypedArray()
         val reduced = description.reduceToList(25).map { mm.deserialize("<gray>$it", *arr).noitalic() }.toMutableList()
-        reduced.removeIf { ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty() }
+        reduced.removeIf {
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+        }
         return reduced
     }
 }

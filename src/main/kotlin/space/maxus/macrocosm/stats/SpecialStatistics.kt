@@ -5,7 +5,8 @@ import net.minecraft.nbt.CompoundTag
 fun specialStats(builder: SpecialStatistics.() -> Unit) = SpecialStatistics().apply(builder)
 
 class SpecialStatistics {
-    private var values: HashMap<SpecialStatistic, Float> = hashMapOf(*SpecialStatistic.values().map { it to 0f }.toTypedArray())
+    private var values: HashMap<SpecialStatistic, Float> =
+        hashMapOf(*SpecialStatistic.values().map { it to 0f }.toTypedArray())
 
     var knockbackBoost: Float
         get() = values[SpecialStatistic.KB_BOOST]!!
@@ -39,14 +40,14 @@ class SpecialStatistics {
 
     fun clone(): SpecialStatistics {
         val clone = SpecialStatistics()
-        for((stat, value) in values) {
+        for ((stat, value) in values) {
             clone.values[stat] = value
         }
         return clone
     }
 
     fun multiply(multiplier: Float) {
-        for((stat, _) in values) {
+        for ((stat, _) in values) {
             values[stat] = values[stat]!! * multiplier
         }
     }
@@ -55,8 +56,8 @@ class SpecialStatistics {
 
     fun compound(): CompoundTag {
         val cmp = CompoundTag()
-        for((stat, value) in values) {
-            if(value == 0f)
+        for ((stat, value) in values) {
+            if (value == 0f)
                 continue
             cmp.putFloat(stat.name, value)
         }
@@ -64,8 +65,8 @@ class SpecialStatistics {
     }
 
     fun increase(other: SpecialStatistics) {
-        for((stat, value) in other.values) {
-            if(other.values[stat]!! == 0f)
+        for ((stat, value) in other.values) {
+            if (other.values[stat]!! == 0f)
                 continue
             values[stat] = values[stat]!! + value
         }

@@ -13,7 +13,7 @@ class SimpleEnchantment(
     special: SpecialStatistics = SpecialStatistics(),
     multiplier: Float = 1f,
     conflicts: List<String> = listOf()
-): EnchantmentBase(
+) : EnchantmentBase(
     name,
     description,
     levels,

@@ -26,11 +26,11 @@ internal fun typeFromMaterial(mat: Material): ItemType {
 }
 
 internal fun specialStatsFromMaterial(mat: Material) = specialStats {
-    if(mat.name.contains("NETHERITE")) {
+    if (mat.name.contains("NETHERITE")) {
         fireResistance = 0.2f
         knockbackResistance = 0.1f
         statBoost = 0.01f
-    } else if(mat.name.contains("DIAMOND")) {
+    } else if (mat.name.contains("DIAMOND")) {
         statBoost = 0.01f
     }
 }
@@ -149,6 +149,7 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
     override var reforge: Reforge? = null
     override var abilities: MutableList<ItemAbility> = mutableListOf()
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+
     @Suppress("UNCHECKED_CAST")
     override fun clone(): MacrocosmItem {
         val vanilla = VanillaItem(base)

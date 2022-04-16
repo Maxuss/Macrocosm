@@ -19,12 +19,12 @@ import java.util.*
 import kotlin.math.max
 
 internal fun specialsFromEntity(entity: LivingEntity?) = specialStats {
-    if(entity == null)
+    if (entity == null)
         return@specialStats
     knockbackResistance = entity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE)?.value?.toFloat() ?: 0f
     knockbackBoost = entity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK)?.value?.toFloat() ?: 0f
 
-    when(entity.type) {
+    when (entity.type) {
         EntityType.BLAZE, EntityType.GHAST, EntityType.WITHER_SKELETON, EntityType.WITHER, EntityType.ZOGLIN, EntityType.ZOMBIFIED_PIGLIN -> {
             fireResistance = 1f
         }

@@ -22,7 +22,7 @@ object EntityRegistry {
     fun find(name: String) = entities[name]
 
     fun toMacrocosm(entity: LivingEntity): MacrocosmEntity? {
-        if(entity is Player)
+        if (entity is Player)
             return null
         val tag = entity.readNbt()
         if (tag.contains(MACROCOSM_TAG)) {
