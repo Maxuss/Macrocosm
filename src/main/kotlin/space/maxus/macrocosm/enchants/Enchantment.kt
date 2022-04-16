@@ -10,10 +10,10 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 
-internal fun colorFromLevel(lvl: Int): TextColor {
-    return if(lvl >= 7)
+internal fun colorFromLevel(lvl: Int, max: Int): TextColor {
+    return if (lvl == max)
         NamedTextColor.RED
-    else if(lvl >= 6)
+    else if (lvl >= max - 1)
         NamedTextColor.GOLD
     else
         NamedTextColor.BLUE
@@ -35,5 +35,5 @@ interface Enchantment: Listener {
         lore.addAll(description(level))
     }
 
-    fun displaySimple(level: Int) = comp("$name ${roman(level)}").color(colorFromLevel(level)).noitalic()
+    fun displaySimple(level: Int) = comp("$name ${roman(level)}").color(colorFromLevel(level, levels.last)).noitalic()
 }

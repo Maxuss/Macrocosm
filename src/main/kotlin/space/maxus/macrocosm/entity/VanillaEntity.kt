@@ -241,7 +241,8 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
             kill()
             return
         }
-        entity.target = damager as LivingEntity
+
+        entity.target = damager as? LivingEntity
         entity.damage(0.0)
 
         loadChanges(paper!!)

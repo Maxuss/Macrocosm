@@ -1,10 +1,10 @@
 package space.maxus.macrocosm.enchants
 
-import net.axay.kspigot.extensions.bukkit.toComponent
-import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.chat.Formatting
@@ -66,8 +66,7 @@ abstract class EnchantmentBase(
         basePlaceholders.addAll(specPlaceholders)
         val arr = basePlaceholders.toTypedArray()
         val reduced = description.reduceToList(25).map { mm.deserialize("<gray>$it", *arr).noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        reduced.add("".toComponent())
+        reduced.removeIf { ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty() }
         return reduced
     }
 }

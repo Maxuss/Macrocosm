@@ -143,17 +143,18 @@ interface MacrocosmItem {
             // enchants
             if(enchantments.isNotEmpty()) {
                 if(enchantments.size > 6) {
-                    val cmp = Component.empty()
+                    val cmp = StringBuilder()
                     enchantments.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
-                        cmp.append(" ".toComponent().append(it))
+                        cmp.append(", ${MiniMessage.miniMessage().serialize(it)}")
                     }
-                    val reduced = MiniMessage.miniMessage().serialize(cmp).trim().reduceToList(40).map { comp(it) }
+                    val reduced = cmp.toString().trim(',').trim().reduceToList(25).map { comp("<gray>$it").noitalic() }
                     lore.addAll(reduced)
                     lore.add("".toComponent())
                 } else {
                     for((ench, lvl) in enchantments) {
                         ench.displayFancy(lore, lvl)
                     }
+                    lore.add("".toComponent())
                 }
             }
 

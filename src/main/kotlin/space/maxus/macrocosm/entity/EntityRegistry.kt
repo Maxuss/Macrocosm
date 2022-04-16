@@ -1,9 +1,10 @@
 package space.maxus.macrocosm.entity
 
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 
-val LivingEntity.macrocosm: MacrocosmEntity get() = EntityRegistry.toMacrocosm(this)
+val LivingEntity.macrocosm: MacrocosmEntity? get() = EntityRegistry.toMacrocosm(this)
 
 @Suppress("unused")
 object EntityRegistry {
@@ -20,7 +21,9 @@ object EntityRegistry {
 
     fun find(name: String) = entities[name]
 
-    fun toMacrocosm(entity: LivingEntity): MacrocosmEntity {
+    fun toMacrocosm(entity: LivingEntity): MacrocosmEntity? {
+        if(entity is Player)
+            return null
         val tag = entity.readNbt()
         if (tag.contains(MACROCOSM_TAG)) {
             val id = tag.getCompound(MACROCOSM_TAG).getString("ID")

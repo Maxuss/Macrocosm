@@ -68,6 +68,12 @@ fun enchantCommand() = command("enchantme") {
         }
 
         argument("level", IntegerArgumentType.integer(0)) {
+            suggestList { ctx ->
+                val name = ctx.getArgumentOrNull<String>("enchant") ?: return@suggestList listOf("!")
+                val ench = EnchantmentRegistry.find(name) ?: return@suggestList listOf("!")
+                ench.levels.map { it.toString() }
+            }
+
             runs {
                 val item = player.inventory.itemInMainHand
                 if (item.type == Material.AIR) {

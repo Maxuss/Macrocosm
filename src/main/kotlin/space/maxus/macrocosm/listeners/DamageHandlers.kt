@@ -62,7 +62,7 @@ object DamageHandlers : Listener {
         val (damagerStats, damagerSpecials) = if (damager is Player)
             Pair(damager.macrocosm!!.calculateStats()!!, damager.macrocosm!!.specialStats()!!)
         else
-            Pair(damager.macrocosm.calculateStats(), damager.macrocosm.specialStats())
+            Pair(damager.macrocosm!!.calculateStats(), damager.macrocosm!!.specialStats())
 
         if (damager is Player) {
             damager.macrocosm!!.onAtsCooldown = true
@@ -75,12 +75,12 @@ object DamageHandlers : Listener {
         val damagerName = if (damager is Player)
             damager.displayName()
         else
-            damager.macrocosm.name
+            damager.macrocosm!!.name
 
         val (damagedStats, damagedSpecials) = if (damaged is Player)
             Pair(damaged.macrocosm!!.calculateStats()!!, damaged.macrocosm!!.specialStats()!!)
         else
-            Pair(damaged.macrocosm.calculateStats(), damaged.macrocosm.specialStats())
+            Pair(damaged.macrocosm!!.calculateStats(), damaged.macrocosm!!.specialStats())
 
         var (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
 
@@ -107,7 +107,7 @@ object DamageHandlers : Listener {
         if (damaged is Player) {
             damaged.macrocosm!!.damage(received, damagerName)
         } else {
-            damaged.macrocosm.damage(received, damager)
+            damaged.macrocosm!!.damage(received, damager)
         }
 
         // get knockback level here
@@ -157,7 +157,7 @@ object DamageHandlers : Listener {
         if (entity is Player) {
             entity.macrocosm!!.damage(damage, source)
         } else {
-            entity.macrocosm.damage(damage)
+            entity.macrocosm!!.damage(damage)
         }
         val vector = entity.eyeLocation.direction.clone() reduce vec(1) increase vec(y = 1)
         for (i in 0 until 12) {
@@ -177,7 +177,7 @@ object DamageHandlers : Listener {
         summonDamageIndicator(entity.location, damage, crit)
     }
 
-    private fun summonDamageIndicator(loc: Location, damage: Float, crit: Boolean) {
+    fun summonDamageIndicator(loc: Location, damage: Float, crit: Boolean = false, fire: Boolean = false, frost: Boolean = false, electric: Boolean = false) {
         val x: Double = loc.x
         val y: Double = loc.y
         val z: Double = loc.z
@@ -214,6 +214,12 @@ object DamageHandlers : Listener {
                 display = display.append(char.toString().toComponent().color(color))
             }
             comp("<white>✧</white>").append(display).append(comp("<white>✧</white>"))
+        } else if(fire) {
+            comp("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
+        } else if(frost) {
+            comp("<white>❄ <aqua>$damageDisplay<white> ❄")
+        } else if(electric) {
+            comp("<white>\uD83D\uDDF2 <yellow>$damageDisplay<white> \uD83D\uDDF2")
         } else {
             damageDisplay.toComponent().color(NamedTextColor.GRAY)
         }
