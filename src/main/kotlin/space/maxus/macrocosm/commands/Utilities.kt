@@ -2,10 +2,8 @@ package space.maxus.macrocosm.commands
 
 import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
-import net.axay.kspigot.commands.argument
-import net.axay.kspigot.commands.command
-import net.axay.kspigot.commands.runs
-import net.axay.kspigot.commands.suggestList
+import net.axay.kspigot.commands.*
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import space.maxus.macrocosm.damage.DamageCalculator
@@ -25,12 +23,22 @@ fun playtimeCommand() = command("playtime") {
     }
 }
 
+inline fun <reified T> com.mojang.brigadier.context.CommandContext<CommandSourceStack>.getArgumentOrNull(name: String): T? {
+    return try {
+        getArgument<T>(name)
+    } catch(e: java.lang.IllegalArgumentException) {
+        null
+    }
+}
+
 fun statCommand() = command("stat") {
     requires { it.hasPermission(4) }
 
     argument("player", EntityArgument.player()) {
         argument("statistic", StringArgumentType.word()) {
-            suggestList { Statistic.values().map { it.name } }
+            suggestList {  ctx ->
+                Statistic.values().map { it.name }.filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
+            }
 
             argument("value", FloatArgumentType.floatArg()) {
 

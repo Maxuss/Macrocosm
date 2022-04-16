@@ -101,7 +101,11 @@ interface MacrocosmEntity {
         entity.equipment?.boots = this.boots?.build()
 
         EquipmentSlot.values().forEach {
-            entity.equipment?.setDropChance(it, 0.0f)
+            try {
+                entity.equipment?.setDropChance(it, 0.0f)
+            } catch(e: java.lang.IllegalArgumentException) {
+                // pass
+            }
         }
         entity.isCustomNameVisible = true
         // name

@@ -2,6 +2,8 @@ package space.maxus.macrocosm.damage
 
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import org.bukkit.Location
+import org.bukkit.util.Vector
 import java.text.DecimalFormat
 import kotlin.math.max
 import kotlin.math.min
@@ -26,3 +28,5 @@ fun healthColor(amount: Float, max: Float): TextColor {
     else
         NamedTextColor.YELLOW
 }
+
+fun Vector.relativeLocation(location: Location) = Location(location.world, location.x + x, location.y + y, location.z + z)

@@ -8,6 +8,7 @@ import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.listeners.AbilityTriggers
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.listeners.DataListener
+import space.maxus.macrocosm.listeners.EntityHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.ReforgeType
 import java.util.*
@@ -33,6 +34,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(ChatHandler, this)
         server.pluginManager.registerEvents(AbilityTriggers, this)
         server.pluginManager.registerEvents(DamageHandlers, this)
+        server.pluginManager.registerEvents(EntityHandlers, this)
 
         ReforgeType.init()
 

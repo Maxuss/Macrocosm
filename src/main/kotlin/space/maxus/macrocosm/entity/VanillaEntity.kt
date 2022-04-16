@@ -17,7 +17,9 @@ import space.maxus.macrocosm.stats.defaultStats
 import java.util.*
 import kotlin.math.max
 
-internal fun statsFromEntity(entity: LivingEntity) = defaultStats {
+internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
+    if(entity == null)
+        return@defaultStats
     when (entity.type) {
         EntityType.ELDER_GUARDIAN -> {
             health = 25000f
@@ -165,11 +167,16 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
             if (entity.readNbt().contains(MACROCOSM_TAG)) {
                 val vanilla = VanillaEntity(entity.uniqueId)
                 val tag = entity.readNbt().getCompound(MACROCOSM_TAG)
+                vanilla.paper = entity
                 vanilla.currentHealth = tag.getFloat("CurrentHealth")
+                vanilla.baseStats = statsFromEntity(entity)
                 vanilla.loadChanges(entity)
                 return vanilla
             } else {
                 val vanilla = VanillaEntity(entity.uniqueId)
+                vanilla.paper = entity
+                vanilla.baseStats = statsFromEntity(entity)
+                vanilla.currentHealth = vanilla.baseStats.health
                 vanilla.loadChanges(entity)
                 return vanilla
             }
@@ -179,7 +186,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
             from(loc.world.spawnEntity(loc, type) as LivingEntity)
     }
 
-    val paper: LivingEntity? get() = server.getEntity(id) as? LivingEntity
+    var paper: LivingEntity? = server.getEntity(id) as? LivingEntity
 
     override var mainHand: MacrocosmItem? by equipment(id, EquipmentSlot.HAND)
     override var offHand: MacrocosmItem? by equipment(id, EquipmentSlot.OFF_HAND)
@@ -188,10 +195,10 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var leggings: MacrocosmItem? by equipment(id, EquipmentSlot.LEGS)
     override var boots: MacrocosmItem? by equipment(id, EquipmentSlot.FEET)
 
-    override var baseStats: Statistics = statsFromEntity(paper!!)
+    override var baseStats: Statistics = statsFromEntity(paper)
     override var currentHealth: Float = baseStats.health
 
-    override val name: Component = type.name.lowercase().split("_").joinToString(separator = " ") { str ->
+    override val name: Component get() = type.name.lowercase().split("_").joinToString(separator = " ") { str ->
         str.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.getDefault()
@@ -201,7 +208,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
 
 
     override val type: EntityType
-        get() = paper!!.type
+        get() = paper?.type ?: EntityType.UNKNOWN
 
     override fun damage(amount: Float) {
         if (paper == null)

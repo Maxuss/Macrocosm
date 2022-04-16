@@ -6,7 +6,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import space.maxus.macrocosm.players.MacrocosmPlayer
 
-class PlayerDealDamageEvent(val player: MacrocosmPlayer, val damaged: LivingEntity, var damage: Float, var crit: Boolean) : Event(), Cancellable {
+class PlayerReceiveDamageEvent(val player: MacrocosmPlayer, val damager: LivingEntity, var damage: Float, var crit: Boolean) : Event(), Cancellable {
     private var eventCancelled = false
 
     companion object {
