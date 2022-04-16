@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack
 
 @Suppress("UNUSED")
 object ItemRegistry {
-    private val items: HashMap<String, MacrocosmItem> = hashMapOf()
+    val items: HashMap<String, MacrocosmItem> = hashMapOf()
     private var itemCmd: Long = 1000
 
     fun nextModel() = ++itemCmd

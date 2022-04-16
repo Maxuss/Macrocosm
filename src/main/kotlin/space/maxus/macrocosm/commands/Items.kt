@@ -5,7 +5,12 @@ import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.commands.arguments.selector.EntitySelector
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.text.comp
@@ -27,8 +32,8 @@ fun recombobulateCommand() = command("recombobulate") {
 fun reforgeCommand() = command("reforge") {
     requires { it.hasPermission(4) }
     argument("reforge", StringArgumentType.word()) {
-        suggestList {
-            ReforgeRegistry.reforges.keys
+        suggestList {ctx ->
+            ReforgeRegistry.reforges.keys.filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
         }
 
         runs {
@@ -41,6 +46,26 @@ fun reforgeCommand() = command("reforge") {
             val reforge = getArgument<String>("reforge")
             macrocosm!!.reforge(ReforgeRegistry.find(reforge)!!)
             player.inventory.setItemInMainHand(macrocosm.build())
+        }
+    }
+}
+
+fun itemCommand() = command("getitem") {
+    requires { it.hasPermission(4) }
+    argument("player", EntityArgument.player()) {
+        argument("item", StringArgumentType.word()) {
+            suggestList { ctx ->
+                ItemRegistry.items.keys.filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
+            }
+
+            runs {
+                val player = getArgument<EntitySelector>("player").findSinglePlayer(this.nmsContext.source).bukkitEntity
+                val item = getArgument<String>("item")
+
+                val stack = ItemRegistry.find(item).build() ?: ItemStack(Material.AIR)
+                player.inventory.addItem(stack)
+                this.player.sendMessage(comp("<green>Gave ${player.name} ${MiniMessage.miniMessage().serialize(stack.displayName())}<green>!"))
+            }
         }
     }
 }

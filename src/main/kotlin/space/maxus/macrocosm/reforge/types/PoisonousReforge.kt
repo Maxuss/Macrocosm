@@ -1,9 +1,10 @@
-package space.maxus.macrocosm.reforge
+package space.maxus.macrocosm.reforge.types
 
 import org.bukkit.event.EventHandler
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 

@@ -6,9 +6,7 @@ import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Slime
+import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
@@ -210,17 +208,18 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override val type: EntityType
         get() = paper?.type ?: EntityType.UNKNOWN
 
-    override fun damage(amount: Float) {
+    override fun damage(amount: Float, damager: Entity?) {
         if (paper == null)
             return
 
-        val entity = paper!!
+        val entity = paper!! as Creature
 
         currentHealth -= amount
         if (currentHealth <= 0) {
             kill()
             return
         }
+        entity.target = damager as LivingEntity
         entity.damage(0.0)
 
         loadChanges(paper!!)

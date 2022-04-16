@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.players
 
 import net.axay.kspigot.extensions.broadcast
+import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -20,6 +21,7 @@ import space.maxus.macrocosm.text.comp
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+import kotlin.math.roundToInt
 
 val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 
@@ -34,7 +36,45 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var baseStats: Statistics = Statistics.default()
     var purse: Float = 0f
     var bank: Float = 0f
-    var currentHealth: Float = 0f
+    var currentHealth: Float = calculateStats()!!.health
+    var currentMana: Float = calculateStats()!!.intelligence
+    var lastAbilityUse: HashMap<String, Long> = hashMapOf()
+
+    init {
+        // mana & health regen
+        task(period = 20L) {
+            if(paper == null) {
+                it.cancel()
+                return@task
+            }
+            val stats = calculateStats()!!
+            if(currentMana < stats.intelligence)
+                currentMana += stats.intelligence / 12f
+            if(currentHealth < stats.health) {
+                currentHealth += stats.health / 20f
+                paper!!.health = (currentHealth / stats.health).toDouble() * 20
+            }
+        }
+
+        // fixing speed
+        task(period = 20L) {
+            if(paper == null) {
+                it.cancel()
+                return@task
+            }
+            val stats = calculateStats()!!
+            paper?.walkSpeed = 0.2F * (stats.speed / 100f)
+        }
+
+        // displaying base stats on action bar
+        task(period = 20L) {
+            if(paper == null) {
+                it.cancel()
+                return@task
+            }
+            sendStatBar()
+        }
+    }
 
     var onAtsCooldown: Boolean = false
 
@@ -92,6 +132,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
 
+    private fun sendStatBar() {
+        val stats = calculateStats()!!
+        paper?.sendActionBar(comp("<red>${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤    <green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
+    }
+
     fun kill(reason: Component? = null) {
         if (paper == null)
             return
@@ -99,14 +144,14 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         purse /= 2f
 
         if (reason == null) {
-            broadcast(paper!!.displayName().append(comp("<gray> died.")))
+            broadcast(comp("<red>☠ <gray>").append(paper!!.displayName().append(comp("<gray> died."))))
             if (purse > 0f) {
                 paper!!.sendMessage(comp("<red>You died and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
             } else {
                 paper!!.sendMessage(comp("<red>You died!"))
             }
         } else {
-            broadcast(paper!!.displayName().append(comp("<gray> was killed by ").append(reason)))
+            broadcast(comp("<red>☠ <gray>").append(paper!!.displayName().append(comp("<gray> was killed by ").append(reason))))
             if (purse > 0f) {
                 paper!!.sendMessage(
                     comp("<red>You were killed by ").append(reason)
@@ -120,6 +165,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         currentHealth = calculateStats()?.health ?: baseStats.health
     }
 
+    fun decreaseMana(amount: Float) {
+        currentMana -= amount
+        sendStatBar()
+    }
+
     /**
      * Note that it deals raw damage, and does not reduce it further!
      */
@@ -127,9 +177,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (paper == null)
             return
         currentHealth -= amount
-        paper!!.damage(0.0)
         if (currentHealth <= 0)
             kill(source)
+        paper!!.health = (currentHealth / calculateStats()!!.health).toDouble() * 20
+        sendStatBar()
     }
 
     fun calculateStats(): Statistics? {

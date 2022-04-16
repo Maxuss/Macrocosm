@@ -5,6 +5,7 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.listeners.AbilityTriggers
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.listeners.DataListener
@@ -37,6 +38,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(EntityHandlers, this)
 
         ReforgeType.init()
+        ItemValue.init()
 
         playtimeCommand()
         rankCommand()
@@ -44,10 +46,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         recombobulateCommand()
         reforgeCommand()
         myDamageCommand()
+        itemCommand()
+        giveCoinsCommand()
 
-        testItemCommand()
         testStatsCommand()
-        testEntityCommand()
     }
 
     override fun shutdown() {

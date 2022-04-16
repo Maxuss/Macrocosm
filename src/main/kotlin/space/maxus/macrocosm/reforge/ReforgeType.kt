@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.reforge
 
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.reforge.types.PoisonousReforge
 import space.maxus.macrocosm.stats.stats
 
 enum class ReforgeType(private val ref: Reforge) {

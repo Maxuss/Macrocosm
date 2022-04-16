@@ -83,7 +83,7 @@ interface MacrocosmEntity {
             .noitalic()
     }
 
-    fun damage(amount: Float)
+    fun damage(amount: Float, damager: Entity? = null)
     fun kill()
 
     fun loadChanges(entity: LivingEntity) {

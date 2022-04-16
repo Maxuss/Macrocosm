@@ -12,11 +12,12 @@ object AbilityRegistry {
             return ability
         }
         abilities[name] = ability
-        if (ability.type == AbilityType.PASSIVE) {
-            Bukkit.getServer().pluginManager.registerEvents(ability, Macrocosm)
-        }
+        Bukkit.getServer().pluginManager.registerEvents(ability, Macrocosm)
         return ability
     }
 
     fun find(name: String) = abilities[name]
+
+    fun nameOf(ability: ItemAbility) = abilities.filter { (_, v) -> v == ability }.map { (k, _) -> k }.firstOrNull()
+
 }

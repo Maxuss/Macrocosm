@@ -107,7 +107,7 @@ object DamageHandlers : Listener {
         if (damaged is Player) {
             damaged.macrocosm!!.damage(received, damagerName)
         } else {
-            damaged.macrocosm.damage(received)
+            damaged.macrocosm.damage(received, damager)
         }
 
         // get knockback level here

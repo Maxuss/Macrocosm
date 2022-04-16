@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.commands
 
 import com.mojang.brigadier.arguments.FloatArgumentType
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.axay.kspigot.commands.*
 import net.minecraft.commands.CommandSourceStack
@@ -50,9 +51,7 @@ fun statCommand() = command("stat") {
                         return@runs
                     }
                     val statName = getArgument<String>("statistic")
-                    println(statName)
                     val stat = Statistic.valueOf(statName)
-                    println(stat)
                     val value = getArgument<Float>("value")
                     player.baseStats[stat] = value
                     this.player.sendMessage(comp("<green>Set $stat of player <gold>${player.paper?.name}<green> to $value!"))
@@ -76,4 +75,24 @@ fun myDamageCommand() = command("mydamage") {
         """.trimIndent())
         player.sendMessage(message)
     }
+}
+
+fun giveCoinsCommand() = command("givecoins") {
+    requires { it.hasPermission(4) }
+    argument("player", EntityArgument.player()) {
+        argument("amount", IntegerArgumentType.integer(0)) {
+            runs {
+                val player =
+                    getArgument<EntitySelector>("player").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm
+                if (player == null) {
+                    this.player.sendMessage(comp("<red>Provided player is not online!"))
+                    return@runs
+                }
+                val amount = getArgument<Int>("amount")
+                player.purse += amount
+                this.player.sendMessage(comp("<green>Successfully gave ${player.paper?.name} <gold>$amount coins<green>!"))
+            }
+        }
+    }
+
 }

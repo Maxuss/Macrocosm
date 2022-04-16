@@ -13,7 +13,7 @@ enum class AbilityType {
     ;
 
     fun format(abilityName: String): Component {
-        val type = comp(if (this == PASSIVE) "" else "<bold><yellow>${name.replace("_", " ")}</yellow></bold>")
+        val type = comp(if (this == PASSIVE) "" else " <bold><yellow>${name.replace("_", " ")}</yellow></bold>")
         return comp("<gold>Ability: $abilityName").append(type)
     }
 }
