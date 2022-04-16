@@ -59,10 +59,10 @@ object DamageHandlers : Listener {
                 return
         }
 
-        val damagerStats = if (damager is Player)
-            damager.macrocosm!!.calculateStats()!!
+        val (damagerStats, damagerSpecials) = if (damager is Player)
+            Pair(damager.macrocosm!!.calculateStats()!!, damager.macrocosm!!.specialStats()!!)
         else
-            damager.macrocosm.calculateStats()
+            Pair(damager.macrocosm.calculateStats(), damager.macrocosm.specialStats())
 
         if (damager is Player) {
             damager.macrocosm!!.onAtsCooldown = true
@@ -77,10 +77,10 @@ object DamageHandlers : Listener {
         else
             damager.macrocosm.name
 
-        val damagedStats = if (damaged is Player)
-            damaged.macrocosm!!.calculateStats()!!
+        val (damagedStats, damagedSpecials) = if (damaged is Player)
+            Pair(damaged.macrocosm!!.calculateStats()!!, damaged.macrocosm!!.specialStats()!!)
         else
-            damaged.macrocosm.calculateStats()
+            Pair(damaged.macrocosm.calculateStats(), damaged.macrocosm.specialStats())
 
         var (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
 
@@ -111,7 +111,7 @@ object DamageHandlers : Listener {
         }
 
         // get knockback level here
-        val knockbackAmount = .5226
+        val knockbackAmount = .5226 * (1 + damagerSpecials.knockbackBoost) * (1 - damagedSpecials.knockbackResistance)
         val nmsDamaged = (damaged as CraftLivingEntity).handle
         val nmsDamager = (damager as CraftLivingEntity).handle
         nmsDamaged.knockback(

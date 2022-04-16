@@ -28,4 +28,6 @@ interface Reforge : Listener {
         lore.addAll(truncated.map { comp("<gray>$it").noitalic() })
         lore.add("".toComponent())
     }
+
+    fun clone(): Reforge
 }

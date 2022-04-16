@@ -2,13 +2,13 @@ package space.maxus.macrocosm.item
 
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
-import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.reforge.Reforge
-import space.maxus.macrocosm.reforge.ReforgeRegistry
+import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import java.util.*
 
@@ -22,6 +22,16 @@ internal fun typeFromMaterial(mat: Material): ItemType {
         Material.ELYTRA -> ItemType.CLOAK
         Material.BOW, Material.CROSSBOW -> ItemType.BOW
         else -> ItemType.OTHER
+    }
+}
+
+internal fun specialStatsFromMaterial(mat: Material) = specialStats {
+    if(mat.name.contains("NETHERITE")) {
+        fireResistance = 0.2f
+        knockbackResistance = 0.1f
+        statBoost = 0.01f
+    } else if(mat.name.contains("DIAMOND")) {
+        statBoost = 0.01f
     }
 }
 
@@ -122,6 +132,8 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
 
 class VanillaItem(override val base: Material) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
+    override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
+    override val id: String = "NULL"
     override val type: ItemType = typeFromMaterial(base)
 
     override val name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->
@@ -136,15 +148,16 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override var abilities: MutableList<ItemAbility> = mutableListOf()
-    override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
-        rarityUpgraded = nbt.getBoolean("RarityUpgraded")
-        if (rarityUpgraded)
-            rarity = rarity.next()
-
-        val reforge = nbt.getString("Reforge")
-        if (reforge != "NULL") {
-            reforge(ReforgeRegistry.find(reforge)!!)
-        }
-        return this
+    override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    @Suppress("UNCHECKED_CAST")
+    override fun clone(): MacrocosmItem {
+        val vanilla = VanillaItem(base)
+        vanilla.stats = stats.clone()
+        vanilla.specialStats = specialStats.clone()
+        vanilla.rarity = rarity
+        vanilla.rarityUpgraded = rarityUpgraded
+        vanilla.reforge = reforge?.clone()
+        vanilla.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        return vanilla
     }
 }

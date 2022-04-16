@@ -19,4 +19,8 @@ class SimpleReforge(
         clone.multiply(1 + (multiplier * max(rarity.ordinal, 1)))
         return clone
     }
+
+    override fun clone(): Reforge {
+        return SimpleReforge(name, applicable, baseStats, multiplier)
+    }
 }

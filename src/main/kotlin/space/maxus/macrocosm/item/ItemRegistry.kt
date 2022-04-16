@@ -11,7 +11,9 @@ object ItemRegistry {
 
     fun nextModel() = ++itemCmd
 
-    fun find(id: String) = items[id]!!
+    fun find(id: String): MacrocosmItem {
+        return items[id]!!.clone()
+    }
 
     fun register(id: String, item: MacrocosmItem): MacrocosmItem {
         if (items.containsKey(id))
@@ -20,7 +22,7 @@ object ItemRegistry {
         return item
     }
 
-    fun nameOf(item: MacrocosmItem) = items.filter { (_, v) -> v == item }.map { (k, _) -> k }.firstOrNull()
+    fun nameOf(item: MacrocosmItem) = items.filter { (_, v) -> v.id == item.id }.map { (k, _) -> k }.firstOrNull()
 
     fun toMacrocosm(item: ItemStack): MacrocosmItem? {
         if (item.type == Material.AIR)

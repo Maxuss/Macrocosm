@@ -15,7 +15,7 @@ enum class Statistic(
     private val specialChar: Char,
     val default: Float = 0f,
     val percents: Boolean = false,
-    private val hidden: Boolean = false,
+    val hidden: Boolean = false,
     private val hiddenFancy: Boolean = false
 ) {
     DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', 10f, hiddenFancy = true),

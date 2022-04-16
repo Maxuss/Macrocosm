@@ -15,6 +15,7 @@ import space.maxus.macrocosm.damage.healthColor
 import space.maxus.macrocosm.damage.truncateEntityHealth
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import kotlin.math.max
@@ -39,6 +40,7 @@ interface MacrocosmEntity {
     val name: Component
     val type: EntityType
     var baseStats: Statistics
+    var baseSpecials: SpecialStatistics
 
     fun extraWeight(): Float {
         return 0f
@@ -62,12 +64,25 @@ interface MacrocosmEntity {
 
     fun calculateStats(): Statistics {
         val base = baseStats.clone()
-        base.increase(mainHand?.stats)
-        base.increase(offHand?.stats)
-        base.increase(helmet?.stats)
-        base.increase(chestplate?.stats)
-        base.increase(leggings?.stats)
-        base.increase(boots?.stats)
+        val specials = specialStats()
+        base.multiply(1 + specials.statBoost)
+        base.increase(mainHand?.stats())
+        base.increase(offHand?.stats())
+        base.increase(helmet?.stats())
+        base.increase(chestplate?.stats())
+        base.increase(leggings?.stats())
+        base.increase(boots?.stats())
+        return base
+    }
+
+    fun specialStats(): SpecialStatistics {
+        val base = baseSpecials.clone()
+        base.increase(mainHand?.specialStats() ?: SpecialStatistics())
+        base.increase(offHand?.specialStats() ?: SpecialStatistics())
+        base.increase(helmet?.specialStats() ?: SpecialStatistics())
+        base.increase(chestplate?.specialStats() ?: SpecialStatistics())
+        base.increase(leggings?.specialStats() ?: SpecialStatistics())
+        base.increase(boots?.specialStats() ?: SpecialStatistics())
         return base
     }
 

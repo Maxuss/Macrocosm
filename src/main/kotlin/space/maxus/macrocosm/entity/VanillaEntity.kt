@@ -6,18 +6,38 @@ import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.defaultStats
+import space.maxus.macrocosm.stats.specialStats
 import java.util.*
 import kotlin.math.max
+
+internal fun specialsFromEntity(entity: LivingEntity?) = specialStats {
+    if(entity == null)
+        return@specialStats
+    knockbackResistance = entity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE)?.value?.toFloat() ?: 0f
+    knockbackBoost = entity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK)?.value?.toFloat() ?: 0f
+
+    when(entity.type) {
+        EntityType.BLAZE, EntityType.GHAST, EntityType.WITHER_SKELETON, EntityType.WITHER, EntityType.ZOGLIN, EntityType.ZOMBIFIED_PIGLIN -> {
+            fireResistance = 1f
+        }
+        else -> {}
+    }
+}
 
 internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
     if (entity == null)
         return@defaultStats
+    health = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.value.toFloat() * 5f
+    defense = entity.getAttribute(Attribute.GENERIC_ARMOR)?.value?.toFloat()?.times(5f) ?: 0f
+    damage = entity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)?.value?.toFloat()?.times(5f) ?: 15f
     when (entity.type) {
         EntityType.ELDER_GUARDIAN -> {
             health = 25000f
@@ -194,6 +214,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var boots: MacrocosmItem? by equipment(id, EquipmentSlot.FEET)
 
     override var baseStats: Statistics = statsFromEntity(paper)
+    override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
     override var currentHealth: Float = baseStats.health
 
     override val name: Component

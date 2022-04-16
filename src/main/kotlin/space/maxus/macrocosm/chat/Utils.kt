@@ -2,10 +2,13 @@ package space.maxus.macrocosm.chat
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
+import java.util.*
 
 fun Component.noitalic() = decoration(TextDecoration.ITALIC, false)
 
-fun String.reduceToList(preferredLength: Int = 35): List<String> {
+fun String.mmLength() = replace("<[^<>]+>".toRegex(), "").length
+
+fun String.reduceToList(preferredLength: Int = 25): List<String> {
     val list = mutableListOf<String>()
     // splitting words
     val words = split("\\s(?=\\S{2,})".toRegex())
@@ -13,7 +16,7 @@ fun String.reduceToList(preferredLength: Int = 35): List<String> {
     var curLen = 0
     val inter = StringBuilder()
     for (word in words) {
-        curLen += word.length
+        curLen += word.mmLength()
         inter.append(word)
         if (curLen >= preferredLength) {
             curLen = 0
@@ -28,3 +31,7 @@ fun String.reduceToList(preferredLength: Int = 35): List<String> {
 
     return list
 }
+
+fun String.capitalized(separator: String = " ") = lowercase().split(" ").joinToString(separator) { str -> str.replaceFirstChar { it.titlecase(Locale.getDefault()) } }
+
+fun String.isBlankOrEmpty() = isBlank() || isEmpty()

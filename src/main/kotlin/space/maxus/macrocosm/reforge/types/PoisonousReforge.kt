@@ -4,6 +4,7 @@ import org.bukkit.event.EventHandler
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
@@ -25,5 +26,9 @@ class PoisonousReforge : ReforgeBase(
         val (dmg, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
         e.damage = dmg
         e.crit = crit
+    }
+
+    override fun clone(): Reforge {
+        return PoisonousReforge()
     }
 }

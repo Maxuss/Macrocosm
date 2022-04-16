@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.commands
 
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
@@ -10,6 +11,7 @@ import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.reforge.ReforgeRegistry
@@ -50,6 +52,34 @@ fun reforgeCommand() = command("reforge") {
             val reforge = getArgument<String>("reforge")
             macrocosm!!.reforge(ReforgeRegistry.find(reforge)!!)
             player.inventory.setItemInMainHand(macrocosm.build())
+        }
+    }
+}
+
+fun enchantCommand() = command("enchantme") {
+    requires { it.hasPermission(4) }
+    argument("enchant", StringArgumentType.word()) {
+        suggestList { ctx ->
+            EnchantmentRegistry.enchants.keys.filter {
+                it.contains(
+                    ctx.getArgumentOrNull<String>("enchant")?.uppercase() ?: ""
+                )
+            }
+        }
+
+        argument("level", IntegerArgumentType.integer(0)) {
+            runs {
+                val item = player.inventory.itemInMainHand
+                if (item.type == Material.AIR) {
+                    player.sendMessage(comp("<red>Hold the item you want to enchant!"))
+                    return@runs
+                }
+                val level = getArgument<Int>("level")
+                val macrocosm = item.macrocosm
+                val enchant = getArgument<String>("enchant")
+                macrocosm!!.enchant(EnchantmentRegistry.find(enchant)!!, level)
+                player.inventory.setItemInMainHand(macrocosm.build())
+            }
         }
     }
 }

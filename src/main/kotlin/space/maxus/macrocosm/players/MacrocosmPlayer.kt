@@ -10,12 +10,14 @@ import org.bukkit.inventory.EquipmentSlot
 import org.jetbrains.annotations.NotNull
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.ranks.Rank
+import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import java.sql.Statement
@@ -52,7 +54,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 currentMana += stats.intelligence / 12f
             if (currentHealth < stats.health) {
                 currentHealth += stats.health / 20f
-                paper!!.health = (currentHealth / stats.health).toDouble() * 20
+                paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
         }
 
@@ -192,15 +194,48 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             return null
 
         val cloned = baseStats.clone()
-        EquipmentSlot.values().map {
+        EquipmentSlot.values().forEach {
             val baseItem = paper!!.inventory.getItem(it)
             if (baseItem.type == Material.AIR)
-                return@map Statistics.zero()
-            val item = ItemRegistry.toMacrocosm(baseItem)
-            cloned.increase(item?.stats)
+                return@forEach
+            val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
+            cloned.increase(item.stats)
+            cloned.multiply(1 + item.specialStats.statBoost)
+            if(item.enchantments.isNotEmpty()) {
+                for((ench, level) in item.enchantments) {
+                    val base = ench.stats(level)
+                    val special = ench.special(level)
+                    cloned.increase(base)
+                    cloned.multiply(1 + special.statBoost)
+                }
+            }
         }
 
         return cloned
+    }
+
+    fun specialStats(): SpecialStatistics? {
+        val stats = SpecialStatistics()
+        if(paper == null)
+            return null
+
+        EquipmentSlot.values().forEach {
+            val baseItem = paper!!.inventory.getItem(it)
+            if(baseItem.type == Material.AIR)
+                return@forEach
+
+            val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
+
+            stats.increase(item.specialStats)
+            if(item.enchantments.isNotEmpty()) {
+                for((ench, level) in item.enchantments) {
+                    val special = ench.special(level)
+                    stats.increase(special)
+                }
+            }
+        }
+
+        return stats
     }
 
     override fun storeSelf(stmt: Statement) {

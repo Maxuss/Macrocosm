@@ -5,6 +5,7 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.listeners.AbilityTriggers
 import space.maxus.macrocosm.listeners.DamageHandlers
@@ -39,6 +40,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         ReforgeType.init()
         ItemValue.init()
+        Enchant.init()
 
         playtimeCommand()
         rankCommand()
@@ -48,6 +50,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         myDamageCommand()
         itemCommand()
         giveCoinsCommand()
+        enchantCommand()
 
         testStatsCommand()
     }
