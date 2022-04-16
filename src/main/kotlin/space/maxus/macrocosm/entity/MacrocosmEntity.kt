@@ -103,7 +103,7 @@ interface MacrocosmEntity {
         EquipmentSlot.values().forEach {
             try {
                 entity.equipment?.setDropChance(it, 0.0f)
-            } catch(e: java.lang.IllegalArgumentException) {
+            } catch (e: java.lang.IllegalArgumentException) {
                 // pass
             }
         }

@@ -84,19 +84,19 @@ object DamageHandlers : Listener {
 
         var (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
 
-        if(damager is Player) {
+        if (damager is Player) {
             val event = PlayerDealDamageEvent(damager.macrocosm!!, damaged, damage, crit)
             val cancelled = !event.callEvent()
-            if(cancelled)
+            if (cancelled)
                 return
             damage = event.damage
             crit = event.crit
         }
 
-        if(damaged is Player) {
+        if (damaged is Player) {
             val event = PlayerReceiveDamageEvent(damaged.macrocosm!!, damager, damage, crit)
             val cancelled = !event.callEvent()
-            if(cancelled)
+            if (cancelled)
                 return
             damage = event.damage
             crit = event.crit
@@ -114,7 +114,12 @@ object DamageHandlers : Listener {
         val knockbackAmount = .5226
         val nmsDamaged = (damaged as CraftLivingEntity).handle
         val nmsDamager = (damager as CraftLivingEntity).handle
-        nmsDamaged.knockback(knockbackAmount, Mth.sin(nmsDamager.getYRot() * 0.017453292F).toDouble(), -Mth.cos(nmsDamager.getYRot() * 0.017453292F).toDouble(), nmsDamager)
+        nmsDamaged.knockback(
+            knockbackAmount,
+            Mth.sin(nmsDamager.getYRot() * 0.017453292F).toDouble(),
+            -Mth.cos(nmsDamager.getYRot() * 0.017453292F).toDouble(),
+            nmsDamager
+        )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
         summonDamageIndicator(damaged.location, received, crit)
@@ -122,18 +127,24 @@ object DamageHandlers : Listener {
         processFerocity(damage, crit, damagerStats, damaged, damagerName)
     }
 
-    private fun processFerocity(damage: Float, crit: Boolean, stats: Statistics, entity: LivingEntity, source: Component) {
+    private fun processFerocity(
+        damage: Float,
+        crit: Boolean,
+        stats: Statistics,
+        entity: LivingEntity,
+        source: Component
+    ) {
         var ferocity = stats.ferocity
-        if(stats.ferocity > 0) {
+        if (stats.ferocity > 0) {
             val times = floor(stats.ferocity / 100f)
             ferocity -= times
-            for(i in 0 until times.toInt()) {
+            for (i in 0 until times.toInt()) {
                 taskRunLater(15L + i * 3) {
                     activateFerocity(damage, crit, entity, source)
                 }
             }
         }
-        if(Random.nextFloat() < (ferocity / 100f)) {
+        if (Random.nextFloat() < (ferocity / 100f)) {
             taskRunLater(20L) {
                 activateFerocity(damage, crit, entity, source)
             }
@@ -141,16 +152,21 @@ object DamageHandlers : Listener {
     }
 
     private fun activateFerocity(damage: Float, crit: Boolean, entity: LivingEntity, source: Component) {
-        if(entity.isDead)
+        if (entity.isDead)
             return
-        if(entity is Player) {
+        if (entity is Player) {
             entity.macrocosm!!.damage(damage, source)
         } else {
             entity.macrocosm.damage(damage)
         }
         val vector = entity.eyeLocation.direction.clone() reduce vec(1) increase vec(y = 1)
-        for(i in 0 until 12) {
-            entity.world.spawnParticle(Particle.REDSTONE, vector.relativeLocation(entity.location), 2 + Random.nextInt(0..2), DustOptions(Color.fromRGB(0x870606), 0.6f))
+        for (i in 0 until 12) {
+            entity.world.spawnParticle(
+                Particle.REDSTONE,
+                vector.relativeLocation(entity.location),
+                2 + Random.nextInt(0..2),
+                DustOptions(Color.fromRGB(0x870606), 0.6f)
+            )
             vector increase vec(x = .2)
         }
         sound(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR) {

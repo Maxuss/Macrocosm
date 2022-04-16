@@ -11,7 +11,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 
 @Suppress("unused")
-interface Reforge: Listener {
+interface Reforge : Listener {
     val abilityName: String?
     val abilityDescription: String?
     val name: String
@@ -20,7 +20,7 @@ interface Reforge: Listener {
     fun stats(rarity: Rarity): Statistics
 
     fun buildLore(lore: MutableList<Component>) {
-        if(abilityName == null || abilityDescription == null)
+        if (abilityName == null || abilityDescription == null)
             return
 
         lore.add(comp("<blue>$abilityName <blue>($name Bonus)").noitalic())

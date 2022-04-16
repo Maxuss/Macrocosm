@@ -13,7 +13,7 @@ object ReforgeRegistry {
         if (reforges.containsKey(name))
             return reforge
         reforges[name] = reforge
-        if(reforge.abilityName != null) {
+        if (reforge.abilityName != null) {
             server.pluginManager.registerEvents(reforge as Listener, Macrocosm)
         }
         return reforge

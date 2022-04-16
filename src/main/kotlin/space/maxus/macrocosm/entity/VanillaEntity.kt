@@ -16,7 +16,7 @@ import java.util.*
 import kotlin.math.max
 
 internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
-    if(entity == null)
+    if (entity == null)
         return@defaultStats
     when (entity.type) {
         EntityType.ELDER_GUARDIAN -> {
@@ -196,13 +196,14 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseStats: Statistics = statsFromEntity(paper)
     override var currentHealth: Float = baseStats.health
 
-    override val name: Component get() = type.name.lowercase().split("_").joinToString(separator = " ") { str ->
-        str.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(
-                Locale.getDefault()
-            ) else it.toString()
-        }
-    }.toComponent()
+    override val name: Component
+        get() = type.name.lowercase().split("_").joinToString(separator = " ") { str ->
+            str.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+        }.toComponent()
 
 
     override val type: EntityType

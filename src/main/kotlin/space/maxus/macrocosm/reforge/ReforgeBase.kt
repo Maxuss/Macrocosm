@@ -5,9 +5,13 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.stats.Statistics
 import kotlin.math.max
 
-abstract class ReforgeBase(override val name: String,
-                           override val abilityName: String?,
-                  override val abilityDescription: String?, override val applicable: List<ItemType>, private val baseStats: Statistics, private val multiplier: Float = 1f
+abstract class ReforgeBase(
+    override val name: String,
+    override val abilityName: String?,
+    override val abilityDescription: String?,
+    override val applicable: List<ItemType>,
+    private val baseStats: Statistics,
+    private val multiplier: Float = 1f
 ) : Reforge {
     override fun stats(rarity: Rarity): Statistics {
         val clone = baseStats.clone()

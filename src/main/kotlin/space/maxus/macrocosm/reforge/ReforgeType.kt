@@ -18,7 +18,7 @@ enum class ReforgeType(private val ref: Reforge) {
 
     companion object {
         fun init() {
-            for(reforge in ReforgeType.values()) {
+            for (reforge in ReforgeType.values()) {
                 ReforgeRegistry.register(reforge.name, reforge.ref)
             }
         }

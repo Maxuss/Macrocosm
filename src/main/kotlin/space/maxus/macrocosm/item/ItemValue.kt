@@ -17,7 +17,7 @@ enum class ItemValue(private val item: MacrocosmItem) {
     companion object {
         fun init() {
             Ability.init()
-            for(item in values()) {
+            for (item in values()) {
                 ItemRegistry.register(item.name, item.item)
             }
         }

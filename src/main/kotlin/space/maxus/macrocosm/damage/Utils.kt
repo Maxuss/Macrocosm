@@ -29,4 +29,5 @@ fun healthColor(amount: Float, max: Float): TextColor {
         NamedTextColor.YELLOW
 }
 
-fun Vector.relativeLocation(location: Location) = Location(location.world, location.x + x, location.y + y, location.z + z)
+fun Vector.relativeLocation(location: Location) =
+    Location(location.world, location.x + x, location.y + y, location.z + z)

@@ -1,7 +1,12 @@
 package space.maxus.macrocosm.item
 
 @Suppress("UNUSED")
-enum class ItemType(val weapon: Boolean = true, val tool: Boolean = false, val armor: Boolean = false, val leftHand: Boolean = false) {
+enum class ItemType(
+    val weapon: Boolean = true,
+    val tool: Boolean = false,
+    val armor: Boolean = false,
+    val leftHand: Boolean = false
+) {
     SWORD,
     BOW,
     AXE(tool = true),
@@ -28,7 +33,7 @@ enum class ItemType(val weapon: Boolean = true, val tool: Boolean = false, val a
     ;
 
     override fun toString(): String {
-        return if(this == OTHER) "" else name
+        return if (this == OTHER) "" else name
     }
 
     companion object {

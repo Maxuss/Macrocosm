@@ -27,7 +27,7 @@ fun playtimeCommand() = command("playtime") {
 inline fun <reified T> com.mojang.brigadier.context.CommandContext<CommandSourceStack>.getArgumentOrNull(name: String): T? {
     return try {
         getArgument<T>(name)
-    } catch(e: java.lang.IllegalArgumentException) {
+    } catch (e: java.lang.IllegalArgumentException) {
         null
     }
 }
@@ -37,8 +37,9 @@ fun statCommand() = command("stat") {
 
     argument("player", EntityArgument.player()) {
         argument("statistic", StringArgumentType.word()) {
-            suggestList {  ctx ->
-                Statistic.values().map { it.name }.filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
+            suggestList { ctx ->
+                Statistic.values().map { it.name }
+                    .filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
             }
 
             argument("value", FloatArgumentType.floatArg()) {
@@ -65,14 +66,16 @@ fun myDamageCommand() = command("mydamage") {
     runs {
         val stats = player.macrocosm!!.calculateStats()!!
         val (damage, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
-        val message = comp("""
-            <yellow>You would deal <red>${damage.roundToInt()} ${if(crit) "<gold>critical " else ""}<yellow>damage!
+        val message = comp(
+            """
+            <yellow>You would deal <red>${damage.roundToInt()} ${if (crit) "<gold>critical " else ""}<yellow>damage!
             Offensive stats:
             <red>${stats.damage.roundToInt()} ❁ Damage
             ${stats.strength.roundToInt()} ❁ Strength
             <blue>${stats.critChance.roundToInt()}% ☣ Crit Chance
             ${stats.critDamage.roundToInt()}% ☠ Crit Damage
-        """.trimIndent())
+        """.trimIndent()
+        )
         player.sendMessage(message)
     }
 }

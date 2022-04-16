@@ -32,8 +32,12 @@ fun recombobulateCommand() = command("recombobulate") {
 fun reforgeCommand() = command("reforge") {
     requires { it.hasPermission(4) }
     argument("reforge", StringArgumentType.word()) {
-        suggestList {ctx ->
-            ReforgeRegistry.reforges.keys.filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
+        suggestList { ctx ->
+            ReforgeRegistry.reforges.keys.filter {
+                it.contains(
+                    ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: ""
+                )
+            }
         }
 
         runs {
@@ -55,7 +59,11 @@ fun itemCommand() = command("getitem") {
     argument("player", EntityArgument.player()) {
         argument("item", StringArgumentType.word()) {
             suggestList { ctx ->
-                ItemRegistry.items.keys.filter { it.contains(ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: "") }
+                ItemRegistry.items.keys.filter {
+                    it.contains(
+                        ctx.getArgumentOrNull<String>("statistic")?.uppercase() ?: ""
+                    )
+                }
             }
 
             runs {
@@ -64,7 +72,13 @@ fun itemCommand() = command("getitem") {
 
                 val stack = ItemRegistry.find(item).build() ?: ItemStack(Material.AIR)
                 player.inventory.addItem(stack)
-                this.player.sendMessage(comp("<green>Gave ${player.name} ${MiniMessage.miniMessage().serialize(stack.displayName())}<green>!"))
+                this.player.sendMessage(
+                    comp(
+                        "<green>Gave ${player.name} ${
+                            MiniMessage.miniMessage().serialize(stack.displayName())
+                        }<green>!"
+                    )
+                )
             }
         }
     }

@@ -8,7 +8,7 @@ enum class Ability(private val ability: ItemAbility) {
 
     companion object {
         fun init() {
-            for(abil in values()) {
+            for (abil in values()) {
                 AbilityRegistry.register(abil.name, abil.ability)
             }
         }

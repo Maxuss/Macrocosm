@@ -10,9 +10,10 @@ import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 
-class AbilityItem(override val type: ItemType, itemName: String, override var rarity: Rarity, override val base: Material,
-                  override var stats: Statistics,
-                  override val abilities: MutableList<ItemAbility> = mutableListOf()
+class AbilityItem(
+    override val type: ItemType, itemName: String, override var rarity: Rarity, override val base: Material,
+    override var stats: Statistics,
+    override val abilities: MutableList<ItemAbility> = mutableListOf()
 ) : MacrocosmItem {
     override val name: Component = comp(itemName)
     override var rarityUpgraded: Boolean = false

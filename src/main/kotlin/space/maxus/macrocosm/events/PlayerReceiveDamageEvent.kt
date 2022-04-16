@@ -6,11 +6,17 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import space.maxus.macrocosm.players.MacrocosmPlayer
 
-class PlayerReceiveDamageEvent(val player: MacrocosmPlayer, val damager: LivingEntity, var damage: Float, var crit: Boolean) : Event(), Cancellable {
+class PlayerReceiveDamageEvent(
+    val player: MacrocosmPlayer,
+    val damager: LivingEntity,
+    var damage: Float,
+    var crit: Boolean
+) : Event(), Cancellable {
     private var eventCancelled = false
 
     companion object {
         private val HANDLERS = HandlerList()
+
         @JvmStatic
         fun getHandlerList(): HandlerList {
             return HANDLERS

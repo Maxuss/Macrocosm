@@ -8,7 +8,7 @@ import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-class PoisonousReforge: ReforgeBase(
+class PoisonousReforge : ReforgeBase(
     "Poisonous",
     "Toxicity",
     "Grants you <blue>+10% ${Statistic.CRIT_CHANCE.display}<gray> on hit", ItemType.melee(), stats {
@@ -18,7 +18,7 @@ class PoisonousReforge: ReforgeBase(
 
     @EventHandler
     fun ability(e: PlayerDealDamageEvent) {
-        if(e.crit)
+        if (e.crit)
             return
         val stats = e.player.calculateStats()!!
         stats.increase(stats { critChance = 10f })

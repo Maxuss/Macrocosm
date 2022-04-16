@@ -43,14 +43,14 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     init {
         // mana & health regen
         task(period = 20L) {
-            if(paper == null) {
+            if (paper == null) {
                 it.cancel()
                 return@task
             }
             val stats = calculateStats()!!
-            if(currentMana < stats.intelligence)
+            if (currentMana < stats.intelligence)
                 currentMana += stats.intelligence / 12f
-            if(currentHealth < stats.health) {
+            if (currentHealth < stats.health) {
                 currentHealth += stats.health / 20f
                 paper!!.health = (currentHealth / stats.health).toDouble() * 20
             }
@@ -58,7 +58,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
         // fixing speed
         task(period = 20L) {
-            if(paper == null) {
+            if (paper == null) {
                 it.cancel()
                 return@task
             }
@@ -68,7 +68,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
         // displaying base stats on action bar
         task(period = 20L) {
-            if(paper == null) {
+            if (paper == null) {
                 it.cancel()
                 return@task
             }
@@ -151,7 +151,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 paper!!.sendMessage(comp("<red>You died!"))
             }
         } else {
-            broadcast(comp("<red>☠ <gray>").append(paper!!.displayName().append(comp("<gray> was killed by ").append(reason))))
+            broadcast(
+                comp("<red>☠ <gray>").append(
+                    paper!!.displayName().append(comp("<gray> was killed by ").append(reason))
+                )
+            )
             if (purse > 0f) {
                 paper!!.sendMessage(
                     comp("<red>You were killed by ").append(reason)
