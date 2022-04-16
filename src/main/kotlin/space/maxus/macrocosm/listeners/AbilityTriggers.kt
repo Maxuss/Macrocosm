@@ -7,9 +7,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerToggleSneakEvent
-import space.maxus.macrocosm.events.PlayerLeftClick
-import space.maxus.macrocosm.events.PlayerRightClick
-import space.maxus.macrocosm.events.PlayerSneak
+import space.maxus.macrocosm.events.PlayerLeftClickEvent
+import space.maxus.macrocosm.events.PlayerRightClickEvent
+import space.maxus.macrocosm.events.PlayerSneakEvent
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
 
@@ -19,10 +19,10 @@ object AbilityTriggers : Listener {
         if (e.item == null || e.item?.type == Material.AIR)
             return
         if (e.action.isLeftClick) {
-            val event = PlayerLeftClick(e.player.macrocosm!!, e.item!!.macrocosm)
+            val event = PlayerLeftClickEvent(e.player.macrocosm!!, e.item!!.macrocosm)
             event.callEvent()
         } else if (e.action.isRightClick) {
-            val event = PlayerRightClick(e.player.macrocosm!!, e.item!!.macrocosm)
+            val event = PlayerRightClickEvent(e.player.macrocosm!!, e.item!!.macrocosm)
             event.callEvent()
         }
     }
@@ -31,13 +31,13 @@ object AbilityTriggers : Listener {
     fun clickEntity(e: PlayerInteractEntityEvent) {
         if (e.interactItem == null || e.interactItem?.type == Material.AIR)
             return
-        val event = PlayerRightClick(e.player.macrocosm!!, e.interactItem!!.macrocosm)
+        val event = PlayerRightClickEvent(e.player.macrocosm!!, e.interactItem!!.macrocosm)
         event.callEvent()
     }
 
     @EventHandler
     fun sneak(e: PlayerToggleSneakEvent) {
-        val event = PlayerSneak(e.player.macrocosm!!)
+        val event = PlayerSneakEvent(e.player.macrocosm!!)
         event.callEvent()
     }
 }

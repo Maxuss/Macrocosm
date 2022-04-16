@@ -1,11 +1,13 @@
 package space.maxus.macrocosm.item
 
 import net.axay.kspigot.extensions.bukkit.toComponent
+import net.axay.kspigot.items.flags
 import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.ItemAbility
@@ -22,6 +24,7 @@ val ItemStack.macrocosm: MacrocosmItem? get() = ItemRegistry.toMacrocosm(this)
 interface MacrocosmItem {
     var stats: Statistics
 
+    val type: ItemType
     val name: Component
     val base: Material
     var rarity: Rarity
@@ -86,8 +89,11 @@ interface MacrocosmItem {
 
             // abilities
             for (ability in abilities) {
-                lore.addAll(ability.buildLore())
+                ability.buildLore(lore)
             }
+
+            // reforge
+            reforge?.buildLore(lore)
 
             // extra lore
             buildLore(lore)
@@ -103,6 +109,9 @@ interface MacrocosmItem {
                 display = comp("${reforge!!.name} ").append(display)
 
             displayName(display.color(rarity.color).noitalic())
+
+            // item flags
+            flags(*ItemFlag.values())
         }
 
         // NBT

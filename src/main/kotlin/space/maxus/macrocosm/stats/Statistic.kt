@@ -4,6 +4,7 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.text.comp
 import java.util.*
@@ -39,6 +40,8 @@ enum class Statistic(
     DAMAGE_BOOST(StatisticType.OFFENSIVE, NamedTextColor.GOLD, '⚠', 0f, true, true),
     DAMAGE_REDUCTION(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '⓪', 0f, true, true),
     ;
+
+    val display = MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color))
 
     override fun toString() =
         name.lowercase().split("_")

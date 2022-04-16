@@ -8,9 +8,11 @@ import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
+import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
+import kotlin.math.roundToInt
 
 fun playtimeCommand() = command("playtime") {
     runs {
@@ -49,5 +51,21 @@ fun statCommand() = command("stat") {
                 }
             }
         }
+    }
+}
+
+fun myDamageCommand() = command("mydamage") {
+    runs {
+        val stats = player.macrocosm!!.calculateStats()!!
+        val (damage, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
+        val message = comp("""
+            <yellow>You would deal <red>${damage.roundToInt()} ${if(crit) "<gold>critical " else ""}<yellow>damage!
+            Offensive stats:
+            <red>${stats.damage.roundToInt()} ❁ Damage
+            ${stats.strength.roundToInt()} ❁ Strength
+            <blue>${stats.critChance.roundToInt()}% ☣ Crit Chance
+            ${stats.critDamage.roundToInt()}% ☠ Crit Damage
+        """.trimIndent())
+        player.sendMessage(message)
     }
 }

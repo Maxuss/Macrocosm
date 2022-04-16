@@ -4,10 +4,9 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import org.bukkit.event.Listener
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.events.PlayerLeftClick
-import space.maxus.macrocosm.events.PlayerRightClick
-import space.maxus.macrocosm.events.PlayerSneak
-import space.maxus.macrocosm.item.AbilityType
+import space.maxus.macrocosm.events.PlayerLeftClickEvent
+import space.maxus.macrocosm.events.PlayerRightClickEvent
+import space.maxus.macrocosm.events.PlayerSneakEvent
 import space.maxus.macrocosm.text.comp
 
 @Suppress("unused")
@@ -16,25 +15,23 @@ interface ItemAbility : Listener {
     val description: String
     val type: AbilityType
 
-    fun rightClick(ctx: PlayerRightClick) {
+    fun rightClick(ctx: PlayerRightClickEvent) {
 
     }
 
-    fun leftClick(ctx: PlayerLeftClick) {
+    fun leftClick(ctx: PlayerLeftClickEvent) {
 
     }
 
-    fun sneak(ctx: PlayerSneak) {
+    fun sneak(ctx: PlayerSneakEvent) {
 
     }
 
-    fun buildLore(): List<Component> {
-        val lore = mutableListOf<Component>()
+    fun buildLore(lore: MutableList<Component>) {
         lore.add(type.format(name))
         for (desc in description.reduceToList()) {
             lore.add(comp("<gray>$desc</gray>"))
         }
         lore.add("".toComponent())
-        return lore
     }
 }

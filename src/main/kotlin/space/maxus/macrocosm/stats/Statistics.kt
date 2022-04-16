@@ -226,6 +226,14 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         }
     }
 
+    fun multiply(multiplier: Float) {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = self[stat]!! * multiplier
+        }
+    }
+
     fun clone(): Statistics {
         val clone = TreeMap<Statistic, Float>()
         for ((stat, value) in self) {

@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.item
+package space.maxus.macrocosm.ability
 
 import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.text.comp

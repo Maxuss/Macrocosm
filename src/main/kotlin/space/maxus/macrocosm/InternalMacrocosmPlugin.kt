@@ -9,6 +9,7 @@ import space.maxus.macrocosm.listeners.AbilityTriggers
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.listeners.DataListener
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.reforge.ReforgeType
 import java.util.*
 
 class InternalMacrocosmPlugin : KSpigot() {
@@ -33,11 +34,14 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AbilityTriggers, this)
         server.pluginManager.registerEvents(DamageHandlers, this)
 
+        ReforgeType.init()
+
         playtimeCommand()
         rankCommand()
         statCommand()
         recombobulateCommand()
         reforgeCommand()
+        myDamageCommand()
 
         testItemCommand()
         testStatsCommand()

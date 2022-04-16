@@ -5,7 +5,7 @@ import net.kyori.adventure.text.format.TextDecoration
 
 fun Component.noitalic() = decoration(TextDecoration.ITALIC, false)
 
-fun String.reduceToList(preferredLength: Int = 25): List<String> {
+fun String.reduceToList(preferredLength: Int = 35): List<String> {
     val list = mutableListOf<String>()
     // splitting words
     val words = split("\\s(?=\\S{2,})".toRegex())

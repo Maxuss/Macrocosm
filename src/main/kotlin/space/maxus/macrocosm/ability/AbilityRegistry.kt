@@ -2,7 +2,6 @@ package space.maxus.macrocosm.ability
 
 import org.bukkit.Bukkit
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.item.AbilityType
 
 @Suppress("unused")
 object AbilityRegistry {

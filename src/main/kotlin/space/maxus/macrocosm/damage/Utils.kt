@@ -21,12 +21,8 @@ fun truncateEntityHealth(health: Float): String {
 
 fun healthColor(amount: Float, max: Float): TextColor {
     val ratio = amount / max
-    return if (ratio > 0.8f)
+    return if (ratio > 0.5f)
         NamedTextColor.GREEN
-    else if (ratio > 0.5f)
-        NamedTextColor.YELLOW
-    else if (ratio > 0.2f)
-        NamedTextColor.GOLD
     else
-        NamedTextColor.RED
+        NamedTextColor.YELLOW
 }

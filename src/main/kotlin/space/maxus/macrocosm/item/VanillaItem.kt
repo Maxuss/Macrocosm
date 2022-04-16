@@ -12,6 +12,18 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import java.util.*
 
+internal val SPLIT_THIS = listOf("HOE", "PICKAXE", "AXE", "SWORD", "SHOVEL", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS")
+
+internal fun typeFromMaterial(mat: Material): ItemType {
+    if(SPLIT_THIS.any { mat.name.contains(it) })
+        return ItemType.valueOf(mat.name.split("_").last())
+    return when(mat) {
+        Material.ELYTRA -> ItemType.CLOAK
+        Material.BOW, Material.CROSSBOW -> ItemType.BOW
+        else -> ItemType.OTHER
+    }
+}
+
 internal fun statsFromMaterial(mat: Material) = stats {
     when (mat) {
         // weapons
@@ -109,6 +121,8 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
 
 class VanillaItem(override val base: Material) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
+    override val type: ItemType = typeFromMaterial(base)
+
     override val name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->
         str.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(

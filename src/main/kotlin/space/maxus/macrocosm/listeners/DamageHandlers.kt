@@ -2,12 +2,13 @@ package space.maxus.macrocosm.listeners
 
 import net.axay.kspigot.extensions.bukkit.kill
 import net.axay.kspigot.extensions.bukkit.toComponent
-import net.axay.kspigot.extensions.geometry.multiply
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.minecraft.util.Mth
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
@@ -20,6 +21,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.entity.macrocosm
+import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
@@ -68,11 +70,12 @@ fun summonDamageIndicator(loc: Location, damage: Float, crit: Boolean) {
     }
 
     val stand = newLocation.world.spawnEntity(newLocation, EntityType.ARMOR_STAND) as ArmorStand
+    stand.isInvulnerable = true
+    stand.isMarker = true
     stand.isVisible = false
     stand.customName(display)
     stand.isCustomNameVisible = true
     stand.setGravity(false)
-    stand.isSmall = true
     stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
     taskRunLater(30, runnable = stand::remove)
 }
@@ -104,10 +107,10 @@ object DamageHandlers : Listener {
         else
             damager.macrocosm.calculateStats()
 
-        // TODO: test this
         if (damager is Player) {
             damager.macrocosm!!.onAtsCooldown = true
-            taskRunLater((((1 - (damagerStats.attackSpeed / 100f))) * 20f).roundToLong()) {
+            // 0.45s is default attack speed, becomes 0.2s at 100 attack speed
+            taskRunLater((((1.2 - (damagerStats.attackSpeed / 100f))) * 9f).roundToLong()) {
                 damager.macrocosm!!.onAtsCooldown = false
             }
         }
@@ -122,7 +125,17 @@ object DamageHandlers : Listener {
         else
             damaged.macrocosm.calculateStats()
 
-        val (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
+        var (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
+
+        if(damager is Player) {
+            val event = PlayerDealDamageEvent(damager.macrocosm!!, damaged, damage, crit)
+            val cancelled = !event.callEvent()
+            if(cancelled)
+                return
+            damage = event.damage
+            crit = event.crit
+        }
+
         val received = DamageCalculator.calculateStandardReceived(damage, damagedStats)
 
         if (damaged is Player) {
@@ -131,7 +144,12 @@ object DamageHandlers : Listener {
             damaged.macrocosm.damage(received)
         }
 
-        damaged.velocity = damager.eyeLocation.direction multiply 2f
+        // get knockback level here
+        val knockbackAmount = .5226
+        val nmsDamaged = (damaged as CraftLivingEntity).handle
+        val nmsDamager = (damager as CraftLivingEntity).handle
+        nmsDamaged.knockback(knockbackAmount, Mth.sin(nmsDamager.getYRot() * 0.017453292F).toDouble(), -Mth.cos(nmsDamager.getYRot() * 0.017453292F).toDouble(), nmsDamager)
+        nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
         summonDamageIndicator(damaged.location, received, crit)
     }
