@@ -36,6 +36,16 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         GODLIKE -> COMMON
     }
 
+    fun previous() = when(this) {
+        COMMON -> GODLIKE
+        UNCOMMON -> COMMON
+        RARE -> UNCOMMON
+        EPIC -> RARE
+        LEGENDARY -> EPIC
+        MYTHIC -> LEGENDARY
+        GODLIKE -> MYTHIC
+    }
+
     companion object {
         fun fromId(id: Int) = values()[id]
     }

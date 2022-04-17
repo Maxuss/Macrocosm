@@ -54,6 +54,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         testStatsCommand()
         testDropCommand()
+        testEnchantedItem()
     }
 
     override fun shutdown() {

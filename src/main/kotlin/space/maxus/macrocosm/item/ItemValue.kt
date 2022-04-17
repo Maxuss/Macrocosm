@@ -3,6 +3,7 @@ package space.maxus.macrocosm.item
 import org.bukkit.Material
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.InstantTransmission
+import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.stats.stats
 
 enum class ItemValue(private val item: MacrocosmItem) {
@@ -15,6 +16,8 @@ enum class ItemValue(private val item: MacrocosmItem) {
     ;
 
     companion object {
+        fun enchanted(type: Material, rarity: Rarity, id: String? = null) = EnchantedItem(type, rarity, "Enchanted ${type.name.replace("_", " ").capitalized()}", id)
+
         fun init() {
             Ability.init()
             for (item in values()) {

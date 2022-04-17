@@ -49,6 +49,10 @@ interface MacrocosmItem {
 
     }
 
+    fun addExtraMeta(meta: ItemMeta) {
+
+    }
+
     fun reforge(ref: Reforge) {
         if (reforge != null) {
             stats.decrease(reforge!!.stats(rarity))
@@ -216,6 +220,8 @@ interface MacrocosmItem {
 
             // item flags
             flags(*ItemFlag.values())
+
+            addExtraMeta(this)
         }
 
         // NBT

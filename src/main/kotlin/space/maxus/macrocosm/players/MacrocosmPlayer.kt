@@ -51,7 +51,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     init {
         // statistic manipulations
-        task(period = 20L) {
+        task(period = 40L) {
             if (paper == null) {
                 it.cancel()
                 return@task
