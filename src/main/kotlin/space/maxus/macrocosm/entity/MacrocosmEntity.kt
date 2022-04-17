@@ -23,7 +23,7 @@ import kotlin.math.roundToInt
 
 fun levelFromStats(stats: Statistics, extraWeight: Float = 0f): Int {
     val weight =
-        (stats.damage + stats.strength + stats.critDamage + stats.defense + stats.health) / 10f + stats.critChance + extraWeight
+        (stats.damage + stats.strength + stats.critDamage + stats.defense + stats.health) + stats.critChance + extraWeight
     return max((weight / 100f).roundToInt(), 1)
 }
 
@@ -41,6 +41,8 @@ interface MacrocosmEntity {
     val type: EntityType
     var baseStats: Statistics
     var baseSpecials: SpecialStatistics
+
+    val level get() = levelFromStats(calculateStats(), extraWeight())
 
     fun extraWeight(): Float {
         return 0f
@@ -99,7 +101,7 @@ interface MacrocosmEntity {
     }
 
     fun damage(amount: Float, damager: Entity? = null)
-    fun kill()
+    fun kill(damager: Entity? = null)
 
     fun loadChanges(entity: LivingEntity) {
         if (entity.type != type)

@@ -12,7 +12,7 @@ import java.util.*
 enum class Statistic(
     val type: StatisticType,
     private val color: TextColor,
-    private val specialChar: Char,
+    val specialChar: Char,
     val default: Float = 0f,
     val percents: Boolean = false,
     val hidden: Boolean = false,
@@ -20,7 +20,7 @@ enum class Statistic(
 ) {
     DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', 10f, hiddenFancy = true),
     STRENGTH(StatisticType.OFFENSIVE, NamedTextColor.RED, '❁', 10f),
-    FEROCITY(StatisticType.OFFENSIVE, NamedTextColor.RED, '⫽', percents = true),
+    FEROCITY(StatisticType.OFFENSIVE, NamedTextColor.RED, '⫽'),
     CRIT_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☣', 10f, percents = true),
     CRIT_DAMAGE(StatisticType.OFFENSIVE, NamedTextColor.BLUE, '☠', 100f, true),
     BONUS_ATTACK_SPEED(StatisticType.OFFENSIVE, NamedTextColor.YELLOW, '⚔', percents = true),

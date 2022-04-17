@@ -5,5 +5,6 @@ enum class SpecialStatistic {
     KB_RESISTANCE,
     FIRE_RESISTANCE,
     BLAST_RESISTANCE,
+    FALL_RESISTANCE,
     STAT_BOOST
 }

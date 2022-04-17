@@ -1,15 +1,14 @@
 package space.maxus.macrocosm.enchants.type
 
 import net.axay.kspigot.extensions.bukkit.toLegacyString
+import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
-import org.bukkit.NamespacedKey
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
@@ -38,8 +37,12 @@ object FireAspectEnchantment :
         if (!ok)
             return
 
-        if (e.damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "fa_ticks")))
+        val pdc = e.damaged.persistentDataContainer
+        if (pdc.has(pluginKey("fa_ticks")))
             return
+        if(pdc.has(pluginKey("fa_ticks_frost")))
+            pdc[pluginKey("fa_ticks_frost"), PersistentDataType.LONG] = 0
+
         e.damaged.isVisualFire = true
         val stats = e.player.calculateStats()!!
         val damagedStats = e.damaged.macrocosm!!.calculateStats()
@@ -55,17 +58,17 @@ object FireAspectEnchantment :
                 return@task
             }
             val ticksLeft =
-                e.damaged.persistentDataContainer[NamespacedKey(Macrocosm, "fa_ticks"), PersistentDataType.LONG]
+                e.damaged.persistentDataContainer[pluginKey("fa_ticks"), PersistentDataType.LONG]
                     ?: (20L * (lvl + 3))
 
             if (ticksLeft <= 0) {
                 e.damaged.isVisualFire = false
-                e.damaged.persistentDataContainer.remove(NamespacedKey(Macrocosm, "fa_ticks"))
+                e.damaged.persistentDataContainer.remove(pluginKey("fa_ticks"))
                 it.cancel()
                 return@task
             }
 
-            e.damaged.persistentDataContainer[NamespacedKey(Macrocosm, "fa_ticks"), PersistentDataType.LONG] =
+            e.damaged.persistentDataContainer[pluginKey("fa_ticks"), PersistentDataType.LONG] =
                 ticksLeft - 20
 
             e.damaged.macrocosm!!.damage(damage, e.player.paper)
@@ -90,7 +93,8 @@ object FrostAspectEnchantment :
         if (!ok)
             return
 
-        if (e.damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "fa_ticks_frost")))
+        val pdc = e.damaged.persistentDataContainer
+        if (pdc.has(pluginKey("fa_ticks_frost")) || pdc.has(pluginKey("fa_ticks")))
             return
 
         val stats = e.player.calculateStats()!!
@@ -107,16 +111,16 @@ object FrostAspectEnchantment :
                 return@task
             }
             val ticksLeft =
-                e.damaged.persistentDataContainer[NamespacedKey(Macrocosm, "fa_ticks_frost"), PersistentDataType.LONG]
+                e.damaged.persistentDataContainer[pluginKey("fa_ticks_frost"), PersistentDataType.LONG]
                     ?: (20L * (lvl + 3))
 
             if (ticksLeft <= 0) {
-                e.damaged.persistentDataContainer.remove(NamespacedKey(Macrocosm, "fa_ticks_frost"))
+                e.damaged.persistentDataContainer.remove(pluginKey("fa_ticks_frost"))
                 it.cancel()
                 return@task
             }
 
-            e.damaged.persistentDataContainer[NamespacedKey(Macrocosm, "fa_ticks_frost"), PersistentDataType.LONG] =
+            e.damaged.persistentDataContainer[pluginKey("fa_ticks_frost"), PersistentDataType.LONG] =
                 ticksLeft - 20
             e.damaged.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 22, 2, true, false, false))
 

@@ -16,6 +16,7 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
+import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -116,9 +117,29 @@ interface MacrocosmItem {
             return false
         val name = EnchantmentRegistry.nameOf(enchantment)
         enchantments.filter { (ench, _) ->
-            ench.conflicts.contains(name)
+            ench.conflicts.contains("ALL")
         }.forEach { (ench, _) ->
             enchantments.remove(ench)
+        }
+        if(enchantment.conflicts.contains("ALL")) {
+            enchantments.filter{ (ench, _) ->
+                ench.name != "Telekinesis"
+            }.forEach { (ench, _) ->
+                enchantments.remove(ench)
+            }
+        } else {
+            enchantments.filter { (ench, _) ->
+                ench.conflicts.contains(name)
+            }.forEach { (ench, _) ->
+                enchantments.remove(ench)
+            }
+            if (enchantment is UltimateEnchantment) {
+                enchantments.filter { (ench, _) ->
+                    ench is UltimateEnchantment
+                }.forEach { (ench, _) ->
+                    enchantments.remove(ench)
+                }
+            }
         }
         enchantments[enchantment] = level
         return true
@@ -127,6 +148,7 @@ interface MacrocosmItem {
     /**
      * Builds this item
      */
+    @Suppress("UNCHECKED_CAST")
     fun build(): ItemStack? {
         if (base == Material.AIR)
             return null
@@ -142,15 +164,24 @@ interface MacrocosmItem {
 
             // enchants
             if (enchantments.isNotEmpty()) {
-                if (enchantments.size > 6) {
+                val cloned = enchantments.clone() as HashMap<Enchantment, Int>
+                if (cloned.size > 6) {
                     val cmp = StringBuilder()
-                    enchantments.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
+                    cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
+                        cloned.remove(ench)
+                        cmp.append(", ${MiniMessage.miniMessage().serialize(ench.displaySimple(lvl))}<!bold>")
+                    }
+                    cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
                         cmp.append(", ${MiniMessage.miniMessage().serialize(it)}")
                     }
-                    val reduced = cmp.toString().trim(',').trim().reduceToList(25).map { comp("<gray>$it").noitalic() }
+                    val reduced = cmp.toString().trim(',').trim().split(", ").joinToString(", ").reduceToList(30).map { comp(it).noitalic() }
                     lore.addAll(reduced)
                     lore.add("".toComponent())
                 } else {
+                    cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
+                        cloned.remove(ench)
+                        ench.displayFancy(lore, lvl)
+                    }
                     for ((ench, lvl) in enchantments) {
                         ench.displayFancy(lore, lvl)
                     }

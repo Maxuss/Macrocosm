@@ -32,6 +32,12 @@ class SpecialStatistics {
             values[SpecialStatistic.BLAST_RESISTANCE] = value
         }
 
+    var fallResistance: Float
+        get() = values[SpecialStatistic.FALL_RESISTANCE]!!
+        set(value) {
+            values[SpecialStatistic.FALL_RESISTANCE] = value
+        }
+
     var statBoost: Float
         get() = values[SpecialStatistic.STAT_BOOST]!!
         set(value) {

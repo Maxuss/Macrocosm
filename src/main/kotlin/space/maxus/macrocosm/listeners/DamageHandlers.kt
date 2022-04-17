@@ -20,6 +20,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause
+import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
@@ -39,8 +42,14 @@ import kotlin.random.nextInt
 
 object DamageHandlers : Listener {
     @EventHandler
+    fun onKill(e: EntityDeathEvent) {
+        // disable drops, they are handled internally in VanillaEntity and other implementations
+        e.drops.clear()
+    }
+
+    @EventHandler
     fun handleEntityDamage(e: EntityDamageByEntityEvent) {
-        e.isCancelled = true
+        e.damage = 0.0
         val damager = e.damager
         val damaged = e.entity
         if (damaged is ArmorStand) {
@@ -127,6 +136,228 @@ object DamageHandlers : Listener {
         processFerocity(damage, crit, damagerStats, damaged, damagerName)
     }
 
+    @EventHandler
+    fun onFallDamage(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.FALL)
+            return
+        val entity = e.entity as LivingEntity
+        var damage = e.damage * 5
+        e.damage = .0
+        if(entity is Player) {
+            val stats = entity.macrocosm!!.specialStats()!!
+            damage *= (1 - stats.fallResistance)
+            entity.macrocosm!!.damage(damage.toFloat(), comp("fall"))
+        } else {
+            val stats = entity.macrocosm!!.specialStats()
+            damage *= (1 - stats.fallResistance)
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    private val fireCauses = listOf(DamageCause.FIRE, DamageCause.MELTING, DamageCause.LAVA, DamageCause.HOT_FLOOR, DamageCause.LAVA, DamageCause.FIRE_TICK, DamageCause.DRYOUT)
+    @EventHandler
+    fun onFireDamage(e: EntityDamageEvent) {
+        if(!fireCauses.contains(e.cause))
+            return
+        var damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            val stats = entity.macrocosm!!.specialStats()!!
+            damage *= (1 - stats.fireResistance)
+            entity.macrocosm!!.damage(damage.toFloat(), comp("fire"))
+        } else {
+            val stats = entity.macrocosm!!.specialStats()
+            damage *= (1 - stats.fireResistance)
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat(), fire = true)
+    }
+
+    @EventHandler
+    fun onWitherDamage(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.WITHER)
+            return
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("withering"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onPoisonDamage(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.POISON)
+            return
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("poison"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onDrowningDamage(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.DROWNING)
+            return
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("drowning"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onExplosionDamage(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.ENTITY_EXPLOSION || e.cause != DamageCause.BLOCK_EXPLOSION)
+            return
+        val damage = e.damage * 25
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("explosion"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat(), crit = true)
+    }
+
+    @EventHandler
+    fun onLightningHit(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.LIGHTNING)
+            return
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("electricity"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat(), electric = true)
+    }
+
+    @EventHandler
+    fun onMagicHit(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.MAGIC)
+            return
+        val damage = e.damage * 25
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("<dark_purple>magic<gray>"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat(), magic = true)
+    }
+
+    @EventHandler
+    fun onVoidHit(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.VOID)
+            return
+        val damage = e.damage * 15
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("<dark_gray>void<gray>"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onStarvationHit(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.STARVATION) {
+            return
+        }
+        val damage = e.damage * 40
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("hunger"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onPhysicsHit(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.CRAMMING || e.cause != DamageCause.FLY_INTO_WALL) {
+            return
+        }
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("physics"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onContactHit(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.CONTACT) {
+            return
+        }
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("being inaccurate"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat())
+    }
+
+    @EventHandler
+    fun onSuicide(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.SUICIDE)
+            return
+        e.isCancelled = true
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.kill(comp("self-hatred"))
+        } else {
+            entity.macrocosm!!.kill()
+        }
+        summonDamageIndicator(entity.location, Int.MAX_VALUE.toFloat(), crit = true)
+    }
+
+    @EventHandler
+    fun onFreezeDamage(e: EntityDamageEvent) {
+        if(e.cause != DamageCause.FREEZE)
+            return
+        val damage = e.damage * 10
+        e.damage = .0
+        val entity = e.entity as LivingEntity
+        if(entity is Player) {
+            entity.macrocosm!!.damage(damage.toFloat(), comp("freezing"))
+        } else {
+            entity.macrocosm!!.damage(damage.toFloat())
+        }
+        summonDamageIndicator(entity.location, damage.toFloat(), frost = true)
+
+    }
+
     private fun processFerocity(
         damage: Float,
         crit: Boolean,
@@ -183,7 +414,8 @@ object DamageHandlers : Listener {
         crit: Boolean = false,
         fire: Boolean = false,
         frost: Boolean = false,
-        electric: Boolean = false
+        electric: Boolean = false,
+        magic: Boolean = false
     ) {
         val x: Double = loc.x
         val y: Double = loc.y
@@ -227,14 +459,16 @@ object DamageHandlers : Listener {
             comp("<white>❄ <aqua>$damageDisplay<white> ❄")
         } else if (electric) {
             comp("<white>\uD83D\uDDF2 <yellow>$damageDisplay<white> \uD83D\uDDF2")
+        } else if(magic)  {
+            comp("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
         } else {
             damageDisplay.toComponent().color(NamedTextColor.GRAY)
         }
 
         val stand = newLocation.world.spawnEntity(newLocation, EntityType.ARMOR_STAND) as ArmorStand
-        stand.isInvulnerable = true
-        stand.isMarker = true
         stand.isVisible = false
+        stand.isMarker = true
+        stand.isInvulnerable = true
         stand.customName(display)
         stand.isCustomNameVisible = true
         stand.setGravity(false)

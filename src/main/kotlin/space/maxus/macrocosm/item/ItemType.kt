@@ -26,6 +26,8 @@ enum class ItemType(
     ACCESSORY(false),
     CHARM(false, leftHand = true),
 
+    ENCHANTED_BOOK(false),
+
     DEPLOYABLE(false),
     CONSUMABLE(false),
     OTHER(false, leftHand = true)
@@ -45,5 +47,6 @@ enum class ItemType(
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)
         fun accessories() = listOf(ACCESSORY, CHARM)
         fun misc() = listOf(DEPLOYABLE, CONSUMABLE, OTHER)
+        fun all() = values().toList()
     }
 }

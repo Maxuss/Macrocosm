@@ -14,8 +14,8 @@ open class UltimateEnchantment(
     applicable: List<ItemType>,
     baseStats: Statistics = Statistics.zero(),
     baseSpecials: SpecialStatistics = SpecialStatistics(),
-    multiplier: Float,
-    conflicts: List<String>
+    multiplier: Float = 1f,
+    conflicts: List<String> = listOf()
 ) : EnchantmentBase(
     name,
     description,
@@ -27,6 +27,6 @@ open class UltimateEnchantment(
     conflicts
 ) {
     override fun displaySimple(level: Int): Component {
-        return comp("<light_purple><bold>$name ${roman(level)}").noitalic()
+        return comp("<light_purple><bold>$name ${roman(level)}</bold></light_purple>").noitalic()
     }
 }

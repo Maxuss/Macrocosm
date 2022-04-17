@@ -9,12 +9,11 @@ import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
+import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
-import space.maxus.macrocosm.stats.SpecialStatistics
-import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.stats.defaultStats
-import space.maxus.macrocosm.stats.specialStats
+import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.stats.*
 import java.util.*
 import kotlin.math.max
 
@@ -187,7 +186,15 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
                 val tag = entity.readNbt().getCompound(MACROCOSM_TAG)
                 vanilla.paper = entity
                 vanilla.currentHealth = tag.getFloat("CurrentHealth")
-                vanilla.baseStats = statsFromEntity(entity)
+                val stats = Statistics.zero()
+                val statCmp = tag.getCompound("Stats")
+                for(stat in statCmp.allKeys) {
+                    val value = statCmp.getFloat(stat)
+                    if(value == 0f)
+                        continue
+                    stats[Statistic.valueOf(stat)] = value
+                }
+                vanilla.baseStats = stats
                 vanilla.loadChanges(entity)
                 return vanilla
             } else {
@@ -234,21 +241,28 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
         if (paper == null)
             return
 
-        val entity = paper!! as Creature
+        val entity = paper!!
 
         currentHealth -= amount
         if (currentHealth <= 0) {
+            if(damager != null && damager is Player) {
+                val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!)
+                event.callEvent()
+            }
             kill()
             return
         }
 
-        entity.target = damager as? LivingEntity
+        if(entity is Creature) {
+            entity.target = damager as? LivingEntity
+        }
         entity.damage(0.0)
+
 
         loadChanges(paper!!)
     }
 
-    override fun kill() {
+    override fun kill(damager: Entity?) {
         // TODO: item drops
         if (paper == null)
             return

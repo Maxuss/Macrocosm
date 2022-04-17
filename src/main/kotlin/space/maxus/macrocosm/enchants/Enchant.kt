@@ -4,6 +4,7 @@ import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.enchants.type.*
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
+import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 
 enum class Enchant(private val enchant: Enchantment) {
@@ -73,6 +74,17 @@ enum class Enchant(private val enchant: Enchantment) {
             applicable = ItemType.weapons()
         )
     ),
+    IMPALING(
+        MobEnchantment(
+            "Impaling",
+            listOf(EntityType.GUARDIAN, EntityType.ELDER_GUARDIAN, EntityType.SQUID, EntityType.GLOW_SQUID),
+            listOf(),
+            levels = 1..5,
+            multiplier = .15f,
+            applicable = ItemType.weapons()
+        )
+    ),
+
 
     // stat enchants
     VICIOUS(
@@ -99,6 +111,56 @@ enum class Enchant(private val enchant: Enchantment) {
                 attackSpeed = 5f
             },
             conflicts = listOf("VICIOUS")
+        )
+    ),
+    CRITICAL(
+        SimpleEnchantment(
+            "Critical",
+            "Increases your ${Statistic.CRIT_DAMAGE.display}<gray> by <crit_damage><gray>, which allows you to do more critical hit damage.",
+            1..7,
+            multiplier = 1f,
+            applicable = ItemType.melee(),
+            base = stats {
+                critDamage = 10f
+            },
+            conflicts = listOf("PRECISE")
+        )
+    ),
+    PRECISE(
+        SimpleEnchantment(
+            "Precise",
+            "Increases your ${Statistic.CRIT_CHANCE.display}<gray> by <crit_chance><gray>, which allows you to deal <blue>critical hits<gray> more often.",
+            1..7,
+            multiplier = 0.5f,
+            applicable = ItemType.melee(),
+            base = stats {
+                critChance = 5f
+            },
+            conflicts = listOf("CRITICAL")
+        )
+    ),
+    KNOCKBACK(
+        SimpleEnchantment(
+            "Knockback",
+            "Increases your <green>Bonus Knockback<gray> by <green><kb_boost>%<gray>, which allows you to strike enemies further from you.",
+            1..3,
+            multiplier = 1f,
+            applicable = ItemType.weapons(),
+            special = specialStats {
+                knockbackBoost = 0.1f
+            }
+        )
+    ),
+    LUCK(
+        SimpleEnchantment(
+            "Luck",
+            "Increases your ${Statistic.MAGIC_FIND.display}<gray> by <green><magic_find><gray>, which grants higher chance of getting rare drops.",
+            1..4,
+            multiplier = 2f,
+            applicable = ItemType.weapons(),
+            base = stats {
+                magicFind = 3f
+            }
         )
     ),
 
@@ -152,6 +214,38 @@ enum class Enchant(private val enchant: Enchantment) {
 
     FIRE_ASPECT(FireAspectEnchantment),
     FROST_ASPECT(FrostAspectEnchantment),
+
+    EXPERIENCE(ExperienceEnchantment),
+
+    GIANT_KILLER(GiantKillerEnchantment),
+    TITAN_KILLER(TitanKillerEnchantment),
+
+    PROSECUTE(ProsecuteEnchantment),
+    EXECUTE(ExecuteEnchantment),
+
+    LETHALITY(LethalityEnchantment),
+    EXHALATION(ExhalationEnchantment),
+
+    FIRST_STRIKE(FirstStrikeEnchantment),
+    TRIPLE_STRIKE(TripleStrikeEnchantment),
+
+    CLEAVE(CleaveEnchantment),
+    SCAVENGER(ScavengerEnchantment),
+
+    VAMPIRISM(VampirismEnchantment),
+    MANA_EXHAUSTION(ManaExhaustionEnchantment),
+
+    // ultimate
+    SUPERIOR(UltimateEnchantment(
+        "Superior",
+        "Increases <blue>ALL<gray> your stats by <red><stat_boost_whole>%<gray>.",
+        1..5,
+        ItemType.weapons(),
+        multiplier = 1f,
+        baseSpecials = specialStats {
+            statBoost = 0.05f
+        }
+    ))
     ;
 
     companion object {

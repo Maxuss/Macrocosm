@@ -3,10 +3,14 @@ package space.maxus.macrocosm.players
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.jetbrains.annotations.NotNull
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
@@ -23,6 +27,7 @@ import space.maxus.macrocosm.text.comp
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
@@ -42,8 +47,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var currentMana: Float = calculateStats()!!.intelligence
     var lastAbilityUse: HashMap<String, Long> = hashMapOf()
 
+    val activeEffects get() = paper?.activePotionEffects?.map { it.type }
+
     init {
-        // mana & health regen
+        // statistic manipulations
         task(period = 20L) {
             if (paper == null) {
                 it.cancel()
@@ -51,30 +58,14 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             }
             val stats = calculateStats()!!
             if (currentMana < stats.intelligence)
-                currentMana += stats.intelligence / 12f
-            if (currentHealth < stats.health) {
-                currentHealth += stats.health / 20f
+                currentMana += stats.intelligence / 20f
+            if (currentHealth < stats.health && !activeEffects!!.contains(PotionEffectType.ABSORPTION) && !activeEffects!!.contains(PotionEffectType.POISON)) {
+                currentHealth = min(currentHealth + (stats.health / 20f), stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
-        }
-
-        // fixing speed
-        task(period = 20L) {
-            if (paper == null) {
-                it.cancel()
-                return@task
-            }
-            val stats = calculateStats()!!
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
-        }
 
-        // displaying base stats on action bar
-        task(period = 20L) {
-            if (paper == null) {
-                it.cancel()
-                return@task
-            }
-            sendStatBar()
+            sendStatBar(stats)
         }
     }
 
@@ -134,9 +125,25 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
 
-    private fun sendStatBar() {
-        val stats = calculateStats()!!
-        paper?.sendActionBar(comp("<red>${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤    <green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
+    fun addAbsorption(amount: Float, length: Int = -1, myStats: Statistics? = null) {
+        val stats = myStats ?: calculateStats()!!
+        paper!!.addPotionEffect(PotionEffect(PotionEffectType.ABSORPTION, if(length < 0) Int.MAX_VALUE else length, 2, true, true, true))
+        currentHealth = stats.health + amount
+        sendStatBar(stats)
+    }
+
+    fun heal(amount: Float, myStats: Statistics? = null) {
+        val stats = myStats ?: calculateStats()!!
+        currentHealth = min(currentHealth + amount, stats.health)
+        sendStatBar(stats)
+    }
+
+    private fun sendStatBar(myStats: Statistics? = null) {
+        val stats = myStats ?: calculateStats()!!
+        val activeEffects = paper!!.activePotionEffects.map { it.type }
+        val healthColor = if(activeEffects.contains(PotionEffectType.WITHER)) TextColor.color(0x2B0C0C) else if(activeEffects.contains(PotionEffectType.ABSORPTION)) NamedTextColor.GOLD else if(activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
+
+        paper?.sendActionBar(comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤ ").color(healthColor).append(comp("<green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana")))
     }
 
     fun kill(reason: Component? = null) {
@@ -155,16 +162,16 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         } else {
             broadcast(
                 comp("<red>☠ <gray>").append(
-                    paper!!.displayName().append(comp("<gray> was killed by ").append(reason))
+                    paper!!.displayName().append(comp("<gray> died because of ").append(reason))
                 )
             )
             if (purse > 0f) {
                 paper!!.sendMessage(
-                    comp("<red>You were killed by ").append(reason)
+                    comp("<red>You died because of ").append(reason)
                         .append(comp("<red> and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
                 )
             } else {
-                paper!!.sendMessage(comp("<red>You were killed by ").append(reason).append(comp("<red>!")))
+                paper!!.sendMessage(comp("<red>You died because of ").append(reason).append(comp("<red>!")))
             }
         }
         paper!!.teleport(paper!!.world.spawnLocation)
@@ -182,11 +189,17 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     fun damage(amount: Float, source: Component? = null) {
         if (paper == null)
             return
+
+        val stats = calculateStats()!!
         currentHealth -= amount
+        if(currentHealth < stats.health) {
+            paper!!.removePotionEffect(PotionEffectType.ABSORPTION)
+        }
+
         if (currentHealth <= 0)
             kill(source)
-        paper!!.health = (currentHealth / calculateStats()!!.health).toDouble() * 20
-        sendStatBar()
+        paper!!.health = min((currentHealth / stats.health).toDouble() * 20, 20.0)
+        sendStatBar(stats)
     }
 
     fun calculateStats(): Statistics? {
