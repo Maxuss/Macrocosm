@@ -4,14 +4,61 @@ import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.axay.kspigot.commands.*
+import net.axay.kspigot.gui.GUIType
+import net.axay.kspigot.gui.Slots
+import net.axay.kspigot.gui.kSpigotGUI
+import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
+import org.bukkit.Material
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.item.ItemRegistry
+import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
+
+fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
+    title = comp("Item Browser")
+    defaultPage = 0
+
+    page(0) {
+        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
+        val compound = createRectCompound<String>(
+            Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
+            iconGenerator = {
+                ItemRegistry.find(it).build()!!
+            },
+            onClick = { e, it ->
+                if(e.bukkitEvent.click.isLeftClick)
+                    e.player.inventory.addItem(ItemRegistry.find(it).build()!!)
+                else
+                    e.player.inventory.addItem(ItemRegistry.find(it).build()!!.apply { amount = 64 })
+                e.bukkitEvent.isCancelled = true
+            }
+        )
+        compound.addContent(ItemRegistry.items.keys().toList())
+        compound.sortContentBy { it }
+        compoundScroll(
+            Slots.RowOneSlotNine,
+            ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 4
+        )
+        compoundScroll(
+            Slots.RowSixSlotNine,
+            ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
+        )
+
+    }
+}
+
+fun itemsCommand() = command("items") {
+    requires { it.hasPermission(4) }
+    runs {
+        player.openGUI(allItems())
+    }
+}
 
 fun playtimeCommand() = command("playtime") {
     runs {

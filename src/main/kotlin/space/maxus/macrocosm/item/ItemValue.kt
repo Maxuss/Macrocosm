@@ -1,10 +1,16 @@
 package space.maxus.macrocosm.item
 
+import net.axay.kspigot.items.flags
+import net.axay.kspigot.items.itemStack
+import net.axay.kspigot.items.meta
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
+import org.bukkit.inventory.ItemFlag
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.stats.stats
+import space.maxus.macrocosm.text.comp
 import java.util.concurrent.TimeUnit
 
 enum class ItemValue(private val item: MacrocosmItem) {
@@ -19,6 +25,20 @@ enum class ItemValue(private val item: MacrocosmItem) {
     companion object {
         fun enchanted(type: Material) = ItemRegistry.find("ENCHANTED_${type.name}")
 
+        fun placeholder(type: Material) = itemStack(type) {
+            meta {
+                displayName(Component.empty())
+                flags(*ItemFlag.values())
+            }
+        }
+
+        fun placeholder(type: Material, name: String) = itemStack(type) {
+            meta {
+                displayName(comp(name))
+                flags(*ItemFlag.values())
+            }
+        }
+
         private val allowedEnchantedMats = listOf(
             // mining
             "DIAMOND", "EMERALD", "LAPIS_LAZULI", "COAL", "REDSTONE", "COBBLESTONE", "IRON_INGOT", "GOLD_INGOT", "OBSIDIAN", "END_STONE", "NETHERITE_SCRAP", "QUARTZ",
@@ -32,7 +52,9 @@ enum class ItemValue(private val item: MacrocosmItem) {
             // combat
             "ROTTEN_FLESH", "ENDER_PEARL", "STRING", "SPIDER_EYE", "PHANTOM_MEMBRANE", "GUNPOWDER", "GHAST_TEAR", "BONE", "SLIME_BALL", "MAGMA_CREAM", "BLAZE_POWDER",
             // fishing
-            "COD", "SALMON", "SPONGE", "TROPICAL_FISH", "PRISMARINE_SHARD", "PRISMARINE_CRYSTALS", "INK_SAC", "PUFFERFISH", "KELP", "LILY_PAD"
+            "COD", "SALMON", "SPONGE", "TROPICAL_FISH", "PRISMARINE_SHARD", "PRISMARINE_CRYSTALS", "INK_SAC", "PUFFERFISH", "KELP", "LILY_PAD",
+            // more
+            "NETHERITE_INGOT", "NETHERITE_BLOCK"
         )
         private fun initEnchanted() {
             val pool = Threading.pool()

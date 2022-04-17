@@ -115,6 +115,8 @@ internal fun statsFromMaterial(mat: Material) = stats {
 }
 
 internal fun rarityFromMaterial(mat: Material): Rarity {
+    if(mat == Material.NETHERITE_BLOCK)
+        return Rarity.EPIC
     val name = mat.name
     if (name.contains("DIAMOND") || name.contains("EMERALD") || name.contains("END") || name.contains("CANDLE"))
         return Rarity.UNCOMMON
