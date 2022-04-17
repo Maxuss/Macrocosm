@@ -126,6 +126,7 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
     return when (mat) {
         Material.AMETHYST_BLOCK, Material.AMETHYST_CLUSTER -> Rarity.UNCOMMON
         Material.ELYTRA -> Rarity.EPIC
+        Material.NETHER_STAR -> Rarity.MYTHIC
         else -> Rarity.COMMON
     }
 }

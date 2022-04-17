@@ -13,10 +13,7 @@ import net.minecraft.util.Mth
 import org.bukkit.*
 import org.bukkit.Particle.DustOptions
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -28,7 +25,10 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.damage.relativeLocation
+import space.maxus.macrocosm.entity.loot.LootPool
+import space.maxus.macrocosm.entity.loot.vanilla
 import space.maxus.macrocosm.entity.macrocosm
+import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.players.macrocosm
@@ -43,8 +43,23 @@ import kotlin.random.nextInt
 object DamageHandlers : Listener {
     @EventHandler
     fun onKill(e: EntityDeathEvent) {
-        // disable drops, they are handled internally in VanillaEntity and other implementations
+        // converting drops into loot pool
+        var pool = LootPool.of(*e.drops.map { vanilla(it.type, 1.0, amount = it.amount..it.amount) }.toTypedArray())
         e.drops.clear()
+        val cause = e.entity.lastDamageCause
+        val event = EntityDropItemsEvent((cause as? EntityDamageByEntityEvent)?.damager, e.entity, pool)
+        val cancelled = !event.callEvent()
+        if(cancelled)
+            return
+        pool = event.pool
+        val drops = if(cause is EntityDamageByEntityEvent && cause.damager is Player) {
+            pool.roll((cause.damager as Player).macrocosm)
+        } else {
+            pool.roll(null)
+        }
+        for(item in drops) {
+            e.entity.world.dropItemNaturally(e.entity.location, item ?: continue)
+        }
     }
 
     @EventHandler
@@ -113,6 +128,8 @@ object DamageHandlers : Listener {
 
         val received = DamageCalculator.calculateStandardReceived(damage, damagedStats)
 
+        damaged.lastDamageCause = e
+
         if (damaged is Player) {
             damaged.macrocosm!!.damage(received, damagerName)
         } else {
@@ -133,7 +150,7 @@ object DamageHandlers : Listener {
 
         summonDamageIndicator(damaged.location, received, crit)
 
-        processFerocity(damage, crit, damagerStats, damaged, damagerName)
+        processFerocity(damage, crit, damagerStats, damaged, damagerName, damager)
     }
 
     @EventHandler
@@ -162,6 +179,8 @@ object DamageHandlers : Listener {
             return
         var damage = e.damage * 10
         e.damage = .0
+        if(e.entity !is LivingEntity)
+            return
         val entity = e.entity as LivingEntity
         if(entity is Player) {
             val stats = entity.macrocosm!!.specialStats()!!
@@ -363,7 +382,8 @@ object DamageHandlers : Listener {
         crit: Boolean,
         stats: Statistics,
         entity: LivingEntity,
-        source: Component
+        source: Component,
+        damager: Entity
     ) {
         var ferocity = stats.ferocity
         if (stats.ferocity > 0) {
@@ -371,24 +391,24 @@ object DamageHandlers : Listener {
             ferocity -= times
             for (i in 0 until times.toInt()) {
                 taskRunLater(15L + i * 3) {
-                    activateFerocity(damage, crit, entity, source)
+                    activateFerocity(damage, crit, entity, source, damager)
                 }
             }
         }
         if (Random.nextFloat() < (ferocity / 100f)) {
             taskRunLater(20L) {
-                activateFerocity(damage, crit, entity, source)
+                activateFerocity(damage, crit, entity, source, damager)
             }
         }
     }
 
-    private fun activateFerocity(damage: Float, crit: Boolean, entity: LivingEntity, source: Component) {
+    private fun activateFerocity(damage: Float, crit: Boolean, entity: LivingEntity, source: Component, damager: Entity) {
         if (entity.isDead)
             return
         if (entity is Player) {
             entity.macrocosm!!.damage(damage, source)
         } else {
-            entity.macrocosm!!.damage(damage)
+            entity.macrocosm!!.damage(damage, damager)
         }
         val vector = entity.eyeLocation.direction.clone() reduce vec(1) increase vec(y = 1)
         for (i in 0 until 12) {

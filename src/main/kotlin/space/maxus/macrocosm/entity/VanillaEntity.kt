@@ -5,13 +5,19 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
+import space.maxus.macrocosm.entity.loot.DropRarity
+import space.maxus.macrocosm.entity.loot.LootPool
+import space.maxus.macrocosm.entity.loot.vanilla
+import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.*
 import java.util.*
@@ -222,6 +228,16 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
 
     override var baseStats: Statistics = statsFromEntity(paper)
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
+
+    override fun lootPool(player: MacrocosmPlayer?): LootPool {
+        return when(this.paper!!.type) {
+            EntityType.WITHER_SKELETON -> LootPool.of(vanilla(Material.WITHER_SKELETON_SKULL, .025, DropRarity.VERY_RARE))
+            EntityType.SKELETON -> LootPool.of(vanilla(Material.SKELETON_SKULL, .0025, DropRarity.SUPER_RARE))
+            EntityType.SLIME -> LootPool.of(vanilla(Material.SLIME_BLOCK, .001, DropRarity.RARE))
+            else -> LootPool.of()
+        }
+    }
+
     override var currentHealth: Float = baseStats.health
 
     override val name: Component
@@ -249,7 +265,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
                 val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!)
                 event.callEvent()
             }
-            kill()
+            kill(damager)
             return
         }
 
@@ -263,11 +279,23 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     }
 
     override fun kill(damager: Entity?) {
-        // TODO: item drops
         if (paper == null)
             return
         currentHealth = 0f
+        val killer = (damager as? Player)?.macrocosm
+        var pool = lootPool(killer)
+        val event = EntityDropItemsEvent(damager, paper!!, pool)
+        val cancelled = !event.callEvent()
+        pool = event.pool
+        val loc = paper!!.location
         loadChanges(paper!!)
         paper!!.kill()
+        if(cancelled)
+            return
+
+        val items = pool.roll(killer)
+        for(item in items) {
+            loc.world.dropItemNaturally(loc, item ?: continue)
+        }
     }
 }

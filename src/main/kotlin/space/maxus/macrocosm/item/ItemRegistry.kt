@@ -27,7 +27,7 @@ object ItemRegistry {
     fun toMacrocosm(item: ItemStack): MacrocosmItem? {
         if (item.type == Material.AIR)
             return null
-        val tag = CraftItemStack.asNMSCopy(item).tag ?: return null
+        val tag = CraftItemStack.asNMSCopy(item).tag ?: return VanillaItem(item.type)
         if (!tag.contains(MACROCOSM_TAG)) {
             return VanillaItem(item.type)
         }

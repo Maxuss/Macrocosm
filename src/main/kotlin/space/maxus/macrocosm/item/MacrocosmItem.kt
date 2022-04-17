@@ -159,8 +159,10 @@ interface MacrocosmItem {
             val lore = mutableListOf<Component>()
 
             // stats
-            lore.addAll(stats.formatSimple(reforge?.stats(rarity)))
-            lore.add("".toComponent())
+            val formattedStats = stats.formatSimple(reforge?.stats(rarity))
+            lore.addAll(formattedStats)
+            if(formattedStats.isNotEmpty())
+                lore.add("".toComponent())
 
             // enchants
             if (enchantments.isNotEmpty()) {
