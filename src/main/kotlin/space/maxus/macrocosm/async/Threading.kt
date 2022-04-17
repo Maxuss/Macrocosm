@@ -4,9 +4,11 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 object Threading {
-    val pool: ExecutorService = Executors.newFixedThreadPool(10)
+    val pool: ExecutorService = Executors.newCachedThreadPool()
 
     fun start(runnable: () -> Unit) {
         pool.execute(runnable)
     }
+
+    fun pool() = Executors.newCachedThreadPool()
 }

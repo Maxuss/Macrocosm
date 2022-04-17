@@ -2,9 +2,7 @@ package space.maxus.macrocosm.item
 
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
-import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.reforge.Reforge
@@ -163,17 +161,5 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
         vanilla.reforge = reforge?.clone()
         vanilla.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
         return vanilla
-    }
-
-    override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
-        val base = super.convert(from, nbt)
-        if(nbt.contains("EnchantedItem")) {
-            return EnchantedItem(
-                from.type,
-                Rarity.fromId(nbt.getInt("EnchantedRarity")),
-                nbt.getString("EnchantedItem")
-            )
-        }
-        return base
     }
 }

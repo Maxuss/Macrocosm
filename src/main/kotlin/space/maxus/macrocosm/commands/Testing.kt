@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.entity.loot.DropRarity
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.macrocosm
-import space.maxus.macrocosm.item.rarityFromMaterial
 import space.maxus.macrocosm.players.macrocosm
 
 fun testStatsCommand() = command("stats") {
@@ -32,7 +31,7 @@ fun testEnchantedItem() = command("enchanted_item") {
     argument("type", StringArgumentType.word()) {
         runs {
             val type = Material.valueOf(getArgument("type"))
-            player.inventory.addItem(ItemValue.enchanted(type, rarityFromMaterial(type).next()).build()!!)
+            player.inventory.addItem(ItemValue.enchanted(type).build()!!)
         }
     }
 }

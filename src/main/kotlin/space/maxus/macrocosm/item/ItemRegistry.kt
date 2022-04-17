@@ -3,10 +3,11 @@ package space.maxus.macrocosm.item
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
+import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("UNUSED")
 object ItemRegistry {
-    val items: HashMap<String, MacrocosmItem> = hashMapOf()
+    val items: ConcurrentHashMap<String, MacrocosmItem> = ConcurrentHashMap(hashMapOf())
     private var itemCmd: Long = 1000
 
     fun nextModel() = ++itemCmd

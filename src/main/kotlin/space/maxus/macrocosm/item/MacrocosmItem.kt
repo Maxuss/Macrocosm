@@ -54,6 +54,8 @@ interface MacrocosmItem {
     }
 
     fun reforge(ref: Reforge) {
+        if(!ref.applicable.contains(this.type))
+            return
         if (reforge != null) {
             stats.decrease(reforge!!.stats(rarity))
         }

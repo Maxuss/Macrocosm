@@ -143,7 +143,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val activeEffects = paper!!.activePotionEffects.map { it.type }
         val healthColor = if(activeEffects.contains(PotionEffectType.WITHER)) TextColor.color(0x2B0C0C) else if(activeEffects.contains(PotionEffectType.ABSORPTION)) NamedTextColor.GOLD else if(activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
 
-        paper?.sendActionBar(comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤ ").color(healthColor).append(comp("<green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana")))
+        paper?.sendActionBar(comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤    ").color(healthColor).append(comp("<green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana")))
     }
 
     fun kill(reason: Component? = null) {
