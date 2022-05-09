@@ -11,7 +11,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.players.macrocosm
 import kotlin.random.Random
 
-object ExperienceEnchantment: EnchantmentBase(
+object ExperienceEnchantment : EnchantmentBase(
     "Experience",
     "Grants a <green><multiplier_whole>%<gray> chance for mobs and ores to drop <blue>double<gray> experience orbs.",
     1..4,
@@ -27,27 +27,27 @@ object ExperienceEnchantment: EnchantmentBase(
 ) {
     @EventHandler
     fun onBlockBreak(e: BlockBreakEvent) {
-        if(e.player.macrocosm == null)
+        if (e.player.macrocosm == null)
             return
         val player = e.player.macrocosm!!
         val (ok, lvl) = ensureRequirements(player, EquipmentSlot.HAND, EquipmentSlot.OFF_HAND)
-        if(!ok)
+        if (!ok)
             return
         val chance = .125f * lvl
-        e.expToDrop *= if(Random.nextFloat() < chance) 2 else 1
+        e.expToDrop *= if (Random.nextFloat() < chance) 2 else 1
     }
 
     @EventHandler
     fun onKill(e: EntityDeathEvent) {
         val cause = e.entity.lastDamageCause
-        if(cause !is EntityDamageByEntityEvent || cause.damager !is Player)
+        if (cause !is EntityDamageByEntityEvent || cause.damager !is Player)
             return
         val player = cause.damager as Player
         val mc = player.macrocosm ?: return
         val (ok, lvl) = ensureRequirements(mc, EquipmentSlot.HAND, EquipmentSlot.OFF_HAND)
-        if(!ok)
+        if (!ok)
             return
         val chance = .125f * lvl
-        e.droppedExp *= if(Random.nextFloat() < chance) 2 else 1
+        e.droppedExp *= if (Random.nextFloat() < chance) 2 else 1
     }
 }

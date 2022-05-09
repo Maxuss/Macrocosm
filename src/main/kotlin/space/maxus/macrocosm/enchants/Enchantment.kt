@@ -10,6 +10,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
 
 internal fun colorFromLevel(lvl: Int, max: Int): TextColor {
     return if (lvl == max)
@@ -24,7 +25,7 @@ interface Enchantment : Listener {
     val name: String
     val levels: IntRange
     val applicable: List<ItemType>
-    val conflicts: List<String>
+    val conflicts: List<Identifier>
 
     fun description(level: Int): List<Component>
 

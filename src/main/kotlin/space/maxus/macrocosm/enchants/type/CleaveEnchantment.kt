@@ -18,9 +18,14 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 
-object CleaveEnchantment: EnchantmentBase("Cleave", "", 1..6, ItemType.melee()) {
+object CleaveEnchantment : EnchantmentBase("Cleave", "", 1..6, ItemType.melee()) {
     override fun description(level: Int): List<Component> {
-        val str = "Deals <green>${Formatting.stats((level * 4f).toBigDecimal(), true)}%<gray> of your ${Statistic.DAMAGE.display}<gray> to all mobs within <green>${Formatting.stats((level * 0.9f).toBigDecimal())}<gray> blocks of target."
+        val str = "Deals <green>${
+            Formatting.stats(
+                (level * 4f).toBigDecimal(),
+                true
+            )
+        }%<gray> of your ${Statistic.DAMAGE.display}<gray> to all mobs within <green>${Formatting.stats((level * 0.9f).toBigDecimal())}<gray> blocks of target."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -28,17 +33,17 @@ object CleaveEnchantment: EnchantmentBase("Cleave", "", 1..6, ItemType.melee()) 
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead)
+        if (e.damaged.isDead)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val multiplier = lvl * .03f
         val range = lvl * .9
 
         val damage = multiplier * e.damage
-        for(entity in e.damaged.location.getNearbyLivingEntities(range) {
+        for (entity in e.damaged.location.getNearbyLivingEntities(range) {
             it !is ArmorStand && it != e.damaged && it !is Player
         }) {
             entity.macrocosm!!.damage(damage, e.player.paper)

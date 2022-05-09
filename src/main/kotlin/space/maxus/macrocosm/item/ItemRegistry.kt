@@ -3,20 +3,26 @@ package space.maxus.macrocosm.item
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.getId
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("UNUSED")
 object ItemRegistry {
-    val items: ConcurrentHashMap<String, MacrocosmItem> = ConcurrentHashMap(hashMapOf())
+    val items: ConcurrentHashMap<Identifier, MacrocosmItem> = ConcurrentHashMap(hashMapOf())
     private var itemCmd: Long = 1000
 
     fun nextModel() = ++itemCmd
 
-    fun find(id: String): MacrocosmItem {
-        return items[id]!!.clone()
+    fun find(id: Identifier): MacrocosmItem {
+        return if(id.namespace == "minecraft") {
+            VanillaItem(Material.valueOf(id.path.uppercase()))
+        } else if(id.path == "null")
+            VanillaItem(Material.AIR)
+        else items[id]!!.clone()
     }
 
-    fun register(id: String, item: MacrocosmItem): MacrocosmItem {
+    fun register(id: Identifier, item: MacrocosmItem): MacrocosmItem {
         if (items.containsKey(id))
             return item
         items[id] = item
@@ -34,8 +40,8 @@ object ItemRegistry {
         }
 
         val nbt = tag.getCompound(MACROCOSM_TAG)
-        if (!nbt.contains("ID") || nbt.getString("ID") == "NULL")
+        if (!nbt.contains("ID") || nbt.getId("ID").namespace == "minecraft")
             return VanillaItem(item.type).convert(item, nbt)
-        return find(nbt.getString("ID")).convert(item, nbt)
+        return find(Identifier.parse(nbt.getString("ID"))).convert(item, nbt)
     }
 }

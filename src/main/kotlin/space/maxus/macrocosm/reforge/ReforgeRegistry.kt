@@ -5,11 +5,12 @@ package space.maxus.macrocosm.reforge
 import net.axay.kspigot.extensions.server
 import org.bukkit.event.Listener
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.util.Identifier
 
 object ReforgeRegistry {
-    val reforges: HashMap<String, Reforge> = hashMapOf()
+    val reforges: HashMap<Identifier, Reforge> = hashMapOf()
 
-    fun register(name: String, reforge: Reforge): Reforge {
+    fun register(name: Identifier, reforge: Reforge): Reforge {
         if (reforges.containsKey(name))
             return reforge
         reforges[name] = reforge
@@ -21,5 +22,5 @@ object ReforgeRegistry {
 
     fun nameOf(ref: Reforge) = reforges.filter { (_, v) -> v == ref }.map { (k, _) -> k }.firstOrNull()
 
-    fun find(name: String) = reforges[name]
+    fun find(name: Identifier) = reforges[name]
 }

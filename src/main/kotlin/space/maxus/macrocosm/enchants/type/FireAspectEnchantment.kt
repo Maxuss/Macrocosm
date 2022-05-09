@@ -40,7 +40,7 @@ object FireAspectEnchantment :
         val pdc = e.damaged.persistentDataContainer
         if (pdc.has(pluginKey("fa_ticks")))
             return
-        if(pdc.has(pluginKey("fa_ticks_frost")))
+        if (pdc.has(pluginKey("fa_ticks_frost")))
             pdc[pluginKey("fa_ticks_frost"), PersistentDataType.LONG] = 0
 
         e.damaged.isVisualFire = true

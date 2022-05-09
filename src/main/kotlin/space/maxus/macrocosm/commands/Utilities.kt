@@ -10,14 +10,21 @@ import net.axay.kspigot.gui.kSpigotGUI
 import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
+import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.recipes.RecipeRegistry
+import space.maxus.macrocosm.recipes.recipeBrowser
+import space.maxus.macrocosm.recipes.recipeViewer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 
 fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
@@ -26,13 +33,13 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
 
     page(0) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
-        val compound = createRectCompound<String>(
+        val compound = createRectCompound<Identifier>(
             Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = {
                 ItemRegistry.find(it).build()!!
             },
             onClick = { e, it ->
-                if(e.bukkitEvent.click.isLeftClick)
+                if (e.bukkitEvent.click.isLeftClick)
                     e.player.inventory.addItem(ItemRegistry.find(it).build()!!)
                 else
                     e.player.inventory.addItem(ItemRegistry.find(it).build()!!.apply { amount = 64 })
@@ -40,7 +47,7 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
             }
         )
         compound.addContent(ItemRegistry.items.keys().toList())
-        compound.sortContentBy { it }
+        compound.sortContentBy { it.path }
         compoundScroll(
             Slots.RowOneSlotNine,
             ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 4
@@ -50,6 +57,27 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
             ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
         )
 
+    }
+}
+
+fun viewRecipeCommand() = command("viewrecipe") {
+    argument("recipe", ResourceLocationArgument.id()) {
+        suggestList { ctx ->
+            RecipeRegistry.recipes.keys
+                .filter { it.path.contains(ctx.getArgumentOrNull<ResourceLocation>("recipe")?.path?.lowercase() ?: "") }
+        }
+
+        runs {
+            val recipe = getArgument<ResourceLocation>("recipe").macrocosm
+            player.openGUI(recipeViewer(recipe, player.macrocosm!!))
+        }
+
+    }
+}
+
+fun recipesCommand() = command("recipes") {
+    runs {
+        player.openGUI(recipeBrowser(player.macrocosm!!))
     }
 }
 

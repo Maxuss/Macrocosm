@@ -17,6 +17,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
 
 abstract class EnchantmentBase(
     override val name: String,
@@ -26,8 +27,9 @@ abstract class EnchantmentBase(
     private val baseStats: Statistics = Statistics.zero(),
     private val baseSpecials: SpecialStatistics = SpecialStatistics(),
     private val multiplier: Float = 1f,
-    override val conflicts: List<String> = listOf()
+    conflicts: List<String> = listOf()
 ) : Enchantment {
+    override val conflicts: List<Identifier> = conflicts.map { Identifier.macro(it.lowercase()) }
     protected fun ensureRequirements(player: MacrocosmPlayer, vararg slots: EquipmentSlot): Pair<Boolean, Int> {
         val filtered = slots.map {
             val item = player.paper!!.inventory.getItem(it)
@@ -78,9 +80,24 @@ abstract class EnchantmentBase(
         }
         basePlaceholders.addAll(specPlaceholders)
         basePlaceholders.addAll(extraSpecPlaceholders)
-        basePlaceholders.add(Placeholder.unparsed("multiplier", Formatting.stats((level * multiplier).toBigDecimal(), false)))
-        basePlaceholders.add(Placeholder.unparsed("multiplier_percents", Formatting.stats((100 * level * multiplier).toBigDecimal())))
-        basePlaceholders.add(Placeholder.unparsed("multiplier_whole", Formatting.stats((100 * level * multiplier).toBigDecimal(), true)))
+        basePlaceholders.add(
+            Placeholder.unparsed(
+                "multiplier",
+                Formatting.stats((level * multiplier).toBigDecimal(), false)
+            )
+        )
+        basePlaceholders.add(
+            Placeholder.unparsed(
+                "multiplier_percents",
+                Formatting.stats((100 * level * multiplier).toBigDecimal())
+            )
+        )
+        basePlaceholders.add(
+            Placeholder.unparsed(
+                "multiplier_whole",
+                Formatting.stats((100 * level * multiplier).toBigDecimal(), true)
+            )
+        )
         val arr = basePlaceholders.toTypedArray()
         val reduced = description.reduceToList(25).map { mm.deserialize("<gray>$it", *arr).noitalic() }.toMutableList()
         reduced.removeIf {

@@ -15,9 +15,10 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 
-object ExecuteEnchantment: EnchantmentBase("Execute", "", 1..6, ItemType.melee(), conflicts = listOf("PROSECUTE")) {
+object ExecuteEnchantment : EnchantmentBase("Execute", "", 1..6, ItemType.melee(), conflicts = listOf("PROSECUTE")) {
     override fun description(level: Int): List<Component> {
-        val str = "<gray>Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((level * .2f).toBigDecimal())}%<gray> for every percent of ${Statistic.HEALTH.display}<blue> missing<gray> on your target."
+        val str =
+            "<gray>Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((level * .2f).toBigDecimal())}%<gray> for every percent of ${Statistic.HEALTH.display}<blue> missing<gray> on your target."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -25,10 +26,10 @@ object ExecuteEnchantment: EnchantmentBase("Execute", "", 1..6, ItemType.melee()
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead)
+        if (e.damaged.isDead)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val modifier = lvl * .002f
@@ -40,9 +41,10 @@ object ExecuteEnchantment: EnchantmentBase("Execute", "", 1..6, ItemType.melee()
     }
 }
 
-object ProsecuteEnchantment: EnchantmentBase("Prosecute", "", 1..6, ItemType.melee(), conflicts = listOf("EXECUTE")) {
+object ProsecuteEnchantment : EnchantmentBase("Prosecute", "", 1..6, ItemType.melee(), conflicts = listOf("EXECUTE")) {
     override fun description(level: Int): List<Component> {
-        val str = "<gray>Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((level * .15f).toBigDecimal())}%<gray> for every percent of ${Statistic.HEALTH.display}<blue> missing<gray> on your target."
+        val str =
+            "<gray>Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((level * .15f).toBigDecimal())}%<gray> for every percent of ${Statistic.HEALTH.display}<blue> missing<gray> on your target."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -50,10 +52,10 @@ object ProsecuteEnchantment: EnchantmentBase("Prosecute", "", 1..6, ItemType.mel
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead)
+        if (e.damaged.isDead)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val modifier = lvl * .0015f

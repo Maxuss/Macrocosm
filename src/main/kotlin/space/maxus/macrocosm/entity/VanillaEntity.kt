@@ -194,9 +194,9 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
                 vanilla.currentHealth = tag.getFloat("CurrentHealth")
                 val stats = Statistics.zero()
                 val statCmp = tag.getCompound("Stats")
-                for(stat in statCmp.allKeys) {
+                for (stat in statCmp.allKeys) {
                     val value = statCmp.getFloat(stat)
-                    if(value == 0f)
+                    if (value == 0f)
                         continue
                     stats[Statistic.valueOf(stat)] = value
                 }
@@ -230,8 +230,14 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
 
     override fun lootPool(player: MacrocosmPlayer?): LootPool {
-        return when(this.paper!!.type) {
-            EntityType.WITHER_SKELETON -> LootPool.of(vanilla(Material.WITHER_SKELETON_SKULL, .025, DropRarity.VERY_RARE))
+        return when (this.paper!!.type) {
+            EntityType.WITHER_SKELETON -> LootPool.of(
+                vanilla(
+                    Material.WITHER_SKELETON_SKULL,
+                    .025,
+                    DropRarity.VERY_RARE
+                )
+            )
             EntityType.SKELETON -> LootPool.of(vanilla(Material.SKELETON_SKULL, .0025, DropRarity.SUPER_RARE))
             EntityType.SLIME -> LootPool.of(vanilla(Material.SLIME_BLOCK, .001, DropRarity.RARE))
             else -> LootPool.of()
@@ -261,7 +267,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
 
         currentHealth -= amount
         if (currentHealth <= 0) {
-            if(damager != null && damager is Player) {
+            if (damager != null && damager is Player) {
                 val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!)
                 event.callEvent()
             }
@@ -269,7 +275,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
             return
         }
 
-        if(entity is Creature) {
+        if (entity is Creature) {
             entity.target = damager as? LivingEntity
         }
         entity.damage(0.0)
@@ -290,11 +296,11 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
         val loc = paper!!.location
         loadChanges(paper!!)
         paper!!.kill()
-        if(cancelled)
+        if (cancelled)
             return
 
         val items = pool.roll(killer)
-        for(item in items) {
+        for (item in items) {
             loc.world.dropItemNaturally(loc, item ?: continue)
         }
     }

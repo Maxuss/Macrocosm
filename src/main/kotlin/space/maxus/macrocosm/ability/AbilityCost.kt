@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +21,7 @@ data class AbilityCost(private val mana: Int = 0, private val health: Int = 0, p
         }
     }
 
-    fun ensureRequirements(player: MacrocosmPlayer, ability: String): Boolean {
+    fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier): Boolean {
         if (mana > 0 && player.currentMana < mana) {
             player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH MANA"))
 

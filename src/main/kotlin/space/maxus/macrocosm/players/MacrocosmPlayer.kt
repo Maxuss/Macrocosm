@@ -24,6 +24,7 @@ import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
@@ -45,7 +46,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var bank: Float = 0f
     var currentHealth: Float = calculateStats()!!.health
     var currentMana: Float = calculateStats()!!.intelligence
-    var lastAbilityUse: HashMap<String, Long> = hashMapOf()
+    var lastAbilityUse: HashMap<Identifier, Long> = hashMapOf()
 
     val activeEffects get() = paper?.activePotionEffects?.map { it.type }
 
@@ -59,7 +60,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val stats = calculateStats()!!
             if (currentMana < stats.intelligence)
                 currentMana += stats.intelligence / 20f
-            if (currentHealth < stats.health && !activeEffects!!.contains(PotionEffectType.ABSORPTION) && !activeEffects!!.contains(PotionEffectType.POISON)) {
+            if (currentHealth < stats.health && !activeEffects!!.contains(PotionEffectType.ABSORPTION) && !activeEffects!!.contains(
+                    PotionEffectType.POISON
+                )
+            ) {
                 currentHealth = min(currentHealth + (stats.health / 20f), stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
@@ -125,9 +129,24 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
 
+    @Suppress("UNUSED_PARAMETER")
+    fun isRecipeLocked(recipe: Identifier): Boolean {
+        // todo: collections + skill checks
+        return false
+    }
+
     fun addAbsorption(amount: Float, length: Int = -1, myStats: Statistics? = null) {
         val stats = myStats ?: calculateStats()!!
-        paper!!.addPotionEffect(PotionEffect(PotionEffectType.ABSORPTION, if(length < 0) Int.MAX_VALUE else length, 2, true, true, true))
+        paper!!.addPotionEffect(
+            PotionEffect(
+                PotionEffectType.ABSORPTION,
+                if (length < 0) Int.MAX_VALUE else length,
+                2,
+                true,
+                true,
+                true
+            )
+        )
         currentHealth = stats.health + amount
         sendStatBar(stats)
     }
@@ -138,12 +157,23 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         sendStatBar(stats)
     }
 
+    fun sendMessage(message: String) {
+        paper?.sendMessage(comp(message))
+    }
+
     private fun sendStatBar(myStats: Statistics? = null) {
         val stats = myStats ?: calculateStats()!!
         val activeEffects = paper!!.activePotionEffects.map { it.type }
-        val healthColor = if(activeEffects.contains(PotionEffectType.WITHER)) TextColor.color(0x2B0C0C) else if(activeEffects.contains(PotionEffectType.ABSORPTION)) NamedTextColor.GOLD else if(activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
+        val healthColor =
+            if (activeEffects.contains(PotionEffectType.WITHER)) TextColor.color(0x2B0C0C) else if (activeEffects.contains(
+                    PotionEffectType.ABSORPTION
+                )
+            ) NamedTextColor.GOLD else if (activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
 
-        paper?.sendActionBar(comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤    ").color(healthColor).append(comp("<green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana")))
+        paper?.sendActionBar(
+            comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤    ").color(healthColor)
+                .append(comp("<green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
+        )
     }
 
     fun kill(reason: Component? = null) {
@@ -192,7 +222,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
         val stats = calculateStats()!!
         currentHealth -= amount
-        if(currentHealth < stats.health) {
+        if (currentHealth < stats.health) {
             paper!!.removePotionEffect(PotionEffectType.ABSORPTION)
         }
 

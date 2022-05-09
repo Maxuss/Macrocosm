@@ -25,13 +25,17 @@ class DropRarity private constructor(val broadcast: Boolean, val greet: Boolean 
     }
 
     fun announceEntityDrop(player: Player, item: MacrocosmItem) {
-        if(!broadcast)
+        if (!broadcast)
             return
         val mf = player.macrocosm!!.calculateStats()!!.magicFind
-        val message = comp("<bold>$name DROP!</bold> ${MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))} <aqua>(+${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})")
+        val message = comp(
+            "<bold>$name DROP!</bold> ${
+                MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))
+            } <aqua>(+${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"
+        )
         player.sendMessage(message)
-        if(greet) {
-            for(i in 0..5) {
+        if (greet) {
+            for (i in 0..5) {
                 taskRunLater(i * 3L) {
                     sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                         pitch = 1 + i * 0.2f
@@ -40,8 +44,14 @@ class DropRarity private constructor(val broadcast: Boolean, val greet: Boolean 
                 }
             }
         }
-        if(this == UNBELIEVABLE) {
-            broadcast(comp("<red><bold>WOW</bold><gold> ${MiniMessage.miniMessage().serialize(player.displayName())}<gold> has found ${MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))}<gold>!"))
+        if (this == UNBELIEVABLE) {
+            broadcast(
+                comp(
+                    "<red><bold>WOW</bold><gold> ${
+                        MiniMessage.miniMessage().serialize(player.displayName())
+                    }<gold> has found ${MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))}<gold>!"
+                )
+            )
             player.sendTitlePart(TitlePart.TITLE, comp("<red><bold>UNBELIEVABLE DROP!"))
             player.sendTitlePart(TitlePart.SUBTITLE, item.name.color(item.rarity.color))
             taskRunLater(18L) {

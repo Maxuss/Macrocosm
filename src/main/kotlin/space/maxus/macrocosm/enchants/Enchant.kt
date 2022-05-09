@@ -6,6 +6,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
+import space.maxus.macrocosm.util.Identifier
 
 enum class Enchant(private val enchant: Enchantment) {
     SHARPNESS(
@@ -251,7 +252,7 @@ enum class Enchant(private val enchant: Enchantment) {
     companion object {
         fun init() {
             for (ench in values()) {
-                EnchantmentRegistry.register(ench.name, ench.enchant)
+                EnchantmentRegistry.register(Identifier.macro(ench.name.lowercase()), ench.enchant)
             }
         }
     }

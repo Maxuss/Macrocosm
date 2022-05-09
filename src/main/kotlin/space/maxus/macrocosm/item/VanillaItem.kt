@@ -10,6 +10,7 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
+import space.maxus.macrocosm.util.Identifier
 import java.util.*
 
 internal val SPLIT_THIS =
@@ -115,7 +116,7 @@ internal fun statsFromMaterial(mat: Material) = stats {
 }
 
 internal fun rarityFromMaterial(mat: Material): Rarity {
-    if(mat == Material.NETHERITE_BLOCK)
+    if (mat == Material.NETHERITE_BLOCK)
         return Rarity.EPIC
     val name = mat.name
     if (name.contains("DIAMOND") || name.contains("EMERALD") || name.contains("END") || name.contains("CANDLE"))
@@ -136,7 +137,7 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
 class VanillaItem(override val base: Material) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
-    override val id: String = "NULL"
+    override val id: Identifier = Identifier("minecraft", base.name.lowercase())
     override val type: ItemType = typeFromMaterial(base)
 
     override val name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->

@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.item
 
+import net.axay.kspigot.data.nbtData
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.items.flags
 import net.axay.kspigot.items.meta
@@ -17,21 +18,31 @@ import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
+import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.getId
+import space.maxus.macrocosm.util.putId
 
 const val MACROCOSM_TAG = "MacrocosmValues"
 
 val ItemStack.macrocosm: MacrocosmItem? get() = ItemRegistry.toMacrocosm(this)
+fun ItemStack.macrocosmTag(): CompoundTag {
+    val nbt = this.nbtData
+    if(nbt.contains(MACROCOSM_TAG))
+        return nbt.getCompound(MACROCOSM_TAG)
+    return CompoundTag()
+}
 
-interface MacrocosmItem {
+interface MacrocosmItem: Ingredient {
     var stats: Statistics
     var specialStats: SpecialStatistics
 
-    val id: String
+    val id: Identifier
     val type: ItemType
     val name: Component
     val base: Material
@@ -40,6 +51,18 @@ interface MacrocosmItem {
     var reforge: Reforge?
     val abilities: MutableList<ItemAbility>
     val enchantments: HashMap<Enchantment, Int>
+
+    override fun id(): Identifier {
+        return id
+    }
+
+    override fun item(): MacrocosmItem {
+        return this
+    }
+
+    override fun stack(): ItemStack {
+        return build() ?: ItemStack(Material.AIR)
+    }
 
     fun buildLore(lore: MutableList<Component>) {
 
@@ -54,7 +77,7 @@ interface MacrocosmItem {
     }
 
     fun reforge(ref: Reforge) {
-        if(!ref.applicable.contains(this.type))
+        if (!ref.applicable.contains(this.type))
             return
         if (reforge != null) {
             stats.decrease(reforge!!.stats(rarity))
@@ -104,16 +127,16 @@ interface MacrocosmItem {
         if (rarityUpgraded)
             rarity = rarity.next()
 
-        val reforge = nbt.getString("Reforge")
-        if (reforge != "NULL") {
+        val reforge = nbt.getId("Reforge")
+        if (reforge.isNotNull()) {
             reforge(ReforgeRegistry.find(reforge)!!)
         }
 
         val enchants = nbt.getCompound("Enchantments")
         for (k in enchants.allKeys) {
-            if (k == "NULL")
+            if (k == "macrocosm:null")
                 continue
-            enchantments[EnchantmentRegistry.find(k)!!] = enchants.getInt(k)
+            enchantments[EnchantmentRegistry.find(Identifier.parse(k))!!] = enchants.getInt(k)
         }
         return this
     }
@@ -123,12 +146,12 @@ interface MacrocosmItem {
             return false
         val name = EnchantmentRegistry.nameOf(enchantment)
         enchantments.filter { (ench, _) ->
-            ench.conflicts.contains("ALL")
+            ench.conflicts.contains(Identifier.macro("all"))
         }.forEach { (ench, _) ->
             enchantments.remove(ench)
         }
-        if(enchantment.conflicts.contains("ALL")) {
-            enchantments.filter{ (ench, _) ->
+        if (enchantment.conflicts.contains(Identifier.macro("all"))) {
+            enchantments.filter { (ench, _) ->
                 ench.name != "Telekinesis"
             }.forEach { (ench, _) ->
                 enchantments.remove(ench)
@@ -152,6 +175,20 @@ interface MacrocosmItem {
     }
 
     /**
+     * Transfers all enchantments, reforges and other upgrades to other item
+     */
+    fun transfer(to: MacrocosmItem) {
+        if(rarityUpgraded)
+            to.upgradeRarity()
+        for((enchant, lvl) in enchantments) {
+            to.enchantments[enchant] = lvl
+        }
+        if(reforge != null) {
+            to.reforge = reforge
+        }
+    }
+
+    /**
      * Builds this item
      */
     @Suppress("UNCHECKED_CAST")
@@ -167,7 +204,7 @@ interface MacrocosmItem {
             // stats
             val formattedStats = stats.formatSimple(reforge?.stats(rarity))
             lore.addAll(formattedStats)
-            if(formattedStats.isNotEmpty())
+            if (formattedStats.isNotEmpty())
                 lore.add("".toComponent())
 
             // enchants
@@ -182,7 +219,8 @@ interface MacrocosmItem {
                     cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
                         cmp.append(", ${MiniMessage.miniMessage().serialize(it)}")
                     }
-                    val reduced = cmp.toString().trim(',').trim().split(", ").joinToString(", ").reduceToList(30).map { comp(it).noitalic() }
+                    val reduced = cmp.toString().trim(',').trim().split(", ").joinToString(", ").reduceToList(30)
+                        .map { comp(it).noitalic() }
                     lore.addAll(reduced)
                     lore.add("".toComponent())
                 } else {
@@ -241,19 +279,19 @@ interface MacrocosmItem {
 
         // reforges
         if (reforge != null)
-            nbt.putString("Reforge", ReforgeRegistry.nameOf(reforge!!) ?: "NULL")
+            nbt.putId("Reforge", ReforgeRegistry.nameOf(reforge!!) ?: Identifier.NULL)
         else
-            nbt.putString("Reforge", "NULL")
+            nbt.putId("Reforge", Identifier.NULL)
 
         // enchants
         val enchants = CompoundTag()
         for ((ench, level) in enchantments) {
-            enchants.putInt(EnchantmentRegistry.nameOf(ench) ?: "NULL", level)
+            enchants.putInt((EnchantmentRegistry.nameOf(ench) ?: Identifier.NULL).toString(), level)
         }
         nbt.put("Enchantments", enchants)
 
         // item ID
-        nbt.putString("ID", ItemRegistry.nameOf(this) ?: "NULL")
+        nbt.putId("ID", ItemRegistry.nameOf(this) ?: Identifier.NULL)
 
         // adding extra nbt
         addExtraNbt(nbt)

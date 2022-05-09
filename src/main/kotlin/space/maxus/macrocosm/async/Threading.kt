@@ -10,5 +10,5 @@ object Threading {
         pool.execute(runnable)
     }
 
-    fun pool() = Executors.newCachedThreadPool()
+    fun pool(): ExecutorService = Executors.newCachedThreadPool()
 }

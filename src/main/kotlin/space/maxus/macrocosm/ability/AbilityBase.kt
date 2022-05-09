@@ -5,12 +5,13 @@ import org.bukkit.Sound
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.util.Identifier
 
 abstract class AbilityBase(
     override val type: AbilityType, override val name: String, override val description: String,
     override val cost: AbilityCost? = null
 ) : ItemAbility {
-    val id: String get() = AbilityRegistry.nameOf(this) ?: "NULL"
+    val id: Identifier get() = AbilityRegistry.nameOf(this) ?: Identifier.NULL
 
     @Suppress("SameParameterValue")
     protected fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot): Boolean {

@@ -3,6 +3,7 @@ package space.maxus.macrocosm.reforge
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.reforge.types.PoisonousReforge
 import space.maxus.macrocosm.stats.stats
+import space.maxus.macrocosm.util.Identifier
 
 enum class ReforgeType(private val ref: Reforge) {
     SPICY(SimpleReforge("Spicy", ItemType.melee(), stats {
@@ -19,7 +20,7 @@ enum class ReforgeType(private val ref: Reforge) {
     companion object {
         fun init() {
             for (reforge in ReforgeType.values()) {
-                ReforgeRegistry.register(reforge.name, reforge.ref)
+                ReforgeRegistry.register(Identifier.macro(reforge.name.lowercase()), reforge.ref)
             }
         }
     }

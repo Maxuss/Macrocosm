@@ -20,6 +20,9 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.getId
+import space.maxus.macrocosm.util.putId
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -60,12 +63,12 @@ interface MacrocosmEntity {
 
     }
 
-    fun getId(entity: LivingEntity): String {
+    fun getId(entity: LivingEntity): Identifier {
         val nbt = entity.readNbt()
         return if (nbt.contains(MACROCOSM_TAG))
-            nbt.getCompound(MACROCOSM_TAG).getString("ID")
+            nbt.getCompound(MACROCOSM_TAG).getId("ID")
         else
-            EntityRegistry.nameOf(this) ?: "NULL"
+            EntityRegistry.nameOf(this) ?: Identifier.NULL
     }
 
     fun calculateStats(): Statistics {
@@ -140,7 +143,7 @@ interface MacrocosmEntity {
         val tag = CompoundTag()
         tag.put("Stats", stats.compound())
         tag.putFloat("CurrentHealth", currentHealth)
-        tag.putString("ID", getId(entity))
+        tag.putId("ID", getId(entity))
 
         addExtraNbt(tag)
 

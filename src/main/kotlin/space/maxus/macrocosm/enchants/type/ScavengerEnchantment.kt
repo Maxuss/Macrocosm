@@ -17,9 +17,10 @@ import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.text.comp
 
-object ScavengerEnchantment: EnchantmentBase("Scavenger", "", 1..5, ItemType.weapons()) {
+object ScavengerEnchantment : EnchantmentBase("Scavenger", "", 1..5, ItemType.weapons()) {
     override fun description(level: Int): List<Component> {
-        val str = "Scavenge <gold>${Formatting.stats((level * .3).toBigDecimal())} Coins<gray> per monster level on kill."
+        val str =
+            "Scavenge <gold>${Formatting.stats((level * .3).toBigDecimal())} Coins<gray> per monster level on kill."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -28,10 +29,10 @@ object ScavengerEnchantment: EnchantmentBase("Scavenger", "", 1..5, ItemType.wea
     @EventHandler
     fun onKill(e: PlayerKillEntityEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND, EquipmentSlot.OFF_HAND)
-        if(!ok)
+        if (!ok)
             return
 
-        if(e.killed is Player)
+        if (e.killed is Player)
             return
         val mc = e.killed.macrocosm!!
         val amount = lvl * .3f * mc.level

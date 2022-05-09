@@ -13,11 +13,19 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.putId
 
-class EnchantedItem(override val base: Material, override var rarity: Rarity, private var baseName: String = "Enchanted ${base.name.replace("_", " ").capitalized()}", thisId: String? = null, actualId: String? = null) : MacrocosmItem {
+class EnchantedItem(
+    override val base: Material,
+    override var rarity: Rarity,
+    private var baseName: String = "Enchanted ${base.name.replace("_", " ").capitalized()}",
+    thisId: String? = null,
+    actualId: String? = null
+) : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()
     override var specialStats: SpecialStatistics = SpecialStatistics()
-    override val id: String = thisId ?: "ENCHANTED_${base.name}"
+    override val id: Identifier = Identifier.macro(thisId ?: "enchanted_${base.name.lowercase()}")
     override val type: ItemType = ItemType.OTHER
     override val name: Component = comp(baseName)
     override var rarityUpgraded: Boolean = false
@@ -33,6 +41,8 @@ class EnchantedItem(override val base: Material, override var rarity: Rarity, pr
 
     override fun addExtraNbt(cmp: CompoundTag) {
         cmp.putString("BaseItem", actualBase)
+        cmp.putByte("BlockClicks", 0)
+        cmp.putId("ViewRecipes", this.id)
     }
 
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
@@ -46,7 +56,7 @@ class EnchantedItem(override val base: Material, override var rarity: Rarity, pr
     }
 
     override fun clone(): MacrocosmItem {
-        val e = EnchantedItem(base, rarity, baseName, id)
+        val e = EnchantedItem(base, rarity, baseName, id.path)
         e.actualBase = actualBase
         return e
     }

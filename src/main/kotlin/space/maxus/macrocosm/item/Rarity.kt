@@ -36,7 +36,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         GODLIKE -> COMMON
     }
 
-    fun previous() = when(this) {
+    fun previous() = when (this) {
         COMMON -> GODLIKE
         UNCOMMON -> COMMON
         RARE -> UNCOMMON

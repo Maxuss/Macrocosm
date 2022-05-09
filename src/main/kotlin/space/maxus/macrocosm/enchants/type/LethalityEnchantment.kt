@@ -18,9 +18,11 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 
-object LethalityEnchantment: EnchantmentBase("Lethality", "", 1..6, ItemType.melee(), conflicts = listOf("EXHALATION")){
+object LethalityEnchantment :
+    EnchantmentBase("Lethality", "", 1..6, ItemType.melee(), conflicts = listOf("EXHALATION")) {
     override fun description(level: Int): List<Component> {
-        val str = "Reduces the ${Statistic.DEFENSE.display}<gray> of your target by <green>${Formatting.stats((level * 1.2f).toBigDecimal())}%<gray> each time you hit them. Stacks up to <green>${level + 1}<gray> times."
+        val str =
+            "Reduces the ${Statistic.DEFENSE.display}<gray> of your target by <green>${Formatting.stats((level * 1.2f).toBigDecimal())}%<gray> each time you hit them. Stacks up to <green>${level + 1}<gray> times."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -28,21 +30,21 @@ object LethalityEnchantment: EnchantmentBase("Lethality", "", 1..6, ItemType.mel
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead || e.damaged is Player)
+        if (e.damaged.isDead || e.damaged is Player)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val pdc = e.damaged.persistentDataContainer
 
-        if(pdc.has(pluginKey("exhalation_stacks")))
+        if (pdc.has(pluginKey("exhalation_stacks")))
             return
-        if(!pdc.has(pluginKey("lethality_stacks"))) {
+        if (!pdc.has(pluginKey("lethality_stacks"))) {
             pdc[pluginKey("lethality_stacks"), PersistentDataType.BYTE] = 0
         }
         val stacks = pdc[pluginKey("lethality_stacks"), PersistentDataType.BYTE]!!
-        if(stacks >= lvl)
+        if (stacks >= lvl)
             return
 
         pdc[pluginKey("lethality_stacks"), PersistentDataType.BYTE] = (stacks + 1).toByte()
@@ -54,9 +56,11 @@ object LethalityEnchantment: EnchantmentBase("Lethality", "", 1..6, ItemType.mel
     }
 }
 
-object ExhalationEnchantment: EnchantmentBase("Exhalation", "", 1..6, ItemType.melee(), conflicts = listOf("LETHALITY")){
+object ExhalationEnchantment :
+    EnchantmentBase("Exhalation", "", 1..6, ItemType.melee(), conflicts = listOf("LETHALITY")) {
     override fun description(level: Int): List<Component> {
-        val str = "Reduces the ${Statistic.DAMAGE.display}<gray> of your target by <green>${Formatting.stats((level * .6f).toBigDecimal())}%<gray> each time you hit them. Stacks up to <green>${level + 1}<gray> times."
+        val str =
+            "Reduces the ${Statistic.DAMAGE.display}<gray> of your target by <green>${Formatting.stats((level * .6f).toBigDecimal())}%<gray> each time you hit them. Stacks up to <green>${level + 1}<gray> times."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -64,20 +68,20 @@ object ExhalationEnchantment: EnchantmentBase("Exhalation", "", 1..6, ItemType.m
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead || e.damaged is Player)
+        if (e.damaged.isDead || e.damaged is Player)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val pdc = e.damaged.persistentDataContainer
-        if(pdc.has(pluginKey("lethality_stacks")))
+        if (pdc.has(pluginKey("lethality_stacks")))
             return
-        if(!pdc.has(pluginKey("exhalation_stacks"))) {
+        if (!pdc.has(pluginKey("exhalation_stacks"))) {
             pdc[pluginKey("exhalation_stacks"), PersistentDataType.BYTE] = 0
         }
         val stacks = pdc[pluginKey("exhalation_stacks"), PersistentDataType.BYTE]!!
-        if(stacks >= (lvl + 1))
+        if (stacks >= (lvl + 1))
             return
 
         pdc[pluginKey("exhalation_stacks"), PersistentDataType.BYTE] = (stacks + 1).toByte()

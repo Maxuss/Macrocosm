@@ -2,12 +2,13 @@ package space.maxus.macrocosm.enchants
 
 import org.bukkit.Bukkit
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.util.Identifier
 
 @Suppress("unused")
 object EnchantmentRegistry {
-    val enchants: HashMap<String, Enchantment> = hashMapOf()
+    val enchants: HashMap<Identifier, Enchantment> = hashMapOf()
 
-    fun register(name: String, ench: Enchantment): Enchantment {
+    fun register(name: Identifier, ench: Enchantment): Enchantment {
         if (enchants.containsKey(name)) {
             return ench
         }
@@ -16,7 +17,7 @@ object EnchantmentRegistry {
         return ench
     }
 
-    fun find(name: String) = enchants[name]
+    fun find(name: Identifier) = enchants[name]
 
     fun nameOf(ability: Enchantment) = enchants.filter { (_, v) -> v == ability }.map { (k, _) -> k }.firstOrNull()
 }

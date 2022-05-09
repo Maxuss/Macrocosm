@@ -16,9 +16,16 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import kotlin.math.min
 
-object GiantKillerEnchantment: EnchantmentBase("Giant Killer", "", 1..7, ItemType.melee(), conflicts = listOf("TITAN_KILLER")) {
+object GiantKillerEnchantment :
+    EnchantmentBase("Giant Killer", "", 1..7, ItemType.melee(), conflicts = listOf("TITAN_KILLER")) {
     override fun description(level: Int): List<Component> {
-        val str = "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((0.02 * level).toBigDecimal())}%<gray> for each percent of extra ${Statistic.HEALTH.display}<gray> that your target has above you up to <green>${Formatting.stats((5 * level).toBigDecimal(), true)}%<gray>."
+        val str =
+            "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((0.02 * level).toBigDecimal())}%<gray> for each percent of extra ${Statistic.HEALTH.display}<gray> that your target has above you up to <green>${
+                Formatting.stats(
+                    (5 * level).toBigDecimal(),
+                    true
+                )
+            }%<gray>."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -26,10 +33,10 @@ object GiantKillerEnchantment: EnchantmentBase("Giant Killer", "", 1..7, ItemTyp
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead)
+        if (e.damaged.isDead)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val modifier = lvl * .002f
@@ -39,7 +46,7 @@ object GiantKillerEnchantment: EnchantmentBase("Giant Killer", "", 1..7, ItemTyp
         val playerStats = e.player.calculateStats()!!
         val health = stats.health
         val ratio = health / playerStats.health
-        if(ratio < 1f)
+        if (ratio < 1f)
             return
         val percentage = min(ratio / 100f, cap)
         val extra = (1 + (percentage * (1 + modifier)))
@@ -47,9 +54,16 @@ object GiantKillerEnchantment: EnchantmentBase("Giant Killer", "", 1..7, ItemTyp
     }
 }
 
-object TitanKillerEnchantment: EnchantmentBase("Titan Killer", "", 1..7, ItemType.melee(), conflicts = listOf("GIANT_KILLER")) {
+object TitanKillerEnchantment :
+    EnchantmentBase("Titan Killer", "", 1..7, ItemType.melee(), conflicts = listOf("GIANT_KILLER")) {
     override fun description(level: Int): List<Component> {
-        val str = "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((2 * level).toBigDecimal())}%<gray> for each percent of extra ${Statistic.DEFENSE.display}<gray> that your target has above you up to <green>${Formatting.stats((10 * level).toBigDecimal(), true)}%<gray>."
+        val str =
+            "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((2 * level).toBigDecimal())}%<gray> for each percent of extra ${Statistic.DEFENSE.display}<gray> that your target has above you up to <green>${
+                Formatting.stats(
+                    (10 * level).toBigDecimal(),
+                    true
+                )
+            }%<gray>."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -57,10 +71,10 @@ object TitanKillerEnchantment: EnchantmentBase("Titan Killer", "", 1..7, ItemTyp
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
-        if(e.damaged.isDead)
+        if (e.damaged.isDead)
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val modifier = lvl * .02f
@@ -70,7 +84,7 @@ object TitanKillerEnchantment: EnchantmentBase("Titan Killer", "", 1..7, ItemTyp
         val playerStats = e.player.calculateStats()!!
         val defense = stats.defense
         val ratio = defense / playerStats.defense
-        if(ratio < 1f)
+        if (ratio < 1f)
             return
         val percentage = min(ratio / 100f, cap)
         val extra = (1 + (percentage * (1 + modifier)))

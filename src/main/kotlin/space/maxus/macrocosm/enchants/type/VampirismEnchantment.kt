@@ -13,9 +13,11 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 
-object VampirismEnchantment: EnchantmentBase("Vampirism", "", 1..6, ItemType.melee(), conflicts = listOf("MANA_EXHAUSTION")) {
+object VampirismEnchantment :
+    EnchantmentBase("Vampirism", "", 1..6, ItemType.melee(), conflicts = listOf("MANA_EXHAUSTION")) {
     override fun description(level: Int): List<Component> {
-        val str = "Heals for <green>$level%<gray> of your missing ${Statistic.HEALTH.display}<gray> upon killing an enemy."
+        val str =
+            "Heals for <green>$level%<gray> of your missing ${Statistic.HEALTH.display}<gray> upon killing an enemy."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -24,7 +26,7 @@ object VampirismEnchantment: EnchantmentBase("Vampirism", "", 1..6, ItemType.mel
     @EventHandler
     fun onKill(e: PlayerKillEntityEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val stats = e.player.calculateStats()!!
@@ -35,9 +37,11 @@ object VampirismEnchantment: EnchantmentBase("Vampirism", "", 1..6, ItemType.mel
     }
 }
 
-object ManaExhaustionEnchantment:  EnchantmentBase("Mana Exhaustion", "", 1..6, ItemType.melee(), conflicts = listOf("VAMPIRISM")) {
+object ManaExhaustionEnchantment :
+    EnchantmentBase("Mana Exhaustion", "", 1..6, ItemType.melee(), conflicts = listOf("VAMPIRISM")) {
     override fun description(level: Int): List<Component> {
-        val str = "Regain <green>${level * 2}%<gray> of your missing <aqua>${Statistic.INTELLIGENCE.specialChar} Mana<gray> upon killing an enemy."
+        val str =
+            "Regain <green>${level * 2}%<gray> of your missing <aqua>${Statistic.INTELLIGENCE.specialChar} Mana<gray> upon killing an enemy."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -46,7 +50,7 @@ object ManaExhaustionEnchantment:  EnchantmentBase("Mana Exhaustion", "", 1..6, 
     @EventHandler
     fun onKill(e: PlayerKillEntityEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
 
         val stats = e.player.calculateStats()!!

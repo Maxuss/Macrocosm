@@ -2,12 +2,13 @@ package space.maxus.macrocosm.ability
 
 import org.bukkit.Bukkit
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.util.Identifier
 
 @Suppress("unused")
 object AbilityRegistry {
-    private val abilities: HashMap<String, ItemAbility> = hashMapOf()
+    private val abilities: HashMap<Identifier, ItemAbility> = hashMapOf()
 
-    fun register(name: String, ability: ItemAbility): ItemAbility {
+    fun register(name: Identifier, ability: ItemAbility): ItemAbility {
         if (abilities.containsKey(name)) {
             return ability
         }
@@ -16,7 +17,7 @@ object AbilityRegistry {
         return ability
     }
 
-    fun find(name: String) = abilities[name]
+    fun find(name: Identifier) = abilities[name]
 
     fun nameOf(ability: ItemAbility) = abilities.filter { (_, v) -> v == ability }.map { (k, _) -> k }.firstOrNull()
 

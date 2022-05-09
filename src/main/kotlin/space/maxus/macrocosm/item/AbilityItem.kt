@@ -8,6 +8,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
 
 class AbilityItem(
     override val type: ItemType, private val itemName: String, override var rarity: Rarity, override val base: Material,
@@ -15,7 +16,7 @@ class AbilityItem(
     override val abilities: MutableList<ItemAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics()
 ) : MacrocosmItem {
-    override val id: String = itemName.uppercase().replace(" ", "_")
+    override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_"))
     override val name: Component = comp(itemName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null

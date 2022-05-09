@@ -7,11 +7,10 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.listeners.AbilityTriggers
-import space.maxus.macrocosm.listeners.DamageHandlers
-import space.maxus.macrocosm.listeners.DataListener
-import space.maxus.macrocosm.listeners.EntityHandlers
+import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.recipes.RecipeMenu
+import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
 import java.util.*
 
@@ -20,6 +19,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
     }
 
+    val id: String = "macrocosm"
     val onlinePlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
     lateinit var playersLazy: MutableList<UUID>; private set
 
@@ -37,10 +37,13 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AbilityTriggers, this)
         server.pluginManager.registerEvents(DamageHandlers, this)
         server.pluginManager.registerEvents(EntityHandlers, this)
+        server.pluginManager.registerEvents(RecipeMenu, this)
+        server.pluginManager.registerEvents(BlockClickListener, this)
 
         ReforgeType.init()
         ItemValue.init()
         Enchant.init()
+        RecipeValue.init()
 
         playtimeCommand()
         rankCommand()
@@ -51,11 +54,13 @@ class InternalMacrocosmPlugin : KSpigot() {
         itemCommand()
         giveCoinsCommand()
         enchantCommand()
+        viewRecipeCommand()
+        recipesCommand()
 
         testStatsCommand()
         testDropCommand()
-        testEnchantedItem()
         itemsCommand()
+        testCraftingTable()
     }
 
     override fun shutdown() {
