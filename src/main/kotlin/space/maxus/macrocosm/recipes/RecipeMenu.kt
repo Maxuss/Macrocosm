@@ -74,13 +74,40 @@ object RecipeMenu: Listener {
             }
             return
         }
+        val resultItem = recipe.first.resultItem()
         val indices = recipe.second
-        val result = recipe.first.assemble(ctx, macrocosm)
-        sound(Sound.BLOCK_ANVIL_USE) {
-            playFor(macrocosm.paper!!)
-        }
-        e.view.topInventory.setItem(outputIndex, result)
+        val resultSlot = e.view.topInventory.getItem(outputIndex)
 
+        if(resultSlot != null && !resultSlot.type.isAir) {
+            val id = resultSlot.macrocosm!!.id
+            if(id != resultItem.macrocosm!!.id) {
+                sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
+                    pitch = 0f
+                    playFor(macrocosm.paper!!)
+                }
+                return
+            } else {
+                if(resultSlot.amount + resultItem.amount <= resultItem.maxStackSize) {
+                    sound(Sound.BLOCK_ANVIL_USE) {
+                        playFor(macrocosm.paper!!)
+                    }
+                    resultSlot.amount += resultItem.amount
+                    e.view.topInventory.setItem(outputIndex, resultSlot)
+                } else {
+                    sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
+                        pitch = 0f
+                        playFor(macrocosm.paper!!)
+                    }
+                    return
+                }
+            }
+        } else {
+            val result = recipe.first.assemble(ctx, macrocosm)
+            sound(Sound.BLOCK_ANVIL_USE) {
+                playFor(macrocosm.paper!!)
+            }
+            e.view.topInventory.setItem(outputIndex, result)
+        }
         // clearing grid
         // todo: give player carpentry experience on craft
         // all checks complete, and now we can actually reduce the amount of items

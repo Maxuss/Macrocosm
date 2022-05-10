@@ -40,6 +40,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(EntityHandlers, this)
         server.pluginManager.registerEvents(RecipeMenu, this)
         server.pluginManager.registerEvents(BlockClickListener, this)
+        server.pluginManager.registerEvents(PickupListener, this)
         server.pluginManager.registerEvents(AlchemyReward, this)
 
         ReforgeType.init()

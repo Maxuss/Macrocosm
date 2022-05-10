@@ -137,6 +137,7 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
 class VanillaItem(override val base: Material) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
+    override var amount: Int = 1
     override val id: Identifier = Identifier("minecraft", base.name.lowercase())
     override val type: ItemType = typeFromMaterial(base)
 

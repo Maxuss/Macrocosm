@@ -16,6 +16,7 @@ class AbilityItem(
     override val abilities: MutableList<ItemAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics()
 ) : MacrocosmItem {
+    override var amount: Int = 1
     override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_"))
     override val name: Component = comp(itemName)
     override var rarityUpgraded: Boolean = false

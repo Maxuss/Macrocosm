@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.events
+package space.maxus.macrocosm.listeners
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

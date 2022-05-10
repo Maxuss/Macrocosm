@@ -70,7 +70,7 @@ enum class ItemValue(val item: MacrocosmItem) {
             }
         }
 
-        private val allowedEnchantedMats = listOf(
+        val allowedEnchantedMats = listOf(
             // mining
             "DIAMOND",
             "EMERALD",

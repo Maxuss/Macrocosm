@@ -41,6 +41,7 @@ fun ItemStack.macrocosmTag(): CompoundTag {
 interface MacrocosmItem: Ingredient {
     var stats: Statistics
     var specialStats: SpecialStatistics
+    var amount: Int
 
     val id: Identifier
     val type: ItemType
@@ -138,6 +139,7 @@ interface MacrocosmItem: Ingredient {
                 continue
             enchantments[EnchantmentRegistry.find(Identifier.parse(k))!!] = enchants.getInt(k)
         }
+        amount = from.amount
         return this
     }
 
@@ -263,6 +265,7 @@ interface MacrocosmItem: Ingredient {
 
             addExtraMeta(this)
         }
+        item.amount = amount
 
         // NBT
         val nbt = CompoundTag()
@@ -291,7 +294,7 @@ interface MacrocosmItem: Ingredient {
         nbt.put("Enchantments", enchants)
 
         // item ID
-        nbt.putId("ID", ItemRegistry.nameOf(this) ?: Identifier.NULL)
+        nbt.putId("ID", id)
 
         // adding extra nbt
         addExtraNbt(nbt)
