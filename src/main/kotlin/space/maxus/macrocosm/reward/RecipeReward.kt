@@ -8,7 +8,7 @@ import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.Identifier
 
-class RecipeReward(val recipe: Identifier, override val isHidden: Boolean = false): Reward {
+class RecipeReward(val recipe: Identifier, override val isHidden: Boolean = false) : Reward {
     override fun reward(player: MacrocosmPlayer, lvl: Int) {
         player.unlockedRecipes.add(recipe)
     }

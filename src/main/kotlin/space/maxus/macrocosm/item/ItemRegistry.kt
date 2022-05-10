@@ -15,9 +15,9 @@ object ItemRegistry {
     fun nextModel() = ++itemCmd
 
     fun find(id: Identifier): MacrocosmItem {
-        return if(id.namespace == "minecraft") {
+        return if (id.namespace == "minecraft") {
             VanillaItem(Material.valueOf(id.path.uppercase()))
-        } else if(id.path == "null")
+        } else if (id.path == "null")
             VanillaItem(Material.AIR)
         else items[id]!!.clone()
     }

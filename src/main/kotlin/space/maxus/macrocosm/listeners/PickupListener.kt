@@ -6,10 +6,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
 import space.maxus.macrocosm.item.macrocosm
 
-object PickupListener: Listener {
+object PickupListener : Listener {
     @EventHandler
     fun onPickup(e: EntityPickupItemEvent) {
-        if(e.entity !is Player)
+        if (e.entity !is Player)
             return
         e.item.itemStack = e.item.itemStack.macrocosm?.build()!!
     }

@@ -38,11 +38,10 @@ import space.maxus.macrocosm.util.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-val Player. macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
+val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 
 @Suppress("unused", "ReplaceWithEnumMap")
 class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
@@ -84,7 +83,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
 
-            if(blockNextStatus)
+            if (blockNextStatus)
                 blockNextStatus = false
             else sendStatBar(stats)
         }
@@ -160,7 +159,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             pitch = 2f
             playFor(paper!!)
         }
-        if(skill.inst.table.shouldLevelUp(skills.level(skill), skills[skill], exp)) {
+        if (skill.inst.table.shouldLevelUp(skills.level(skill), skills[skill], exp)) {
             val lvl = skills.level(skill) + 1
             skills.setLevel(skill, lvl)
             sendSkillLevelUp(skill)
@@ -170,7 +169,12 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     fun addCollectionAmount(collection: CollectionType, amount: Int) {
         collections.increase(collection, amount)
-        if(collection.inst.table.shouldLevelUp(collections.level(collection), collections[collection].toDouble(), amount.toDouble())) {
+        if (collection.inst.table.shouldLevelUp(
+                collections.level(collection),
+                collections[collection].toDouble(),
+                amount.toDouble()
+            )
+        ) {
             val lvl = collections.level(collection) + 1
             collections.setLevel(collection, lvl)
             sendCollectionLevelUp(collection)
@@ -183,13 +187,15 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val newLevel = skills.level(skill)
         val previous = newLevel - 1
         val roman = roman(newLevel)
-        val message = comp("""<dark_aqua><bold>
+        val message = comp(
+            """<dark_aqua><bold>
 --------------------------------------
- <aqua><bold>SKILL LEVEL UP!<!bold> <dark_aqua>${skill.inst.name} ${if(previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<dark_aqua>$roman
+ <aqua><bold>SKILL LEVEL UP!<!bold> <dark_aqua>${skill.inst.name} ${if (previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<dark_aqua>$roman
   <yellow>${skill.profession} $roman
  ${skill.descript(newLevel)}<reset>
  ${skill.inst.rewards[newLevel - 1].display(newLevel).str()}
-<dark_aqua><bold>--------------------------------------""".trimIndent())
+<dark_aqua><bold>--------------------------------------""".trimIndent()
+        )
         paper?.sendMessage(message)
         sound(Sound.ENTITY_PLAYER_LEVELUP) {
             playFor(paper!!)
@@ -200,12 +206,14 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val newLevel = collections.level(coll)
         val previous = newLevel - 1
         val roman = roman(newLevel)
-        val message = comp("""<gold><bold>
+        val message = comp(
+            """<gold><bold>
 --------------------------------------</bold>
- <yellow><bold>COLLECTION LEVEL UP!<!bold> <gold>${coll.inst.name} ${if(previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<gold>$roman
+ <yellow><bold>COLLECTION LEVEL UP!<!bold> <gold>${coll.inst.name} ${if (previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<gold>$roman
   ${coll.inst.rewards[newLevel - 1].display(newLevel).str()}
  <gold><bold>
---------------------------------------""".trimIndent())
+--------------------------------------""".trimIndent()
+        )
         paper?.sendMessage(message)
         sound(Sound.ENTITY_PLAYER_LEVELUP) {
             playFor(paper!!)
@@ -409,16 +417,18 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             player.baseStats = Statistics.fromRes(stats)
 
             val skillsCollections = stmt.executeQuery("SELECT * FROM SkillsCollections WHERE UUID = '$id'")
-            if(!skillsCollections.next()) return null
+            if (!skillsCollections.next()) return null
             val skills = Skills.fromJson(skillsCollections.getString("SKILLS"))
             val colls = Collections.fromJson(skillsCollections.getString("COLLECTIONS"))
             player.skills = skills
             player.collections = colls
 
             val recipesRes = stmt.executeQuery("SELECT * FROM Recipes WHERE UUID = '$id'")
-            if(!recipesRes.next())
+            if (!recipesRes.next())
                 return null
-            val recipes = GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object: TypeToken<List<String>>() { }.type).map { Identifier.parse(it) }
+            val recipes =
+                GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object : TypeToken<List<String>>() {}.type)
+                    .map { Identifier.parse(it) }
             player.unlockedRecipes = recipes.toMutableList()
 
             stmt.close()

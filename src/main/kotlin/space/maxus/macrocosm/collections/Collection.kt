@@ -9,7 +9,7 @@ fun collection(
     section: Section,
     rewards: List<Reward>,
     table: LevelingTable = SkillTable
-) = object: Collection(name, rewards, section, table) { }
+) = object : Collection(name, rewards, section, table) {}
 
 abstract class Collection(val name: String, val rewards: List<Reward>, val section: Section, val table: LevelingTable)
 

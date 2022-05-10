@@ -49,7 +49,8 @@ enum class Statistic(
     DAMAGE_REDUCTION(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '⓪', 0f, true, true),
     ;
 
-    val display = MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color).append(comp("<reset>")))
+    val display =
+        MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color).append(comp("<reset>")))
 
     override fun toString() =
         name.lowercase().split("_")

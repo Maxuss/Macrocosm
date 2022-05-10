@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.collections
 
-import space.maxus.macrocosm.collections.Section.*
 import org.bukkit.Material
+import space.maxus.macrocosm.collections.Section.*
 import space.maxus.macrocosm.util.Identifier
 
 // todo: collection recipes
@@ -82,7 +82,7 @@ enum class CollectionType(val inst: Collection) {
 
     companion object {
         fun from(mat: Material): CollectionType? {
-            return when(mat) {
+            return when (mat) {
                 Material.ROTTEN_FLESH -> ROTTEN_FLESH
                 Material.BONE -> BONE
                 Material.SLIME_BALL, Material.SLIME_BLOCK -> SLIME_BALL
@@ -143,9 +143,9 @@ enum class CollectionType(val inst: Collection) {
         }
 
         fun from(id: Identifier): CollectionType? {
-            if(id.path.contains("enchanted_"))
+            if (id.path.contains("enchanted_"))
                 return from(Material.valueOf(id.path.replace("enchanted_", "").uppercase()))
-            return when(id.path) {
+            return when (id.path) {
                 "magmafish" -> MAGMAFISH
                 "moonstone_dust" -> MOONSTONE_DUST
                 "steelwood" -> STEELWOOD

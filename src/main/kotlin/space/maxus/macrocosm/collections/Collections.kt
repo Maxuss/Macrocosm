@@ -31,7 +31,8 @@ class Collections(private val colls: HashMap<CollectionType, PlayerCollection>) 
     }
 
     companion object {
-        fun default(): Collections = Collections(HashMap(CollectionType.values().associateWith { PlayerCollection(0, 0) }))
+        fun default(): Collections =
+            Collections(HashMap(CollectionType.values().associateWith { PlayerCollection(0, 0) }))
 
         fun fromJson(json: String): Collections {
             val map: HashMap<String, PlayerCollection> =

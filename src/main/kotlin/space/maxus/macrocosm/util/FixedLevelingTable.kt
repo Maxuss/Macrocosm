@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.util
 
-abstract class FixedLevelingTable(val levels: List<Double>): LevelingTable {
+abstract class FixedLevelingTable(val levels: List<Double>) : LevelingTable {
     override fun expForLevel(lvl: Int): Double {
         return levels.subList(0, lvl - 1).sum()
     }

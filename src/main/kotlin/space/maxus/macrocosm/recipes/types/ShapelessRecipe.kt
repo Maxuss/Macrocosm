@@ -11,9 +11,14 @@ import space.maxus.macrocosm.recipes.SbRecipe
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
 
-fun shapelessRecipe(id: String, result: MacrocosmItem, vararg ingredients: Pair<Identifier, Int>): SbRecipe = ShapelessRecipe(id(id), ingredients.toList(), result)
+fun shapelessRecipe(id: String, result: MacrocosmItem, vararg ingredients: Pair<Identifier, Int>): SbRecipe =
+    ShapelessRecipe(id(id), ingredients.toList(), result)
 
-class ShapelessRecipe(override val id: Identifier, private val ingredients: List<Pair<Identifier, Int>>, private val result: MacrocosmItem): SbRecipe {
+class ShapelessRecipe(
+    override val id: Identifier,
+    private val ingredients: List<Pair<Identifier, Int>>,
+    private val result: MacrocosmItem
+) : SbRecipe {
     @Suppress("KotlinConstantConditions")
     override fun matches(
         player: MacrocosmPlayer,
@@ -21,16 +26,16 @@ class ShapelessRecipe(override val id: Identifier, private val ingredients: List
         modify: Boolean
     ): Pair<Boolean, HashMap<Int, Pair<ItemStack, Int>>> {
         val cache = hashMapOf<Int, Pair<ItemStack, Int>>()
-        for(x in 0..2) {
-            for(y in 0..2) {
+        for (x in 0..2) {
+            for (y in 0..2) {
                 val index = gridIndices[x][y]
                 val item = inv.getItem(index) ?: continue
-                if(item.type.isAir)
+                if (item.type.isAir)
                     continue
                 val id = item.macrocosm!!.id
                 val amount = item.amount
-                for((expectedId, expectedAmount) in ingredients) {
-                    if(expectedId == id && amount >= expectedAmount) {
+                for ((expectedId, expectedAmount) in ingredients) {
+                    if (expectedId == id && amount >= expectedAmount) {
                         cache[index] = Pair(item, expectedAmount)
                     } else {
                         return Pair(false, hashMapOf())
@@ -38,10 +43,10 @@ class ShapelessRecipe(override val id: Identifier, private val ingredients: List
                 }
             }
         }
-        if(cache.size != ingredients.size)
+        if (cache.size != ingredients.size)
             return Pair(false, hashMapOf())
 
-        if(modify) {
+        if (modify) {
             for ((index, pair) in cache) {
                 val (item, amount) = pair
                 item.amount -= amount

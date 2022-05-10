@@ -9,28 +9,34 @@ import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
 enum class RecipeValue(private val recipe: SbRecipe) {
-    ASPECT_OF_THE_END(shapedRecipe("aspect_of_the_end", ItemValue.ASPECT_OF_THE_END.item, listOf(" P "," P "," D "),
-    'P' to (id("enchanted_ender_pearl") to 16), 'D' to (id("enchanted_diamond") to 1)))
+    ASPECT_OF_THE_END(
+        shapedRecipe(
+            "aspect_of_the_end", ItemValue.ASPECT_OF_THE_END.item, listOf(" P ", " P ", " D "),
+            'P' to (id("enchanted_ender_pearl") to 16), 'D' to (id("enchanted_diamond") to 1)
+        )
+    )
     ;
 
     companion object {
         private fun initEnchanted() {
             val pool = Threading.pool()
 
-            for(mat in ItemValue.allowedEnchantedMats.toList().parallelStream()) {
+            for (mat in ItemValue.allowedEnchantedMats.toList().parallelStream()) {
                 pool.execute {
                     val result = ItemRegistry.find(id("enchanted_${mat.lowercase()}"))
                     val pair = id("minecraft", mat.lowercase()) to 32
-                    RecipeRegistry.register(id("enchanted_${mat.lowercase()}"), shapelessRecipe(
-                        "enchanted_${mat.lowercase()}",
-                        result,
+                    RecipeRegistry.register(
+                        id("enchanted_${mat.lowercase()}"), shapelessRecipe(
+                            "enchanted_${mat.lowercase()}",
+                            result,
 
-                        pair,
-                        pair,
-                        pair,
-                        pair,
-                        pair
-                    ))
+                            pair,
+                            pair,
+                            pair,
+                            pair,
+                            pair
+                        )
+                    )
                 }
             }
 

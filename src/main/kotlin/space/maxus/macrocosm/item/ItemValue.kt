@@ -39,6 +39,7 @@ enum class ItemValue(val item: MacrocosmItem) {
                 flags(*ItemFlag.values())
             }
         }
+
         fun placeholderHead(skin: String, name: String, description: String) = itemStack(Material.PLAYER_HEAD) {
             meta {
                 displayName(comp(name))
@@ -59,11 +60,12 @@ enum class ItemValue(val item: MacrocosmItem) {
                 }
             }
         }
+
         fun placeholder(type: Material, name: String, vararg extra: String) = itemStack(type) {
             meta {
                 displayName(comp(name))
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
-                for(e in extra) {
+                for (e in extra) {
                     persistentDataContainer[pluginKey(e), PersistentDataType.BYTE] = 1
                 }
                 flags(*ItemFlag.values())

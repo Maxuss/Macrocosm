@@ -6,11 +6,14 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import java.util.concurrent.ConcurrentLinkedQueue
 
 object RecipeHandler {
-    fun matchingRecipes(ctx: Inventory, player: MacrocosmPlayer): List<Pair<SbRecipe, HashMap<Int, Pair<ItemStack, Int>>>> {
+    fun matchingRecipes(
+        ctx: Inventory,
+        player: MacrocosmPlayer
+    ): List<Pair<SbRecipe, HashMap<Int, Pair<ItemStack, Int>>>> {
         val matching = ConcurrentLinkedQueue<Pair<SbRecipe, HashMap<Int, Pair<ItemStack, Int>>>>()
-        for((_, recipe) in RecipeRegistry.recipes.toList().parallelStream()) {
+        for ((_, recipe) in RecipeRegistry.recipes.toList().parallelStream()) {
             val (matches, indices) = recipe.matches(player, ctx, false)
-            if(matches) {
+            if (matches) {
                 matching.add(Pair(recipe, indices))
             }
         }

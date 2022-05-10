@@ -29,10 +29,10 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
                 val mat = Material.valueOf(it.item.path.uppercase())
                 var amount = it.amount.random()
                 val collType = CollectionType.from(mat)
-                if(collType != null) {
+                if (collType != null) {
                     player?.addCollectionAmount(collType, amount)
                     var boost = 1
-                    var fortune = when(collType.inst.section) {
+                    var fortune = when (collType.inst.section) {
                         Section.FARMING -> stats?.farmingFortune
                         Section.MINING -> stats?.miningFortune
                         Section.FORAGING -> stats?.foragingFortune
@@ -40,7 +40,7 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
                         else -> null
                     } ?: 0f
 
-                    while(fortune >= 100f) {
+                    while (fortune >= 100f) {
                         boost += 1
                         fortune -= 100f
                     }
@@ -55,10 +55,10 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
                 val item = ItemRegistry.find(it.item)
                 var amount = it.amount.random()
                 val collType = CollectionType.from(it.item)
-                if(collType != null) {
+                if (collType != null) {
                     player?.addCollectionAmount(collType, amount)
                     var boost = 1
-                    var fortune = when(collType.inst.section) {
+                    var fortune = when (collType.inst.section) {
                         Section.FARMING -> stats?.farmingFortune
                         Section.MINING -> stats?.miningFortune
                         Section.FORAGING -> stats?.foragingFortune
@@ -66,7 +66,7 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
                         else -> null
                     } ?: 0f
 
-                    while(fortune >= 100f) {
+                    while (fortune >= 100f) {
                         boost += 1
                         fortune -= 100f
                     }

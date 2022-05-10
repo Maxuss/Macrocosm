@@ -14,8 +14,9 @@ val NamespacedKey.macrocosm get() = Identifier.fromBukkit(this)
 fun id(namespace: String, path: String) = Identifier(namespace, path)
 fun id(path: String) = Identifier.macro(path)
 
-data class Identifier(val namespace: String, val path: String): Tag {
+data class Identifier(val namespace: String, val path: String) : Tag {
     fun minecraft() = ResourceLocation(namespace, path)
+
     @Suppress("DEPRECATION")
     fun bukkit() = NamespacedKey(namespace, path)
     fun tag(): StringTag = StringTag.valueOf(toString())
@@ -66,6 +67,7 @@ data class Identifier(val namespace: String, val path: String): Tag {
             val split = value.split(':')
             return Identifier(split[0], split[1])
         }
+
         fun fromMinecraft(rl: ResourceLocation) = Identifier(rl.namespace, rl.path)
         fun fromBukkit(nk: NamespacedKey) = Identifier(nk.namespace, nk.key)
     }

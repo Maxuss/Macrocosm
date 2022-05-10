@@ -8,7 +8,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.reward.Reward
 
-object AlchemyReward: Reward, Listener {
+object AlchemyReward : Reward, Listener {
     override val isHidden: Boolean = true
 
     @EventHandler

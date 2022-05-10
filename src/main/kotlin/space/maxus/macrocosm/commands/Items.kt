@@ -71,7 +71,8 @@ fun enchantCommand() = command("enchantme") {
 
         argument("level", IntegerArgumentType.integer(0)) {
             suggestList { ctx ->
-                val name = ctx.getArgumentOrNull<ResourceLocation>("enchant")?.macrocosm ?: return@suggestList listOf("!")
+                val name =
+                    ctx.getArgumentOrNull<ResourceLocation>("enchant")?.macrocosm ?: return@suggestList listOf("!")
                 val ench = EnchantmentRegistry.find(name) ?: return@suggestList listOf("!")
                 ench.levels.map { it.toString() }
             }

@@ -184,12 +184,12 @@ internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
 }
 
 fun dropsFromType(ty: EntityType): List<EntityDrop> {
-    return when(ty) {
+    return when (ty) {
         EntityType.ELDER_GUARDIAN -> listOf(
             vanilla(Material.PRISMARINE_SHARD, 1.0, amount = 5..10),
             vanilla(Material.PRISMARINE_CRYSTALS, 1.0, amount = 6..10),
             vanilla(Material.SPONGE, 1.0, DropRarity.RARE, amount = 1..2),
-            )
+        )
         EntityType.WITHER_SKELETON -> listOf(
             vanilla(Material.BONE, .6, amount = 1..2),
             vanilla(Material.COAL, .6, amount = 1..4),
@@ -209,7 +209,7 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
             custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
             custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
-            )
+        )
         EntityType.ZOMBIE_VILLAGER -> listOf(
             vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
             vanilla(Material.EMERALD, .001, DropRarity.CRAZY_RARE),
@@ -219,10 +219,10 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
             custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
             custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
-            )
+        )
         EntityType.SKELETON_HORSE -> listOf(
             vanilla(Material.BONE, .8, amount = 1..2),
-            )
+        )
         EntityType.ZOMBIE_HORSE -> listOf(
             vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
         )
@@ -231,7 +231,7 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
         )
         EntityType.DONKEY -> listOf(
             vanilla(Material.LEATHER, .9, amount = 1..3),
-            )
+        )
         EntityType.MULE -> listOf(
             vanilla(Material.LEATHER, .9, amount = 1..3),
         )
@@ -268,7 +268,7 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
             custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
             custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
-            )
+        )
         EntityType.SLIME -> listOf(
             vanilla(Material.SLIME_BALL, 1.0),
             custom(ItemValue.enchanted(Material.SLIME_BALL), DropRarity.RARE, .01)
@@ -284,13 +284,13 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
             custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
             custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
-            )
+        )
         EntityType.ENDERMAN -> listOf(
             vanilla(Material.ENDER_PEARL, .5, amount = 1..2),
             vanilla(Material.WARPED_FUNGUS, .001, DropRarity.VERY_RARE),
             vanilla(Material.CRIMSON_FUNGUS, .01, DropRarity.RARE),
             custom(ItemValue.enchanted(Material.ENDER_PEARL), DropRarity.RARE, .01),
-            )
+        )
         EntityType.CAVE_SPIDER -> listOf(
             vanilla(Material.STRING, .9, amount = 1..2),
             vanilla(Material.SPIDER_EYE, .5),
@@ -311,30 +311,30 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             vanilla(Material.GLOWSTONE_DUST, .5),
             vanilla(Material.REDSTONE, .5),
             vanilla(Material.DIAMOND, .01, DropRarity.RARE),
-            )
+        )
         EntityType.ENDERMITE -> listOf(
             vanilla(Material.ENDER_PEARL, .5),
-            )
+        )
         EntityType.GUARDIAN -> listOf(
             vanilla(Material.PRISMARINE_SHARD, .7, amount = 1..5),
             vanilla(Material.PRISMARINE_CRYSTALS, .7, amount = 1..6),
             vanilla(Material.SPONGE, .01, DropRarity.RARE, amount = 1..1),
-            )
+        )
         EntityType.SHULKER -> listOf(
             vanilla(Material.ENDER_PEARL, .5),
             vanilla(Material.SHULKER_SHELL, .4),
-            )
+        )
         EntityType.PIG -> listOf(
             vanilla(Material.PORKCHOP, 1.0, amount = 1..2),
-            )
+        )
         EntityType.SHEEP -> listOf(
             vanilla(Material.MUTTON, 1.0, amount = 1..2),
             vanilla(Material.WHITE_WOOL, 1.0),
-            )
+        )
         EntityType.COW -> listOf(
             vanilla(Material.BEEF, 1.0, amount = 1..2),
             vanilla(Material.LEATHER, .7, amount = 1..2),
-            )
+        )
         EntityType.CHICKEN -> listOf(
             vanilla(Material.CHICKEN, 1.0, amount = 1..2),
             vanilla(Material.FEATHER, .7, amount = 1..2),
@@ -350,19 +350,19 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             vanilla(Material.RED_MUSHROOM, .5, amount = 1..2),
             vanilla(Material.WARPED_FUNGUS, .01, DropRarity.VERY_RARE, amount = 1..2),
             vanilla(Material.CRIMSON_FUNGUS, .01, DropRarity.VERY_RARE, amount = 1..2),
-            )
+        )
         EntityType.IRON_GOLEM -> listOf(
             vanilla(Material.IRON_INGOT, 1.0, amount = 1..4),
             vanilla(Material.POPPY, 1.0),
-            )
+        )
         EntityType.HORSE -> listOf(
             vanilla(Material.LEATHER, .9, amount = 1..3),
-            )
+        )
         EntityType.RABBIT -> listOf(
             vanilla(Material.RABBIT_HIDE, .7),
             vanilla(Material.RABBIT, 1.0, amount = 1..2),
             vanilla(Material.RABBIT_FOOT, .6, amount = 1..2),
-            )
+        )
         EntityType.POLAR_BEAR -> listOf(
             vanilla(Material.ICE, 1.0, amount = 1..2)
         )
@@ -371,7 +371,7 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
         )
         EntityType.PARROT -> listOf(
             vanilla(Material.FEATHER, .9, amount = 1..3),
-            )
+        )
         EntityType.PHANTOM -> listOf(
             vanilla(Material.PHANTOM_MEMBRANE, 1.0, amount = 1..2),
             custom(ItemValue.enchanted(Material.PHANTOM_MEMBRANE), DropRarity.RARE, .01)
@@ -390,10 +390,10 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
             custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
             custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
             custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
-            )
+        )
         EntityType.PILLAGER -> listOf(
             vanilla(Material.EMERALD, .8, amount = 1..2),
-            )
+        )
         EntityType.RAVAGER -> listOf(
             vanilla(Material.EMERALD, .8, amount = 1..5),
             vanilla(Material.SADDLE, 1.0, DropRarity.RARE),
@@ -401,18 +401,18 @@ fun dropsFromType(ty: EntityType): List<EntityDrop> {
         )
         EntityType.TRADER_LLAMA -> listOf(
             vanilla(Material.LEATHER, .8, amount = 1..2),
-            )
+        )
         EntityType.HOGLIN -> listOf(
             vanilla(Material.PORKCHOP, 1.0, amount = 1..2),
             vanilla(Material.COOKED_PORKCHOP, .3, amount = 1..2),
-            )
+        )
         EntityType.ZOGLIN -> listOf(
             vanilla(Material.PORKCHOP, 1.0, amount = 1..2),
             vanilla(Material.ROTTEN_FLESH, .3, amount = 1..2),
         )
         EntityType.GLOW_SQUID -> listOf(
             vanilla(Material.GLOW_INK_SAC, 1.0, amount = 1..2),
-            )
+        )
         else -> listOf()
     }
 }

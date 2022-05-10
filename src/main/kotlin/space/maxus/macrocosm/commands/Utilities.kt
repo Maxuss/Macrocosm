@@ -112,7 +112,10 @@ fun collAmount() = command("coll") {
 
         argument("amount", IntegerArgumentType.integer(0)) {
             runs {
-                player.macrocosm?.addCollectionAmount(CollectionType.valueOf(getArgument("coll")), getArgument("amount"))
+                player.macrocosm?.addCollectionAmount(
+                    CollectionType.valueOf(getArgument("coll")),
+                    getArgument("amount")
+                )
             }
         }
     }

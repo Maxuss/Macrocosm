@@ -20,7 +20,7 @@ import space.maxus.macrocosm.recipes.ctx.CraftingTableContext
 import space.maxus.macrocosm.text.comp
 
 @Suppress("SENSELESS_COMPARISON")
-object RecipeMenu: Listener {
+object RecipeMenu : Listener {
     fun craftingTable(player: Player): Inventory {
         val inv = server.createInventory(player, 45, comp("Crafting Table"))
         val arrow = ItemValue.placeholder(Material.ARROW, "<yellow><!italic>Craft!", "build")
@@ -40,14 +40,14 @@ object RecipeMenu: Listener {
 
     @EventHandler
     fun clickHandler(e: InventoryClickEvent) {
-        if(!e.view.title().toLegacyString().contains("Crafting Table"))
+        if (!e.view.title().toLegacyString().contains("Crafting Table"))
             return
-        if(e.currentItem != null && e.currentItem!!.itemMeta.persistentDataContainer.has(pluginKey("placeholder"))) {
+        if (e.currentItem != null && e.currentItem!!.itemMeta.persistentDataContainer.has(pluginKey("placeholder"))) {
             e.isCancelled = true
         }
         val new = e.currentItem
         val newIndex = e.view.topInventory.indexOf(new)
-        if(newIndex == buildBtnIndex) {
+        if (newIndex == buildBtnIndex) {
             buildItem(e)
         }
     }
@@ -61,12 +61,13 @@ object RecipeMenu: Listener {
         grid.addAll(invList.subList(28, 30))
 
         @Suppress("SENSELESS_COMPARISON")
-        val ctx = CraftingTableContext(grid.map { if(it == null || it.type.isAir) VanillaItem(Material.AIR) else it.macrocosm!! })
+        val ctx =
+            CraftingTableContext(grid.map { if (it == null || it.type.isAir) VanillaItem(Material.AIR) else it.macrocosm!! })
 
         val matching = RecipeHandler.matchingRecipes(e.view.topInventory, macrocosm)
         // todo: handle multiple recipes
         val recipe = matching.firstOrNull()
-        if(recipe == null || grid.all { it == null || it.type.isAir }) {
+        if (recipe == null || grid.all { it == null || it.type.isAir }) {
             macrocosm.sendMessage("<red>Could not find suitable recipe!")
             sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                 pitch = 0f
@@ -78,16 +79,16 @@ object RecipeMenu: Listener {
         val indices = recipe.second
         val resultSlot = e.view.topInventory.getItem(outputIndex)
 
-        if(resultSlot != null && !resultSlot.type.isAir) {
+        if (resultSlot != null && !resultSlot.type.isAir) {
             val id = resultSlot.macrocosm!!.id
-            if(id != resultItem.macrocosm!!.id) {
+            if (id != resultItem.macrocosm!!.id) {
                 sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                     pitch = 0f
                     playFor(macrocosm.paper!!)
                 }
                 return
             } else {
-                if(resultSlot.amount + resultItem.amount <= resultItem.maxStackSize) {
+                if (resultSlot.amount + resultItem.amount <= resultItem.maxStackSize) {
                     sound(Sound.BLOCK_ANVIL_USE) {
                         playFor(macrocosm.paper!!)
                     }

@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.util
 
-object SkillTable: FixedLevelingTable(
+object SkillTable : FixedLevelingTable(
     listOf(
         50.0,
         125.0,

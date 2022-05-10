@@ -33,12 +33,12 @@ const val MACROCOSM_TAG = "MacrocosmValues"
 val ItemStack.macrocosm: MacrocosmItem? get() = ItemRegistry.toMacrocosm(this)
 fun ItemStack.macrocosmTag(): CompoundTag {
     val nbt = this.nbtData
-    if(nbt.contains(MACROCOSM_TAG))
+    if (nbt.contains(MACROCOSM_TAG))
         return nbt.getCompound(MACROCOSM_TAG)
     return CompoundTag()
 }
 
-interface MacrocosmItem: Ingredient {
+interface MacrocosmItem : Ingredient {
     var stats: Statistics
     var specialStats: SpecialStatistics
     var amount: Int
@@ -180,12 +180,12 @@ interface MacrocosmItem: Ingredient {
      * Transfers all enchantments, reforges and other upgrades to other item
      */
     fun transfer(to: MacrocosmItem) {
-        if(rarityUpgraded)
+        if (rarityUpgraded)
             to.upgradeRarity()
-        for((enchant, lvl) in enchantments) {
+        for ((enchant, lvl) in enchantments) {
             to.enchantments[enchant] = lvl
         }
-        if(reforge != null) {
+        if (reforge != null) {
             to.reforge = reforge
         }
     }

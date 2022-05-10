@@ -30,7 +30,7 @@ object EntityRegistry {
         val tag = entity.readNbt()
         if (tag.contains(MACROCOSM_TAG)) {
             val id = tag.getCompound(MACROCOSM_TAG).getId("ID")
-            if(id.namespace != "minecraft") {
+            if (id.namespace != "minecraft") {
                 val e = find(id)!!
                 e.loadChanges(entity)
                 return e
