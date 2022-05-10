@@ -41,6 +41,23 @@ object Database {
                 BANK REAL)
                 """.trimIndent()
             )
+            st.executeUpdate(
+                """
+                CREATE TABLE SkillsCollections(
+                UUID VARCHAR PRIMARY KEY,
+                COLLECTIONS VARCHAR DEFAULT('{}'),
+                SKILLS VARCHAR DEFAULT('{}')
+                )
+                """.trimIndent()
+            )
+            st.executeUpdate(
+                """
+                CREATE TABLE Recipes(
+                UUID VARCHAR PRIMARY KEY,
+                RECIPES VARCHAR DEFAULT('[]')
+                )
+                """.trimIndent()
+            )
             var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
             for (stat in Statistic.values()) {
                 statQuery += ", ${stat.name} REAL"

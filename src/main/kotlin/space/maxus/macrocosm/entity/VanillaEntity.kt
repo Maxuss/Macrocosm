@@ -10,11 +10,10 @@ import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
-import space.maxus.macrocosm.entity.loot.DropRarity
-import space.maxus.macrocosm.entity.loot.LootPool
-import space.maxus.macrocosm.entity.loot.vanilla
+import space.maxus.macrocosm.entity.loot.*
 import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
+import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -184,6 +183,240 @@ internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
     }
 }
 
+fun dropsFromType(ty: EntityType): List<EntityDrop> {
+    return when(ty) {
+        EntityType.ELDER_GUARDIAN -> listOf(
+            vanilla(Material.PRISMARINE_SHARD, 1.0, amount = 5..10),
+            vanilla(Material.PRISMARINE_CRYSTALS, 1.0, amount = 6..10),
+            vanilla(Material.SPONGE, 1.0, DropRarity.RARE, amount = 1..2),
+            )
+        EntityType.WITHER_SKELETON -> listOf(
+            vanilla(Material.BONE, .6, amount = 1..2),
+            vanilla(Material.COAL, .6, amount = 1..4),
+        )
+        EntityType.STRAY -> listOf(
+            vanilla(Material.BONE, .8, amount = 1..2),
+            vanilla(Material.SNOWBALL, .5),
+            vanilla(Material.SKELETON_SKULL, .001, DropRarity.SUPER_RARE),
+            custom(ItemValue.enchanted(Material.BONE), DropRarity.RARE, .01, 1..2)
+        )
+        EntityType.HUSK -> listOf(
+            vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
+            vanilla(Material.LEATHER, .2),
+            vanilla(Material.POTATO, .01, DropRarity.RARE),
+            vanilla(Material.CARROT, .01, DropRarity.RARE),
+            vanilla(Material.ZOMBIE_HEAD, .0012, DropRarity.SUPER_RARE),
+            custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
+            custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
+            custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
+            )
+        EntityType.ZOMBIE_VILLAGER -> listOf(
+            vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
+            vanilla(Material.EMERALD, .001, DropRarity.CRAZY_RARE),
+            vanilla(Material.POTATO, .021, DropRarity.RARE),
+            vanilla(Material.CARROT, .021, DropRarity.RARE),
+            vanilla(Material.ZOMBIE_HEAD, .0012, DropRarity.SUPER_RARE),
+            custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
+            custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
+            custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
+            )
+        EntityType.SKELETON_HORSE -> listOf(
+            vanilla(Material.BONE, .8, amount = 1..2),
+            )
+        EntityType.ZOMBIE_HORSE -> listOf(
+            vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
+        )
+        EntityType.ARMOR_STAND -> listOf(
+            vanilla(Material.ARMOR_STAND, 1.0)
+        )
+        EntityType.DONKEY -> listOf(
+            vanilla(Material.LEATHER, .9, amount = 1..3),
+            )
+        EntityType.MULE -> listOf(
+            vanilla(Material.LEATHER, .9, amount = 1..3),
+        )
+        EntityType.EVOKER -> listOf(
+            vanilla(Material.EMERALD, .8, amount = 1..2),
+            vanilla(Material.TOTEM_OF_UNDYING, .4, DropRarity.RARE)
+        )
+        EntityType.VINDICATOR -> listOf(
+            vanilla(Material.EMERALD, .8),
+            vanilla(Material.TOTEM_OF_UNDYING, .2, DropRarity.VERY_RARE)
+        )
+        EntityType.ILLUSIONER -> listOf(
+            vanilla(Material.EMERALD, 1.0, amount = 1..4),
+            vanilla(Material.TOTEM_OF_UNDYING, .7, DropRarity.RARE)
+        )
+        EntityType.CREEPER -> listOf(
+            vanilla(Material.GUNPOWDER, 1.0, amount = 1..2)
+        )
+        EntityType.SKELETON -> listOf(
+            vanilla(Material.BONE, 0.9, amount = 1..2),
+            vanilla(Material.SKELETON_SKULL, .001, DropRarity.SUPER_RARE),
+            custom(ItemValue.enchanted(Material.BONE), DropRarity.RARE, .01, 1..2)
+        )
+        EntityType.SPIDER -> listOf(
+            vanilla(Material.STRING, 0.9, amount = 1..2),
+            vanilla(Material.SPIDER_EYE, .5),
+            custom(ItemValue.enchanted(Material.STRING), DropRarity.RARE, .01, 1..2)
+        )
+        EntityType.ZOMBIE -> listOf(
+            vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
+            vanilla(Material.POTATO, .01, DropRarity.RARE),
+            vanilla(Material.CARROT, .01, DropRarity.RARE),
+            vanilla(Material.ZOMBIE_HEAD, .0012, DropRarity.SUPER_RARE),
+            custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
+            custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
+            custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
+            )
+        EntityType.SLIME -> listOf(
+            vanilla(Material.SLIME_BALL, 1.0),
+            custom(ItemValue.enchanted(Material.SLIME_BALL), DropRarity.RARE, .01)
+        )
+        EntityType.GHAST -> listOf(
+            vanilla(Material.GHAST_TEAR, .9, amount = 1..2)
+        )
+        EntityType.ZOMBIFIED_PIGLIN -> listOf(
+            vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
+            vanilla(Material.WARPED_FUNGUS, .01, DropRarity.RARE),
+            vanilla(Material.CRIMSON_FUNGUS, .01, DropRarity.RARE),
+            vanilla(Material.PORKCHOP, .01),
+            custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
+            custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
+            custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
+            )
+        EntityType.ENDERMAN -> listOf(
+            vanilla(Material.ENDER_PEARL, .5, amount = 1..2),
+            vanilla(Material.WARPED_FUNGUS, .001, DropRarity.VERY_RARE),
+            vanilla(Material.CRIMSON_FUNGUS, .01, DropRarity.RARE),
+            custom(ItemValue.enchanted(Material.ENDER_PEARL), DropRarity.RARE, .01),
+            )
+        EntityType.CAVE_SPIDER -> listOf(
+            vanilla(Material.STRING, .9, amount = 1..2),
+            vanilla(Material.SPIDER_EYE, .5),
+            custom(ItemValue.enchanted(Material.STRING), DropRarity.RARE, .01, 1..2)
+        )
+        EntityType.SILVERFISH -> listOf(
+            custom(ItemValue.enchanted(Material.STRING), DropRarity.RARE, .01, 1..2)
+        )
+        EntityType.BLAZE -> listOf(
+            vanilla(Material.BLAZE_ROD, .9, amount = 1..2),
+        )
+        EntityType.MAGMA_CUBE -> listOf(
+            vanilla(Material.MAGMA_CREAM, .9, amount = 1..3),
+            custom(ItemValue.enchanted(Material.MAGMA_CREAM), DropRarity.RARE, .01)
+        )
+        EntityType.WITCH -> listOf(
+            vanilla(Material.SPIDER_EYE, .5),
+            vanilla(Material.GLOWSTONE_DUST, .5),
+            vanilla(Material.REDSTONE, .5),
+            vanilla(Material.DIAMOND, .01, DropRarity.RARE),
+            )
+        EntityType.ENDERMITE -> listOf(
+            vanilla(Material.ENDER_PEARL, .5),
+            )
+        EntityType.GUARDIAN -> listOf(
+            vanilla(Material.PRISMARINE_SHARD, .7, amount = 1..5),
+            vanilla(Material.PRISMARINE_CRYSTALS, .7, amount = 1..6),
+            vanilla(Material.SPONGE, .01, DropRarity.RARE, amount = 1..1),
+            )
+        EntityType.SHULKER -> listOf(
+            vanilla(Material.ENDER_PEARL, .5),
+            vanilla(Material.SHULKER_SHELL, .4),
+            )
+        EntityType.PIG -> listOf(
+            vanilla(Material.PORKCHOP, 1.0, amount = 1..2),
+            )
+        EntityType.SHEEP -> listOf(
+            vanilla(Material.MUTTON, 1.0, amount = 1..2),
+            vanilla(Material.WHITE_WOOL, 1.0),
+            )
+        EntityType.COW -> listOf(
+            vanilla(Material.BEEF, 1.0, amount = 1..2),
+            vanilla(Material.LEATHER, .7, amount = 1..2),
+            )
+        EntityType.CHICKEN -> listOf(
+            vanilla(Material.CHICKEN, 1.0, amount = 1..2),
+            vanilla(Material.FEATHER, .7, amount = 1..2),
+        )
+        EntityType.SQUID -> listOf(
+            vanilla(Material.INK_SAC, .7, amount = 1..2),
+            custom(ItemValue.enchanted(Material.INK_SAC), DropRarity.RARE, .01, 1..2)
+        )
+        EntityType.MUSHROOM_COW -> listOf(
+            vanilla(Material.BEEF, 1.0, amount = 1..2),
+            vanilla(Material.LEATHER, .7, amount = 1..2),
+            vanilla(Material.BROWN_MUSHROOM, .5, amount = 1..2),
+            vanilla(Material.RED_MUSHROOM, .5, amount = 1..2),
+            vanilla(Material.WARPED_FUNGUS, .01, DropRarity.VERY_RARE, amount = 1..2),
+            vanilla(Material.CRIMSON_FUNGUS, .01, DropRarity.VERY_RARE, amount = 1..2),
+            )
+        EntityType.IRON_GOLEM -> listOf(
+            vanilla(Material.IRON_INGOT, 1.0, amount = 1..4),
+            vanilla(Material.POPPY, 1.0),
+            )
+        EntityType.HORSE -> listOf(
+            vanilla(Material.LEATHER, .9, amount = 1..3),
+            )
+        EntityType.RABBIT -> listOf(
+            vanilla(Material.RABBIT_HIDE, .7),
+            vanilla(Material.RABBIT, 1.0, amount = 1..2),
+            vanilla(Material.RABBIT_FOOT, .6, amount = 1..2),
+            )
+        EntityType.POLAR_BEAR -> listOf(
+            vanilla(Material.ICE, 1.0, amount = 1..2)
+        )
+        EntityType.LLAMA -> listOf(
+            vanilla(Material.LEATHER, .9, amount = 1..3),
+        )
+        EntityType.PARROT -> listOf(
+            vanilla(Material.FEATHER, .9, amount = 1..3),
+            )
+        EntityType.PHANTOM -> listOf(
+            vanilla(Material.PHANTOM_MEMBRANE, 1.0, amount = 1..2),
+            custom(ItemValue.enchanted(Material.PHANTOM_MEMBRANE), DropRarity.RARE, .01)
+        )
+        EntityType.COD -> listOf(vanilla(Material.COD, 1.0))
+        EntityType.SALMON -> listOf(vanilla(Material.SALMON, 1.0))
+        EntityType.PUFFERFISH -> listOf(vanilla(Material.PUFFERFISH, 1.0))
+        EntityType.TROPICAL_FISH -> listOf(vanilla(Material.TROPICAL_FISH, 1.0))
+        EntityType.DROWNED -> listOf(
+            vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
+            vanilla(Material.SEAGRASS, .01, DropRarity.RARE),
+            vanilla(Material.CARROT, .01, DropRarity.RARE),
+            vanilla(Material.ZOMBIE_HEAD, .0012, DropRarity.SUPER_RARE),
+            vanilla(Material.TRIDENT, .0453, DropRarity.VERY_RARE),
+            vanilla(Material.NAUTILUS_SHELL, .0354, DropRarity.VERY_RARE),
+            custom(ItemValue.enchanted(Material.ROTTEN_FLESH), DropRarity.RARE, .01, 1..2),
+            custom(ItemValue.enchanted(Material.GOLD_INGOT), DropRarity.VERY_RARE, .001, 1..2),
+            custom(ItemValue.enchanted(Material.DIAMOND), DropRarity.SUPER_RARE, .0006),
+            )
+        EntityType.PILLAGER -> listOf(
+            vanilla(Material.EMERALD, .8, amount = 1..2),
+            )
+        EntityType.RAVAGER -> listOf(
+            vanilla(Material.EMERALD, .8, amount = 1..5),
+            vanilla(Material.SADDLE, 1.0, DropRarity.RARE),
+            vanilla(Material.LEATHER, .8, amount = 1..2),
+        )
+        EntityType.TRADER_LLAMA -> listOf(
+            vanilla(Material.LEATHER, .8, amount = 1..2),
+            )
+        EntityType.HOGLIN -> listOf(
+            vanilla(Material.PORKCHOP, 1.0, amount = 1..2),
+            vanilla(Material.COOKED_PORKCHOP, .3, amount = 1..2),
+            )
+        EntityType.ZOGLIN -> listOf(
+            vanilla(Material.PORKCHOP, 1.0, amount = 1..2),
+            vanilla(Material.ROTTEN_FLESH, .3, amount = 1..2),
+        )
+        EntityType.GLOW_SQUID -> listOf(
+            vanilla(Material.GLOW_INK_SAC, 1.0, amount = 1..2),
+            )
+        else -> listOf()
+    }
+}
+
 class VanillaEntity(val id: UUID) : MacrocosmEntity {
     companion object {
         fun from(entity: LivingEntity): VanillaEntity {
@@ -230,18 +463,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
 
     override fun lootPool(player: MacrocosmPlayer?): LootPool {
-        return when (this.paper!!.type) {
-            EntityType.WITHER_SKELETON -> LootPool.of(
-                vanilla(
-                    Material.WITHER_SKELETON_SKULL,
-                    .025,
-                    DropRarity.VERY_RARE
-                )
-            )
-            EntityType.SKELETON -> LootPool.of(vanilla(Material.SKELETON_SKULL, .0025, DropRarity.SUPER_RARE))
-            EntityType.SLIME -> LootPool.of(vanilla(Material.SLIME_BLOCK, .001, DropRarity.RARE))
-            else -> LootPool.of()
-        }
+        return LootPool.of(*dropsFromType(paper!!.type).toTypedArray())
     }
 
     override var currentHealth: Float = baseStats.health

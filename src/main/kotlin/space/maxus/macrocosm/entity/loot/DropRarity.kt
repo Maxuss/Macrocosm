@@ -21,7 +21,7 @@ class DropRarity private constructor(val broadcast: Boolean, val greet: Boolean 
         val SUPER_RARE = DropRarity(true, greet = true, "<dark_purple>SUPER RARE")
         val CRAZY_RARE = DropRarity(true, greet = true, "<light_purple>CRAZY RARE")
         val INSANE = DropRarity(true, greet = true, "<red>INSANE")
-        val UNBELIEVABLE = DropRarity(true, greet = true, "<red>UNBELIEVABLE")
+        val UNBELIEVABLE = DropRarity(true, greet = true, "<#2ACE7C>UNBELIEVABLE")
     }
 
     fun announceEntityDrop(player: Player, item: MacrocosmItem) {
@@ -52,7 +52,7 @@ class DropRarity private constructor(val broadcast: Boolean, val greet: Boolean 
                     }<gold> has found ${MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))}<gold>!"
                 )
             )
-            player.sendTitlePart(TitlePart.TITLE, comp("<red><bold>UNBELIEVABLE DROP!"))
+            player.sendTitlePart(TitlePart.TITLE, comp("<#2ACE7C><bold>UNBELIEVABLE DROP!"))
             player.sendTitlePart(TitlePart.SUBTITLE, item.name.color(item.rarity.color))
             taskRunLater(18L) {
                 sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {

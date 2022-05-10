@@ -22,7 +22,6 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.getId
-import space.maxus.macrocosm.util.putId
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -68,7 +67,7 @@ interface MacrocosmEntity {
         return if (nbt.contains(MACROCOSM_TAG))
             nbt.getCompound(MACROCOSM_TAG).getId("ID")
         else
-            EntityRegistry.nameOf(this) ?: Identifier.NULL
+            EntityRegistry.nameOf(this) ?: Identifier("minecraft", type.name.lowercase())
     }
 
     fun calculateStats(): Statistics {
@@ -143,7 +142,7 @@ interface MacrocosmEntity {
         val tag = CompoundTag()
         tag.put("Stats", stats.compound())
         tag.putFloat("CurrentHealth", currentHealth)
-        tag.putId("ID", getId(entity))
+        tag.putString("ID", getId(entity).toString())
 
         addExtraNbt(tag)
 

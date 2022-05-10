@@ -34,6 +34,14 @@ enum class Statistic(
     SPEED(StatisticType.DEFENSIVE, NamedTextColor.WHITE, '✦', 100f),
     INTELLIGENCE(StatisticType.DEFENSIVE, NamedTextColor.AQUA, '✎', 100f),
 
+    MINING_SPEED(StatisticType.DEFENSIVE, NamedTextColor.YELLOW, '⛏', 100f),
+    MINING_FORTUNE(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '☘', 0f),
+    PRISTINE(StatisticType.DEFENSIVE, NamedTextColor.DARK_PURPLE, '❖', 0f),
+    EXCAVATING_FORTUNE(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '☘', 0f),
+    FARMING_FORTUNE(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '☘', 0f),
+    FORAGING_FORTUNE(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '☘', 0f),
+
+    TREASURE_CHANCE(StatisticType.OFFENSIVE, NamedTextColor.DARK_BLUE, 'Ψ', 5f, true),
     PET_LUCK(StatisticType.DEFENSIVE, NamedTextColor.LIGHT_PURPLE, '♣', 5f),
     MAGIC_FIND(StatisticType.DEFENSIVE, NamedTextColor.AQUA, '✯', 15f),
 
@@ -41,7 +49,7 @@ enum class Statistic(
     DAMAGE_REDUCTION(StatisticType.DEFENSIVE, NamedTextColor.GOLD, '⓪', 0f, true, true),
     ;
 
-    val display = MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color))
+    val display = MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color).append(comp("<reset>")))
 
     override fun toString() =
         name.lowercase().split("_")

@@ -31,7 +31,7 @@ enum class ItemValue(val item: MacrocosmItem) {
     ;
 
     companion object {
-        fun enchanted(type: Material) = ItemRegistry.find(Identifier.macro("enchanted_${type.name}"))
+        fun enchanted(type: Material) = ItemRegistry.find(Identifier.macro("enchanted_${type.name.lowercase()}"))
         fun placeholder(type: Material) = itemStack(type) {
             meta {
                 displayName(Component.empty())

@@ -12,6 +12,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
+import space.maxus.macrocosm.skills.AlchemyReward
 import java.util.*
 
 class InternalMacrocosmPlugin : KSpigot() {
@@ -39,6 +40,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(EntityHandlers, this)
         server.pluginManager.registerEvents(RecipeMenu, this)
         server.pluginManager.registerEvents(BlockClickListener, this)
+        server.pluginManager.registerEvents(AlchemyReward, this)
 
         ReforgeType.init()
         ItemValue.init()
@@ -58,7 +60,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         recipesCommand()
 
         testStatsCommand()
-        testDropCommand()
+        testLevelUp()
+        testCollUp()
+        skillExp()
+        collAmount()
         itemsCommand()
         testCraftingTable()
     }

@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.commands
 
+import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -14,6 +15,7 @@ import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
+import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
@@ -21,6 +23,7 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeRegistry
 import space.maxus.macrocosm.recipes.recipeBrowser
 import space.maxus.macrocosm.recipes.recipeViewer
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
@@ -80,6 +83,41 @@ fun recipesCommand() = command("recipes") {
         player.openGUI(recipeBrowser(player.macrocosm!!))
     }
 }
+
+fun skillExp() = command("skillexp") {
+    requires { it.hasPermission(4) }
+    argument("skill", StringArgumentType.word()) {
+        suggestList { ctx ->
+            SkillType.values().filter {
+                it.name.contains(ctx.getArgumentOrNull<String>("skill") ?: "")
+            }
+        }
+
+        argument("exp", DoubleArgumentType.doubleArg(.0)) {
+            runs {
+                player.macrocosm?.addSkillExperience(SkillType.valueOf(getArgument("skill")), getArgument("exp"))
+            }
+        }
+    }
+}
+
+fun collAmount() = command("coll") {
+    requires { it.hasPermission(4) }
+    argument("coll", StringArgumentType.word()) {
+        suggestList { ctx ->
+            CollectionType.values().filter {
+                it.name.contains(ctx.getArgumentOrNull<String>("coll") ?: "")
+            }
+        }
+
+        argument("amount", IntegerArgumentType.integer(0)) {
+            runs {
+                player.macrocosm?.addCollectionAmount(CollectionType.valueOf(getArgument("coll")), getArgument("amount"))
+            }
+        }
+    }
+}
+
 
 fun itemsCommand() = command("items") {
     requires { it.hasPermission(4) }

@@ -1,13 +1,14 @@
 package space.maxus.macrocosm.commands
 
+import com.mojang.brigadier.arguments.StringArgumentType
+import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.entity.loot.DropRarity
-import space.maxus.macrocosm.item.macrocosm
+import net.axay.kspigot.commands.suggestList
+import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
+import space.maxus.macrocosm.skills.SkillType
 
 fun testStatsCommand() = command("stats") {
     runs {
@@ -17,13 +18,30 @@ fun testStatsCommand() = command("stats") {
     }
 }
 
-fun testDropCommand() = command("raredrop") {
-    runs {
-        val item = ItemStack(Material.NETHER_STAR).macrocosm!!
-        DropRarity.UNBELIEVABLE.announceEntityDrop(player, item)
-        player.location.world.dropItemNaturally(player.location, item.build()!!)
+fun testLevelUp() = command("skillup") {
+    argument("skill", StringArgumentType.word()) {
+        suggestList {
+            SkillType.values().filter { sk -> sk.name.contains(it.getArgumentOrNull<String>("skill") ?: "") }
+        }
+        runs {
+            val sk = SkillType.valueOf(getArgument("skill"))
+            player.macrocosm?.sendSkillLevelUp(sk)
+        }
     }
 }
+
+fun testCollUp() = command("collup") {
+    argument("coll", StringArgumentType.word()) {
+        suggestList {
+            CollectionType.values().filter { sk -> sk.name.contains(it.getArgumentOrNull<String>("coll") ?: "") }
+        }
+        runs {
+            val sk = CollectionType.valueOf(getArgument("coll"))
+            player.macrocosm?.sendCollectionLevelUp(sk)
+        }
+    }
+}
+
 
 fun testCraftingTable() = command("crafting_test") {
     runs {

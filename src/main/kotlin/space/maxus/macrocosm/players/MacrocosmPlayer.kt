@@ -1,12 +1,15 @@
 package space.maxus.macrocosm.players
 
+import com.google.gson.reflect.TypeToken
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.task
+import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect
@@ -14,26 +17,34 @@ import org.bukkit.potion.PotionEffectType
 import org.jetbrains.annotations.NotNull
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.collections.CollectionType
+import space.maxus.macrocosm.collections.Collections
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
+import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.ranks.Rank
+import space.maxus.macrocosm.skills.SkillType
+import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.util.GSON
 import space.maxus.macrocosm.util.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
+val Player. macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 
-@Suppress("unused")
+@Suppress("unused", "ReplaceWithEnumMap")
 class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     val paper: Player? get() = Bukkit.getServer().getPlayer(ref)
 
@@ -47,6 +58,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var currentHealth: Float = calculateStats()!!.health
     var currentMana: Float = calculateStats()!!.intelligence
     var lastAbilityUse: HashMap<Identifier, Long> = hashMapOf()
+    var unlockedRecipes: MutableList<Identifier> = mutableListOf()
+    var skills: Skills = Skills.default()
+    var collections: Collections = Collections.default()
+    var blockNextStatus: Boolean = false
 
     val activeEffects get() = paper?.activePotionEffects?.map { it.type }
 
@@ -69,7 +84,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
 
-            sendStatBar(stats)
+            if(blockNextStatus)
+                blockNextStatus = false
+            else sendStatBar(stats)
         }
     }
 
@@ -133,6 +150,66 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     fun isRecipeLocked(recipe: Identifier): Boolean {
         // todo: collections + skill checks
         return false
+    }
+
+    fun addSkillExperience(skill: SkillType, exp: Double) {
+        skills.increase(skill, exp)
+        blockNextStatus = true
+        paper?.sendActionBar(comp("<aqua>+${Formatting.withCommas(exp.toBigDecimal(), true)} ${skill.inst.name} EXP"))
+        sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
+            pitch = 2f
+            playFor(paper!!)
+        }
+        if(skill.inst.table.shouldLevelUp(skills.level(skill), skills[skill], exp)) {
+            val lvl = skills.level(skill) + 1
+            skills.setLevel(skill, lvl)
+            sendSkillLevelUp(skill)
+            skill.inst.rewards[lvl - 1].reward(this, lvl)
+        }
+    }
+
+    fun addCollectionAmount(collection: CollectionType, amount: Int) {
+        collections.increase(collection, amount)
+        if(collection.inst.table.shouldLevelUp(collections.level(collection), collections[collection].toDouble(), amount.toDouble())) {
+            val lvl = collections.level(collection) + 1
+            collections.setLevel(collection, lvl)
+            sendCollectionLevelUp(collection)
+            collection.inst.rewards[lvl - 1].reward(this, lvl)
+        }
+
+    }
+
+    fun sendSkillLevelUp(skill: SkillType) {
+        val newLevel = skills.level(skill)
+        val previous = newLevel - 1
+        val roman = roman(newLevel)
+        val message = comp("""<dark_aqua><bold>
+--------------------------------------
+ <aqua><bold>SKILL LEVEL UP!<!bold> <dark_aqua>${skill.inst.name} ${if(previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<dark_aqua>$roman
+  <yellow>${skill.profession} $roman
+ ${skill.descript(newLevel)}<reset>
+ ${skill.inst.rewards[newLevel - 1].display(newLevel).str()}
+<dark_aqua><bold>--------------------------------------""".trimIndent())
+        paper?.sendMessage(message)
+        sound(Sound.ENTITY_PLAYER_LEVELUP) {
+            playFor(paper!!)
+        }
+    }
+
+    fun sendCollectionLevelUp(coll: CollectionType) {
+        val newLevel = collections.level(coll)
+        val previous = newLevel - 1
+        val roman = roman(newLevel)
+        val message = comp("""<gold><bold>
+--------------------------------------</bold>
+ <yellow><bold>COLLECTION LEVEL UP!<!bold> <gold>${coll.inst.name} ${if(previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<gold>$roman
+  ${coll.inst.rewards[newLevel - 1].display(newLevel).str()}
+ <gold><bold>
+--------------------------------------""".trimIndent())
+        paper?.sendMessage(message)
+        sound(Sound.ENTITY_PLAYER_LEVELUP) {
+            playFor(paper!!)
+        }
     }
 
     fun addAbsorption(amount: Float, length: Int = -1, myStats: Statistics? = null) {
@@ -297,6 +374,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             rightHand += ", $value"
         }
         stmt.executeUpdate("$leftHand)$rightHand)")
+        val skillsJson = skills.json()
+        val collectionJson = collections.json()
+        val recipes = GSON.toJson(unlockedRecipes.map { it.toString() })
+        stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
+        stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
         stmt.close()
     }
 
@@ -325,6 +407,20 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if (!stats.next())
                 return null
             player.baseStats = Statistics.fromRes(stats)
+
+            val skillsCollections = stmt.executeQuery("SELECT * FROM SkillsCollections WHERE UUID = '$id'")
+            if(!skillsCollections.next()) return null
+            val skills = Skills.fromJson(skillsCollections.getString("SKILLS"))
+            val colls = Collections.fromJson(skillsCollections.getString("COLLECTIONS"))
+            player.skills = skills
+            player.collections = colls
+
+            val recipesRes = stmt.executeQuery("SELECT * FROM Recipes WHERE UUID = '$id'")
+            if(!recipesRes.next())
+                return null
+            val recipes = GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object: TypeToken<List<String>>() { }.type).map { Identifier.parse(it) }
+            player.unlockedRecipes = recipes.toMutableList()
+
             stmt.close()
             return player
         }

@@ -24,13 +24,14 @@ data class AbilityCost(private val mana: Int = 0, private val health: Int = 0, p
     fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier): Boolean {
         if (mana > 0 && player.currentMana < mana) {
             player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH MANA"))
-
+            player.blockNextStatus = true
             return false
         } else if (mana > 0) {
             player.decreaseMana(mana.toFloat())
         }
         if (health > 0 && player.currentHealth < health) {
             player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH HEALTH"))
+            player.blockNextStatus = true
             return false
         } else if (health > 0) {
             player.damage(health.toFloat(), comp("Cruel Ability"))

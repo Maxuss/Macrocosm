@@ -4,6 +4,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.getId
 import java.util.concurrent.ConcurrentHashMap
 
 val LivingEntity.macrocosm: MacrocosmEntity? get() = EntityRegistry.toMacrocosm(this)
@@ -28,9 +29,9 @@ object EntityRegistry {
             return null
         val tag = entity.readNbt()
         if (tag.contains(MACROCOSM_TAG)) {
-            val id = tag.getCompound(MACROCOSM_TAG).getString("ID")
-            if (id != "macrocosm:null") {
-                val e = find(Identifier.parse(id))!!
+            val id = tag.getCompound(MACROCOSM_TAG).getId("ID")
+            if(id.namespace != "minecraft") {
+                val e = find(id)!!
                 e.loadChanges(entity)
                 return e
             }

@@ -44,6 +44,37 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         }
     }
 
+    var farmingFortune: Float
+        get() = self[Statistic.FARMING_FORTUNE]!!
+        set(value) {
+            self[Statistic.FARMING_FORTUNE] = value
+        }
+    var foragingFortune: Float
+        get() = self[Statistic.FORAGING_FORTUNE]!!
+        set(value) {
+            self[Statistic.FORAGING_FORTUNE] = value
+        }
+    var excavatingFortune: Float
+        get() = self[Statistic.EXCAVATING_FORTUNE]!!
+        set(value) {
+            self[Statistic.EXCAVATING_FORTUNE] = value
+        }
+    var miningFortune: Float
+        get() = self[Statistic.MINING_FORTUNE]!!
+        set(value) {
+            self[Statistic.MINING_FORTUNE] = value
+        }
+    var miningSpeed: Float
+        get() = self[Statistic.MINING_SPEED]!!
+        set(value) {
+            self[Statistic.MINING_SPEED] = value
+        }
+    var treasureChance: Float
+        get() = self[Statistic.TREASURE_CHANCE]!!
+        set(value) {
+            self[Statistic.TREASURE_CHANCE] = value
+        }
+
     var trueDamage: Float
         get() = self[Statistic.TRUE_DAMAGE]!!
         set(value) {

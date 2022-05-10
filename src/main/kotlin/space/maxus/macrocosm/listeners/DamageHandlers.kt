@@ -19,16 +19,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
-import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.damage.relativeLocation
-import space.maxus.macrocosm.entity.loot.LootPool
-import space.maxus.macrocosm.entity.loot.vanilla
 import space.maxus.macrocosm.entity.macrocosm
-import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.players.macrocosm
@@ -41,27 +37,6 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 object DamageHandlers : Listener {
-    @EventHandler
-    fun onKill(e: EntityDeathEvent) {
-        // converting drops into loot pool
-        var pool = LootPool.of(*e.drops.map { vanilla(it.type, 1.0, amount = it.amount..it.amount) }.toTypedArray())
-        e.drops.clear()
-        val cause = e.entity.lastDamageCause
-        val event = EntityDropItemsEvent((cause as? EntityDamageByEntityEvent)?.damager, e.entity, pool)
-        val cancelled = !event.callEvent()
-        if (cancelled)
-            return
-        pool = event.pool
-        val drops = if (cause is EntityDamageByEntityEvent && cause.damager is Player) {
-            pool.roll((cause.damager as Player).macrocosm)
-        } else {
-            pool.roll(null)
-        }
-        for (item in drops) {
-            e.entity.world.dropItemNaturally(e.entity.location, item ?: continue)
-        }
-    }
-
     @EventHandler
     fun handleEntityDamage(e: EntityDamageByEntityEvent) {
         e.damage = 0.0
