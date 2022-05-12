@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.ability.types
 
-import org.bukkit.event.EventHandler
+import net.axay.kspigot.event.listen
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
@@ -14,11 +14,12 @@ object InstantTransmission : AbilityBase(
     "Instantly teleport <green>5 blocks</green> forward!",
     AbilityCost(50)
 ) {
-    @EventHandler
-    fun rightClick(ctx: PlayerRightClickEvent) {
-        if (!ensureRequirements(ctx.player, EquipmentSlot.HAND))
-            return
-        val player = ctx.player.paper!!
-        player.teleport(raycast(player, 5))
+    override fun registerListeners() {
+        listen<PlayerRightClickEvent> { ctx ->
+            if (!ensureRequirements(ctx.player, EquipmentSlot.HAND))
+                return@listen
+            val player = ctx.player.paper!!
+            player.teleport(raycast(player, 5))
+        }
     }
 }

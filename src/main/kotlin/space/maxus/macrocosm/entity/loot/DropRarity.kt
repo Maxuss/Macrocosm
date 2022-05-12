@@ -27,11 +27,11 @@ class DropRarity private constructor(val broadcast: Boolean, val greet: Boolean 
     fun announceEntityDrop(player: Player, item: MacrocosmItem) {
         if (!broadcast)
             return
-        val mf = player.macrocosm!!.calculateStats()!!.magicFind
+        val mf = player.macrocosm!!.stats()!!.magicFind
         val message = comp(
             "<bold>$name DROP!</bold> ${
                 MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))
-            } <aqua>(+${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"
+            } <aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"
         )
         player.sendMessage(message)
         if (greet) {

@@ -6,9 +6,13 @@ import kotlin.random.Random
 object DamageCalculator {
     fun crits(stats: Statistics) = Random.nextFloat() < (stats.critChance / 100f)
 
+    fun calculateMagicDamage(base: Int, scaling: Float, stats: Statistics): Float {
+        return base * (1 + (stats.abilityDamage) / 100f) * (stats.intelligence / 10f * scaling)
+    }
+
     fun calculateStandardDealt(amount: Float, stats: Statistics): Pair<Float, Boolean> {
         val strengthMul = (1 + (stats.strength / 100f))
-        val extraMul = (1 + stats.damageBoost)
+        val extraMul = (1 + (stats.damageBoost / 100f))
         val crit = crits(stats)
         val critMultiplier = 1 + if (crit) (stats.critDamage / 100f) else 0f
         val trueMultiplier = 1 + (stats.trueDamage / (stats.trueDamage + 100f))

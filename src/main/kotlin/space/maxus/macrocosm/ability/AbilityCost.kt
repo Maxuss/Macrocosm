@@ -2,13 +2,14 @@ package space.maxus.macrocosm.ability
 
 import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.events.AbilityCostApplyEvent
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-data class AbilityCost(private val mana: Int = 0, private val health: Int = 0, private val cooldown: Int = 0) {
+data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int = 0) {
     fun buildLore(lore: MutableList<Component>) {
         if (mana > 0) {
             lore.add(comp("<dark_gray>Mana Cost: <dark_aqua>$mana").noitalic())
@@ -21,38 +22,48 @@ data class AbilityCost(private val mana: Int = 0, private val health: Int = 0, p
         }
     }
 
-    fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier): Boolean {
-        if (mana > 0 && player.currentMana < mana) {
-            player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH MANA"))
-            player.blockNextStatus = true
+    fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier, loud: Boolean = true): Boolean {
+        val event = AbilityCostApplyEvent(player, mana, health, cooldown)
+        event.callEvent()
+
+        if (event.mana > 0 && player.currentMana < event.mana) {
+            if(loud)
+                player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH MANA"))
             return false
-        } else if (mana > 0) {
-            player.decreaseMana(mana.toFloat())
         }
-        if (health > 0 && player.currentHealth < health) {
-            player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH HEALTH"))
-            player.blockNextStatus = true
+        if (event.health > 0 && player.currentHealth < event.health) {
+            if(loud)
+                player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH HEALTH"))
             return false
-        } else if (health > 0) {
-            player.damage(health.toFloat(), comp("Cruel Ability"))
         }
         val lastUse = player.lastAbilityUse[ability]
-        val cdMillis = TimeUnit.SECONDS.toMillis(cooldown.toLong())
+
+        val cdMillis = TimeUnit.SECONDS.toMillis(event.cooldown.toLong())
         val now = Instant.now().toEpochMilli()
-        if (cooldown > 0 && player.lastAbilityUse.contains(ability) && lastUse!! + cdMillis > now) {
-            player.paper!!.sendMessage(
-                comp(
-                    "<red>This ability is current on cooldown for ${
-                        TimeUnit.MILLISECONDS.toSeconds(
-                            (lastUse + cdMillis) - now
-                        )
-                    }s!"
+        if (event.cooldown > 0 && player.lastAbilityUse.contains(ability) && lastUse!! + cdMillis > now) {
+            if(loud)
+                player.paper!!.sendMessage(
+                    comp(
+                        "<red>This ability is current on cooldown for ${
+                            TimeUnit.MILLISECONDS.toSeconds(
+                                (lastUse + cdMillis) - now
+                            )
+                        }s!"
+                    )
                 )
-            )
             return false
-        } else if (cooldown > 0) {
+        }
+
+        if (event.mana > 0) {
+            player.decreaseMana(event.mana.toFloat())
+        }
+        if(event.health > 0) {
+            player.damage(event.health.toFloat(), comp("Cruel Ability"))
+        }
+        if (event.cooldown > 0) {
             player.lastAbilityUse[ability] = now
         }
+
         return true
     }
 }

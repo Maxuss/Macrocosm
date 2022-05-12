@@ -12,7 +12,7 @@ import space.maxus.macrocosm.skills.SkillType
 
 fun testStatsCommand() = command("stats") {
     runs {
-        for (comp in player.macrocosm?.calculateStats()?.formatFancy()!!) {
+        for (comp in player.macrocosm?.stats()?.formatFancy()!!) {
             player.sendMessage(comp)
         }
     }

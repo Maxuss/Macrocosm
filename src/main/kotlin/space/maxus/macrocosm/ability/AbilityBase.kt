@@ -14,7 +14,7 @@ abstract class AbilityBase(
     val id: Identifier get() = AbilityRegistry.nameOf(this) ?: Identifier.NULL
 
     @Suppress("SameParameterValue")
-    protected fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot): Boolean {
+    protected open fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot): Boolean {
         val item = player.paper!!.inventory.getItem(slot)
         if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
             return false

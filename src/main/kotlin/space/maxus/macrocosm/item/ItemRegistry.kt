@@ -34,14 +34,14 @@ object ItemRegistry {
     fun toMacrocosm(item: ItemStack): MacrocosmItem? {
         if (item.type == Material.AIR)
             return null
-        val tag = CraftItemStack.asNMSCopy(item).tag ?: return VanillaItem(item.type)
+        val tag = CraftItemStack.asNMSCopy(item).tag ?: return VanillaItem(item.type, item.amount)
         if (!tag.contains(MACROCOSM_TAG)) {
-            return VanillaItem(item.type)
+            return VanillaItem(item.type, item.amount)
         }
 
         val nbt = tag.getCompound(MACROCOSM_TAG)
         if (!nbt.contains("ID") || nbt.getId("ID").namespace == "minecraft")
-            return VanillaItem(item.type).convert(item, nbt)
+            return VanillaItem(item.type, item.amount).convert(item, nbt)
         return find(Identifier.parse(nbt.getString("ID"))).convert(item, nbt)
     }
 }

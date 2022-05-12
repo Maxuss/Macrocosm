@@ -43,7 +43,7 @@ object GiantKillerEnchantment :
         val cap = lvl * .05f
 
         val stats = e.damaged.macrocosm!!.calculateStats()
-        val playerStats = e.player.calculateStats()!!
+        val playerStats = e.player.stats()!!
         val health = stats.health
         val ratio = health / playerStats.health
         if (ratio < 1f)
@@ -81,7 +81,7 @@ object TitanKillerEnchantment :
         val cap = lvl * .1f
 
         val stats = e.damaged.macrocosm!!.calculateStats()
-        val playerStats = e.player.calculateStats()!!
+        val playerStats = e.player.stats()!!
         val defense = stats.defense
         val ratio = defense / playerStats.defense
         if (ratio < 1f)

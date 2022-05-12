@@ -9,12 +9,14 @@ import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.ItemFlag
+import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
@@ -26,7 +28,101 @@ enum class ItemValue(val item: MacrocosmItem) {
         damage = 100f
         strength = 50f
         intelligence = 150f
-    }, mutableListOf(InstantTransmission)))
+    }, mutableListOf(InstantTransmission))),
+
+    UNREFINED_WITHER_BLADE(WitherBlade("Unrefined Wither Blade", Material.IRON_SWORD, stats {
+        damage = 260f
+        strength = 110f
+        intelligence = 50f
+        ferocity = 30f
+    })),
+
+    ASTRAEA(WitherBlade("Astraea", Material.STONE_SWORD, stats {
+        damage = 270f
+        strength = 150f
+        defense = 250f
+        intelligence = 50f
+        trueDefense = 20f
+        ferocity = 30f
+    })),
+
+    SCYLLA(WitherBlade("Scylla", Material.GOLDEN_SWORD, stats {
+        damage = 270f
+        strength = 150f
+        critChance = 12f
+        critDamage = 35f
+        intelligence = 50f
+        ferocity = 30f
+    })),
+
+    HYPERION(WitherBlade("Hyperion", Material.DIAMOND_SWORD, stats {
+        damage = 260f
+        strength = 150f
+        intelligence = 350f
+        ferocity = 30f
+    })),
+
+    VALKYRIE(WitherBlade("Valkyrie", Material.NETHERITE_SWORD, stats {
+        damage = 270f
+        strength = 145f
+        intelligence = 60f
+        ferocity = 60f
+    })),
+
+    EMERALD_BOOTS(AbilityItem(ItemType.BOOTS, "Emerald Boots", Rarity.RARE, Material.LEATHER_BOOTS, stats {
+        health = 75f
+        miningFortune = 25f
+        defense = 25f
+        strength = 15f
+    }, mutableListOf(Ability.EMERALD_AFFECTION.ability), metaModifier = {
+        it.isUnbreakable = true
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
+        leather
+    })),
+
+    EMERALD_LEGGINGS(AbilityItem(ItemType.BOOTS, "Emerald Leggings", Rarity.RARE, Material.LEATHER_LEGGINGS, stats {
+        health = 80f
+        miningFortune = 30f
+        defense = 30f
+        strength = 15f
+    }, mutableListOf(Ability.EMERALD_AFFECTION.ability), metaModifier = {
+        it.isUnbreakable = true
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
+        leather
+    })),
+
+    EMERALD_CHESTPLATE(AbilityItem(ItemType.BOOTS, "Emerald Chestplate", Rarity.RARE, Material.LEATHER_CHESTPLATE, stats {
+        health = 100f
+        miningFortune = 30f
+        defense = 30f
+        strength = 20f
+    }, mutableListOf(Ability.EMERALD_AFFECTION.ability), metaModifier = {
+        it.isUnbreakable = true
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
+        leather
+    })),
+
+    EMERALD_HELMET(AbilityItem(ItemType.HELMET, "Emerald Helmet", Rarity.RARE, Material.LEATHER_HELMET, stats {
+        health = 75f
+        miningFortune = 26f
+        defense = 25f
+        strength = 12f
+    }, mutableListOf(Ability.EMERALD_AFFECTION.ability), metaModifier = {
+        it.isUnbreakable = true
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
+        leather
+    })),
+
+    EMERALD_PICKAXE(AbilityItem(ItemType.PICKAXE, "Emerald Pickaxe", Rarity.RARE, Material.DIAMOND_PICKAXE, stats {
+        damage = 30f
+        defense = 50f
+        miningSpeed = 450f
+        miningFortune = 150f
+    }, mutableListOf(Ability.EMERALD_AFFECTION_PICKAXE.ability)))
 
     ;
 

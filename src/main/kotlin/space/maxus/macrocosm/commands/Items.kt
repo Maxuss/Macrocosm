@@ -12,11 +12,16 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.ability.AbilityRegistry
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.item.types.WitherBlade
+import space.maxus.macrocosm.item.types.WitherScrollAbility
+import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.reforge.ReforgeRegistry
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.util.macrocosm
 
 fun recombobulateCommand() = command("recombobulate") {
@@ -29,7 +34,50 @@ fun recombobulateCommand() = command("recombobulate") {
         }
         val m = item.macrocosm!!
         m.upgradeRarity()
-        player.inventory.setItemInMainHand(m.build())
+        player.inventory.setItemInMainHand(m.build(player.macrocosm))
+    }
+}
+
+
+fun setStarsCommand() = command("setstars") {
+    requires { it.hasPermission(4) }
+    argument("stars", IntegerArgumentType.integer(0)) {
+        runs {
+            val item = player.inventory.itemInMainHand
+            if (item.type == Material.AIR) {
+                player.sendMessage(comp("<red>Hold the item you want to add scroll to!"))
+                return@runs
+            }
+            val macrocosm = item.macrocosm ?: return@runs
+            macrocosm.stars = getArgument("stars")
+            player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
+        }
+    }
+}
+
+
+fun addScrollCommand() = command("addscroll") {
+    requires { it.hasPermission(4) }
+    argument("scroll", ResourceLocationArgument.id()) {
+        suggestList { ctx ->
+            listOf(id("implosion"), id("wither_shield"), id("shadow_warp"), id("wither_impact")).filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>("scroll")?.path ?: ""
+                )
+            }
+        }
+
+        runs {
+            val item = player.inventory.itemInMainHand
+            if (item.type == Material.AIR) {
+                player.sendMessage(comp("<red>Hold the item you want to add scroll to!"))
+                return@runs
+            }
+            val macrocosm = item.macrocosm as? WitherBlade ?: return@runs
+            val reforge = getArgument<ResourceLocation>("scroll").macrocosm
+            macrocosm.addScroll(AbilityRegistry.find(reforge)!! as WitherScrollAbility)
+            player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
+        }
     }
 }
 
@@ -53,7 +101,7 @@ fun reforgeCommand() = command("reforge") {
             val macrocosm = item.macrocosm
             val reforge = getArgument<ResourceLocation>("reforge").macrocosm
             macrocosm!!.reforge(ReforgeRegistry.find(reforge)!!)
-            player.inventory.setItemInMainHand(macrocosm.build())
+            player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
         }
     }
 }
@@ -87,7 +135,7 @@ fun enchantCommand() = command("enchantme") {
                 val macrocosm = item.macrocosm
                 val enchant = getArgument<ResourceLocation>("enchant").macrocosm
                 macrocosm!!.enchant(EnchantmentRegistry.find(enchant)!!, level)
-                player.inventory.setItemInMainHand(macrocosm.build())
+                player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
             }
         }
     }
@@ -109,7 +157,7 @@ fun itemCommand() = command("getitem") {
                 val player = getArgument<EntitySelector>("player").findSinglePlayer(this.nmsContext.source).bukkitEntity
                 val item = getArgument<ResourceLocation>("item").macrocosm
 
-                val stack = ItemRegistry.find(item).build() ?: ItemStack(Material.AIR)
+                val stack = ItemRegistry.find(item).build(player.macrocosm) ?: ItemStack(Material.AIR)
                 player.inventory.addItem(stack)
                 this.player.sendMessage(
                     comp(

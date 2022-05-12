@@ -1,7 +1,5 @@
 package space.maxus.macrocosm.ability
 
-import org.bukkit.Bukkit
-import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.util.Identifier
 
 @Suppress("unused")
@@ -13,7 +11,7 @@ object AbilityRegistry {
             return ability
         }
         abilities[name] = ability
-        Bukkit.getServer().pluginManager.registerEvents(ability, Macrocosm)
+        ability.registerListeners()
         return ability
     }
 

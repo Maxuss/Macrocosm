@@ -130,14 +130,20 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
         Material.AMETHYST_BLOCK, Material.AMETHYST_CLUSTER -> Rarity.UNCOMMON
         Material.ELYTRA -> Rarity.EPIC
         Material.NETHER_STAR -> Rarity.MYTHIC
+        Material.TOTEM_OF_UNDYING -> Rarity.LEGENDARY
         else -> Rarity.COMMON
     }
 }
 
-class VanillaItem(override val base: Material) : MacrocosmItem {
+class VanillaItem(override val base: Material, override var amount: Int = 1) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
-    override var amount: Int = 1
+    override var stars: Int = 0
+        set(value) {
+            if(value > maxStars)
+                return
+            else field = value
+        }
     override val id: Identifier = Identifier("minecraft", base.name.lowercase())
     override val type: ItemType = typeFromMaterial(base)
 
@@ -164,6 +170,7 @@ class VanillaItem(override val base: Material) : MacrocosmItem {
         vanilla.rarityUpgraded = rarityUpgraded
         vanilla.reforge = reforge?.clone()
         vanilla.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        vanilla.amount = amount
         return vanilla
     }
 }

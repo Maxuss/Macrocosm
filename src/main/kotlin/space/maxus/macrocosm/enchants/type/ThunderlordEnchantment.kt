@@ -46,7 +46,7 @@ object ThunderlordEnchantment :
         if (tlHits >= 3) {
             pdc.remove(NamespacedKey(Macrocosm, "tl_hits"))
             e.damaged.location.world.strikeLightningEffect(e.damaged.location)
-            val stats = e.player.calculateStats() ?: return
+            val stats = e.player.stats() ?: return
             val damage = stats.strength * (1 + ((lvl - 1) * 0.25f))
             e.damaged.macrocosm!!.damage(damage, e.player.paper)
             DamageHandlers.summonDamageIndicator(e.damaged.location, damage, electric = true)
@@ -81,7 +81,7 @@ object ThunderboltEnchantment :
         if (tlHits >= 3) {
             pdc.remove(NamespacedKey(Macrocosm, "tb_hits"))
             var counter = 0
-            val stats = e.player.calculateStats() ?: return
+            val stats = e.player.stats() ?: return
             for (entity in e.damaged.world.getNearbyEntities(e.damaged.location, 10.0, 4.0, 10.0) {
                 it is LivingEntity && it !is Player && it !is ArmorStand && ++counter < 5
             }) {

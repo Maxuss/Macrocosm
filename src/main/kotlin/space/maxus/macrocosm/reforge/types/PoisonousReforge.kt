@@ -21,7 +21,7 @@ class PoisonousReforge : ReforgeBase(
     fun ability(e: PlayerDealDamageEvent) {
         if (e.crit)
             return
-        val stats = e.player.calculateStats()!!
+        val stats = e.player.stats()!!
         stats.increase(stats { critChance = 10f })
         val (dmg, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
         e.damage = dmg

@@ -5,6 +5,8 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.items.flags
 import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
@@ -14,10 +16,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
+import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.reforge.ReforgeRegistry
@@ -27,6 +30,13 @@ import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
+
+private fun starColor(star: Int): TextColor {
+    return if (star >= 15) NamedTextColor.GREEN
+    else if (star >= 10) NamedTextColor.AQUA
+    else if (star >= 5) NamedTextColor.LIGHT_PURPLE
+    else NamedTextColor.GOLD
+}
 
 const val MACROCOSM_TAG = "MacrocosmValues"
 
@@ -42,6 +52,7 @@ interface MacrocosmItem : Ingredient {
     var stats: Statistics
     var specialStats: SpecialStatistics
     var amount: Int
+    var stars: Int
 
     val id: Identifier
     val type: ItemType
@@ -52,6 +63,7 @@ interface MacrocosmItem : Ingredient {
     var reforge: Reforge?
     val abilities: MutableList<ItemAbility>
     val enchantments: HashMap<Enchantment, Int>
+    val maxStars: Int get() = 20
 
     override fun id(): Identifier {
         return id
@@ -90,7 +102,12 @@ interface MacrocosmItem : Ingredient {
     fun stats(): Statistics {
         val base = stats.clone()
         val special = specialStats()
+        for ((ench, level) in enchantments) {
+            base.increase(ench.stats(level))
+        }
         base.multiply(1 + special.statBoost)
+        // 2% boost from stars
+        base.multiply(1 + (stars * .02f))
         return base
     }
 
@@ -99,6 +116,8 @@ interface MacrocosmItem : Ingredient {
         for ((ench, level) in enchantments) {
             base.increase(ench.special(level))
         }
+        // 2% boost from stars
+        base.multiply(1 + (stars * .02f))
         return base
     }
 
@@ -116,6 +135,30 @@ interface MacrocosmItem : Ingredient {
         }
         rarityUpgraded = true
         return true
+    }
+
+    fun buildName(): Component {
+        var display = name
+        if (reforge != null)
+            display = comp("${reforge!!.name} ").append(display)
+        if(stars <= 0)
+            return display.color(rarity.color).noitalic()
+        display = display.append(comp(" "))
+
+        val starIndices = MutableList(5) { comp("") }
+        for(star in 0 until stars) {
+            var reducedIndex = star
+            while(reducedIndex > 4) {
+                reducedIndex -= 5
+            }
+            starIndices[reducedIndex] = comp("✪").color(starColor(star))
+        }
+
+        for(star in starIndices) {
+            display = display.append(star)
+        }
+
+        return display.color(rarity.color).noitalic()
     }
 
     /**
@@ -139,7 +182,10 @@ interface MacrocosmItem : Ingredient {
                 continue
             enchantments[EnchantmentRegistry.find(Identifier.parse(k))!!] = enchants.getInt(k)
         }
-        amount = from.amount
+
+        val stars = nbt.getInt("Stars")
+        this.stars = stars
+        this.amount = from.amount
         return this
     }
 
@@ -188,13 +234,14 @@ interface MacrocosmItem : Ingredient {
         if (reforge != null) {
             to.reforge = reforge
         }
+        to.stars = stars
     }
 
     /**
      * Builds this item
      */
     @Suppress("UNCHECKED_CAST")
-    fun build(): ItemStack? {
+    fun build(player: MacrocosmPlayer? = null): ItemStack? {
         if (base == Material.AIR)
             return null
 
@@ -204,7 +251,7 @@ interface MacrocosmItem : Ingredient {
             val lore = mutableListOf<Component>()
 
             // stats
-            val formattedStats = stats.formatSimple(reforge?.stats(rarity))
+            val formattedStats = stats().formatSimple(reforge?.stats(rarity))
             lore.addAll(formattedStats)
             if (formattedStats.isNotEmpty())
                 lore.add("".toComponent())
@@ -212,17 +259,57 @@ interface MacrocosmItem : Ingredient {
             // enchants
             if (enchantments.isNotEmpty()) {
                 val cloned = enchantments.clone() as HashMap<Enchantment, Int>
-                if (cloned.size > 6) {
+                if (cloned.size >= 6) {
                     val cmp = StringBuilder()
-                    cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
-                        cloned.remove(ench)
-                        cmp.append(", ${MiniMessage.miniMessage().serialize(ench.displaySimple(lvl))}<!bold>")
+                    if(cloned.size >= 12) {
+                        // 3 > enchants per line
+                        var size = 0
+                        cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
+                            cloned.remove(ench)
+                            cmp.append(" ${MiniMessage.miniMessage().serialize(ench.displaySimple(lvl))}<!bold>")
+                            size++
+                        }
+                        cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
+                            if(it is UltimateEnchantment)
+                                return@forEach
+                            cmp.append(" ${MiniMessage.miniMessage().serialize(it)}")
+                            size++
+                            if(size >= 3) {
+                                cmp.append('\n')
+                                size = 0
+                            }
+                        }
+                    } else if(cloned.size >= 8) {
+                        // 2 enchants per line
+                        var size = 0
+                        cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
+                            cloned.remove(ench)
+                            cmp.append("${MiniMessage.miniMessage().serialize(ench.displaySimple(lvl))}<!bold>")
+                            size++
+                        }
+                        cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
+                            if(it is UltimateEnchantment)
+                                return@forEach
+                            cmp.append(" ${MiniMessage.miniMessage().serialize(it)}")
+                            size++
+                            if(size >= 2) {
+                                cmp.append('\n')
+                                size = 0
+                            }
+                        }
+                    } else {
+                        // 1 enchant per line
+                        cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
+                            cloned.remove(ench)
+                            cmp.append("${MiniMessage.miniMessage().serialize(ench.displaySimple(lvl))}<!bold>\n")
+                        }
+                        cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
+                            if(it is UltimateEnchantment)
+                                return@forEach
+                            cmp.append("${MiniMessage.miniMessage().serialize(it)}\n")
+                        }
                     }
-                    cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
-                        cmp.append(", ${MiniMessage.miniMessage().serialize(it)}")
-                    }
-                    val reduced = cmp.toString().trim(',').trim().split(", ").joinToString(", ").reduceToList(30)
-                        .map { comp(it).noitalic() }
+                    val reduced = cmp.toString().trim().trimEnd('\n').split('\n').map { comp(it.trim()) }
                     lore.addAll(reduced)
                     lore.add("".toComponent())
                 } else {
@@ -231,6 +318,8 @@ interface MacrocosmItem : Ingredient {
                         ench.displayFancy(lore, lvl)
                     }
                     for ((ench, lvl) in enchantments) {
+                        if(ench is UltimateEnchantment)
+                            continue
                         ench.displayFancy(lore, lvl)
                     }
                     lore.add("".toComponent())
@@ -239,7 +328,11 @@ interface MacrocosmItem : Ingredient {
 
             // abilities
             for (ability in abilities) {
-                ability.buildLore(lore)
+                val tmp = mutableListOf<Component>()
+                ability.buildLore(tmp, player)
+                val event = AbilityCompileEvent(this@MacrocosmItem, ability, tmp)
+                event.callEvent()
+                lore.addAll(event.lore)
             }
 
             // reforge
@@ -254,17 +347,18 @@ interface MacrocosmItem : Ingredient {
             lore(lore)
 
             // name
-            var display = name
-            if (reforge != null)
-                display = comp("${reforge!!.name} ").append(display)
-
-            displayName(display.color(rarity.color).noitalic())
+            displayName(buildName())
 
             // item flags
             flags(*ItemFlag.values())
 
+            // unbreakable
+            isUnbreakable = true
+
             addExtraMeta(this)
         }
+
+        // amount
         item.amount = amount
 
         // NBT
@@ -292,6 +386,9 @@ interface MacrocosmItem : Ingredient {
             enchants.putInt((EnchantmentRegistry.nameOf(ench) ?: Identifier.NULL).toString(), level)
         }
         nbt.put("Enchantments", enchants)
+
+        // stars
+        nbt.putInt("Stars", stars)
 
         // item ID
         nbt.putId("ID", id)

@@ -29,7 +29,7 @@ object VampirismEnchantment :
         if (!ok)
             return
 
-        val stats = e.player.calculateStats()!!
+        val stats = e.player.stats()!!
         val missing = stats.health - e.player.currentHealth
         val ratio = missing / stats.health
         val amount = missing * (ratio * (lvl * .01f))
@@ -53,7 +53,7 @@ object ManaExhaustionEnchantment :
         if (!ok)
             return
 
-        val stats = e.player.calculateStats()!!
+        val stats = e.player.stats()!!
         val missing = stats.intelligence - e.player.currentMana
         val ratio = missing / stats.intelligence
         val amount = missing * (ratio * (lvl * .02f))

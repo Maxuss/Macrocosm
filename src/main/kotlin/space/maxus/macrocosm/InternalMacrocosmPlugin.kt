@@ -42,6 +42,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(BlockClickListener, this)
         server.pluginManager.registerEvents(PickupListener, this)
         server.pluginManager.registerEvents(AlchemyReward, this)
+        server.pluginManager.registerEvents(BlockBreakListener, this)
 
         ReforgeType.init()
         ItemValue.init()
@@ -59,6 +60,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         enchantCommand()
         viewRecipeCommand()
         recipesCommand()
+        addScrollCommand()
+        setStarsCommand()
 
         testStatsCommand()
         testLevelUp()

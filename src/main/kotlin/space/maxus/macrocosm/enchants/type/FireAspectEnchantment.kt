@@ -44,7 +44,7 @@ object FireAspectEnchantment :
             pdc[pluginKey("fa_ticks_frost"), PersistentDataType.LONG] = 0
 
         e.damaged.isVisualFire = true
-        val stats = e.player.calculateStats()!!
+        val stats = e.player.stats()!!
         val damagedStats = e.damaged.macrocosm!!.calculateStats()
         val damage = (.1f + (lvl * .1f)) * DamageCalculator.calculateStandardReceived(
             DamageCalculator.calculateStandardDealt(
@@ -97,7 +97,7 @@ object FrostAspectEnchantment :
         if (pdc.has(pluginKey("fa_ticks_frost")) || pdc.has(pluginKey("fa_ticks")))
             return
 
-        val stats = e.player.calculateStats()!!
+        val stats = e.player.stats()!!
         val damagedStats = e.damaged.macrocosm!!.calculateStats()
         val damage = (.1f + (lvl * .05f)) * DamageCalculator.calculateStandardReceived(
             DamageCalculator.calculateStandardDealt(

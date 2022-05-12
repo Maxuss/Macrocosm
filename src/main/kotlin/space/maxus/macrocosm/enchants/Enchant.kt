@@ -172,7 +172,7 @@ enum class Enchant(private val enchant: Enchantment) {
             Statistic.HEALTH,
             0.5f,
             regain = { player, (amount, _) ->
-                player.currentHealth = kotlin.math.min(player.currentHealth + amount, player.calculateStats()!!.health)
+                player.currentHealth = kotlin.math.min(player.currentHealth + amount, player.stats()!!.health)
             },
             conflicts = listOf("SYPHON"),
             levels = 1..5
@@ -185,7 +185,7 @@ enum class Enchant(private val enchant: Enchantment) {
             0.25f,
             regain = { player, (amount, _) ->
                 player.currentMana =
-                    kotlin.math.min(player.currentMana + amount, player.calculateStats()!!.intelligence)
+                    kotlin.math.min(player.currentMana + amount, player.stats()!!.intelligence)
             },
             levels = 1..3
         )
@@ -198,7 +198,7 @@ enum class Enchant(private val enchant: Enchantment) {
             actualDescription = "<gray>Heal for <green>{{amount}}%<gray> of your max ${Statistic.HEALTH.display}<gray> per <blue>100 ${Statistic.CRIT_DAMAGE.display}<gray> you deal per hit, up to <blue>1,000 ${Statistic.CRIT_DAMAGE.display}<gray>.",
             regain = { player, (amount, crit) ->
                 if (crit) {
-                    val stats = player.calculateStats()!!
+                    val stats = player.stats()!!
                     player.currentHealth = kotlin.math.min(
                         player.currentHealth + (amount * (stats.critDamage.toInt() / 100)),
                         stats.health
@@ -246,7 +246,12 @@ enum class Enchant(private val enchant: Enchantment) {
         baseSpecials = specialStats {
             statBoost = 0.05f
         }
-    ))
+    )),
+
+    ULTIMATE_WISE(UltimateWiseEnchantment),
+    ULTIMATE_BULK(UltimateBulkEnchantment),
+
+    ONE_FOR_ALL(OneForAllEnchantment)
     ;
 
     companion object {

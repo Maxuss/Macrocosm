@@ -59,7 +59,7 @@ object DamageHandlers : Listener {
         }
 
         val (damagerStats, damagerSpecials) = if (damager is Player)
-            Pair(damager.macrocosm!!.calculateStats()!!, damager.macrocosm!!.specialStats()!!)
+            Pair(damager.macrocosm!!.stats()!!, damager.macrocosm!!.specialStats()!!)
         else
             Pair(damager.macrocosm!!.calculateStats(), damager.macrocosm!!.specialStats())
 
@@ -77,7 +77,7 @@ object DamageHandlers : Listener {
             damager.macrocosm!!.name
 
         val (damagedStats, damagedSpecials) = if (damaged is Player)
-            Pair(damaged.macrocosm!!.calculateStats()!!, damaged.macrocosm!!.specialStats()!!)
+            Pair(damaged.macrocosm!!.stats()!!, damaged.macrocosm!!.specialStats()!!)
         else
             Pair(damaged.macrocosm!!.calculateStats(), damaged.macrocosm!!.specialStats())
 

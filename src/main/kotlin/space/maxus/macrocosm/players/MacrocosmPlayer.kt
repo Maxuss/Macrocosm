@@ -23,6 +23,7 @@ import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.enchants.roman
+import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
@@ -54,13 +55,15 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var baseStats: Statistics = Statistics.default()
     var purse: Float = 0f
     var bank: Float = 0f
-    var currentHealth: Float = calculateStats()!!.health
-    var currentMana: Float = calculateStats()!!.intelligence
+    var currentHealth: Float = stats()!!.health
+    var currentMana: Float = stats()!!.intelligence
     var lastAbilityUse: HashMap<Identifier, Long> = hashMapOf()
     var unlockedRecipes: MutableList<Identifier> = mutableListOf()
     var skills: Skills = Skills.default()
     var collections: Collections = Collections.default()
-    var blockNextStatus: Boolean = false
+
+    private var statCache: Statistics? = null
+    private var specialCache: SpecialStatistics? = null
 
     val activeEffects get() = paper?.activePotionEffects?.map { it.type }
 
@@ -71,7 +74,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 it.cancel()
                 return@task
             }
-            val stats = calculateStats()!!
+            recalculateSpecialStats()
+            val stats = recalculateStats()
+
             if (currentMana < stats.intelligence)
                 currentMana += stats.intelligence / 20f
             if (currentHealth < stats.health && !activeEffects!!.contains(PotionEffectType.ABSORPTION) && !activeEffects!!.contains(
@@ -83,9 +88,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
 
-            if (blockNextStatus)
-                blockNextStatus = false
-            else sendStatBar(stats)
+            sendStatBar(stats)
         }
     }
 
@@ -98,7 +101,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             return item.macrocosm
         }
-        set(@NotNull value) = paper?.inventory?.setItemInMainHand(value!!.build()) ?: Unit
+        set(@NotNull value) = paper?.inventory?.setItemInMainHand(value!!.build(this)) ?: Unit
 
     var offHand: MacrocosmItem?
         get() {
@@ -107,7 +110,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             return item.macrocosm
         }
-        set(@NotNull value) = paper?.inventory?.setItemInOffHand(value!!.build()) ?: Unit
+        set(@NotNull value) = paper?.inventory?.setItemInOffHand(value!!.build(this)) ?: Unit
 
     var helmet: MacrocosmItem?
         get() {
@@ -116,7 +119,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             return item.macrocosm
         }
-        set(@NotNull value) = paper?.inventory?.setHelmet(value!!.build()) ?: Unit
+        set(@NotNull value) = paper?.inventory?.setHelmet(value!!.build(this)) ?: Unit
 
     var chestplate: MacrocosmItem?
         get() {
@@ -125,7 +128,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             return item.macrocosm
         }
-        set(@NotNull value) = paper?.inventory?.setChestplate(value!!.build()) ?: Unit
+        set(@NotNull value) = paper?.inventory?.setChestplate(value!!.build(this)) ?: Unit
 
     var leggings: MacrocosmItem?
         get() {
@@ -134,7 +137,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             return item.macrocosm
         }
-        set(@NotNull value) = paper?.inventory?.setLeggings(value!!.build()) ?: Unit
+        set(@NotNull value) = paper?.inventory?.setLeggings(value!!.build(this)) ?: Unit
 
     var boots: MacrocosmItem?
         get() {
@@ -143,17 +146,15 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             return item.macrocosm
         }
-        set(@NotNull value) = paper?.inventory?.setBoots(value!!.build()) ?: Unit
+        set(@NotNull value) = paper?.inventory?.setBoots(value!!.build(this)) ?: Unit
 
     @Suppress("UNUSED_PARAMETER")
     fun isRecipeLocked(recipe: Identifier): Boolean {
-        // todo: collections + skill checks
-        return false
+        return unlockedRecipes.contains(recipe)
     }
 
     fun addSkillExperience(skill: SkillType, exp: Double) {
         skills.increase(skill, exp)
-        blockNextStatus = true
         paper?.sendActionBar(comp("<aqua>+${Formatting.withCommas(exp.toBigDecimal(), true)} ${skill.inst.name} EXP"))
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
             pitch = 2f
@@ -177,8 +178,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         ) {
             val lvl = collections.level(collection) + 1
             collections.setLevel(collection, lvl)
-            sendCollectionLevelUp(collection)
-            collection.inst.rewards[lvl - 1].reward(this, lvl)
+            // todo: rewards!!
+            // sendCollectionLevelUp(collection)
+            // collection.inst.rewards[lvl - 1].reward(this, lvl)
         }
 
     }
@@ -221,7 +223,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun addAbsorption(amount: Float, length: Int = -1, myStats: Statistics? = null) {
-        val stats = myStats ?: calculateStats()!!
+        val stats = myStats ?: stats()!!
         paper!!.addPotionEffect(
             PotionEffect(
                 PotionEffectType.ABSORPTION,
@@ -237,7 +239,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun heal(amount: Float, myStats: Statistics? = null) {
-        val stats = myStats ?: calculateStats()!!
+        val stats = myStats ?: stats()!!
         currentHealth = min(currentHealth + amount, stats.health)
         sendStatBar(stats)
     }
@@ -247,7 +249,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     private fun sendStatBar(myStats: Statistics? = null) {
-        val stats = myStats ?: calculateStats()!!
+        val stats = myStats ?: stats()!!
         val activeEffects = paper!!.activePotionEffects.map { it.type }
         val healthColor =
             if (activeEffects.contains(PotionEffectType.WITHER)) TextColor.color(0x2B0C0C) else if (activeEffects.contains(
@@ -290,7 +292,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             }
         }
         paper!!.teleport(paper!!.world.spawnLocation)
-        currentHealth = calculateStats()?.health ?: baseStats.health
+        currentHealth = stats()?.health ?: baseStats.health
     }
 
     fun decreaseMana(amount: Float) {
@@ -305,7 +307,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (paper == null)
             return
 
-        val stats = calculateStats()!!
+        val stats = stats()!!
         currentHealth -= amount
         if (currentHealth < stats.health) {
             paper!!.removePotionEffect(PotionEffectType.ABSORPTION)
@@ -317,35 +319,25 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         sendStatBar(stats)
     }
 
-    fun calculateStats(): Statistics? {
-        if (paper == null)
-            return null
-
+    private fun recalculateStats(): Statistics {
         val cloned = baseStats.clone()
         EquipmentSlot.values().forEach {
             val baseItem = paper!!.inventory.getItem(it)
             if (baseItem.type == Material.AIR)
                 return@forEach
             val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
-            cloned.increase(item.stats)
-            cloned.multiply(1 + item.specialStats.statBoost)
-            if (item.enchantments.isNotEmpty()) {
-                for ((ench, level) in item.enchantments) {
-                    val base = ench.stats(level)
-                    val special = ench.special(level)
-                    cloned.increase(base)
-                    cloned.multiply(1 + special.statBoost)
-                }
-            }
+            cloned.increase(item.stats())
         }
+        val event = PlayerCalculateStatsEvent(this, cloned)
+        event.callEvent()
 
-        return cloned
+        statCache = event.stats.clone()
+
+        return event.stats
     }
 
-    fun specialStats(): SpecialStatistics? {
+    private fun recalculateSpecialStats(): SpecialStatistics {
         val stats = SpecialStatistics()
-        if (paper == null)
-            return null
 
         EquipmentSlot.values().forEach {
             val baseItem = paper!!.inventory.getItem(it)
@@ -362,8 +354,23 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 }
             }
         }
+        specialCache = stats.clone()
 
         return stats
+    }
+
+    fun stats(): Statistics? {
+        if (paper == null)
+            return null
+
+        return statCache ?: recalculateStats()
+    }
+
+    fun specialStats(): SpecialStatistics? {
+        if (paper == null)
+            return null
+
+        return specialCache ?: recalculateSpecialStats()
     }
 
     override fun storeSelf(stmt: Statement) {

@@ -26,6 +26,7 @@ class EnchantedItem(
     override var stats: Statistics = Statistics.zero()
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
+    override var stars: Int = 0
     override val id: Identifier = Identifier.macro(thisId ?: "enchanted_${base.name.lowercase()}")
     override val type: ItemType = ItemType.OTHER
     override val name: Component = comp(baseName)

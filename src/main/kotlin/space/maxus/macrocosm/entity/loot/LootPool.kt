@@ -10,7 +10,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import kotlin.random.Random
 
-class LootPool private constructor(private val drops: List<EntityDrop>) {
+class LootPool private constructor(val drops: List<EntityDrop>) {
     companion object {
         fun of(vararg drops: EntityDrop) = LootPool(drops.toList())
     }
@@ -22,7 +22,7 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
     }
 
     fun roll(player: MacrocosmPlayer?): List<ItemStack?> {
-        val stats = player?.calculateStats()
+        val stats = player?.stats()
         val roll = roll(stats?.magicFind ?: 0f)
         return roll.map {
             if (it.item.namespace == "minecraft") {
@@ -50,7 +50,7 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
                 if (player?.paper != null) {
                     it.rarity.announceEntityDrop(player.paper!!, item.macrocosm ?: return@map null)
                 }
-                item.macrocosm?.build() ?: return@map null
+                item.macrocosm?.build(player) ?: return@map null
             } else {
                 val item = ItemRegistry.find(it.item)
                 var amount = it.amount.random()
@@ -75,7 +75,7 @@ class LootPool private constructor(private val drops: List<EntityDrop>) {
                 if (player?.paper != null) {
                     it.rarity.announceEntityDrop(player.paper!!, item)
                 }
-                (item.build() ?: return@map null).apply { this.amount = amount }
+                (item.build(player) ?: return@map null).apply { this.amount = amount }
             }
         }
     }

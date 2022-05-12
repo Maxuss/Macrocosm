@@ -43,9 +43,9 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
             },
             onClick = { e, it ->
                 if (e.bukkitEvent.click.isLeftClick)
-                    e.player.inventory.addItem(ItemRegistry.find(it).build()!!)
+                    e.player.inventory.addItem(ItemRegistry.find(it).build(e.player.macrocosm)!!)
                 else
-                    e.player.inventory.addItem(ItemRegistry.find(it).build()!!.apply { amount = 64 })
+                    e.player.inventory.addItem(ItemRegistry.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
                 e.bukkitEvent.isCancelled = true
             }
         )
@@ -180,7 +180,7 @@ fun statCommand() = command("stat") {
 
 fun myDamageCommand() = command("mydamage") {
     runs {
-        val stats = player.macrocosm!!.calculateStats()!!
+        val stats = player.macrocosm!!.stats()!!
         val (damage, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
         val message = comp(
             """

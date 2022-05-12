@@ -12,6 +12,7 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -42,6 +43,14 @@ abstract class EnchantmentBase(
         }.filter { (success, _) -> success }
         return filtered.maxByOrNull { (_, lvl) -> lvl } ?: filtered.firstOrNull() ?: Pair(false, -1)
     }
+
+    protected fun ensureRequirements(item: MacrocosmItem): Pair<Boolean, Int> {
+        val enchants = item.enchantments
+        if (!enchants.contains(this))
+            return Pair(false, -1)
+        return Pair(true, enchants[this]!!)
+    }
+
 
     override fun stats(level: Int): Statistics {
         val clone = baseStats.clone()
