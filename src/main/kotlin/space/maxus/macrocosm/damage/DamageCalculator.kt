@@ -7,7 +7,7 @@ object DamageCalculator {
     fun crits(stats: Statistics) = Random.nextFloat() < (stats.critChance / 100f)
 
     fun calculateMagicDamage(base: Int, scaling: Float, stats: Statistics): Float {
-        return base * (1 + (stats.abilityDamage) / 100f) * (stats.intelligence / 10f * scaling)
+        return base * (1 + (stats.abilityDamage) / 100f) * (1 + (stats.intelligence / 100f) * scaling)
     }
 
     fun calculateStandardDealt(amount: Float, stats: Statistics): Pair<Float, Boolean> {
