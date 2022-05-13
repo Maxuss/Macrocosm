@@ -23,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.damage.relativeLocation
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
@@ -123,7 +124,7 @@ object DamageHandlers : Listener {
         )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
-        summonDamageIndicator(damaged.location, received, crit)
+        summonDamageIndicator(damaged.location, received, if(crit) DamageType.CRITICAL else DamageType.DEFAULT)
 
         processFerocity(damage, crit, damagerStats, damaged, damagerName, damager)
     }
@@ -175,7 +176,7 @@ object DamageHandlers : Listener {
             damage *= (1 - stats.fireResistance)
             entity.macrocosm!!.damage(damage.toFloat())
         }
-        summonDamageIndicator(entity.location, damage.toFloat(), fire = true)
+        summonDamageIndicator(entity.location, damage.toFloat(), DamageType.FIRE)
     }
 
     @EventHandler
@@ -235,7 +236,7 @@ object DamageHandlers : Listener {
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
-        summonDamageIndicator(entity.location, damage.toFloat(), crit = true)
+        summonDamageIndicator(entity.location, damage.toFloat(), DamageType.CRITICAL)
     }
 
     @EventHandler
@@ -250,7 +251,7 @@ object DamageHandlers : Listener {
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
-        summonDamageIndicator(entity.location, damage.toFloat(), electric = true)
+        summonDamageIndicator(entity.location, damage.toFloat(), DamageType.ELECTRIC)
     }
 
     @EventHandler
@@ -265,7 +266,7 @@ object DamageHandlers : Listener {
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
-        summonDamageIndicator(entity.location, damage.toFloat(), magic = true)
+        summonDamageIndicator(entity.location, damage.toFloat(), DamageType.CRITICAL)
     }
 
     @EventHandler
@@ -342,7 +343,7 @@ object DamageHandlers : Listener {
         } else {
             entity.macrocosm!!.kill()
         }
-        summonDamageIndicator(entity.location, Int.MAX_VALUE.toFloat(), crit = true)
+        summonDamageIndicator(entity.location, Int.MAX_VALUE.toFloat(), DamageType.CRITICAL)
     }
 
     @EventHandler
@@ -357,7 +358,7 @@ object DamageHandlers : Listener {
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
-        summonDamageIndicator(entity.location, damage.toFloat(), frost = true)
+        summonDamageIndicator(entity.location, damage.toFloat(), DamageType.FROST)
 
     }
 
@@ -415,17 +416,13 @@ object DamageHandlers : Listener {
             this.volume = 1f
             playAt(entity.location)
         }
-        summonDamageIndicator(entity.location, damage, crit)
+        summonDamageIndicator(entity.location, damage, if(crit) DamageType.CRITICAL else DamageType.DEFAULT)
     }
 
     fun summonDamageIndicator(
         loc: Location,
         damage: Float,
-        crit: Boolean = false,
-        fire: Boolean = false,
-        frost: Boolean = false,
-        electric: Boolean = false,
-        magic: Boolean = false
+        damageType: DamageType = DamageType.DEFAULT
     ) {
         val x: Double = loc.x
         val y: Double = loc.y
@@ -442,37 +439,44 @@ object DamageHandlers : Listener {
         val newLocation = Location(loc.world, nx, ny, nz)
 
         val damageDisplay = Formatting.withCommas(damage.roundToInt().toBigDecimal())
-        val display = if (crit) {
-            var display = Component.empty()
-            var digitIndex = 0
-            for (char in damageDisplay) {
-                if (!char.isDigit()) {
-                    display.append(",".toComponent().color(NamedTextColor.GOLD))
-                    continue
+        val display = when(damageType) {
+            DamageType.CRITICAL -> {
+                var display = Component.empty()
+                var digitIndex = 0
+                for (char in damageDisplay) {
+                    if (!char.isDigit()) {
+                        display.append(",".toComponent().color(NamedTextColor.GOLD))
+                        continue
+                    }
+                    digitIndex++
+                    if (digitIndex > 5) {
+                        digitIndex = 1
+                    }
+                    val color = when (digitIndex) {
+                        2 -> NamedTextColor.YELLOW
+                        3 -> NamedTextColor.GOLD
+                        4, 5 -> NamedTextColor.RED
+                        else -> NamedTextColor.WHITE
+                    }
+                    display = display.append(char.toString().toComponent().color(color))
                 }
-                digitIndex++
-                if (digitIndex > 5) {
-                    digitIndex = 1
-                }
-                val color = when (digitIndex) {
-                    2 -> NamedTextColor.YELLOW
-                    3 -> NamedTextColor.GOLD
-                    4, 5 -> NamedTextColor.RED
-                    else -> NamedTextColor.WHITE
-                }
-                display = display.append(char.toString().toComponent().color(color))
+                comp("<white>✧</white>").append(display).append(comp("<white>✧</white>"))
             }
-            comp("<white>✧</white>").append(display).append(comp("<white>✧</white>"))
-        } else if (fire) {
-            comp("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
-        } else if (frost) {
-            comp("<white>❄ <aqua>$damageDisplay<white> ❄")
-        } else if (electric) {
-            comp("<white>\uD83D\uDDF2 <yellow>$damageDisplay<white> \uD83D\uDDF2")
-        } else if (magic) {
-            comp("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
-        } else {
-            damageDisplay.toComponent().color(NamedTextColor.GRAY)
+            DamageType.FIRE -> {
+                comp("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
+            }
+            DamageType.FROST -> {
+                comp("<white>❄ <aqua>$damageDisplay<white> ❄")
+            }
+            DamageType.ELECTRIC -> {
+                comp("<white>\uD83D\uDDF2 <yellow>$damageDisplay<white> \uD83D\uDDF2")
+            }
+            DamageType.MAGIC -> {
+                comp("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
+            }
+            else -> {
+                damageDisplay.toComponent().color(NamedTextColor.GRAY)
+            }
         }
 
         val stand = newLocation.world.spawnEntity(newLocation, EntityType.ARMOR_STAND) as ArmorStand

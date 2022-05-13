@@ -41,26 +41,73 @@ internal fun statsFromMaterial(mat: Material) = stats {
         // weapons
 
         // melee
-        Material.WOODEN_SHOVEL, Material.WOODEN_HOE, Material.WOODEN_PICKAXE, Material.STONE_SHOVEL, Material.STONE_HOE, Material.STONE_PICKAXE -> damage =
-            5f
-        Material.WOODEN_SWORD, Material.WOODEN_AXE, Material.IRON_PICKAXE, Material.IRON_HOE, Material.IRON_SHOVEL -> damage =
-            10f
-        Material.STONE_SWORD, Material.STONE_AXE, Material.DIAMOND_SHOVEL -> damage = 15f
-        Material.IRON_SWORD, Material.IRON_AXE, Material.DIAMOND_HOE, Material.DIAMOND_PICKAXE -> damage = 20f
-        Material.DIAMOND_SWORD, Material.DIAMOND_AXE, Material.NETHERITE_SHOVEL -> damage = 40f
-        Material.NETHERITE_PICKAXE, Material.NETHERITE_HOE -> damage = 50f
-        Material.NETHERITE_SWORD, Material.NETHERITE_AXE -> {
+        Material.WOODEN_SHOVEL, Material.WOODEN_HOE, Material.WOODEN_PICKAXE -> {
+            damage = 5f
+            miningSpeed = 35f
+        }
+        Material.STONE_SHOVEL -> damage = 5f
+        Material.STONE_HOE, Material.STONE_PICKAXE -> {
+            damage = 5f
+            miningSpeed = 60f
+        }
+        Material.WOODEN_SWORD, Material.WOODEN_AXE -> damage = 10f
+        Material.IRON_PICKAXE, Material.IRON_HOE, Material.IRON_SHOVEL -> {
+            damage = 10f
+            miningSpeed = 110f
+        }
+        Material.STONE_SWORD, Material.STONE_AXE -> {
+            damage = 20f
+            miningSpeed = 150f
+        }
+        Material.IRON_SWORD -> damage = 20f
+        Material.IRON_AXE, Material.DIAMOND_HOE, Material.DIAMOND_PICKAXE -> {
+            damage = 20f
+            miningSpeed = 180f
+        }
+        Material.DIAMOND_SWORD -> damage = 40f
+        Material.DIAMOND_AXE -> {
+            damage = 40f
+            miningSpeed = 180f
+        }
+        Material.NETHERITE_PICKAXE -> {
+            damage = 50f
+            miningSpeed = 350f
+            miningFortune = 45f
+        }
+        Material.NETHERITE_HOE -> {
+            damage = 50f
+            miningSpeed = 350f
+            farmingFortune = 30f
+        }
+        Material.NETHERITE_SHOVEL -> {
+            damage = 50f
+            miningSpeed = 350f
+            excavatingFortune = 40f
+        }
+        Material.NETHERITE_SWORD -> {
             damage = 100f
             strength = 25f
+            ferocity = 10f
+        }
+        Material.NETHERITE_AXE -> {
+            damage = 100f
+            miningSpeed = 350f
+            foragingFortune = 15f
         }
 
         Material.GOLDEN_HOE, Material.GOLDEN_PICKAXE, Material.GOLDEN_SHOVEL -> {
             damage = 10f
             magicFind = 5f
+            miningSpeed = 300f
         }
-        Material.GOLDEN_SWORD, Material.GOLDEN_AXE -> {
+        Material.GOLDEN_SWORD -> {
             damage = 20f
             magicFind = 8f
+        }
+        Material.GOLDEN_AXE -> {
+            damage = 20f
+            magicFind = 8f
+            miningSpeed = 300f
         }
 
         // ranged
@@ -134,6 +181,25 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
         else -> Rarity.COMMON
     }
 }
+private val blacklist: List<String> = listOf("SWORD", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "INGOT", "SCRAP")
+private fun bpFromMat(mat: Material): Int {
+    val name = mat.name
+    if(blacklist.any { name.contains(it) } || mat.isBlock)
+        return 0
+    if(name.contains("WOODEN"))
+        return 1
+    if(name.contains("STONE"))
+        return 2
+    if(name.contains("IRON"))
+        return 3
+    if(name.contains("GOLDEN"))
+        return 2
+    if(name.contains("DIAMOND"))
+        return 5
+    if(name.contains("NETHERITE"))
+        return 6
+    return 0
+}
 
 class VanillaItem(override val base: Material, override var amount: Int = 1) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
@@ -160,6 +226,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1) : M
     override var reforge: Reforge? = null
     override var abilities: MutableList<ItemAbility> = mutableListOf()
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override var breakingPower: Int = bpFromMat(base)
 
     @Suppress("UNCHECKED_CAST")
     override fun clone(): MacrocosmItem {

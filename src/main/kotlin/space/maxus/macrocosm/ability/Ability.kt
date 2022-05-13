@@ -3,6 +3,7 @@ package space.maxus.macrocosm.ability
 import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
 import space.maxus.macrocosm.ability.types.EmeraldPickaxeBonus
 import space.maxus.macrocosm.ability.types.InstantTransmission
+import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
@@ -23,8 +24,12 @@ enum class Ability(val ability: ItemAbility) {
 
     companion object {
         fun init() {
-            for (abil in values()) {
-                AbilityRegistry.register(Identifier.macro(abil.name.lowercase()), abil.ability)
+            Threading.start("Ability Registry", true) {
+                info("Starting ${javaClass.simpleName} daemon...")
+                for (abil in values()) {
+                    info("Registering ${abil.name} ability...")
+                    AbilityRegistry.register(Identifier.macro(abil.name.lowercase()), abil.ability)
+                }
             }
         }
     }

@@ -1,68 +1,69 @@
 package space.maxus.macrocosm.stats
 
 import net.minecraft.nbt.CompoundTag
+import kotlin.math.roundToInt
 
 fun specialStats(builder: SpecialStatistics.() -> Unit) = SpecialStatistics().apply(builder)
 
 class SpecialStatistics {
-    private var values: HashMap<SpecialStatistic, Float> =
+    private var self: HashMap<SpecialStatistic, Float> =
         hashMapOf(*SpecialStatistic.values().map { it to 0f }.toTypedArray())
 
     var knockbackBoost: Float
-        get() = values[SpecialStatistic.KB_BOOST]!!
+        get() = self[SpecialStatistic.KB_BOOST]!!
         set(value) {
-            values[SpecialStatistic.KB_BOOST] = value
+            self[SpecialStatistic.KB_BOOST] = value
         }
 
     var knockbackResistance: Float
-        get() = values[SpecialStatistic.KB_RESISTANCE]!!
+        get() = self[SpecialStatistic.KB_RESISTANCE]!!
         set(value) {
-            values[SpecialStatistic.KB_RESISTANCE] = value
+            self[SpecialStatistic.KB_RESISTANCE] = value
         }
 
     var fireResistance: Float
-        get() = values[SpecialStatistic.FIRE_RESISTANCE]!!
+        get() = self[SpecialStatistic.FIRE_RESISTANCE]!!
         set(value) {
-            values[SpecialStatistic.FIRE_RESISTANCE] = value
+            self[SpecialStatistic.FIRE_RESISTANCE] = value
         }
 
     var blastResistance: Float
-        get() = values[SpecialStatistic.BLAST_RESISTANCE]!!
+        get() = self[SpecialStatistic.BLAST_RESISTANCE]!!
         set(value) {
-            values[SpecialStatistic.BLAST_RESISTANCE] = value
+            self[SpecialStatistic.BLAST_RESISTANCE] = value
         }
 
     var fallResistance: Float
-        get() = values[SpecialStatistic.FALL_RESISTANCE]!!
+        get() = self[SpecialStatistic.FALL_RESISTANCE]!!
         set(value) {
-            values[SpecialStatistic.FALL_RESISTANCE] = value
+            self[SpecialStatistic.FALL_RESISTANCE] = value
         }
 
     var statBoost: Float
-        get() = values[SpecialStatistic.STAT_BOOST]!!
+        get() = self[SpecialStatistic.STAT_BOOST]!!
         set(value) {
-            values[SpecialStatistic.STAT_BOOST] = value
+            self[SpecialStatistic.STAT_BOOST] = value
         }
 
     fun clone(): SpecialStatistics {
         val clone = SpecialStatistics()
-        for ((stat, value) in values) {
-            clone.values[stat] = value
+        for ((stat, value) in self) {
+            clone.self[stat] = value
         }
         return clone
     }
 
     fun multiply(multiplier: Float) {
-        for ((stat, _) in values) {
-            values[stat] = values[stat]!! * multiplier
+        for ((stat, _) in self) {
+            self[stat] = self[stat]!! * multiplier
         }
     }
 
-    fun map() = values
+    fun map() = self
 
     fun compound(): CompoundTag {
         val cmp = CompoundTag()
-        for ((stat, value) in values) {
+        for ((stat, value) in self) {
             if (value == 0f)
                 continue
             cmp.putFloat(stat.name, value)
@@ -71,10 +72,35 @@ class SpecialStatistics {
     }
 
     fun increase(other: SpecialStatistics) {
-        for ((stat, value) in other.values) {
-            if (other.values[stat]!! == 0f)
+        for ((stat, value) in other.self) {
+            if (other.self[stat]!! == 0f)
                 continue
-            values[stat] = values[stat]!! + value
+            self[stat] = self[stat]!! + value
+        }
+    }
+
+
+    fun round() {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = self[stat]!!.roundToInt().toFloat()
+        }
+    }
+
+    fun ceil() {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = kotlin.math.ceil(self[stat]!!)
+        }
+    }
+
+    fun floor() {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = kotlin.math.floor(self[stat]!!)
         }
     }
 }

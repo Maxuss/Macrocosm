@@ -13,6 +13,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
@@ -49,7 +50,7 @@ object ThunderlordEnchantment :
             val stats = e.player.stats() ?: return
             val damage = stats.strength * (1 + ((lvl - 1) * 0.25f))
             e.damaged.macrocosm!!.damage(damage, e.player.paper)
-            DamageHandlers.summonDamageIndicator(e.damaged.location, damage, electric = true)
+            DamageHandlers.summonDamageIndicator(e.damaged.location, damage, DamageType.ELECTRIC)
         } else {
             pdc[NamespacedKey(Macrocosm, "tl_hits"), PersistentDataType.BYTE] = (tlHits + 1).toByte()
         }
@@ -89,7 +90,7 @@ object ThunderboltEnchantment :
                 living.world.strikeLightningEffect(living.location)
                 val damage = stats.critDamage * (1 + ((lvl - 1) * 0.1f))
                 living.macrocosm!!.damage(damage, e.player.paper)
-                DamageHandlers.summonDamageIndicator(living.location, damage, electric = true)
+                DamageHandlers.summonDamageIndicator(living.location, damage, DamageType.ELECTRIC)
             }
         } else {
             pdc[NamespacedKey(Macrocosm, "tb_hits"), PersistentDataType.BYTE] = (tlHits + 1).toByte()

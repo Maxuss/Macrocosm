@@ -34,6 +34,7 @@ class EnchantedItem(
     override var reforge: Reforge? = null
     override val abilities: MutableList<ItemAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override var breakingPower: Int = 0
 
     private var actualBase: String = actualId ?: base.name
 

@@ -64,6 +64,7 @@ interface MacrocosmItem : Ingredient {
     val abilities: MutableList<ItemAbility>
     val enchantments: HashMap<Enchantment, Int>
     val maxStars: Int get() = 20
+    var breakingPower: Int
 
     override fun id(): Identifier {
         return id
@@ -183,8 +184,8 @@ interface MacrocosmItem : Ingredient {
             enchantments[EnchantmentRegistry.find(Identifier.parse(k))!!] = enchants.getInt(k)
         }
 
-        val stars = nbt.getInt("Stars")
-        this.stars = stars
+        this.stars = nbt.getInt("Stars")
+        this.breakingPower = nbt.getInt("BreakingPower")
         this.amount = from.amount
         return this
     }
@@ -249,6 +250,11 @@ interface MacrocosmItem : Ingredient {
         item.meta<ItemMeta> {
             // lore
             val lore = mutableListOf<Component>()
+
+            // breaking power
+            if(breakingPower > 0) {
+                lore.add(comp("<dark_gray>Breaking Power $breakingPower").noitalic())
+            }
 
             // stats
             val formattedStats = stats().formatSimple(reforge?.stats(rarity))
@@ -389,6 +395,9 @@ interface MacrocosmItem : Ingredient {
 
         // stars
         nbt.putInt("Stars", stars)
+
+        // breaking power
+        nbt.putInt("BreakingPower", breakingPower)
 
         // item ID
         nbt.putId("ID", id)

@@ -13,6 +13,7 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
@@ -72,7 +73,7 @@ object FireAspectEnchantment :
                 ticksLeft - 20
 
             e.damaged.macrocosm!!.damage(damage, e.player.paper)
-            DamageHandlers.summonDamageIndicator(e.damaged.location, damage, fire = true)
+            DamageHandlers.summonDamageIndicator(e.damaged.location, damage, DamageType.FIRE)
         }
     }
 }
@@ -125,7 +126,7 @@ object FrostAspectEnchantment :
             e.damaged.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 22, 2, true, false, false))
 
             e.damaged.macrocosm!!.damage(damage, e.player.paper)
-            DamageHandlers.summonDamageIndicator(e.damaged.location, damage, frost = true)
+            DamageHandlers.summonDamageIndicator(e.damaged.location, damage, DamageType.FROST)
         }
     }
 }

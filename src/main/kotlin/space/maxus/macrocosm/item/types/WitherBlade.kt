@@ -29,6 +29,7 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.damage.relativeLocation
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.macrocosm
@@ -56,7 +57,7 @@ val WITHER_SCROLL_IMPLOSION = WitherScrollAbility("Implosion", "Deals <red>10.00
         if(entity is Player || entity is ArmorStand)
             continue
 
-        DamageHandlers.summonDamageIndicator(entity.location, damage, magic = true)
+        DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.MAGIC)
         entity.macrocosm?.damage(damage, paper)
     }
     particle(Particle.EXPLOSION_HUGE) {
@@ -117,7 +118,7 @@ val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility("Shadow Warp", "Create a spa
                 it.cancel()
                 val mc = entity.macrocosm!!
                 mc.damage(damage)
-                DamageHandlers.summonDamageIndicator(entity.location, damage)
+                DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.MAGIC)
                 sound(Sound.ENTITY_ENDERMAN_HURT) {
                     pitch = .7f
                     playFor(paper)

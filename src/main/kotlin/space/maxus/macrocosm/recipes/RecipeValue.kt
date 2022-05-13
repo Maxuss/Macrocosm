@@ -59,8 +59,15 @@ enum class RecipeValue(private val recipe: SbRecipe) {
         }
 
         fun init() {
-            Threading.start(this::initBasic)
-            Threading.start(this::initEnchanted)
+            Threading.start("Basic Recipe Registry", true) {
+                info("Starting Basic Recipe daemon...")
+                initBasic()
+            }
+            Threading.start("Enchanted Recipe Registry", true) {
+                info("Starting Enchanted Recipe daemon...")
+                initEnchanted()
+
+            }
         }
     }
 }

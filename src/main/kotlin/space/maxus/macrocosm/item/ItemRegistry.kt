@@ -22,6 +22,15 @@ object ItemRegistry {
         else items[id]!!.clone()
     }
 
+    fun findOrNull(id: Identifier): MacrocosmItem? {
+        return if (id.namespace == "minecraft") {
+            VanillaItem(Material.valueOf(id.path.uppercase()))
+        } else if (id.path == "null")
+            VanillaItem(Material.AIR)
+        else items[id]?.clone()
+    }
+
+
     fun register(id: Identifier, item: MacrocosmItem): MacrocosmItem {
         if (items.containsKey(id))
             return item

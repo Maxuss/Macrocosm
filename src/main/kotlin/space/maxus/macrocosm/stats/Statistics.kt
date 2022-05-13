@@ -7,6 +7,8 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
 import java.util.*
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 inline fun defaultStats(builder: Statistics.() -> Unit) = Statistics.default().apply(builder)
 inline fun stats(builder: Statistics.() -> Unit) = Statistics.zero().apply(builder)
@@ -262,6 +264,30 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
             if (self[stat]!! == 0f)
                 continue
             self[stat] = self[stat]!! * multiplier
+        }
+    }
+
+    fun round() {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = self[stat]!!.roundToInt().toFloat()
+        }
+    }
+
+    fun ceil() {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = ceil(self[stat]!!)
+        }
+    }
+
+    fun floor() {
+        for((stat, _) in self) {
+            if(self[stat]!! == 0f)
+                continue
+            self[stat] = kotlin.math.floor(self[stat]!!)
         }
     }
 

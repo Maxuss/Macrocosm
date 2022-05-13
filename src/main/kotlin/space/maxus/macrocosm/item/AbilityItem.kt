@@ -16,7 +16,8 @@ open class AbilityItem(
     override var stats: Statistics,
     override val abilities: MutableList<ItemAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
-    private val metaModifier: (ItemMeta) -> ItemMeta = { it }
+    override var breakingPower: Int = 0,
+    private val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
     override var amount: Int = 1
     override var stars: Int = 0
@@ -37,11 +38,12 @@ open class AbilityItem(
 
     @Suppress("UNCHECKED_CAST")
     override fun clone(): MacrocosmItem {
-        val item = AbilityItem(type, itemName, rarity, base, stats.clone(), abilities, specialStats.clone(), metaModifier)
+        val item = AbilityItem(type, itemName, rarity, base, stats.clone(), abilities, specialStats.clone(), metaModifier = metaModifier)
         item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
         item.stars = stars
+        item.breakingPower = breakingPower
         return item
     }
 

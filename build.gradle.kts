@@ -9,12 +9,14 @@ version = "1.0-SNAPSHOT"
 
 repositories {
   mavenCentral()
+  maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
 }
 
 dependencies {
   paperDevBundle("1.18.2-R0.1-SNAPSHOT")
   implementation("net.axay:kspigot:1.18.2")
   implementation("org.xerial:sqlite-jdbc:3.36.0.3")
+  implementation("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 
 tasks {

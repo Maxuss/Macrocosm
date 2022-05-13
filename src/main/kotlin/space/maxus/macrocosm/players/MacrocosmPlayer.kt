@@ -7,9 +7,12 @@ import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect
@@ -398,6 +401,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
+    fun <T, L> sendPacket(packet: T) where T: Packet<L>, L: PacketListener {
+        (this.paper as CraftPlayer).handle.networkManager.send(packet)
+    }
 
     companion object {
         fun readPlayer(id: UUID): MacrocosmPlayer? {

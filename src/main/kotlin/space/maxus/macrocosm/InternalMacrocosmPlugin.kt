@@ -1,13 +1,17 @@
 package space.maxus.macrocosm
 
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
+import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.listeners.*
+import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
@@ -18,6 +22,7 @@ import java.util.*
 class InternalMacrocosmPlugin : KSpigot() {
     companion object {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
+        lateinit var PACKET_MANAGER: ProtocolManager; private set
     }
 
     val id: String = "macrocosm"
@@ -33,6 +38,8 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     override fun startup() {
+        PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
+
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this)
         server.pluginManager.registerEvents(AbilityTriggers, this)
@@ -43,11 +50,16 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(PickupListener, this)
         server.pluginManager.registerEvents(AlchemyReward, this)
         server.pluginManager.registerEvents(BlockBreakListener, this)
+        server.pluginManager.registerEvents(MiningHandler, this)
+
+        // todo: TEST PACKETS!!!
+        protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
         ItemValue.init()
         Enchant.init()
         RecipeValue.init()
+        Armor.init()
 
         playtimeCommand()
         rankCommand()
@@ -81,5 +93,5 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
     }
 }
-
+val protocolManager by lazy { InternalMacrocosmPlugin.PACKET_MANAGER }
 val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
