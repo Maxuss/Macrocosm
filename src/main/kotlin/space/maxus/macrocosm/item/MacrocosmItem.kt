@@ -20,6 +20,9 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
@@ -64,6 +67,7 @@ interface MacrocosmItem : Ingredient {
     val abilities: MutableList<ItemAbility>
     val enchantments: HashMap<Enchantment, Int>
     val maxStars: Int get() = 20
+    val runes: HashMap<ApplicableRune, RuneState>
     var breakingPower: Int
 
     override fun id(): Identifier {
@@ -93,11 +97,7 @@ interface MacrocosmItem : Ingredient {
     fun reforge(ref: Reforge) {
         if (!ref.applicable.contains(this.type))
             return
-        if (reforge != null) {
-            stats.decrease(reforge!!.stats(rarity))
-        }
         reforge = ref
-        stats.increase(ref.stats(rarity))
     }
 
     fun stats(): Statistics {
@@ -105,6 +105,13 @@ interface MacrocosmItem : Ingredient {
         val special = specialStats()
         for ((ench, level) in enchantments) {
             base.increase(ench.stats(level))
+        }
+        base.increase(reforge?.stats(rarity))
+        for((rune, state) in runes) {
+            val (open, lvl) = state
+            if(!open)
+                continue
+            base.increase(rune.stats(lvl))
         }
         base.multiply(1 + special.statBoost)
         // 2% boost from stars
@@ -162,6 +169,20 @@ interface MacrocosmItem : Ingredient {
         return display.color(rarity.color).noitalic()
     }
 
+    fun unlockRune(rune: ApplicableRune): Boolean {
+        if(!this.runes.containsKey(rune))
+            return false
+        this.runes[rune] = RuneState(true, 0)
+        return true
+    }
+
+    fun addRune(gem: ApplicableRune, tier: Int): Boolean {
+        if(!this.runes.containsKey(gem) || !this.runes[gem]!!.open)
+            return false
+        this.runes[gem] = RuneState(true, tier)
+        return true
+    }
+
     /**
     Constructs base item stack differently, by default returns null
      **/
@@ -186,6 +207,10 @@ interface MacrocosmItem : Ingredient {
 
         this.stars = nbt.getInt("Stars")
         this.breakingPower = nbt.getInt("BreakingPower")
+        val gems = nbt.getCompound("Gemstones")
+        // todo: allow not only vanilla gemstones (possibly identifiers)
+        val associated = gems.allKeys.map { VanillaRune.valueOf(it) }.associateWith { val cmp = gems.getCompound(it.name); RuneState(cmp.getBoolean("Open"), cmp.getInt("Tier")) }
+        this.runes.putAll(associated)
         this.amount = from.amount
         return this
     }
@@ -255,13 +280,26 @@ interface MacrocosmItem : Ingredient {
             // lore
             val lore = this.lore()?.toMutableList() ?: mutableListOf()
 
+            // runes
+            var gemComp = comp("")
+            for((gem, state) in runes) {
+                val (open, lvl) = state
+                gemComp = if(!open)
+                    gemComp.append(gem.locked()).append(" ".toComponent())
+                else if(lvl <= 0)
+                    gemComp.append(gem.unlocked()).append(" ".toComponent())
+                else
+                    gemComp.append(gem.full(lvl)).append(" ".toComponent())
+            }
+            lore.add(gemComp.noitalic())
+
             // breaking power
             if(breakingPower > 0) {
                 lore.add(comp("<dark_gray>Breaking Power $breakingPower").noitalic())
             }
 
             // stats
-            val formattedStats = stats().formatSimple(reforge?.stats(rarity))
+            val formattedStats = stats().formatSimple(reforge?.stats(rarity), runes)
             lore.addAll(formattedStats)
             if (formattedStats.isNotEmpty())
                 lore.add("".toComponent())
@@ -406,6 +444,16 @@ interface MacrocosmItem : Ingredient {
 
         // item ID
         nbt.putId("ID", id)
+
+        val gemsComp = CompoundTag()
+        runes.forEach() {
+            val k = (it.key as VanillaRune).name
+            val cmp = CompoundTag()
+            cmp.putInt("Tier", it.value.tier)
+            cmp.putBoolean("Open", it.value.open)
+            gemsComp.put(k, cmp)
+        }
+        nbt.put("Gemstones", gemsComp)
 
         // adding extra nbt
         addExtraNbt(nbt)

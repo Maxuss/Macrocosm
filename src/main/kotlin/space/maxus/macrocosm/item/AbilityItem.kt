@@ -5,6 +5,8 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -17,8 +19,9 @@ open class AbilityItem(
     override val abilities: MutableList<ItemAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
     override var breakingPower: Int = 0,
-    private val metaModifier: (ItemMeta) -> Unit = { },
-) : MacrocosmItem {
+    applicableRunes: List<ApplicableRune> = listOf(),
+    private val metaModifier: (ItemMeta) -> Unit = { }
+    ) : MacrocosmItem {
     override var amount: Int = 1
     override var stars: Int = 0
         set(value) {
@@ -31,6 +34,7 @@ open class AbilityItem(
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val runes: HashMap<ApplicableRune, RuneState> = HashMap(applicableRunes.associateWith { RuneState.ZERO })
 
     override fun addExtraMeta(meta: ItemMeta) {
         metaModifier(meta)
@@ -44,6 +48,7 @@ open class AbilityItem(
         item.rarityUpgraded = rarityUpgraded
         item.stars = stars
         item.breakingPower = breakingPower
+        item.runes.putAll(runes)
         return item
     }
 

@@ -39,6 +39,7 @@ import space.maxus.macrocosm.item.AbilityItem
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
@@ -153,7 +154,7 @@ val WITHER_SCROLL_WITHER_IMPACT = WitherScrollAbility("Wither Impact", "Teleport
     WITHER_SCROLL_IMPLOSION.executor(player)
 }
 
-class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarity = Rarity.LEGENDARY): AbilityItem(ItemType.SWORD, name, rarity, base, stats) {
+class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarity = Rarity.LEGENDARY): AbilityItem(ItemType.SWORD, name, rarity, base, stats, applicableRunes = listOf(VanillaRune.REDSTONE, VanillaRune.DIAMOND, VanillaRune.EMERALD)) {
     fun addScroll(scroll: WitherScrollAbility) {
         if(abilities.contains(WITHER_SCROLL_WITHER_IMPACT))
             return

@@ -1,12 +1,15 @@
 package space.maxus.macrocosm.enchants
 
+import org.bukkit.Material
 import org.bukkit.entity.EntityType
+import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.enchants.type.*
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.Identifier
+import java.util.concurrent.TimeUnit
 
 enum class Enchant(private val enchant: Enchantment) {
     SHARPNESS(
@@ -236,6 +239,34 @@ enum class Enchant(private val enchant: Enchantment) {
     VAMPIRISM(VampirismEnchantment),
     MANA_EXHAUSTION(ManaExhaustionEnchantment),
 
+    // tools
+
+    // default stuff
+
+    // farming
+    TURBO_POTATOES(BlockTargetingEnchantment("Turbo-Potatoes", ItemType.HOE, "<yellow>Potatoes<gray>", Statistic.FARMING_FORTUNE, 15, Material.POTATOES)),
+    TURBO_CARROTS(BlockTargetingEnchantment("Turbo-Carrots", ItemType.HOE, "<#FF6927>Carrots<gray>", Statistic.FARMING_FORTUNE, 15, Material.CARROTS)),
+    TURBO_PUMPKINS(BlockTargetingEnchantment("Turbo-Pumpkins", ItemType.HOE, "<gold>Pumpkins<gray>", Statistic.FARMING_FORTUNE, 15, Material.PUMPKIN)),
+    TURBO_WARTS(BlockTargetingEnchantment("Turbo-Warts", ItemType.HOE, "<red>Nether Warts<gray>", Statistic.FARMING_FORTUNE, 15, Material.NETHER_WART)),
+
+    // mining
+    HYPER_COAL(BlockTargetingEnchantment("Hyper-Coal", ItemType.PICKAXE, "<dark_gray>Coal<gray>", Statistic.MINING_FORTUNE, 20, Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)),
+    HYPER_GOLD(BlockTargetingEnchantment("Hyper-Gold", ItemType.PICKAXE, "<#FFA327>Gold<gray>", Statistic.MINING_FORTUNE, 20, Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE)),
+    HYPER_EMERALDS(BlockTargetingEnchantment("Hyper-Emeralds", ItemType.PICKAXE, "<#42FF27>Emeralds<gray>", Statistic.MINING_FORTUNE, 15, Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)),
+    HYPER_DIAMONDS(BlockTargetingEnchantment("Hyper-Diamonds", ItemType.PICKAXE, "<#27FFC9>Diamonds<gray>", Statistic.MINING_FORTUNE, 15, Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE)),
+
+    // foraging
+    SUPER_JUNGLE(BlockTargetingEnchantment("Super-Jungle", ItemType.AXE, "<#FF917D>Jungle Wood<gray>", Statistic.FORAGING_FORTUNE, 25, Material.JUNGLE_LOG)),
+    SUPER_OAK(BlockTargetingEnchantment("Super-Oak", ItemType.AXE, "<white>Oak<gray> and <dark_gray>Dark Oak<gray> Wood", Statistic.FORAGING_FORTUNE, 25, Material.DARK_OAK_LOG, Material.OAK_LOG)),
+    SUPER_BIRCH(BlockTargetingEnchantment("Super-Birch", ItemType.AXE, "<#CCC9C8>Birch Wood<gray>", Statistic.FORAGING_FORTUNE, 25, Material.BIRCH_LOG)),
+    SUPER_ACACIA(BlockTargetingEnchantment("Super-Acacia", ItemType.AXE, "<#F9E5A5>Acacia Wood<gray>", Statistic.FORAGING_FORTUNE, 25, Material.ACACIA_LOG)),
+
+    // excavating
+    ULTRA_SAND(BlockTargetingEnchantment("Ultra-Sand", ItemType.SHOVEL, "<#FFE592>Sand<gray> and <#9A1308>Soul Sand<gray>", Statistic.EXCAVATING_FORTUNE, 30, Material.SAND, Material.SOUL_SAND)),
+    ULTRA_CLAY(BlockTargetingEnchantment("Ultra-Clay", ItemType.SHOVEL, "<#BBFDE5>Clay<gray>", Statistic.EXCAVATING_FORTUNE, 30, Material.CLAY)),
+    ULTRA_NYLIUM(BlockTargetingEnchantment("Ultra-Nylium", ItemType.SHOVEL, "<#E7BBFD><obfuscated>a</obfuscated> Warped <obfuscated>a</obfuscated><gray> and <#FDBBBB><obfuscated>a</obfuscated> Crimson <obfuscated>a</obfuscated><gray> Nylium", Statistic.EXCAVATING_FORTUNE, 30, Material.CRIMSON_NYLIUM, Material.WARPED_NYLIUM)),
+    ULTRA_GRAVEL(BlockTargetingEnchantment("Ultra-Gravel", ItemType.SHOVEL, "<#808080>Gravel<gray>", Statistic.EXCAVATING_FORTUNE, 30, Material.GRAVEL)),
+
     // armor
     GROWTH(SimpleEnchantment("Growth", "Increases your ${Statistic.HEALTH.display}<gray> by <green><health><gray>.", 1..7, ItemType.armor(), stats {
         health = 25f
@@ -271,8 +302,23 @@ enum class Enchant(private val enchant: Enchantment) {
 
     companion object {
         fun init() {
-            for (ench in values()) {
-                EnchantmentRegistry.register(Identifier.macro(ench.name.lowercase()), ench.enchant)
+            Threading.start("Enchant Registry Daemon") {
+                info("Starting Enchant daemon...")
+
+                val pool = Threading.pool()
+                val values = values().toList().parallelStream()
+                for(ench in values) {
+                    pool.execute {
+                        EnchantmentRegistry.register(Identifier.macro(ench.name.lowercase()), ench.enchant)
+                    }
+                }
+
+                pool.shutdown()
+
+                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+                if (!success)
+                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
+                info("Successfully registered ${values().size} enchantments from ${Enchant::class.qualifiedName}!")
             }
         }
     }

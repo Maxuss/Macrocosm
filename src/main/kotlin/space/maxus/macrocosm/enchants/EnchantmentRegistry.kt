@@ -3,10 +3,11 @@ package space.maxus.macrocosm.enchants
 import org.bukkit.Bukkit
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.util.Identifier
+import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
 object EnchantmentRegistry {
-    val enchants: HashMap<Identifier, Enchantment> = hashMapOf()
+    val enchants: ConcurrentHashMap<Identifier, Enchantment> = ConcurrentHashMap(hashMapOf())
 
     fun register(name: Identifier, ench: Enchantment): Enchantment {
         if (enchants.containsKey(name)) {

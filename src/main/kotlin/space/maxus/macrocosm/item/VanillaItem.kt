@@ -5,6 +5,9 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -12,6 +15,7 @@ import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.Identifier
 import java.util.*
+import kotlin.collections.HashMap
 
 internal val SPLIT_THIS =
     listOf("HOE", "PICKAXE", "AXE", "SWORD", "SHOVEL", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS")
@@ -202,6 +206,37 @@ private fun bpFromMat(mat: Material): Int {
     return 0
 }
 
+private fun getGemsForItem(item: Material): List<ApplicableRune> {
+    if(item.isBlock)
+        return listOf()
+    if(!SPLIT_THIS.any { item.name.contains(it) })
+        return listOf()
+
+    // weapons
+    when(item) {
+        Material.STONE_SWORD, Material.STONE_AXE -> return listOf(VanillaRune.AMETHYST)
+        Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_HOE -> return listOf(VanillaRune.DIAMOND)
+        Material.NETHERITE_SWORD, Material.NETHERITE_AXE -> return listOf(VanillaRune.AMETHYST, VanillaRune.REDSTONE, VanillaRune.EMERALD)
+        else -> { }
+    }
+
+    // other equipment
+    val name = item.name
+    if(name.contains("GOLD"))
+        return listOf(VanillaRune.EMERALD)
+    if(name.contains("LEATHER"))
+        return listOf(VanillaRune.AMETHYST)
+    if(name.contains("IRON"))
+        return listOf(VanillaRune.REDSTONE)
+    if(name.contains("DIAMOND")) {
+        return listOf(VanillaRune.DIAMOND, VanillaRune.AMETHYST)
+    }
+    if(name.contains("NETHERITE")) {
+        return listOf(VanillaRune.EMERALD, VanillaRune.REDSTONE, VanillaRune.DIAMOND)
+    }
+    return listOf()
+}
+
 class VanillaItem(override val base: Material, override var amount: Int = 1) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
@@ -227,6 +262,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1) : M
     override var reforge: Reforge? = null
     override var abilities: MutableList<ItemAbility> = mutableListOf()
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val runes: HashMap<ApplicableRune, RuneState> = HashMap(getGemsForItem(base).associateWith { RuneState.ZERO })
     override var breakingPower: Int = bpFromMat(base)
 
     @Suppress("UNCHECKED_CAST")
@@ -239,6 +275,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1) : M
         vanilla.reforge = reforge?.clone()
         vanilla.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
         vanilla.amount = amount
+        vanilla.runes.putAll(runes)
         return vanilla
     }
 }

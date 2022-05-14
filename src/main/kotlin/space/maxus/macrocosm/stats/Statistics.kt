@@ -4,9 +4,12 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -202,11 +205,20 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         return cmp
     }
 
-    fun formatSimple(reforge: Statistics? = null): List<Component> {
+    fun formatSimple(reforge: Statistics? = null, gems: HashMap<ApplicableRune, RuneState> = hashMapOf()): List<Component> {
         val base = mutableListOf<Component>()
         var prev: Statistic? = null
+        val dissolvedGemstones: Statistics = zero()
+        if(gems.isNotEmpty()) {
+            for((gem, state) in gems) {
+                val (open, lvl) = state
+                if(!open || lvl <= 0)
+                    continue
+                dissolvedGemstones.increase(gem.stats(lvl))
+            }
+        }
         for ((stat, value) in self) {
-            val formatted = stat.formatSimple(value) ?: continue
+            var formatted = stat.formatSimple(value) ?: continue
             if (prev != null) {
                 if (prev.type != stat.type) {
                     base.add(" ".toComponent())
@@ -221,9 +233,22 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
                 reforgeComp += if (amount < 0) fmt else "+$fmt"
                 if (stat.percents)
                     reforgeComp += "%"
-                base.add(formatted.append(comp("$reforgeComp)</blue>")))
-            } else
-                base.add(formatted)
+                formatted = formatted.append(comp("$reforgeComp)</blue>"))
+            }
+
+            // gemstones
+            if(dissolvedGemstones[stat] != 0f) {
+                val amount = dissolvedGemstones[stat]
+                var gemComp = " <light_purple>["
+                val fmt = Formatting.stats(amount.toBigDecimal(), false)
+                gemComp += if (amount < 0) fmt else "+$fmt"
+                if (stat.percents)
+                    gemComp += "%"
+                formatted = formatted.append(comp("$gemComp]</light_purple>"))
+            }
+
+            base.add(formatted)
+
             prev = stat
         }
         return base

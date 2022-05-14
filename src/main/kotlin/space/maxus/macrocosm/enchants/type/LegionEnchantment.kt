@@ -4,6 +4,7 @@ import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
@@ -22,10 +23,13 @@ object LegionEnchantment: UltimateEnchantment("Legion", "", 1..5, ItemType.armor
 
     @EventHandler
     fun onStatCalculation(e: PlayerCalculateStatsEvent) {
+        val (ok, lvl) = ensureRequirementsStacking(e.player, EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD)
+        if(!ok)
+            return
         val nearby = e.player.paper!!.location.getNearbyLivingEntities(10.0).filterIsInstance<Player>()
         if(nearby.isEmpty())
             return
         val clone = e.stats.clone()
-        clone.multiply(.01f * nearby.size)
+        clone.multiply((.01f * lvl) * nearby.size)
     }
 }

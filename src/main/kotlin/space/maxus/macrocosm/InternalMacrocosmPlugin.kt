@@ -72,6 +72,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         recipesCommand()
         addScrollCommand()
         setStarsCommand()
+        setGemsCommand()
+        unlockGemsCommand()
 
         testStatsCommand()
         testLevelUp()

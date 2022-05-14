@@ -44,6 +44,21 @@ abstract class EnchantmentBase(
         return filtered.maxByOrNull { (_, lvl) -> lvl } ?: filtered.firstOrNull() ?: Pair(false, -1)
     }
 
+    protected fun ensureRequirementsStacking(player: MacrocosmPlayer, vararg slots: EquipmentSlot): Pair<Boolean, Int> {
+        val filtered = slots.map {
+            val item = player.paper!!.inventory.getItem(it)
+            if (item.type == Material.AIR)
+                return@map Pair(false, -1)
+            val enchants = item.macrocosm?.enchantments
+            if (enchants?.contains(this) != true)
+                return@map Pair(false, -1)
+            Pair(true, enchants[this]!!)
+        }.filter { (success, _) -> success }
+        if(filtered.isEmpty())
+            return Pair(false, -1)
+        return Pair(true, filtered.sumOf { (_, lvl) -> lvl })
+    }
+
     protected fun ensureRequirements(item: MacrocosmItem): Pair<Boolean, Int> {
         val enchants = item.enchantments
         if (!enchants.contains(this))
