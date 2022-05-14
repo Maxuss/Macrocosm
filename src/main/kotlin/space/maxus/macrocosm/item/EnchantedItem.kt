@@ -29,7 +29,7 @@ class EnchantedItem(
     override var stars: Int = 0
     override val id: Identifier = Identifier.macro(thisId ?: "enchanted_${base.name.lowercase()}")
     override val type: ItemType = ItemType.OTHER
-    override val name: Component = comp(baseName)
+    override var name: Component = comp(baseName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override val abilities: MutableList<ItemAbility> = mutableListOf()

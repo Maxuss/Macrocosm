@@ -56,7 +56,7 @@ interface MacrocosmItem : Ingredient {
 
     val id: Identifier
     val type: ItemType
-    val name: Component
+    var name: Component
     val base: Material
     var rarity: Rarity
     var rarityUpgraded: Boolean
@@ -193,6 +193,11 @@ interface MacrocosmItem : Ingredient {
     fun enchant(enchantment: Enchantment, level: Int): Boolean {
         if (!enchantment.levels.contains(level) || !enchantment.applicable.contains(type))
             return false
+        enchantUnsafe(enchantment, level)
+        return true
+    }
+
+    fun enchantUnsafe(enchantment: Enchantment, lvl: Int) {
         val name = EnchantmentRegistry.nameOf(enchantment)
         enchantments.filter { (ench, _) ->
             ench.conflicts.contains(Identifier.macro("all"))
@@ -219,8 +224,7 @@ interface MacrocosmItem : Ingredient {
                 }
             }
         }
-        enchantments[enchantment] = level
-        return true
+        enchantments[enchantment] = lvl
     }
 
     /**
@@ -249,7 +253,7 @@ interface MacrocosmItem : Ingredient {
         val item = alternativeCtor() ?: ItemStack(base, 1)
         item.meta<ItemMeta> {
             // lore
-            val lore = mutableListOf<Component>()
+            val lore = this.lore()?.toMutableList() ?: mutableListOf()
 
             // breaking power
             if(breakingPower > 0) {
@@ -361,6 +365,7 @@ interface MacrocosmItem : Ingredient {
             // unbreakable
             isUnbreakable = true
 
+            // adding extra meta
             addExtraMeta(this)
         }
 

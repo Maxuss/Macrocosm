@@ -213,7 +213,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1) : M
     override val id: Identifier = Identifier("minecraft", base.name.lowercase())
     override val type: ItemType = typeFromMaterial(base)
 
-    override val name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->
+    override var name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->
         str.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.getDefault()

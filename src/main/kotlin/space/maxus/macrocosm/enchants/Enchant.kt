@@ -236,6 +236,20 @@ enum class Enchant(private val enchant: Enchantment) {
     VAMPIRISM(VampirismEnchantment),
     MANA_EXHAUSTION(ManaExhaustionEnchantment),
 
+    // armor
+    GROWTH(SimpleEnchantment("Growth", "Increases your ${Statistic.HEALTH.display}<gray> by <green><health><gray>.", 1..7, ItemType.armor(), stats {
+        health = 25f
+    })),
+    PROTECTION(SimpleEnchantment("Protection", "Increases your ${Statistic.DEFENSE.display}<gray> by <green><defense><gray>.", 1..7, ItemType.armor(), stats {
+        defense = 15f
+    })),
+    TRUE_PROTECTION(SimpleEnchantment("True Protection", "Increases your ${Statistic.TRUE_DEFENSE.display}<gray> by <green><true_defense><gray>.", 1..3, listOf(ItemType.CHESTPLATE), stats {
+        trueDefense = 5f
+    }, conflicts = listOf("DISTURBANCE"))),
+    DISTURBANCE(SimpleEnchantment("Disturbance", "Increases your ${Statistic.STRENGTH.display}<gray> by <green><strength><gray>.", 1..2, listOf(ItemType.CHESTPLATE), stats {
+        strength = 10f
+    })),
+
     // ultimate
     SUPERIOR(UltimateEnchantment(
         "Superior",

@@ -27,7 +27,7 @@ open class AbilityItem(
             else field = value
         }
     override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_"))
-    override val name: Component = comp(itemName)
+    override var name: Component = comp(itemName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()

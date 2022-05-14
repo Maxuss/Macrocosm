@@ -23,6 +23,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 enum class ItemValue(val item: MacrocosmItem) {
+    ENCHANTED_BOOK(EnchantedBook()),
+
     ASPECT_OF_THE_END(AbilityItem(ItemType.SWORD, "Aspect of the End", Rarity.RARE, Material.DIAMOND_SWORD, stats {
         damage = 100f
         strength = 50f
