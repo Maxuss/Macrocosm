@@ -51,7 +51,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AlchemyReward, this)
         server.pluginManager.registerEvents(MiningHandler, this)
 
-        // todo: TEST PACKETS!!!
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()

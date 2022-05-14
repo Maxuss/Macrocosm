@@ -65,7 +65,6 @@ object RecipeMenu : Listener {
             CraftingTableContext(grid.map { if (it == null || it.type.isAir) VanillaItem(Material.AIR) else it.macrocosm!! })
 
         val matching = RecipeHandler.matchingRecipes(e.view.topInventory, macrocosm)
-        // todo: handle multiple recipes
         val recipe = matching.firstOrNull()
         if (recipe == null || grid.all { it == null || it.type.isAir }) {
             macrocosm.sendMessage("<red>Could not find suitable recipe!")
@@ -109,11 +108,14 @@ object RecipeMenu : Listener {
             }
             e.view.topInventory.setItem(outputIndex, result)
         }
+
+        var expAmount = .0
+
         // clearing grid
-        // todo: give player carpentry experience on craft
         // all checks complete, and now we can actually reduce the amount of items
         for ((index, pair) in indices) {
             val (item, amount) = pair
+            expAmount += (item.amount / 6.4) * (item.rarity.ordinal + 1)
             item.amount -= amount
             if (item.amount <= 0)
                 e.view.topInventory.setItem(index, null)
