@@ -262,7 +262,7 @@ object MiningHandler: PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketTy
     override fun onPacketReceiving(e: PacketEvent) {
         if (e.packetType == PacketType.Play.Client.ARM_ANIMATION) {
             val player = e.player
-            val target = player.getTargetBlock(null, 4)
+            val target = player.getTargetBlock(null, 5)
 
             if (target.type != Material.AIR) {
                 val targetLoc = target.location

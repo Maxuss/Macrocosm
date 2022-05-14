@@ -181,10 +181,11 @@ internal fun rarityFromMaterial(mat: Material): Rarity {
         else -> Rarity.COMMON
     }
 }
+private val allowed: List<String> = listOf("AXE", "HOE", "SHOVEL")
 private val blacklist: List<String> = listOf("SWORD", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "INGOT", "SCRAP")
 private fun bpFromMat(mat: Material): Int {
     val name = mat.name
-    if(blacklist.any { name.contains(it) } || mat.isBlock)
+    if(blacklist.any { name.contains(it) } || !allowed.any { name.contains(it) }|| mat.isBlock)
         return 0
     if(name.contains("WOODEN"))
         return 1
