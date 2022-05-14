@@ -265,7 +265,8 @@ enum class Enchant(private val enchant: Enchantment) {
     ULTIMATE_WISE(UltimateWiseEnchantment),
     ULTIMATE_BULK(UltimateBulkEnchantment),
 
-    ONE_FOR_ALL(OneForAllEnchantment)
+    ONE_FOR_ALL(OneForAllEnchantment),
+    LEGION(LegionEnchantment)
     ;
 
     companion object {
