@@ -157,17 +157,20 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun addSkillExperience(skill: SkillType, exp: Double) {
-        skills.increase(skill, exp)
-        val required = skill.inst.table.expForLevel(skills.level(skill) + 1) - skill.inst.table.expForLevel(skills.level(skill))
-        val current = skills[skill] - skill.inst.table.expForLevel(skills.level(skill)) + exp
+        val table = skill.inst.table
+        val currentLevel = skills.level(skill)
+        val required = table.expForLevel(currentLevel + 1)
+        // overflow + added experience
+        val current = skills[skill] + exp
         paper?.sendActionBar(comp("<aqua>+${Formatting.withCommas(exp.toBigDecimal(), true)} ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}/${Formatting.withCommas(required.toBigDecimal())})"))
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
             pitch = 2f
             playFor(paper!!)
         }
-        if (skill.inst.table.shouldLevelUp(skills.level(skill), skills[skill], exp)) {
+        if (skills.increase(skill, exp)) {
             val lvl = skills.level(skill) + 1
             skills.setLevel(skill, lvl)
+            skills[skill] = .0
             sendSkillLevelUp(skill)
             skill.inst.rewards[lvl - 1].reward(this, lvl)
         }

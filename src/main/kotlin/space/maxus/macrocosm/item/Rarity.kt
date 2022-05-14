@@ -23,7 +23,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         .color(color)
         .append(
             if (upgraded)
-                comp("<obfuscated>a</obfuscated> $name ${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>")
+                comp("<obfuscated>a</obfuscated> ${name.replace("_", " ")} ${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>")
             else
                 "${name.replace("_", " ")}${if (ty == ItemType.OTHER) "" else " $ty"}".toComponent()
         ).noitalic()

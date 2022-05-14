@@ -17,6 +17,7 @@ import space.maxus.macrocosm.item.VanillaItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.ctx.CraftingTableContext
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.comp
 
 @Suppress("SENSELESS_COMPARISON")
@@ -121,6 +122,9 @@ object RecipeMenu : Listener {
                 e.view.topInventory.setItem(index, null)
             else e.view.topInventory.setItem(index, item)
         }
+
+        val player = e.whoClicked as Player
+        player.macrocosm?.addSkillExperience(SkillType.CARPENTRY, expAmount)
     }
 
     private val gridIndices = listOf(

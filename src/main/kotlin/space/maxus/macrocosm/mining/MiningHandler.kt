@@ -182,7 +182,7 @@ object MiningHandler: PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketTy
     fun onBreakBlock(e: PlayerBreakBlockEvent) {
         val mc = e.player
         var pool = LootPool.of(*e.block.drops.map { vanilla(it.type, 1.0, amount = it.amount..it.amount) }.toTypedArray())
-        if(!e.block.hasMetadata("_PLAYER_PLACED")) {
+        val items = if(!e.block.hasMetadata("_PLAYER_PLACED")) {
             val event = BlockDropItemsEvent(mc, e.block, pool)
             event.callEvent()
             pool = event.pool
@@ -190,8 +190,8 @@ object MiningHandler: PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketTy
             val (exp, type) = pair
             // todo: skill exp modifiers (e.g. pets)
             e.player.addSkillExperience(type, exp.toDouble())
-        }
-        val items = pool.roll(mc)
+            pool.roll(mc, true)
+        } else pool.roll(mc, false)
 
         for (item in items) {
             e.block.world.dropItemNaturally(e.block.location, item ?: continue)

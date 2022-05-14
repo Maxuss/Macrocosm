@@ -93,9 +93,11 @@ fun skillExp() = command("skillexp") {
             }
         }
 
-        argument("exp", DoubleArgumentType.doubleArg(.0)) {
+        argument("exp", DoubleArgumentType.doubleArg()) {
             runs {
-                player.macrocosm?.addSkillExperience(SkillType.valueOf(getArgument("skill")), getArgument("exp"))
+                val skill = getArgument<String>("skill")
+                val exp = getArgument<Double>("exp")
+                player.macrocosm?.addSkillExperience(SkillType.valueOf(skill), exp)
             }
         }
     }

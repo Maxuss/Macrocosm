@@ -6,16 +6,17 @@ import space.maxus.macrocosm.util.GSON
 class Skills(private val skillExp: HashMap<SkillType, PlayerSkill>) {
 
     operator fun get(sk: SkillType): Double {
-        return skillExp[sk]!!.total
+        return skillExp[sk]!!.overflow
     }
 
     operator fun set(sk: SkillType, exp: Double) {
-        skillExp[sk]!!.total = exp
+        skillExp[sk]!!.overflow = exp
     }
 
     fun increase(sk: SkillType, exp: Double): Boolean {
-        skillExp[sk]!!.total = skillExp[sk]!!.total + exp
-        return sk.inst.table.shouldLevelUp(skillExp[sk]!!.lvl, skillExp[sk]!!.total, exp)
+        val skill = skillExp[sk]!!
+        skill.overflow += exp
+        return sk.inst.table.shouldLevelUp(skill.lvl, skill.overflow, .0)
     }
 
     fun level(sk: SkillType): Int {
@@ -23,6 +24,7 @@ class Skills(private val skillExp: HashMap<SkillType, PlayerSkill>) {
     }
 
     fun setLevel(sk: SkillType, lvl: Int) {
+        skillExp[sk]!!.overflow = .0
         skillExp[sk]!!.lvl = lvl
     }
 
@@ -31,7 +33,7 @@ class Skills(private val skillExp: HashMap<SkillType, PlayerSkill>) {
     }
 
     companion object {
-        fun default(): Skills = Skills(HashMap(SkillType.values().associateWith { PlayerSkill(0, .0) }))
+        fun default(): Skills = Skills(HashMap(SkillType.values().associateWith { PlayerSkill(1, .0) }))
 
         fun fromJson(json: String): Skills {
             val map: HashMap<String, PlayerSkill> =
@@ -41,4 +43,4 @@ class Skills(private val skillExp: HashMap<SkillType, PlayerSkill>) {
     }
 }
 
-data class PlayerSkill(var lvl: Int, var total: Double)
+data class PlayerSkill(var lvl: Int, var overflow: Double)
