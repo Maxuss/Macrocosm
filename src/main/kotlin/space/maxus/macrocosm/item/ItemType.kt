@@ -11,6 +11,7 @@ enum class ItemType(
     BOW,
     AXE(tool = true),
     PICKAXE(false, true),
+    DRILL(false, true),
     HOE(false, true),
     SHOVEL(false, true),
     SHIELD(false, leftHand = true),
@@ -42,7 +43,7 @@ enum class ItemType(
         fun melee() = listOf(AXE, SWORD, GAUNTLET)
         fun ranged() = listOf(BOW)
         fun weapons() = listOf(AXE, SWORD, GAUNTLET, BOW)
-        fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET)
+        fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL)
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)
         fun accessories() = listOf(ACCESSORY, CHARM)

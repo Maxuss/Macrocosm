@@ -6,7 +6,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import space.maxus.macrocosm.players.MacrocosmPlayer
 
-class PlayerBreakBlock(
+class StopBreakingBlockEvent(
     val player: MacrocosmPlayer,
     val block: Block
 ) : Event(), Cancellable {

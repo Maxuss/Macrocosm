@@ -73,7 +73,14 @@ enum class ItemValue(val item: MacrocosmItem) {
         defense = 50f
         miningSpeed = 450f
         miningFortune = 150f
-    }, mutableListOf(Ability.EMERALD_AFFECTION_PICKAXE.ability), breakingPower = 6))
+    }, mutableListOf(Ability.EMERALD_AFFECTION_PICKAXE.ability), breakingPower = 6)),
+
+    TEST_DRILL(AbilityItem(ItemType.DRILL, "Test Drill", Rarity.SPECIAL, Material.PRISMARINE_SHARD, stats {
+        damage = 50f
+        defense = 150f
+        miningSpeed = 1000f
+        miningFortune = 300f
+    }, breakingPower = 8))
 
     ;
 

@@ -158,7 +158,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     fun addSkillExperience(skill: SkillType, exp: Double) {
         skills.increase(skill, exp)
-        paper?.sendActionBar(comp("<aqua>+${Formatting.withCommas(exp.toBigDecimal(), true)} ${skill.inst.name} EXP"))
+        val required = skill.inst.table.expForLevel(skills.level(skill) + 1) - skill.inst.table.expForLevel(skills.level(skill))
+        val current = skills[skill] - skill.inst.table.expForLevel(skills.level(skill)) + exp
+        paper?.sendActionBar(comp("<aqua>+${Formatting.withCommas(exp.toBigDecimal(), true)} ${skill.inst.name} EXP (${Formatting.withCommas(current.toBigDecimal())}/${Formatting.withCommas(required.toBigDecimal())})"))
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
             pitch = 2f
             playFor(paper!!)

@@ -49,7 +49,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(BlockClickListener, this)
         server.pluginManager.registerEvents(PickupListener, this)
         server.pluginManager.registerEvents(AlchemyReward, this)
-        server.pluginManager.registerEvents(BlockBreakListener, this)
         server.pluginManager.registerEvents(MiningHandler, this)
 
         // todo: TEST PACKETS!!!
