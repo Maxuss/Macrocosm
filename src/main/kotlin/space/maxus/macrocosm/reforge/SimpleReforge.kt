@@ -9,10 +9,10 @@ class SimpleReforge(
     override val name: String,
     override val applicable: List<ItemType>,
     private val baseStats: Statistics,
-    private val multiplier: Float = 1f
+    private val multiplier: Float = 1f,
+    override val abilityName: String? = null,
+    override val abilityDescription: String? = null
 ) : Reforge {
-    override val abilityName = null
-    override val abilityDescription = null
 
     override fun stats(rarity: Rarity): Statistics {
         val clone = baseStats.clone()

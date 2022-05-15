@@ -56,6 +56,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var lastJoin: Long = Instant.now().toEpochMilli()
     var playtime: Long = 0
     var baseStats: Statistics = Statistics.default()
+    var tempStats: Statistics = Statistics.zero()
     var purse: Float = 0f
     var bank: Float = 0f
     var currentHealth: Float = stats()!!.health
@@ -384,7 +385,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (paper == null)
             return null
 
-        return statCache ?: recalculateStats()
+        val cache = statCache?.clone() ?: recalculateStats()
+        cache.increase(tempStats)
+        return cache
     }
 
     fun specialStats(): SpecialStatistics? {

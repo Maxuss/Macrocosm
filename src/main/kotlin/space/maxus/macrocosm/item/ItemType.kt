@@ -17,6 +17,7 @@ enum class ItemType(
     SHIELD(false, leftHand = true),
     WAND(false, leftHand = true),
     GAUNTLET(true, true, leftHand = true),
+    FISHING_ROD(false, true),
 
     HELMET(false, false, true),
     CHESTPLATE(false, false, true),
@@ -37,14 +38,14 @@ enum class ItemType(
     ;
 
     override fun toString(): String {
-        return if (this == OTHER) "" else name
+        return if (this == OTHER) "" else name.replace("_", " ")
     }
 
     companion object {
         fun melee() = listOf(AXE, SWORD, GAUNTLET)
         fun ranged() = listOf(BOW)
         fun weapons() = listOf(AXE, SWORD, GAUNTLET, BOW)
-        fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL)
+        fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL, FISHING_ROD)
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)
         fun accessories() = listOf(ACCESSORY, CHARM)

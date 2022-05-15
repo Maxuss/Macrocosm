@@ -292,17 +292,19 @@ interface MacrocosmItem : Ingredient {
             val lore = this.lore()?.toMutableList() ?: mutableListOf()
 
             // runes
-            var gemComp = comp("")
-            for ((gem, state) in runes) {
-                val (open, lvl) = state
-                gemComp = if (!open)
-                    gemComp.append(gem.locked()).append(" ".toComponent())
-                else if (lvl <= 0)
-                    gemComp.append(gem.unlocked()).append(" ".toComponent())
-                else
-                    gemComp.append(gem.full(lvl)).append(" ".toComponent())
+            if(runes.size > 0) {
+                var gemComp = comp("")
+                for ((gem, state) in runes) {
+                    val (open, lvl) = state
+                    gemComp = if (!open)
+                        gemComp.append(gem.locked()).append(" ".toComponent())
+                    else if (lvl <= 0)
+                        gemComp.append(gem.unlocked()).append(" ".toComponent())
+                    else
+                        gemComp.append(gem.full(lvl)).append(" ".toComponent())
+                }
+                lore.add(gemComp.noitalic())
             }
-            lore.add(gemComp.noitalic())
 
             // breaking power
             if (breakingPower > 0) {

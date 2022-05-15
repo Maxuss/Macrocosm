@@ -26,6 +26,7 @@ import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.damage.relativeLocation
 import space.maxus.macrocosm.entity.macrocosm
+import space.maxus.macrocosm.events.EntityActivateFerocityEvent
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.players.macrocosm
@@ -396,6 +397,10 @@ object DamageHandlers : Listener {
     ) {
         if (entity.isDead)
             return
+        val event = EntityActivateFerocityEvent(damager, entity)
+        if(!event.callEvent())
+            return
+
         if (entity is Player) {
             entity.macrocosm!!.damage(damage, source)
         } else {
