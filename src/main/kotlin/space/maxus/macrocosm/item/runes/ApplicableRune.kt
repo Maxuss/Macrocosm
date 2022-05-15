@@ -4,11 +4,16 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.id
 
 interface ApplicableRune {
+    val id: Identifier
+
     fun locked(): Component
     fun unlocked(): Component
     fun full(level: Int): Component
@@ -39,6 +44,9 @@ enum class VanillaRune(private val char: String, private val color: TextColor, p
     AMETHYST("▒", TextColor.color(0x9950CC), stats { defense = 15f })
 
     ;
+
+    override val id: Identifier = id(name.lowercase())
+
     override fun full(level: Int): Component {
         val tierColor = colorFromTier(level)
         return "[".toComponent().color(tierColor).append(comp(char).color(color)).append("]".toComponent().color(tierColor))
@@ -56,5 +64,9 @@ enum class VanillaRune(private val char: String, private val color: TextColor, p
         val clone = baseStats.clone()
         clone.multiply(level.toFloat())
         return clone
+    }
+
+    init {
+        BuffRegistry.registerRune(id, this)
     }
 }

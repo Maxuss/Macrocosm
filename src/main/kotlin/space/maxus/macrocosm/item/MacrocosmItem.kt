@@ -20,9 +20,9 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
-import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
@@ -207,9 +207,9 @@ interface MacrocosmItem : Ingredient {
 
         this.stars = nbt.getInt("Stars")
         this.breakingPower = nbt.getInt("BreakingPower")
-        val gems = nbt.getCompound("Gemstones")
+        val runes = nbt.getCompound("Runes")
         // todo: allow not only vanilla gemstones (possibly identifiers)
-        val associated = gems.allKeys.map { VanillaRune.valueOf(it) }.associateWith { val cmp = gems.getCompound(it.name); RuneState(cmp.getBoolean("Open"), cmp.getInt("Tier")) }
+        val associated = runes.allKeys.map { BuffRegistry.findRune(Identifier.parse(it)) }.associateWith { val cmp = runes.getCompound(it.id.toString()); RuneState(cmp.getBoolean("Open"), cmp.getInt("Tier")) }
         this.runes.putAll(associated)
         this.amount = from.amount
         return this
@@ -447,13 +447,13 @@ interface MacrocosmItem : Ingredient {
 
         val gemsComp = CompoundTag()
         runes.forEach() {
-            val k = (it.key as VanillaRune).name
+            val k = it.key.id.toString()
             val cmp = CompoundTag()
             cmp.putInt("Tier", it.value.tier)
             cmp.putBoolean("Open", it.value.open)
             gemsComp.put(k, cmp)
         }
-        nbt.put("Gemstones", gemsComp)
+        nbt.put("Runes", gemsComp)
 
         // adding extra nbt
         addExtraNbt(nbt)
