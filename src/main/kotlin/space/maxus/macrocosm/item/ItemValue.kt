@@ -16,6 +16,7 @@ import space.maxus.macrocosm.ability.types.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.types.WitherBlade
+import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
@@ -82,7 +83,10 @@ enum class ItemValue(val item: MacrocosmItem) {
         defense = 150f
         miningSpeed = 1000f
         miningFortune = 300f
-    }, breakingPower = 8))
+    }, breakingPower = 8)),
+
+    WITHER_BLOOD(ReforgeStone(ReforgeType.WITHERED.ref, "Wither Blood", Rarity.EPIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZjMwYWM2N2VjMTBhM2Q1ZTdkZWFmNjRkMGU5YTIwMDRhZTgwMWMwYmQ2Y2U4NWM1ZDYwNzM5YTlkODgyYSJ9fX0=")),
+    ELDER_SILK(ReforgeStone(ReforgeType.SILKY.ref, "Elder Silk", Rarity.RARE, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjc0MTc5MjQ1NjY3ZTYxNjY5Y2MxNDFhM2RjNDZkMjU5ZjE1OWEyOGVhMWI0NjkzNjQyZDlhMzEyNmRhOTU3ZCJ9fX0="))
 
     ;
 

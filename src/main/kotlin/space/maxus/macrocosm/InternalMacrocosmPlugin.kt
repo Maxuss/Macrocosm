@@ -10,6 +10,8 @@ import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.item.buffs.Buffs
+import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -41,16 +43,15 @@ class InternalMacrocosmPlugin : KSpigot() {
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
 
         DataListener.joinLeave()
-        server.pluginManager.registerEvents(ChatHandler, this)
-        server.pluginManager.registerEvents(AbilityTriggers, this)
-        server.pluginManager.registerEvents(DamageHandlers, this)
-        server.pluginManager.registerEvents(EntityHandlers, this)
-        server.pluginManager.registerEvents(RecipeMenu, this)
-        server.pluginManager.registerEvents(BlockClickListener, this)
-        server.pluginManager.registerEvents(PickupListener, this)
-        server.pluginManager.registerEvents(AlchemyReward, this)
-        server.pluginManager.registerEvents(MiningHandler, this)
-
+        server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(EntityHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(RecipeMenu, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(BlockClickListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(PickupListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -58,6 +59,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         Enchant.init()
         RecipeValue.init()
         Armor.init()
+        VanillaRune.init()
+        Buffs.init()
 
         playtimeCommand()
         rankCommand()
@@ -73,6 +76,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         addScrollCommand()
         setStarsCommand()
         setGemsCommand()
+        addPotatoBooks()
         unlockGemsCommand()
 
         testStatsCommand()

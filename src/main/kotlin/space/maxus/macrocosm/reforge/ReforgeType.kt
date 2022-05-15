@@ -6,12 +6,24 @@ import space.maxus.macrocosm.reforge.types.PoisonousReforge
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.Identifier
 
-enum class ReforgeType(private val ref: Reforge) {
+enum class ReforgeType(val ref: Reforge) {
     SPICY(SimpleReforge("Spicy", ItemType.melee(), stats {
         strength = 4f
         critDamage = 5f
         critChance = 2f
         attackSpeed = 2f
+    })),
+
+    WITHERED(SimpleReforge("Withered", ItemType.melee(), stats {
+        strength = 30f
+        critDamage = -2f
+        attackSpeed = 1f
+    })),
+
+    SILKY(SimpleReforge("Silky", ItemType.melee(), stats {
+        strength = -2f
+        critDamage = 20f
+        attackSpeed = -1f
     })),
 
     POISONOUS(PoisonousReforge())

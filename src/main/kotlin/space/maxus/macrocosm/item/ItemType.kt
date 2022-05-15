@@ -31,7 +31,8 @@ enum class ItemType(
 
     DEPLOYABLE(false),
     CONSUMABLE(false),
-    OTHER(false, leftHand = true)
+    OTHER(false, leftHand = true),
+    REFORGE_STONE(false)
 
     ;
 
@@ -47,7 +48,7 @@ enum class ItemType(
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)
         fun accessories() = listOf(ACCESSORY, CHARM)
-        fun misc() = listOf(DEPLOYABLE, CONSUMABLE, OTHER)
+        fun misc() = listOf(DEPLOYABLE, CONSUMABLE, OTHER, REFORGE_STONE)
         fun all() = values().toList()
     }
 }

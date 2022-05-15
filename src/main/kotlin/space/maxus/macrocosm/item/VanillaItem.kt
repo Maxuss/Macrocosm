@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.item.runes.VanillaRune
@@ -15,6 +16,7 @@ import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.Identifier
 import java.util.*
+import kotlin.collections.HashMap
 
 internal val SPLIT_THIS =
     listOf("HOE", "PICKAXE", "AXE", "SWORD", "SHOVEL", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS")
@@ -268,6 +270,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1) : M
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> =
         HashMap(getGemsForItem(base).associateWith { RuneState.ZERO })
+    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = bpFromMat(base)
 
     @Suppress("UNCHECKED_CAST")

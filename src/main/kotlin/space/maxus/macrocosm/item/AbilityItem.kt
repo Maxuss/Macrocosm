@@ -5,6 +5,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.reforge.Reforge
@@ -35,6 +36,7 @@ open class AbilityItem(
     override var reforge: Reforge? = null
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap(applicableRunes.associateWith { RuneState.ZERO })
+    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
 
     override fun addExtraMeta(meta: ItemMeta) {
         metaModifier(meta)

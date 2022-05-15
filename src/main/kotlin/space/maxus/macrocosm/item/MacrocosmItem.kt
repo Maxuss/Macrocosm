@@ -21,6 +21,8 @@ import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.AbilityCompileEvent
 import space.maxus.macrocosm.item.buffs.BuffRegistry
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
+import space.maxus.macrocosm.item.buffs.PotatoBook
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -68,6 +70,7 @@ interface MacrocosmItem : Ingredient {
     val enchantments: HashMap<Enchantment, Int>
     val maxStars: Int get() = 20
     val runes: HashMap<ApplicableRune, RuneState>
+    val buffs: HashMap<MinorItemBuff, Int>
     var breakingPower: Int
 
     override fun id(): Identifier {
@@ -92,6 +95,10 @@ interface MacrocosmItem : Ingredient {
 
     fun addExtraMeta(meta: ItemMeta) {
 
+    }
+
+    fun addPotatoBooks(amount: Int) {
+        buffs[PotatoBook] = (buffs[PotatoBook] ?: 0) + amount
     }
 
     fun reforge(ref: Reforge) {
@@ -134,13 +141,8 @@ interface MacrocosmItem : Ingredient {
             return false
         }
 
-        val prev = rarity
         rarity = rarity.next()
 
-        if (reforge != null) {
-            stats.decrease(reforge!!.stats(prev))
-            stats.increase(reforge!!.stats(rarity))
-        }
         rarityUpgraded = true
         return true
     }
@@ -208,7 +210,6 @@ interface MacrocosmItem : Ingredient {
         this.stars = nbt.getInt("Stars")
         this.breakingPower = nbt.getInt("BreakingPower")
         val runes = nbt.getCompound("Runes")
-        // todo: allow not only vanilla gemstones (possibly identifiers)
         val associated = runes.allKeys.map { BuffRegistry.findRune(Identifier.parse(it)) }.associateWith {
             val cmp = runes.getCompound(it.id.toString()); RuneState(
             cmp.getBoolean("Open"),
@@ -216,6 +217,9 @@ interface MacrocosmItem : Ingredient {
         )
         }
         this.runes.putAll(associated)
+        val buffsCmp = nbt.getCompound("Buffs")
+        val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }.associateWith { buffsCmp.getInt(it.id.toString()) }
+        this.buffs.putAll(buffs)
         this.amount = from.amount
         return this
     }
@@ -270,6 +274,8 @@ interface MacrocosmItem : Ingredient {
             to.reforge = reforge
         }
         to.stars = stars
+        to.buffs.putAll(this.buffs)
+        to.runes.putAll(this.runes)
     }
 
     /**
@@ -304,7 +310,7 @@ interface MacrocosmItem : Ingredient {
             }
 
             // stats
-            val formattedStats = stats().formatSimple(reforge?.stats(rarity), runes)
+            val formattedStats = stats().formatSimple(this@MacrocosmItem)
             lore.addAll(formattedStats)
             if (formattedStats.isNotEmpty())
                 lore.add("".toComponent())
@@ -450,8 +456,9 @@ interface MacrocosmItem : Ingredient {
         // item ID
         nbt.putId("ID", id)
 
+        // runes
         val gemsComp = CompoundTag()
-        runes.forEach() {
+        runes.forEach {
             val k = it.key.id.toString()
             val cmp = CompoundTag()
             cmp.putInt("Tier", it.value.tier)
@@ -459,6 +466,14 @@ interface MacrocosmItem : Ingredient {
             gemsComp.put(k, cmp)
         }
         nbt.put("Runes", gemsComp)
+
+        // buffs
+        val buffsComp = CompoundTag()
+        buffs.forEach {
+            val k = it.key.id.toString()
+            buffsComp.putInt(k, it.value)
+        }
+        nbt.put("Buffs", buffsComp)
 
         // adding extra nbt
         addExtraNbt(nbt)

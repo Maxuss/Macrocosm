@@ -9,6 +9,7 @@ import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.reforge.Reforge
@@ -37,6 +38,7 @@ class EnchantedItem(
     override val abilities: MutableList<ItemAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
+    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
 
     private var actualBase: String = actualId ?: base.name

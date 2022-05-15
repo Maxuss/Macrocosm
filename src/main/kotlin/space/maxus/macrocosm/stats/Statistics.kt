@@ -4,8 +4,10 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.item.runes.ApplicableRune
-import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
+import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
 import java.util.*
@@ -204,14 +206,17 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         return cmp
     }
 
-    fun formatSimple(
-        reforge: Statistics? = null,
-        gems: HashMap<ApplicableRune, RuneState> = hashMapOf()
-    ): List<Component> {
+    fun formatSimple(item: MacrocosmItem? = null, baseReforge: Reforge? = item?.reforge): List<Component> {
+        val gems = item?.runes
+        val buffs = item?.buffs
+        val reforge = baseReforge?.stats(item?.rarity ?: Rarity.COMMON)
+
         val base = mutableListOf<Component>()
         var prev: Statistic? = null
         val dissolvedGemstones: Statistics = zero()
-        if (gems.isNotEmpty()) {
+        val dissolvedBuffs: HashMap<MinorItemBuff, Statistics> = hashMapOf()
+
+        if (gems != null && gems.isNotEmpty()) {
             for ((gem, state) in gems) {
                 val (open, lvl) = state
                 if (!open || lvl <= 0)
@@ -219,6 +224,17 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
                 dissolvedGemstones.increase(gem.stats(lvl))
             }
         }
+
+        if(buffs != null && buffs.isNotEmpty()) {
+            for((buff, lvl) in buffs) {
+                if(lvl <= 0)
+                    continue
+                val tmp = zero()
+                tmp.increase(buff.stats(item, lvl))
+                dissolvedBuffs[buff] = tmp
+            }
+        }
+
         for ((stat, value) in self) {
             var formatted = stat.formatSimple(value) ?: continue
             if (prev != null) {
@@ -247,6 +263,14 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
                 if (stat.percents)
                     gemComp += "%"
                 formatted = formatted.append(comp("$gemComp]</light_purple>"))
+            }
+
+            // buffs
+            for((buff, stats) in dissolvedBuffs) {
+                if(stats[stat] != 0f) {
+                    val amount = stats[stat]
+                    formatted = formatted.append(" ".toComponent().append(buff.buildFancy(amount.toInt())))
+                }
             }
 
             base.add(formatted)

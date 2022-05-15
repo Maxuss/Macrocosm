@@ -93,6 +93,18 @@ fun unlockGemsCommand() = command("unlockgems") {
     }
 }
 
+fun addPotatoBooks() = command("addbooks") {
+    requires { it.hasPermission(4) }
+    argument("amount", IntegerArgumentType.integer(0)) {
+        runs {
+            val mc = player.macrocosm
+            val item = player.inventory.itemInMainHand.macrocosm ?: return@runs
+            item.addPotatoBooks(getArgument("amount"))
+            player.inventory.setItemInMainHand(item.build(mc)!!)
+        }
+    }
+}
+
 fun setGemsCommand() = command("setgems") {
     requires { it.hasPermission(4) }
     argument("level", IntegerArgumentType.integer(0)) {
