@@ -6,6 +6,7 @@ import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
 import space.maxus.macrocosm.collections.CollectionType
+import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.skills.SkillType
@@ -42,9 +43,14 @@ fun testCollUp() = command("collup") {
     }
 }
 
-
 fun testCraftingTable() = command("crafting_test") {
     runs {
         this.player.openInventory(RecipeMenu.craftingTable(this.player))
+    }
+}
+
+fun testEntityCommand() = command("testsummon") {
+    runs {
+        EntityValue.TEST_ENTITY.entity.spawn(this.player.location)
     }
 }

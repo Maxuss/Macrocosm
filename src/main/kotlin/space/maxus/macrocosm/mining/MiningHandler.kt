@@ -21,8 +21,8 @@ import org.bukkit.metadata.LazyMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.entity.loot.LootPool
-import space.maxus.macrocosm.entity.loot.vanilla
+import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.events.MineTickEvent
 import space.maxus.macrocosm.events.PlayerBreakBlockEvent

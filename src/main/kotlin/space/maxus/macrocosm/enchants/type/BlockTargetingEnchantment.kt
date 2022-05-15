@@ -10,9 +10,9 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.EnchantmentBase
-import space.maxus.macrocosm.entity.loot.EntityDrop
-import space.maxus.macrocosm.entity.loot.LootPool
-import space.maxus.macrocosm.entity.loot.MacrocosmDrop
+import space.maxus.macrocosm.loot.Drop
+import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.MacrocosmDrop
 import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
@@ -47,7 +47,7 @@ class BlockTargetingEnchantment(
             return
         val add =
             ((lvl * base) / 100f).roundToInt() + (if (Random.nextFloat() < (((lvl * base) % 100) / 100f)) 1 else 0)
-        val pool = mutableListOf<EntityDrop>()
+        val pool = mutableListOf<Drop>()
         for (drop in e.pool.drops) {
             val first = drop.amount.first + add
             val last = drop.amount.last + add

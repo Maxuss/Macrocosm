@@ -14,10 +14,10 @@ fun clamp(value: Float, min: Float, max: Float) = max(min, min(max, value))
 fun truncateEntityHealth(health: Float): String {
     return if (health >= 1_000_000) {
         // > 1M
-        "${DecimalFormat("#.#").format(health / 1_000_000)}M"
+        "${DecimalFormat("#.#").format(health / 1_000_000f)}M"
     } else if (health >= 100_000) {
         // > 100k
-        "${(health / 100_000).roundToInt()}k"
+        "${(health / 1000f).roundToInt()}k"
     } else health.roundToInt().toString()
 }
 

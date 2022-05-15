@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import space.maxus.macrocosm.entity.loot.LootPool
+import space.maxus.macrocosm.loot.LootPool
 
 class EntityDropItemsEvent(
     val killer: Entity?,

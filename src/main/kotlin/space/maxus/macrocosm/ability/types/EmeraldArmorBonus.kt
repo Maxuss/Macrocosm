@@ -6,9 +6,9 @@ import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.ability.FullSetBonus
-import space.maxus.macrocosm.entity.loot.EntityDrop
-import space.maxus.macrocosm.entity.loot.LootPool
-import space.maxus.macrocosm.entity.loot.MacrocosmDrop
+import space.maxus.macrocosm.loot.Drop
+import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.MacrocosmDrop
 import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.stats.Statistic
 
@@ -22,7 +22,7 @@ object EmeraldArmorBonus : FullSetBonus(
                 return@listen
             if (!ensureSetRequirement(e.player))
                 return@listen
-            val pool = mutableListOf<EntityDrop>()
+            val pool = mutableListOf<Drop>()
             for (drop in e.pool.drops) {
                 val first = drop.amount.first + 2
                 val last = drop.amount.last + 2

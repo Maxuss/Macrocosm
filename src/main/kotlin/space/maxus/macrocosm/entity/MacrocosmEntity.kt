@@ -1,27 +1,33 @@
 package space.maxus.macrocosm.entity
 
 import net.axay.kspigot.extensions.bukkit.toComponent
+import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.nbt.CompoundTag
+import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
+import org.bukkit.event.Listener
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.damage.healthColor
 import space.maxus.macrocosm.damage.truncateEntityHealth
-import space.maxus.macrocosm.entity.loot.LootPool
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.LootRegistry
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.getId
+import space.maxus.macrocosm.util.putId
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -31,7 +37,7 @@ fun levelFromStats(stats: Statistics, extraWeight: Float = 0f): Int {
     return max((weight / 100f).roundToInt(), 1)
 }
 
-interface MacrocosmEntity {
+interface MacrocosmEntity: Listener {
     var mainHand: MacrocosmItem?
     var offHand: MacrocosmItem?
     var helmet: MacrocosmItem?
@@ -109,6 +115,12 @@ interface MacrocosmEntity {
     fun damage(amount: Float, damager: Entity? = null)
     fun kill(damager: Entity? = null)
 
+    fun spawn(at: Location): LivingEntity {
+        val entity = server.worlds.first().spawnEntity(at, type) as LivingEntity
+        loadChanges(entity)
+        return entity
+        }
+
     fun loadChanges(entity: LivingEntity) {
         if (entity.type != type)
             return
@@ -137,11 +149,13 @@ interface MacrocosmEntity {
         // actual data
         val nbt = entity.readNbt()
 
-        val stats = calculateStats()
-
         val tag = CompoundTag()
-        tag.put("Stats", stats.compound())
+        tag.put("Stats", baseStats.compound())
+        tag.put("Specials", baseSpecials.compound())
         tag.putFloat("CurrentHealth", currentHealth)
+        tag.putString("BaseName", GsonComponentSerializer.gson().serialize(name))
+        val lootId = LootRegistry.nameOrNull(lootPool(null)) ?: Identifier.NULL
+        tag.putId("LootID", lootId)
         tag.putString("ID", getId(entity).toString())
 
         addExtraNbt(tag)

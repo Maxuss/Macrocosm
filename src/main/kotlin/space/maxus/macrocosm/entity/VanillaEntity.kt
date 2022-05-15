@@ -10,12 +10,12 @@ import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
-import space.maxus.macrocosm.entity.loot.*
 import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.loot.*
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.*
@@ -183,7 +183,7 @@ internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
     }
 }
 
-fun dropsFromType(ty: EntityType): List<EntityDrop> {
+fun dropsFromType(ty: EntityType): List<Drop> {
     return when (ty) {
         EntityType.ELDER_GUARDIAN -> listOf(
             vanilla(Material.PRISMARINE_SHARD, 1.0, amount = 5..10),

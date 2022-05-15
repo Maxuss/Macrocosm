@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.entity.loot
+package space.maxus.macrocosm.loot
 
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.taskRunLater

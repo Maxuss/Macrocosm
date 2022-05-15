@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.entity.loot
+package space.maxus.macrocosm.loot
 
 import net.minecraft.util.Mth
 import org.bukkit.Material
@@ -11,9 +11,9 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-class LootPool private constructor(val drops: List<EntityDrop>) {
+class LootPool private constructor(val drops: List<Drop>) {
     companion object {
-        fun of(vararg drops: EntityDrop) = LootPool(drops.toList())
+        fun of(vararg drops: Drop) = LootPool(drops.toList())
     }
 
     fun roll(mf: Float = 0f) = drops.filter { drop ->

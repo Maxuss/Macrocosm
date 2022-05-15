@@ -8,6 +8,7 @@ import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
+import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
@@ -61,6 +62,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Armor.init()
         VanillaRune.init()
         Buffs.init()
+        EntityValue.init()
 
         playtimeCommand()
         rankCommand()
@@ -86,6 +88,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         collAmount()
         itemsCommand()
         testCraftingTable()
+        testEntityCommand()
     }
 
     override fun shutdown() {

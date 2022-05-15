@@ -127,7 +127,7 @@ object DamageHandlers : Listener {
 
         summonDamageIndicator(damaged.location, received, if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
 
-        processFerocity(damage, crit, damagerStats, damaged, damagerName, damager)
+        processFerocity(received, crit, damagerStats, damaged, damagerName, damager)
     }
 
     @EventHandler
@@ -393,7 +393,7 @@ object DamageHandlers : Listener {
         crit: Boolean,
         entity: LivingEntity,
         source: Component,
-        damager: Entity
+        damager: Entity,
     ) {
         if (entity.isDead)
             return

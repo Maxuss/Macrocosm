@@ -45,6 +45,8 @@ class SpecialStatistics {
             self[SpecialStatistic.STAT_BOOST] = value
         }
 
+    operator fun set(stat: SpecialStatistic, value: Float) = this.self.put(stat, value)
+
     fun clone(): SpecialStatistics {
         val clone = SpecialStatistics()
         for ((stat, value) in self) {
