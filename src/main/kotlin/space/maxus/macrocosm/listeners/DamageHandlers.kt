@@ -124,7 +124,7 @@ object DamageHandlers : Listener {
         )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
-        summonDamageIndicator(damaged.location, received, if(crit) DamageType.CRITICAL else DamageType.DEFAULT)
+        summonDamageIndicator(damaged.location, received, if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
 
         processFerocity(damage, crit, damagerStats, damaged, damagerName, damager)
     }
@@ -416,7 +416,7 @@ object DamageHandlers : Listener {
             this.volume = 1f
             playAt(entity.location)
         }
-        summonDamageIndicator(entity.location, damage, if(crit) DamageType.CRITICAL else DamageType.DEFAULT)
+        summonDamageIndicator(entity.location, damage, if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
     }
 
     fun summonDamageIndicator(
@@ -439,7 +439,7 @@ object DamageHandlers : Listener {
         val newLocation = Location(loc.world, nx, ny, nz)
 
         val damageDisplay = Formatting.withCommas(damage.roundToInt().toBigDecimal())
-        val display = when(damageType) {
+        val display = when (damageType) {
             DamageType.CRITICAL -> {
                 var display = Component.empty()
                 var digitIndex = 0

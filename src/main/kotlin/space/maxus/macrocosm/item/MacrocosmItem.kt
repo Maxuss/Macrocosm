@@ -107,9 +107,9 @@ interface MacrocosmItem : Ingredient {
             base.increase(ench.stats(level))
         }
         base.increase(reforge?.stats(rarity))
-        for((rune, state) in runes) {
+        for ((rune, state) in runes) {
             val (open, lvl) = state
-            if(!open)
+            if (!open)
                 continue
             base.increase(rune.stats(lvl))
         }
@@ -149,20 +149,20 @@ interface MacrocosmItem : Ingredient {
         var display = name
         if (reforge != null)
             display = comp("${reforge!!.name} ").append(display)
-        if(stars <= 0)
+        if (stars <= 0)
             return display.color(rarity.color).noitalic()
         display = display.append(comp(" "))
 
         val starIndices = MutableList(5) { comp("") }
-        for(star in 0 until stars) {
+        for (star in 0 until stars) {
             var reducedIndex = star
-            while(reducedIndex > 4) {
+            while (reducedIndex > 4) {
                 reducedIndex -= 5
             }
             starIndices[reducedIndex] = comp("✪").color(starColor(star))
         }
 
-        for(star in starIndices) {
+        for (star in starIndices) {
             display = display.append(star)
         }
 
@@ -170,14 +170,14 @@ interface MacrocosmItem : Ingredient {
     }
 
     fun unlockRune(rune: ApplicableRune): Boolean {
-        if(!this.runes.containsKey(rune))
+        if (!this.runes.containsKey(rune))
             return false
         this.runes[rune] = RuneState(true, 0)
         return true
     }
 
     fun addRune(gem: ApplicableRune, tier: Int): Boolean {
-        if(!this.runes.containsKey(gem) || !this.runes[gem]!!.open)
+        if (!this.runes.containsKey(gem) || !this.runes[gem]!!.open)
             return false
         this.runes[gem] = RuneState(true, tier)
         return true
@@ -209,7 +209,12 @@ interface MacrocosmItem : Ingredient {
         this.breakingPower = nbt.getInt("BreakingPower")
         val runes = nbt.getCompound("Runes")
         // todo: allow not only vanilla gemstones (possibly identifiers)
-        val associated = runes.allKeys.map { BuffRegistry.findRune(Identifier.parse(it)) }.associateWith { val cmp = runes.getCompound(it.id.toString()); RuneState(cmp.getBoolean("Open"), cmp.getInt("Tier")) }
+        val associated = runes.allKeys.map { BuffRegistry.findRune(Identifier.parse(it)) }.associateWith {
+            val cmp = runes.getCompound(it.id.toString()); RuneState(
+            cmp.getBoolean("Open"),
+            cmp.getInt("Tier")
+        )
+        }
         this.runes.putAll(associated)
         this.amount = from.amount
         return this
@@ -282,11 +287,11 @@ interface MacrocosmItem : Ingredient {
 
             // runes
             var gemComp = comp("")
-            for((gem, state) in runes) {
+            for ((gem, state) in runes) {
                 val (open, lvl) = state
-                gemComp = if(!open)
+                gemComp = if (!open)
                     gemComp.append(gem.locked()).append(" ".toComponent())
-                else if(lvl <= 0)
+                else if (lvl <= 0)
                     gemComp.append(gem.unlocked()).append(" ".toComponent())
                 else
                     gemComp.append(gem.full(lvl)).append(" ".toComponent())
@@ -294,7 +299,7 @@ interface MacrocosmItem : Ingredient {
             lore.add(gemComp.noitalic())
 
             // breaking power
-            if(breakingPower > 0) {
+            if (breakingPower > 0) {
                 lore.add(comp("<dark_gray>Breaking Power $breakingPower").noitalic())
             }
 
@@ -309,7 +314,7 @@ interface MacrocosmItem : Ingredient {
                 val cloned = enchantments.clone() as HashMap<Enchantment, Int>
                 if (cloned.size >= 6) {
                     val cmp = StringBuilder()
-                    if(cloned.size >= 12) {
+                    if (cloned.size >= 12) {
                         // 3 > enchants per line
                         var size = 0
                         cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
@@ -318,16 +323,16 @@ interface MacrocosmItem : Ingredient {
                             size++
                         }
                         cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
-                            if(it is UltimateEnchantment)
+                            if (it is UltimateEnchantment)
                                 return@forEach
                             cmp.append(" ${MiniMessage.miniMessage().serialize(it)}")
                             size++
-                            if(size >= 3) {
+                            if (size >= 3) {
                                 cmp.append('\n')
                                 size = 0
                             }
                         }
-                    } else if(cloned.size >= 8) {
+                    } else if (cloned.size >= 8) {
                         // 2 enchants per line
                         var size = 0
                         cloned.filter { (ench, _) -> ench is UltimateEnchantment }.forEach { (ench, lvl) ->
@@ -336,11 +341,11 @@ interface MacrocosmItem : Ingredient {
                             size++
                         }
                         cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
-                            if(it is UltimateEnchantment)
+                            if (it is UltimateEnchantment)
                                 return@forEach
                             cmp.append(" ${MiniMessage.miniMessage().serialize(it)}")
                             size++
-                            if(size >= 2) {
+                            if (size >= 2) {
                                 cmp.append('\n')
                                 size = 0
                             }
@@ -352,7 +357,7 @@ interface MacrocosmItem : Ingredient {
                             cmp.append("${MiniMessage.miniMessage().serialize(ench.displaySimple(lvl))}<!bold>\n")
                         }
                         cloned.map { (ench, lvl) -> ench.displaySimple(lvl) }.forEach {
-                            if(it is UltimateEnchantment)
+                            if (it is UltimateEnchantment)
                                 return@forEach
                             cmp.append("${MiniMessage.miniMessage().serialize(it)}\n")
                         }
@@ -366,7 +371,7 @@ interface MacrocosmItem : Ingredient {
                         ench.displayFancy(lore, lvl)
                     }
                     for ((ench, lvl) in enchantments) {
-                        if(ench is UltimateEnchantment)
+                        if (ench is UltimateEnchantment)
                             continue
                         ench.displayFancy(lore, lvl)
                     }

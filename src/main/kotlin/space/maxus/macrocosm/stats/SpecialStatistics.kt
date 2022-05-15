@@ -81,24 +81,24 @@ class SpecialStatistics {
 
 
     fun round() {
-        for((stat, _) in self) {
-            if(self[stat]!! == 0f)
+        for ((stat, _) in self) {
+            if (self[stat]!! == 0f)
                 continue
             self[stat] = self[stat]!!.roundToInt().toFloat()
         }
     }
 
     fun ceil() {
-        for((stat, _) in self) {
-            if(self[stat]!! == 0f)
+        for ((stat, _) in self) {
+            if (self[stat]!! == 0f)
                 continue
             self[stat] = kotlin.math.ceil(self[stat]!!)
         }
     }
 
     fun floor() {
-        for((stat, _) in self) {
-            if(self[stat]!! == 0f)
+        for ((stat, _) in self) {
+            if (self[stat]!! == 0f)
                 continue
             self[stat] = kotlin.math.floor(self[stat]!!)
         }

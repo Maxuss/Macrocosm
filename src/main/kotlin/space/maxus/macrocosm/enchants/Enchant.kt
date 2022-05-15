@@ -244,42 +244,223 @@ enum class Enchant(private val enchant: Enchantment) {
     // default stuff
 
     // farming
-    TURBO_POTATOES(BlockTargetingEnchantment("Turbo-Potatoes", ItemType.HOE, "<yellow>Potatoes<gray>", Statistic.FARMING_FORTUNE, 15, Material.POTATOES)),
-    TURBO_CARROTS(BlockTargetingEnchantment("Turbo-Carrots", ItemType.HOE, "<#FF6927>Carrots<gray>", Statistic.FARMING_FORTUNE, 15, Material.CARROTS)),
-    TURBO_PUMPKINS(BlockTargetingEnchantment("Turbo-Pumpkins", ItemType.HOE, "<gold>Pumpkins<gray>", Statistic.FARMING_FORTUNE, 15, Material.PUMPKIN)),
-    TURBO_WARTS(BlockTargetingEnchantment("Turbo-Warts", ItemType.HOE, "<red>Nether Warts<gray>", Statistic.FARMING_FORTUNE, 15, Material.NETHER_WART)),
+    TURBO_POTATOES(
+        BlockTargetingEnchantment(
+            "Turbo-Potatoes",
+            ItemType.HOE,
+            "<yellow>Potatoes<gray>",
+            Statistic.FARMING_FORTUNE,
+            15,
+            Material.POTATOES
+        )
+    ),
+    TURBO_CARROTS(
+        BlockTargetingEnchantment(
+            "Turbo-Carrots",
+            ItemType.HOE,
+            "<#FF6927>Carrots<gray>",
+            Statistic.FARMING_FORTUNE,
+            15,
+            Material.CARROTS
+        )
+    ),
+    TURBO_PUMPKINS(
+        BlockTargetingEnchantment(
+            "Turbo-Pumpkins",
+            ItemType.HOE,
+            "<gold>Pumpkins<gray>",
+            Statistic.FARMING_FORTUNE,
+            15,
+            Material.PUMPKIN
+        )
+    ),
+    TURBO_WARTS(
+        BlockTargetingEnchantment(
+            "Turbo-Warts",
+            ItemType.HOE,
+            "<red>Nether Warts<gray>",
+            Statistic.FARMING_FORTUNE,
+            15,
+            Material.NETHER_WART
+        )
+    ),
 
     // mining
-    HYPER_COAL(BlockTargetingEnchantment("Hyper-Coal", ItemType.PICKAXE, "<dark_gray>Coal<gray>", Statistic.MINING_FORTUNE, 20, Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)),
-    HYPER_GOLD(BlockTargetingEnchantment("Hyper-Gold", ItemType.PICKAXE, "<#FFA327>Gold<gray>", Statistic.MINING_FORTUNE, 20, Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE)),
-    HYPER_EMERALDS(BlockTargetingEnchantment("Hyper-Emeralds", ItemType.PICKAXE, "<#42FF27>Emeralds<gray>", Statistic.MINING_FORTUNE, 15, Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)),
-    HYPER_DIAMONDS(BlockTargetingEnchantment("Hyper-Diamonds", ItemType.PICKAXE, "<#27FFC9>Diamonds<gray>", Statistic.MINING_FORTUNE, 15, Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE)),
+    HYPER_COAL(
+        BlockTargetingEnchantment(
+            "Hyper-Coal",
+            ItemType.PICKAXE,
+            "<dark_gray>Coal<gray>",
+            Statistic.MINING_FORTUNE,
+            20,
+            Material.COAL_ORE,
+            Material.DEEPSLATE_COAL_ORE
+        )
+    ),
+    HYPER_GOLD(
+        BlockTargetingEnchantment(
+            "Hyper-Gold",
+            ItemType.PICKAXE,
+            "<#FFA327>Gold<gray>",
+            Statistic.MINING_FORTUNE,
+            20,
+            Material.GOLD_ORE,
+            Material.DEEPSLATE_GOLD_ORE
+        )
+    ),
+    HYPER_EMERALDS(
+        BlockTargetingEnchantment(
+            "Hyper-Emeralds",
+            ItemType.PICKAXE,
+            "<#42FF27>Emeralds<gray>",
+            Statistic.MINING_FORTUNE,
+            15,
+            Material.EMERALD_ORE,
+            Material.DEEPSLATE_EMERALD_ORE
+        )
+    ),
+    HYPER_DIAMONDS(
+        BlockTargetingEnchantment(
+            "Hyper-Diamonds",
+            ItemType.PICKAXE,
+            "<#27FFC9>Diamonds<gray>",
+            Statistic.MINING_FORTUNE,
+            15,
+            Material.DIAMOND_ORE,
+            Material.DEEPSLATE_DIAMOND_ORE
+        )
+    ),
 
     // foraging
-    SUPER_JUNGLE(BlockTargetingEnchantment("Super-Jungle", ItemType.AXE, "<#FF917D>Jungle Wood<gray>", Statistic.FORAGING_FORTUNE, 25, Material.JUNGLE_LOG)),
-    SUPER_OAK(BlockTargetingEnchantment("Super-Oak", ItemType.AXE, "<white>Oak<gray> and <dark_gray>Dark Oak<gray> Wood", Statistic.FORAGING_FORTUNE, 25, Material.DARK_OAK_LOG, Material.OAK_LOG)),
-    SUPER_BIRCH(BlockTargetingEnchantment("Super-Birch", ItemType.AXE, "<#CCC9C8>Birch Wood<gray>", Statistic.FORAGING_FORTUNE, 25, Material.BIRCH_LOG)),
-    SUPER_ACACIA(BlockTargetingEnchantment("Super-Acacia", ItemType.AXE, "<#F9E5A5>Acacia Wood<gray>", Statistic.FORAGING_FORTUNE, 25, Material.ACACIA_LOG)),
+    SUPER_JUNGLE(
+        BlockTargetingEnchantment(
+            "Super-Jungle",
+            ItemType.AXE,
+            "<#FF917D>Jungle Wood<gray>",
+            Statistic.FORAGING_FORTUNE,
+            25,
+            Material.JUNGLE_LOG
+        )
+    ),
+    SUPER_OAK(
+        BlockTargetingEnchantment(
+            "Super-Oak",
+            ItemType.AXE,
+            "<white>Oak<gray> and <dark_gray>Dark Oak<gray> Wood",
+            Statistic.FORAGING_FORTUNE,
+            25,
+            Material.DARK_OAK_LOG,
+            Material.OAK_LOG
+        )
+    ),
+    SUPER_BIRCH(
+        BlockTargetingEnchantment(
+            "Super-Birch",
+            ItemType.AXE,
+            "<#CCC9C8>Birch Wood<gray>",
+            Statistic.FORAGING_FORTUNE,
+            25,
+            Material.BIRCH_LOG
+        )
+    ),
+    SUPER_ACACIA(
+        BlockTargetingEnchantment(
+            "Super-Acacia",
+            ItemType.AXE,
+            "<#F9E5A5>Acacia Wood<gray>",
+            Statistic.FORAGING_FORTUNE,
+            25,
+            Material.ACACIA_LOG
+        )
+    ),
 
     // excavating
-    ULTRA_SAND(BlockTargetingEnchantment("Ultra-Sand", ItemType.SHOVEL, "<#FFE592>Sand<gray> and <#9A1308>Soul Sand<gray>", Statistic.EXCAVATING_FORTUNE, 30, Material.SAND, Material.SOUL_SAND)),
-    ULTRA_CLAY(BlockTargetingEnchantment("Ultra-Clay", ItemType.SHOVEL, "<#BBFDE5>Clay<gray>", Statistic.EXCAVATING_FORTUNE, 30, Material.CLAY)),
-    ULTRA_NYLIUM(BlockTargetingEnchantment("Ultra-Nylium", ItemType.SHOVEL, "<#E7BBFD><obfuscated>a</obfuscated> Warped <obfuscated>a</obfuscated><gray> and <#FDBBBB><obfuscated>a</obfuscated> Crimson <obfuscated>a</obfuscated><gray> Nylium", Statistic.EXCAVATING_FORTUNE, 30, Material.CRIMSON_NYLIUM, Material.WARPED_NYLIUM)),
-    ULTRA_GRAVEL(BlockTargetingEnchantment("Ultra-Gravel", ItemType.SHOVEL, "<#808080>Gravel<gray>", Statistic.EXCAVATING_FORTUNE, 30, Material.GRAVEL)),
+    ULTRA_SAND(
+        BlockTargetingEnchantment(
+            "Ultra-Sand",
+            ItemType.SHOVEL,
+            "<#FFE592>Sand<gray> and <#9A1308>Soul Sand<gray>",
+            Statistic.EXCAVATING_FORTUNE,
+            30,
+            Material.SAND,
+            Material.SOUL_SAND
+        )
+    ),
+    ULTRA_CLAY(
+        BlockTargetingEnchantment(
+            "Ultra-Clay",
+            ItemType.SHOVEL,
+            "<#BBFDE5>Clay<gray>",
+            Statistic.EXCAVATING_FORTUNE,
+            30,
+            Material.CLAY
+        )
+    ),
+    ULTRA_NYLIUM(
+        BlockTargetingEnchantment(
+            "Ultra-Nylium",
+            ItemType.SHOVEL,
+            "<#E7BBFD><obfuscated>a</obfuscated> Warped <obfuscated>a</obfuscated><gray> and <#FDBBBB><obfuscated>a</obfuscated> Crimson <obfuscated>a</obfuscated><gray> Nylium",
+            Statistic.EXCAVATING_FORTUNE,
+            30,
+            Material.CRIMSON_NYLIUM,
+            Material.WARPED_NYLIUM
+        )
+    ),
+    ULTRA_GRAVEL(
+        BlockTargetingEnchantment(
+            "Ultra-Gravel",
+            ItemType.SHOVEL,
+            "<#808080>Gravel<gray>",
+            Statistic.EXCAVATING_FORTUNE,
+            30,
+            Material.GRAVEL
+        )
+    ),
 
     // armor
-    GROWTH(SimpleEnchantment("Growth", "Increases your ${Statistic.HEALTH.display}<gray> by <green><health><gray>.", 1..7, ItemType.armor(), stats {
-        health = 25f
-    })),
-    PROTECTION(SimpleEnchantment("Protection", "Increases your ${Statistic.DEFENSE.display}<gray> by <green><defense><gray>.", 1..7, ItemType.armor(), stats {
-        defense = 15f
-    })),
-    TRUE_PROTECTION(SimpleEnchantment("True Protection", "Increases your ${Statistic.TRUE_DEFENSE.display}<gray> by <green><true_defense><gray>.", 1..3, listOf(ItemType.CHESTPLATE), stats {
-        trueDefense = 5f
-    }, conflicts = listOf("DISTURBANCE"))),
-    DISTURBANCE(SimpleEnchantment("Disturbance", "Increases your ${Statistic.STRENGTH.display}<gray> by <green><strength><gray>.", 1..2, listOf(ItemType.CHESTPLATE), stats {
-        strength = 10f
-    })),
+    GROWTH(
+        SimpleEnchantment(
+            "Growth",
+            "Increases your ${Statistic.HEALTH.display}<gray> by <green><health><gray>.",
+            1..7,
+            ItemType.armor(),
+            stats {
+                health = 25f
+            })
+    ),
+    PROTECTION(
+        SimpleEnchantment(
+            "Protection",
+            "Increases your ${Statistic.DEFENSE.display}<gray> by <green><defense><gray>.",
+            1..7,
+            ItemType.armor(),
+            stats {
+                defense = 15f
+            })
+    ),
+    TRUE_PROTECTION(
+        SimpleEnchantment(
+            "True Protection",
+            "Increases your ${Statistic.TRUE_DEFENSE.display}<gray> by <green><true_defense><gray>.",
+            1..3,
+            listOf(ItemType.CHESTPLATE),
+            stats {
+                trueDefense = 5f
+            },
+            conflicts = listOf("DISTURBANCE")
+        )
+    ),
+    DISTURBANCE(
+        SimpleEnchantment(
+            "Disturbance",
+            "Increases your ${Statistic.STRENGTH.display}<gray> by <green><strength><gray>.",
+            1..2,
+            listOf(ItemType.CHESTPLATE),
+            stats {
+                strength = 10f
+            })
+    ),
 
     // ultimate
     SUPERIOR(UltimateEnchantment(
@@ -307,7 +488,7 @@ enum class Enchant(private val enchant: Enchantment) {
 
                 val pool = Threading.pool()
                 val values = values().toList().parallelStream()
-                for(ench in values) {
+                for (ench in values) {
                     pool.execute {
                         EnchantmentRegistry.register(Identifier.macro(ench.name.lowercase()), ench.enchant)
                     }

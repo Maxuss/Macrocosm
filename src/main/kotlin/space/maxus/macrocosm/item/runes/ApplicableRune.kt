@@ -27,7 +27,7 @@ data class RuneState(val open: Boolean = false, val tier: Int = 0) {
 }
 
 private fun colorFromTier(tier: Int): TextColor {
-    return when(tier) {
+    return when (tier) {
         1 -> NamedTextColor.WHITE
         2 -> NamedTextColor.GREEN
         3 -> NamedTextColor.BLUE
@@ -37,7 +37,8 @@ private fun colorFromTier(tier: Int): TextColor {
     }
 }
 
-enum class VanillaRune(private val char: String, private val color: TextColor, private val baseStats: Statistics): ApplicableRune {
+enum class VanillaRune(private val char: String, private val color: TextColor, private val baseStats: Statistics) :
+    ApplicableRune {
     EMERALD("◎", TextColor.color(0x50CC8E), stats { critDamage = 5f }),
     DIAMOND("◆", TextColor.color(0x50B6CC), stats { intelligence = 10f }),
     REDSTONE("☄", TextColor.color(0xCC6350), stats { strength = 4f }),
@@ -49,7 +50,8 @@ enum class VanillaRune(private val char: String, private val color: TextColor, p
 
     override fun full(level: Int): Component {
         val tierColor = colorFromTier(level)
-        return "[".toComponent().color(tierColor).append(comp(char).color(color)).append("]".toComponent().color(tierColor))
+        return "[".toComponent().color(tierColor).append(comp(char).color(color))
+            .append("]".toComponent().color(tierColor))
     }
 
     override fun locked(): Component {

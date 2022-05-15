@@ -38,7 +38,7 @@ object Armor {
 
             val pool = Threading.pool()
 
-            for(element in cache) {
+            for (element in cache) {
                 pool.execute {
                     info("Registering ${element.baseName} armor set")
                     internalRegisterSingle(element)

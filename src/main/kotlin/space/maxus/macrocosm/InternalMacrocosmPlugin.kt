@@ -93,5 +93,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
     }
 }
+
 val protocolManager by lazy { InternalMacrocosmPlugin.PACKET_MANAGER }
 val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }

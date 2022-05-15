@@ -11,6 +11,7 @@ class PlayerBreakBlockEvent(
     val block: Block
 ) : Event(), Cancellable {
     private var eventCancelled: Boolean = false
+
     companion object {
         private val HANDLERS = HandlerList()
 

@@ -29,7 +29,7 @@ class LootPool private constructor(val drops: List<EntityDrop>) {
             if (it.item.namespace == "minecraft") {
                 val mat = Material.valueOf(it.item.path.uppercase())
                 var amount = it.amount.random()
-                if(applyFortune) {
+                if (applyFortune) {
                     val collType = CollectionType.from(mat)
                     if (collType != null) {
                         player?.addCollectionAmount(collType, amount)

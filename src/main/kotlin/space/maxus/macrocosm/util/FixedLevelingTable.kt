@@ -4,7 +4,7 @@ abstract class FixedLevelingTable(val levels: List<Double>) : LevelingTable {
     override fun expForLevel(lvl: Int): Double {
         return try {
             levels[lvl - 1]
-        } catch(ignored: ArrayIndexOutOfBoundsException) {
+        } catch (ignored: ArrayIndexOutOfBoundsException) {
             .0
         }
     }

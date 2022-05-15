@@ -86,7 +86,7 @@ fun unlockGemsCommand() = command("unlockgems") {
     runs {
         val mc = player.macrocosm
         val item = player.inventory.itemInMainHand.macrocosm ?: return@runs
-        for((gem, _) in item.runes) {
+        for ((gem, _) in item.runes) {
             item.unlockRune(gem)
         }
         player.inventory.setItemInMainHand(item.build(mc)!!)
@@ -100,7 +100,7 @@ fun setGemsCommand() = command("setgems") {
             val mc = player.macrocosm
             val lvl = getArgument<Int>("level")
             val item = player.inventory.itemInMainHand.macrocosm ?: return@runs
-            for((gem, _) in item.runes) {
+            for ((gem, _) in item.runes) {
                 item.addRune(gem, lvl)
             }
             player.inventory.setItemInMainHand(item.build(mc)!!)

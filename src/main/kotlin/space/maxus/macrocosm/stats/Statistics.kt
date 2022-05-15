@@ -9,7 +9,6 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.text.comp
 import java.sql.ResultSet
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -205,14 +204,17 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
         return cmp
     }
 
-    fun formatSimple(reforge: Statistics? = null, gems: HashMap<ApplicableRune, RuneState> = hashMapOf()): List<Component> {
+    fun formatSimple(
+        reforge: Statistics? = null,
+        gems: HashMap<ApplicableRune, RuneState> = hashMapOf()
+    ): List<Component> {
         val base = mutableListOf<Component>()
         var prev: Statistic? = null
         val dissolvedGemstones: Statistics = zero()
-        if(gems.isNotEmpty()) {
-            for((gem, state) in gems) {
+        if (gems.isNotEmpty()) {
+            for ((gem, state) in gems) {
                 val (open, lvl) = state
-                if(!open || lvl <= 0)
+                if (!open || lvl <= 0)
                     continue
                 dissolvedGemstones.increase(gem.stats(lvl))
             }
@@ -237,7 +239,7 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
             }
 
             // gemstones
-            if(dissolvedGemstones[stat] != 0f) {
+            if (dissolvedGemstones[stat] != 0f) {
                 val amount = dissolvedGemstones[stat]
                 var gemComp = " <light_purple>["
                 val fmt = Formatting.stats(amount.toBigDecimal(), false)
@@ -293,24 +295,24 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
     }
 
     fun round() {
-        for((stat, _) in self) {
-            if(self[stat]!! == 0f)
+        for ((stat, _) in self) {
+            if (self[stat]!! == 0f)
                 continue
             self[stat] = self[stat]!!.roundToInt().toFloat()
         }
     }
 
     fun ceil() {
-        for((stat, _) in self) {
-            if(self[stat]!! == 0f)
+        for ((stat, _) in self) {
+            if (self[stat]!! == 0f)
                 continue
             self[stat] = ceil(self[stat]!!)
         }
     }
 
     fun floor() {
-        for((stat, _) in self) {
-            if(self[stat]!! == 0f)
+        for ((stat, _) in self) {
+            if (self[stat]!! == 0f)
                 continue
             self[stat] = kotlin.math.floor(self[stat]!!)
         }

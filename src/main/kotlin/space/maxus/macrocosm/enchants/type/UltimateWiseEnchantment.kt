@@ -16,7 +16,8 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
 
-object UltimateWiseEnchantment: UltimateEnchantment("Ultimate Wise", "", 1..5, ItemType.weapons(), conflicts = listOf("ULTIMATE_BULK")) {
+object UltimateWiseEnchantment :
+    UltimateEnchantment("Ultimate Wise", "", 1..5, ItemType.weapons(), conflicts = listOf("ULTIMATE_BULK")) {
     override fun description(level: Int): List<Component> {
         val str = "Decreases <aqua>Mana Cost<gray> of your abilities by <yellow>${level * 10}%<gray>."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
@@ -36,7 +37,7 @@ object UltimateWiseEnchantment: UltimateEnchantment("Ultimate Wise", "", 1..5, I
     @EventHandler
     fun onAbilityCompile(e: AbilityCompileEvent) {
         val (ok, lvl) = ensureRequirements(e.item)
-        if(!ok)
+        if (!ok)
             return
 
         val cost = e.ability.cost ?: return
@@ -49,7 +50,8 @@ object UltimateWiseEnchantment: UltimateEnchantment("Ultimate Wise", "", 1..5, I
     }
 }
 
-object UltimateBulkEnchantment: UltimateEnchantment("Ultimate Bulk", "", 1..5, ItemType.weapons(), conflicts = listOf("ULTIMATE_WISE")) {
+object UltimateBulkEnchantment :
+    UltimateEnchantment("Ultimate Bulk", "", 1..5, ItemType.weapons(), conflicts = listOf("ULTIMATE_WISE")) {
     override fun description(level: Int): List<Component> {
         val str = "Decreases <red>Health Cost<gray> of your abilities by <yellow>${level * 10}%<gray>."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
@@ -69,7 +71,7 @@ object UltimateBulkEnchantment: UltimateEnchantment("Ultimate Bulk", "", 1..5, I
     @EventHandler
     fun onAbilityCompile(e: AbilityCompileEvent) {
         val (ok, lvl) = ensureRequirements(e.item)
-        if(!ok)
+        if (!ok)
             return
 
         val cost = e.ability.cost ?: return

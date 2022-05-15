@@ -12,15 +12,18 @@ import space.maxus.macrocosm.entity.loot.MacrocosmDrop
 import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.stats.Statistic
 
-object EmeraldArmorBonus: FullSetBonus("Emerald Affection", "Grants <gold>+200 ${Statistic.MINING_FORTUNE.display}<gray> when mining emerald ore.") {
+object EmeraldArmorBonus : FullSetBonus(
+    "Emerald Affection",
+    "Grants <gold>+200 ${Statistic.MINING_FORTUNE.display}<gray> when mining emerald ore."
+) {
     override fun registerListeners() {
         listen<BlockDropItemsEvent> { e ->
-            if(e.block.type != Material.EMERALD_ORE)
+            if (e.block.type != Material.EMERALD_ORE)
                 return@listen
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
             val pool = mutableListOf<EntityDrop>()
-            for(drop in e.pool.drops) {
+            for (drop in e.pool.drops) {
                 val first = drop.amount.first + 2
                 val last = drop.amount.last + 2
                 pool.add(MacrocosmDrop(drop.item, drop.rarity, drop.chance, first..last))

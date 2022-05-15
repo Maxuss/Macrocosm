@@ -27,12 +27,12 @@ data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int
         event.callEvent()
 
         if (event.mana > 0 && player.currentMana < event.mana) {
-            if(loud)
+            if (loud)
                 player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH MANA"))
             return false
         }
         if (event.health > 0 && player.currentHealth < event.health) {
-            if(loud)
+            if (loud)
                 player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH HEALTH"))
             return false
         }
@@ -41,7 +41,7 @@ data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int
         val cdMillis = TimeUnit.SECONDS.toMillis(event.cooldown.toLong())
         val now = Instant.now().toEpochMilli()
         if (event.cooldown > 0 && player.lastAbilityUse.contains(ability) && lastUse!! + cdMillis > now) {
-            if(loud)
+            if (loud)
                 player.paper!!.sendMessage(
                     comp(
                         "<red>This ability is current on cooldown for ${
@@ -57,7 +57,7 @@ data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int
         if (event.mana > 0) {
             player.decreaseMana(event.mana.toFloat())
         }
-        if(event.health > 0) {
+        if (event.health > 0) {
             player.damage(event.health.toFloat(), comp("Cruel Ability"))
         }
         if (event.cooldown > 0) {

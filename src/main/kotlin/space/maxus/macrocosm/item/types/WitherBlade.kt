@@ -48,14 +48,18 @@ import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
 
-val WITHER_SCROLL_IMPLOSION = WitherScrollAbility("Implosion", "Deals <red>10.000 ${Statistic.DAMAGE.display}<gray> to nearby enemies.", AbilityCost(300, cooldown = 10)) { player ->
+val WITHER_SCROLL_IMPLOSION = WitherScrollAbility(
+    "Implosion",
+    "Deals <red>10.000 ${Statistic.DAMAGE.display}<gray> to nearby enemies.",
+    AbilityCost(300, cooldown = 10)
+) { player ->
     val paper = player.paper!!
     val stats = player.stats()!!
 
     // 0.1 int scaling
     val damage = DamageCalculator.calculateMagicDamage(10000, .1f, stats)
-    for(entity in paper.location.getNearbyLivingEntities(5.0)) {
-        if(entity is Player || entity is ArmorStand)
+    for (entity in paper.location.getNearbyLivingEntities(5.0)) {
+        if (entity is Player || entity is ArmorStand)
             continue
 
         DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.MAGIC)
@@ -71,11 +75,15 @@ val WITHER_SCROLL_IMPLOSION = WitherScrollAbility("Implosion", "Deals <red>10.00
     }
 }
 
-val WITHER_SCROLL_WITHER_SHIELD = WitherScrollAbility("Wither Shield", "Reduces damage taken by <red>10%<gray> for <yellow>5<gray> seconds. Also heals you for <blue>150%<gray> of your ${Statistic.CRIT_DAMAGE.display}<gray>.", AbilityCost(150, cooldown = 5)) { player ->
+val WITHER_SCROLL_WITHER_SHIELD = WitherScrollAbility(
+    "Wither Shield",
+    "Reduces damage taken by <red>10%<gray> for <yellow>5<gray> seconds. Also heals you for <blue>150%<gray> of your ${Statistic.CRIT_DAMAGE.display}<gray>.",
+    AbilityCost(150, cooldown = 5)
+) { player ->
     val paper = player.paper!!
 
     val success = AbilityCost(cooldown = 5).ensureRequirements(player, id("wither_shield_internal"), false)
-    if(!success)
+    if (!success)
         return@WitherScrollAbility
     player.baseStats.damageReduction += 10f
     taskRunLater(5 * 20L) {
@@ -90,7 +98,11 @@ val WITHER_SCROLL_WITHER_SHIELD = WitherScrollAbility("Wither Shield", "Reduces 
     }
 }
 
-val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility("Shadow Warp", "Create a spacial distortion <yellow>10<gray> blocks ahead of you that sucks all enemies around itself and detonates in <green>3s<gray>.", AbilityCost(300, cooldown = 10)) { player ->
+val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility(
+    "Shadow Warp",
+    "Create a spacial distortion <yellow>10<gray> blocks ahead of you that sucks all enemies around itself and detonates in <green>3s<gray>.",
+    AbilityCost(300, cooldown = 10)
+) { player ->
     val paper = player.paper!!
     val casted = raycast(paper, 10)
     val stats = player.stats()!!
@@ -98,8 +110,8 @@ val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility("Shadow Warp", "Create a spa
     // 0.1 int scaling
     val damage = DamageCalculator.calculateMagicDamage(5000, .1f, stats)
 
-    for(entity in casted.getNearbyLivingEntities(5.0)) {
-        if(entity is Player || entity is ArmorStand)
+    for (entity in casted.getNearbyLivingEntities(5.0)) {
+        if (entity is Player || entity is ArmorStand)
             continue
         var amount = 0
         sound(Sound.ENTITY_ENDER_EYE_DEATH) {
@@ -115,7 +127,7 @@ val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility("Shadow Warp", "Create a spa
                 this.offset = Vector.getRandom()
                 spawnAt(casted)
             }
-            if(amount >= 60L) {
+            if (amount >= 60L) {
                 it.cancel()
                 val mc = entity.macrocosm!!
                 mc.damage(damage)
@@ -144,7 +156,11 @@ val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility("Shadow Warp", "Create a spa
     }
 }
 
-val WITHER_SCROLL_WITHER_IMPACT = WitherScrollAbility("Wither Impact", "Teleport <green>10 blocks<gray> ahead of you. Then implode, dealing <red>10.000 base ${Statistic.DAMAGE}<gray> to nearby enemies. Also applies the Wither Shield scroll ability.", AbilityCost(300)) { player ->
+val WITHER_SCROLL_WITHER_IMPACT = WitherScrollAbility(
+    "Wither Impact",
+    "Teleport <green>10 blocks<gray> ahead of you. Then implode, dealing <red>10.000 base ${Statistic.DAMAGE}<gray> to nearby enemies. Also applies the Wither Shield scroll ability.",
+    AbilityCost(300)
+) { player ->
     WITHER_SCROLL_WITHER_SHIELD.executor(player)
     val paper = player.paper!!
 
@@ -154,12 +170,19 @@ val WITHER_SCROLL_WITHER_IMPACT = WitherScrollAbility("Wither Impact", "Teleport
     WITHER_SCROLL_IMPLOSION.executor(player)
 }
 
-class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarity = Rarity.LEGENDARY): AbilityItem(ItemType.SWORD, name, rarity, base, stats, applicableRunes = listOf(VanillaRune.REDSTONE, VanillaRune.DIAMOND, VanillaRune.EMERALD)) {
+class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarity = Rarity.LEGENDARY) : AbilityItem(
+    ItemType.SWORD,
+    name,
+    rarity,
+    base,
+    stats,
+    applicableRunes = listOf(VanillaRune.REDSTONE, VanillaRune.DIAMOND, VanillaRune.EMERALD)
+) {
     fun addScroll(scroll: WitherScrollAbility) {
-        if(abilities.contains(WITHER_SCROLL_WITHER_IMPACT))
+        if (abilities.contains(WITHER_SCROLL_WITHER_IMPACT))
             return
         abilities.add(scroll)
-        if(abilities.size >= 3) {
+        if (abilities.size >= 3) {
             abilities.clear()
             abilities.add(WITHER_SCROLL_WITHER_IMPACT)
         }
@@ -171,7 +194,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
 
     override fun addExtraNbt(cmp: CompoundTag) {
         val list = ListTag()
-        for(ability in abilities) {
+        for (ability in abilities) {
             list.add(StringTag.valueOf((ability as AbilityBase).id.toString()))
         }
         cmp.put("WitherScrolls", list)
@@ -180,7 +203,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt)
         val list = nbt.getList("WitherScrolls", 8)
-        for(ability in 0 until list.size) {
+        for (ability in 0 until list.size) {
             base.abilities.add(AbilityRegistry.find(Identifier.parse(list.getString(ability)))!!)
         }
         return base
@@ -198,7 +221,12 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     }
 }
 
-class WitherScrollAbility(name: String, description: String, cost: AbilityCost, val executor: (player: MacrocosmPlayer) -> Unit): AbilityBase(AbilityType.RIGHT_CLICK, name, description, cost) {
+class WitherScrollAbility(
+    name: String,
+    description: String,
+    cost: AbilityCost,
+    val executor: (player: MacrocosmPlayer) -> Unit
+) : AbilityBase(AbilityType.RIGHT_CLICK, name, description, cost) {
     override fun registerListeners() {
         listen<PlayerRightClickEvent>(priority = EventPriority.HIGH) { e ->
             if (!ensureRequirements(e.player, EquipmentSlot.HAND))

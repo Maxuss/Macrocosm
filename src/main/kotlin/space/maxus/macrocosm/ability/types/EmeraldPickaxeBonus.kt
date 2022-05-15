@@ -17,7 +17,11 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 
-object EmeraldPickaxeBonus: AbilityBase(AbilityType.PASSIVE, "Emerald Affection", "Grants <gold>+10 ${Statistic.MINING_FORTUNE.display}<gray> per <green>5.000 Emerald Collection<gray>.") {
+object EmeraldPickaxeBonus : AbilityBase(
+    AbilityType.PASSIVE,
+    "Emerald Affection",
+    "Grants <gold>+10 ${Statistic.MINING_FORTUNE.display}<gray> per <green>5.000 Emerald Collection<gray>."
+) {
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
         tmp.add(comp("<gold>Item Ability: $name").noitalic())
@@ -25,7 +29,7 @@ object EmeraldPickaxeBonus: AbilityBase(AbilityType.PASSIVE, "Emerald Affection"
             tmp.add(comp("<gray>$desc</gray>").noitalic())
         }
         tmp.add("".toComponent())
-        if(player == null) {
+        if (player == null) {
             tmp.add(comp("<gray>Emerald Collection: <green>0").noitalic())
             tmp.add(comp("${Statistic.MINING_FORTUNE.display}<gray> Bonus: <green>0").noitalic())
         } else {
@@ -43,7 +47,7 @@ object EmeraldPickaxeBonus: AbilityBase(AbilityType.PASSIVE, "Emerald Affection"
 
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
             val stats = e.stats
             val coll = e.player.collections[CollectionType.EMERALD]

@@ -13,9 +13,10 @@ import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.text.comp
 
-object LegionEnchantment: UltimateEnchantment("Legion", "", 1..5, ItemType.armor()) {
+object LegionEnchantment : UltimateEnchantment("Legion", "", 1..5, ItemType.armor()) {
     override fun description(level: Int): List<Component> {
-        val str = "Increases <blue>ALL<gray> your stats by <yellow>$level%<gray> for every player within <blue>10 blocks<gray> of you."
+        val str =
+            "Increases <blue>ALL<gray> your stats by <yellow>$level%<gray> for every player within <blue>10 blocks<gray> of you."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -23,11 +24,17 @@ object LegionEnchantment: UltimateEnchantment("Legion", "", 1..5, ItemType.armor
 
     @EventHandler
     fun onStatCalculation(e: PlayerCalculateStatsEvent) {
-        val (ok, lvl) = ensureRequirementsStacking(e.player, EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD)
-        if(!ok)
+        val (ok, lvl) = ensureRequirementsStacking(
+            e.player,
+            EquipmentSlot.FEET,
+            EquipmentSlot.LEGS,
+            EquipmentSlot.CHEST,
+            EquipmentSlot.HEAD
+        )
+        if (!ok)
             return
         val nearby = e.player.paper!!.location.getNearbyLivingEntities(10.0).filterIsInstance<Player>()
-        if(nearby.isEmpty())
+        if (nearby.isEmpty())
             return
         val clone = e.stats.clone()
         clone.multiply((.01f * lvl) * nearby.size)

@@ -8,7 +8,11 @@ import kotlin.concurrent.thread
 object Threading {
     val activeThreads: AtomicInteger = AtomicInteger(1)
 
-    inline fun start(name: String = "Worker Thread / $activeThreads", isDaemon: Boolean = false, crossinline runnable: ThreadContext.() -> Unit) {
+    inline fun start(
+        name: String = "Worker Thread / $activeThreads",
+        isDaemon: Boolean = false,
+        crossinline runnable: ThreadContext.() -> Unit
+    ) {
         activeThreads.incrementAndGet()
         thread(true, isDaemon = isDaemon, name = name) {
             runnable(ThreadContext(name))

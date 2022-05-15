@@ -25,7 +25,8 @@ class ArmorItem(
     private val bootMeta: (ItemMeta) -> Unit = { },
     private val commonMeta: (ItemMeta) -> Unit = { },
 
-    private val headSkin: String? = null) {
+    private val headSkin: String? = null
+) {
     companion object {
         const val HELMET_MODIFIER = .6f
         const val CHESTPLATE_MODIFIER = 1f
@@ -35,7 +36,7 @@ class ArmorItem(
 
     fun helmet(): MacrocosmItem {
         val cached = ItemRegistry.findOrNull(id("${baseId}_helmet"))
-        if(cached != null)
+        if (cached != null)
             return cached
         val statClone = baseStats.clone()
         statClone.multiply(HELMET_MODIFIER)
@@ -44,8 +45,16 @@ class ArmorItem(
         specClone.multiply(HELMET_MODIFIER)
         specClone.round()
 
-        val item = AbilityItem(ItemType.HELMET, "$baseName Helmet", baseRarity, if(headSkin == null) Material.valueOf("${baseMaterial}_HELMET") else Material.PLAYER_HEAD, statClone, abilities.toMutableList(), specClone) {
-            if(it is SkullMeta) {
+        val item = AbilityItem(
+            ItemType.HELMET,
+            "$baseName Helmet",
+            baseRarity,
+            if (headSkin == null) Material.valueOf("${baseMaterial}_HELMET") else Material.PLAYER_HEAD,
+            statClone,
+            abilities.toMutableList(),
+            specClone
+        ) {
+            if (it is SkullMeta) {
                 val profile = Bukkit.createProfile(UUID.randomUUID())
                 profile.setProperty(ProfileProperty("textures", headSkin!!))
                 it.playerProfile = profile
@@ -58,7 +67,7 @@ class ArmorItem(
 
     fun chestplate(): MacrocosmItem {
         val cached = ItemRegistry.findOrNull(id("${baseId}_chestplate"))
-        if(cached != null)
+        if (cached != null)
             return cached
 
         val statClone = baseStats.clone()
@@ -83,7 +92,7 @@ class ArmorItem(
 
     fun leggings(): MacrocosmItem {
         val cached = ItemRegistry.findOrNull(id("${baseId}_leggings"))
-        if(cached != null)
+        if (cached != null)
             return cached
 
         val statClone = baseStats.clone()
@@ -108,7 +117,7 @@ class ArmorItem(
 
     fun boots(): MacrocosmItem {
         val cached = ItemRegistry.findOrNull(id("${baseId}_boots"))
-        if(cached != null)
+        if (cached != null)
             return cached
 
         val statClone = baseStats.clone()

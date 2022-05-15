@@ -18,17 +18,17 @@ import space.maxus.macrocosm.util.id
 
 private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
     val (_, lvl) = ench.maxByOrNull { it.value } ?: return Rarity.SPECIAL
-    return if(lvl >= 8) Rarity.GODLIKE
-    else if(lvl >= 7) Rarity.MYTHIC
-    else if(lvl >= 6) Rarity.LEGENDARY
-    else if(lvl >= 5) Rarity.EPIC
-    else if(lvl >= 4) Rarity.RARE
-    else if(lvl >= 3) Rarity.UNCOMMON
+    return if (lvl >= 8) Rarity.GODLIKE
+    else if (lvl >= 7) Rarity.MYTHIC
+    else if (lvl >= 6) Rarity.LEGENDARY
+    else if (lvl >= 5) Rarity.EPIC
+    else if (lvl >= 4) Rarity.RARE
+    else if (lvl >= 3) Rarity.UNCOMMON
     else Rarity.COMMON
 }
 
-class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashMapOf()): MacrocosmItem {
-    override var stats: Statistics get() = Statistics.zero(); set(_) { }
+class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashMapOf()) : MacrocosmItem {
+    override var stats: Statistics get() = Statistics.zero(); set(_) {}
     override var specialStats: SpecialStatistics get() = SpecialStatistics(); set(_) {}
     override var amount: Int = 1
     override var stars: Int = 0
@@ -52,7 +52,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     }
 
     override fun enchant(enchantment: Enchantment, level: Int): Boolean {
-        if(!enchantment.levels.contains(level))
+        if (!enchantment.levels.contains(level))
             return false
         enchantUnsafe(enchantment, level)
         return true
@@ -63,7 +63,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     }
 
     override fun transfer(to: MacrocosmItem) {
-        for((enchant, level) in enchantments) {
+        for ((enchant, level) in enchantments) {
             to.enchant(enchant, level)
         }
     }

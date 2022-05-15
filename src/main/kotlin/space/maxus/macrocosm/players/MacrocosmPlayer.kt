@@ -162,7 +162,20 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val required = table.expForLevel(currentLevel + 1)
         // overflow + added experience
         val current = skills[skill] + exp
-        paper?.sendActionBar(comp("<aqua>+${Formatting.withCommas(exp.toBigDecimal(), true)} ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}/${Formatting.withCommas(required.toBigDecimal())})"))
+        paper?.sendActionBar(
+            comp(
+                "<aqua>+${
+                    Formatting.withCommas(
+                        exp.toBigDecimal(),
+                        true
+                    )
+                } ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}/${
+                    Formatting.withCommas(
+                        required.toBigDecimal()
+                    )
+                })"
+            )
+        )
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
             pitch = 2f
             playFor(paper!!)
@@ -406,7 +419,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
-    fun <T, L> sendPacket(packet: T) where T: Packet<L>, L: PacketListener {
+    fun <T, L> sendPacket(packet: T) where T : Packet<L>, L : PacketListener {
         (this.paper as CraftPlayer).handle.networkManager.send(packet)
     }
 

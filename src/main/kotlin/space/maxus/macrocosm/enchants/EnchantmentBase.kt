@@ -54,7 +54,7 @@ abstract class EnchantmentBase(
                 return@map Pair(false, -1)
             Pair(true, enchants[this]!!)
         }.filter { (success, _) -> success }
-        if(filtered.isEmpty())
+        if (filtered.isEmpty())
             return Pair(false, -1)
         return Pair(true, filtered.sumOf { (_, lvl) -> lvl })
     }

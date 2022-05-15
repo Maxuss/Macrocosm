@@ -20,10 +20,19 @@ import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-class BlockTargetingEnchantment(name: String, targetItem: ItemType, private val blockName: String, private val stat: Statistic, private val base: Int, vararg vaBlockTypes: Material): EnchantmentBase(name, "", 1..5, listOf(ItemType.GAUNTLET, targetItem)) {
+class BlockTargetingEnchantment(
+    name: String,
+    targetItem: ItemType,
+    private val blockName: String,
+    private val stat: Statistic,
+    private val base: Int,
+    vararg vaBlockTypes: Material
+) : EnchantmentBase(name, "", 1..5, listOf(ItemType.GAUNTLET, targetItem)) {
     private val blockTypes = vaBlockTypes.toList()
     override fun description(level: Int): List<Component> {
-        val str = "Grants <gold>+${level * base} ${stat.display}<gray> when ${stat.name.split("_").first().lowercase()} $blockName."
+        val str = "Grants <gold>+${level * base} ${stat.display}<gray> when ${
+            stat.name.split("_").first().lowercase()
+        } $blockName."
         val reduced = str.reduceToList(30).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
@@ -31,14 +40,15 @@ class BlockTargetingEnchantment(name: String, targetItem: ItemType, private val 
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onDropItems(e: BlockDropItemsEvent) {
-        if(!blockTypes.contains(e.block.type))
+        if (!blockTypes.contains(e.block.type))
             return
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
-        if(!ok)
+        if (!ok)
             return
-        val add = ((lvl * base) / 100f).roundToInt() + (if(Random.nextFloat() < (((lvl * base) % 100) / 100f)) 1 else 0)
+        val add =
+            ((lvl * base) / 100f).roundToInt() + (if (Random.nextFloat() < (((lvl * base) % 100) / 100f)) 1 else 0)
         val pool = mutableListOf<EntityDrop>()
-        for(drop in e.pool.drops) {
+        for (drop in e.pool.drops) {
             val first = drop.amount.first + add
             val last = drop.amount.last + add
             pool.add(MacrocosmDrop(drop.item, drop.rarity, drop.chance, first..last))

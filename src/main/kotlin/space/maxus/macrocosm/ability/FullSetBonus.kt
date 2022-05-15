@@ -10,9 +10,14 @@ import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.comp
 
-open class FullSetBonus(name: String, description: String): AbilityBase(AbilityType.PASSIVE, name, description) {
+open class FullSetBonus(name: String, description: String) : AbilityBase(AbilityType.PASSIVE, name, description) {
     fun ensureSetRequirement(player: MacrocosmPlayer): Boolean {
-        return listOf(player.helmet, player.chestplate, player.leggings, player.boots).map { it != null && it.abilities.contains(this) }.all { it }
+        return listOf(
+            player.helmet,
+            player.chestplate,
+            player.leggings,
+            player.boots
+        ).map { it != null && it.abilities.contains(this) }.all { it }
     }
 
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {

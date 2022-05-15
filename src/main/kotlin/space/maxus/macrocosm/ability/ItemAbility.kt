@@ -37,10 +37,11 @@ interface ItemAbility : Listener {
         lore.add("".toComponent())
     }
 
-    class Interceptor(abil: ItemAbility,
-                       override val name: String = abil.name,
-                       override val description: String = abil.description,
-                       override val type: AbilityType = abil.type,
-                       override val cost: AbilityCost? = abil.cost,
-                       ): ItemAbility
+    class Interceptor(
+        abil: ItemAbility,
+        override val name: String = abil.name,
+        override val description: String = abil.description,
+        override val type: AbilityType = abil.type,
+        override val cost: AbilityCost? = abil.cost,
+    ) : ItemAbility
 }
