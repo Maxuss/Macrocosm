@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.ability
 
+import space.maxus.macrocosm.ability.types.AmethystArmorBonus
 import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
 import space.maxus.macrocosm.ability.types.EmeraldPickaxeBonus
 import space.maxus.macrocosm.ability.types.InstantTransmission
@@ -18,16 +19,17 @@ enum class Ability(val ability: ItemAbility) {
     WITHER_IMPACT(WITHER_SCROLL_WITHER_IMPACT),
 
     EMERALD_AFFECTION(EmeraldArmorBonus),
-    EMERALD_AFFECTION_PICKAXE(EmeraldPickaxeBonus)
+    EMERALD_AFFECTION_PICKAXE(EmeraldPickaxeBonus),
+
+    DEFLECTION(AmethystArmorBonus)
 
     ;
 
     companion object {
         fun init() {
             Threading.start("Ability Registry", true) {
-                info("Starting ${javaClass.simpleName} daemon...")
+                info("Starting Ability Registry daemon...")
                 for (abil in values()) {
-                    info("Registering ${abil.name} ability...")
                     AbilityRegistry.register(Identifier.macro(abil.name.lowercase()), abil.ability)
                 }
             }

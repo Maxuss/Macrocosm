@@ -10,7 +10,9 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Barrel
 import org.bukkit.block.Block
+import org.bukkit.block.Chest
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -21,13 +23,13 @@ import org.bukkit.metadata.LazyMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.events.MineTickEvent
 import space.maxus.macrocosm.events.PlayerBreakBlockEvent
 import space.maxus.macrocosm.events.StopBreakingBlockEvent
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import java.util.*
@@ -249,6 +251,14 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
         val minePerTick = e.player.stats()!!.miningSpeed / (12f * hardness)
         state += minePerTick
         if (state >= 1f) {
+            // checking if item is a container
+            if(breaking is Chest || breaking is Barrel) {
+                for(drop in breaking.drops) {
+                    val loc = breaking.location
+                    loc.world.dropItemNaturally(loc, drop)
+                }
+            }
+
             val event = PlayerBreakBlockEvent(e.player, e.block)
             if (event.callEvent()) {
                 val pos = BlockPos(breaking.x, breaking.y, breaking.z)

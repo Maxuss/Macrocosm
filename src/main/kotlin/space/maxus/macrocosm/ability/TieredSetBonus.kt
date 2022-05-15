@@ -10,19 +10,22 @@ import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.comp
 
-open class FullSetBonus(name: String, description: String) : AbilityBase(AbilityType.PASSIVE, name, description) {
-    protected fun ensureSetRequirement(player: MacrocosmPlayer): Boolean {
-        return listOf(
+open class TieredSetBonus(name: String, description: String) : AbilityBase(AbilityType.PASSIVE, name, description) {
+    protected fun getArmorTier(player: MacrocosmPlayer): Pair<Boolean, Int> {
+        val tier = listOf(
             player.helmet,
             player.chestplate,
             player.leggings,
             player.boots
-        ).map { it != null && it.abilities.contains(this) }.all { it }
+        ).map { it != null && it.abilities.contains(this) }.filter { it }.size
+        return Pair(tier > 1, tier)
     }
 
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
-        tmp.add(comp("<gold>Full Set Bonus: $name").noitalic())
+        val (_, tier) = if(player != null) getArmorTier(player) else Pair(false, 0)
+        val name = if(tier <= 1) "<dark_gray>Tiered Bonus: $name ($tier/4)" else "<gold>Tiered Bonus: $name ($tier/4)"
+        tmp.add(comp(name).noitalic())
         for (desc in description.reduceToList()) {
             tmp.add(comp("<gray>$desc</gray>").noitalic())
         }

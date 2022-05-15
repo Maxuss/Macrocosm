@@ -6,6 +6,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.id
@@ -24,7 +25,7 @@ class ArmorItem(
     private val legsMeta: (ItemMeta) -> Unit = { },
     private val bootMeta: (ItemMeta) -> Unit = { },
     private val commonMeta: (ItemMeta) -> Unit = { },
-
+    private val runes: List<ApplicableRune> = listOf(),
     private val headSkin: String? = null
 ) {
     companion object {
@@ -38,6 +39,7 @@ class ArmorItem(
         val cached = ItemRegistry.findOrNull(id("${baseId}_helmet"))
         if (cached != null)
             return cached
+
         val statClone = baseStats.clone()
         statClone.multiply(HELMET_MODIFIER)
         statClone.round()
@@ -52,7 +54,8 @@ class ArmorItem(
             if (headSkin == null) Material.valueOf("${baseMaterial}_HELMET") else Material.PLAYER_HEAD,
             statClone,
             abilities.toMutableList(),
-            specClone
+            specClone,
+            applicableRunes = runes
         ) {
             if (it is SkullMeta) {
                 val profile = Bukkit.createProfile(UUID.randomUUID())
@@ -83,7 +86,8 @@ class ArmorItem(
             Material.valueOf("${baseMaterial}_CHESTPLATE"),
             statClone,
             abilities.toMutableList(),
-            specClone
+            specClone,
+            applicableRunes = runes
         ) {
             chestMeta(it)
             commonMeta(it)
@@ -108,7 +112,8 @@ class ArmorItem(
             Material.valueOf("${baseMaterial}_LEGGINGS"),
             statClone,
             abilities.toMutableList(),
-            specClone
+            specClone,
+            applicableRunes = runes
         ) {
             legsMeta(it)
             commonMeta(it)
@@ -133,7 +138,8 @@ class ArmorItem(
             Material.valueOf("${baseMaterial}_BOOTS"),
             statClone,
             abilities.toMutableList(),
-            specClone
+            specClone,
+            applicableRunes = runes
         ) {
             bootMeta(it)
             commonMeta(it)

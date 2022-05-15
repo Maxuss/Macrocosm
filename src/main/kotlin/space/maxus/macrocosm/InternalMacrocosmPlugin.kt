@@ -53,6 +53,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(PickupListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()

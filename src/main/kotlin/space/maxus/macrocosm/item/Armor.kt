@@ -1,8 +1,10 @@
 package space.maxus.macrocosm.item
 
 import org.bukkit.inventory.meta.LeatherArmorMeta
+import space.maxus.macrocosm.ability.types.AmethystArmorBonus
 import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
@@ -18,7 +20,25 @@ object Armor {
     }, abilities = listOf(EmeraldArmorBonus), commonMeta = {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
-    }))
+    }, runes = listOf(VanillaRune.EMERALD, VanillaRune.DIAMOND)))
+
+    val AMETHYST_ARMOR = register(ArmorItem("Amethyst", "amethyst", "LEATHER", Rarity.RARE, stats {
+        health = 80f
+        miningFortune = 20f
+        defense = 40f
+    }, abilities = listOf(AmethystArmorBonus), headMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x6F00CB))
+    }, chestMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x5B00A7))
+    }, legsMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x6B20A9))
+    }, bootMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0x50177F))
+    }, runes = listOf(VanillaRune.AMETHYST, VanillaRune.DIAMOND)))
 
     private fun register(item: ArmorItem): ArmorItem {
         cache.add(item)
