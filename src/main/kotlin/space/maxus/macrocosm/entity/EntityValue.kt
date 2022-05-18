@@ -28,6 +28,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
                 health = 500000f
                 damage = 100f
                 strength = 500f
+                speed = 400f
             },
             mainHand = ItemValue.SCYLLA.item,
             helmet = Armor.AMETHYST_ARMOR.helmet(),

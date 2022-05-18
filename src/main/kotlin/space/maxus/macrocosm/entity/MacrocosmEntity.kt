@@ -9,6 +9,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
+import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
@@ -182,6 +183,12 @@ interface MacrocosmEntity : Listener {
             val disguise = DisguiseAPI.getDisguise(entity) as? PlayerDisguise ?: return
             disguise.name = nameMm(builtName)
         }
+
+        // movement speed
+        val speed = calculateStats().speed
+        val attr = entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED) ?: return
+        val modifier = .2 * (speed / 100.0)
+        attr.baseValue = modifier
     }
 }
 
