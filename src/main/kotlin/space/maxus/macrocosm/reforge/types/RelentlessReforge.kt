@@ -12,7 +12,7 @@ import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-object RelentlessReforge: ReforgeBase(
+object RelentlessReforge : ReforgeBase(
     "Relentless",
     "<red>No Mercy</red>",
     "Whenever you activate ${Statistic.FEROCITY.display}<gray>, gain <red>+20 ${Statistic.STRENGTH.display}<gray> for <green>2s<gray>.",
@@ -28,10 +28,10 @@ object RelentlessReforge: ReforgeBase(
     @EventHandler
     fun onFerocity(e: EntityActivateFerocityEvent) {
         val damager = e.damager
-        if(damager !is Player || damager.macrocosm == null)
+        if (damager !is Player || damager.macrocosm == null)
             return
         val mc = damager.macrocosm!!
-        if(!ensureRequirements(mc, EquipmentSlot.HAND))
+        if (!ensureRequirements(mc, EquipmentSlot.HAND))
             return
         mc.tempStats.strength += 20
         taskRunLater(2 * 20L) {

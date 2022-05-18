@@ -218,7 +218,8 @@ interface MacrocosmItem : Ingredient {
         }
         this.runes.putAll(associated)
         val buffsCmp = nbt.getCompound("Buffs")
-        val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }.associateWith { buffsCmp.getInt(it.id.toString()) }
+        val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }
+            .associateWith { buffsCmp.getInt(it.id.toString()) }
         this.buffs.putAll(buffs)
         this.amount = from.amount
         return this
@@ -292,7 +293,7 @@ interface MacrocosmItem : Ingredient {
             val lore = this.lore()?.toMutableList() ?: mutableListOf()
 
             // runes
-            if(runes.size > 0) {
+            if (runes.size > 0) {
                 var gemComp = comp("")
                 for ((gem, state) in runes) {
                     val (open, lvl) = state

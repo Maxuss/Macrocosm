@@ -86,20 +86,111 @@ enum class ItemValue(val item: MacrocosmItem) {
     }, breakingPower = 8)),
 
     // reforge stones
-    WITHER_BLOOD(ReforgeStone(ReforgeType.WITHERED.ref, "Wither Blood", Rarity.EPIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZjMwYWM2N2VjMTBhM2Q1ZTdkZWFmNjRkMGU5YTIwMDRhZTgwMWMwYmQ2Y2U4NWM1ZDYwNzM5YTlkODgyYSJ9fX0=")),
-    ELDER_SILK(ReforgeStone(ReforgeType.SILKY.ref, "Elder Silk", Rarity.RARE, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjc0MTc5MjQ1NjY3ZTYxNjY5Y2MxNDFhM2RjNDZkMjU5ZjE1OWEyOGVhMWI0NjkzNjQyZDlhMzEyNmRhOTU3ZCJ9fX0=")),
-    DRAGON_CLAW(ReforgeStone(ReforgeType.FABLED.ref, "Dragon Claw", Rarity.RARE, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmI3ZjlmNDg3MjZlNTI1YjBkOWEwODY4MTc4YzMyMzM0NzRlZTRlZDNkYTNmNzYxOTg1NzQ0OWQ0MWEwYzYzYSJ9fX0=")),
+    WITHER_BLOOD(
+        ReforgeStone(
+            ReforgeType.WITHERED.ref,
+            "Wither Blood",
+            Rarity.EPIC,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZjMwYWM2N2VjMTBhM2Q1ZTdkZWFmNjRkMGU5YTIwMDRhZTgwMWMwYmQ2Y2U4NWM1ZDYwNzM5YTlkODgyYSJ9fX0="
+        )
+    ),
+    ELDER_SILK(
+        ReforgeStone(
+            ReforgeType.SILKY.ref,
+            "Elder Silk",
+            Rarity.RARE,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjc0MTc5MjQ1NjY3ZTYxNjY5Y2MxNDFhM2RjNDZkMjU5ZjE1OWEyOGVhMWI0NjkzNjQyZDlhMzEyNmRhOTU3ZCJ9fX0="
+        )
+    ),
+    DRAGON_CLAW(
+        ReforgeStone(
+            ReforgeType.FABLED.ref,
+            "Dragon Claw",
+            Rarity.RARE,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmI3ZjlmNDg3MjZlNTI1YjBkOWEwODY4MTc4YzMyMzM0NzRlZTRlZDNkYTNmNzYxOTg1NzQ0OWQ0MWEwYzYzYSJ9fX0="
+        )
+    ),
 
-    PERFECT_PRISM(ReforgeStone(ReforgeType.REFRACTING.ref, "Perfect Prism", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWE4NjY1MmY5ZmFiNTNkZjM5NjdlZjExMGY1NzAxMTY2NmNmODBkMjNlMGM5OGQ0YTllYTZjODcwMWJhNTBkZSJ9fX0=")),
-    ROTTING_FLESH(ReforgeStone(ReforgeType.NECROTIC.ref, "Rotting Flesh", Rarity.RARE, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjc1NjkyMmMyMWJjMTUxOGJmNjAzNTM1MDkzMGMzYjFmNGM5Yjc0YjEwYjBkNjIxYmFiYWE0ZTQxMTA5YzE3ZiJ9fX0=")),
-    HARNESSED_JEWEL(ReforgeStone(ReforgeType.ORNATE.ref, "Harnessed Jewel", Rarity.EPIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWIzNGI0ODk2ZTQzNGVjNGVmMTY2OWQ2MzQzYjZkYTA2Y2Q4MzBkYzkyOTI3ZDYxZTNkODgzMDE3NjgzYzQyMiJ9fX0=")),
-    AZURE_GEODE(ReforgeStone(ReforgeType.UNDULANT.ref, "Azure Geode", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzhiZjcyOWEzN2M3NDcyNTk5YjA0YWViMmNkMTkwNGNkMzZiN2E1Y2I0NDNiZTlkMmZmNjM2MGE3NWZiZTE3YSJ9fX0=")),
-    CRIMSON_GEODE(ReforgeStone(ReforgeType.RELENTLESS.ref, "Crimson Geode", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGVjNjVmYzg3YzUwNDQxNWVmZjczMGEyZjRmZTdkMDZkMmYxMTZlYTJhMzEzNDgxZjM2MmQwYTI1ZDY1ZTUwMCJ9fX0=")),
-    DRAGON_HORN(ReforgeStone(ReforgeType.RENOWNED.ref, "Dragon Horn", Rarity.EPIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc0NGM4MTA5OWMxYWViZjIwZjY3N2ZhZWQyNGNhY2U1MjBhMjk0Y2Y0NmJkZWI2YTI1N2Y0MzZhMzIzYTFkOCJ9fX0=")),
-    SEAFOAM_CAKE(ReforgeStone(ReforgeType.FOAMY.ref, "Seafoam Cake", Rarity.EPIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2MzMGIzMDc4ZmFiYmRkZDAxNWJjYmI1OTU0Y2YyZmJhM2FmZDEzNjM0NmMwYzAwZTgwODIyZjlmNTc2NjNlOSJ9fX0=")),
-    SEA_PICKLES(ReforgeStone(ReforgeType.ABUNDANT.ref, "Sea Pickles", Rarity.EPIC, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWFlZjVlNGViOTU4OWI1ZjQ4NmRhMDU0ZWMzNjY0NjEzYTQ5MTBlM2UyZjBmNjNlY2U1OTg1MTIwYjQxMzUzMCJ9fX0=")),
-    BURIED_TREASURE(ReforgeStone(ReforgeType.MOURNING.ref, "Buried Treasure", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjc0ZDEzYjUxMDE2OGM3YWNiNDRiNjQ0MTY4NmFkN2FiMWNiNWI3NDg4ZThjZGY5ZDViMjJiNDdjNDgzZjIzIn19fQ==")),
-    SOUL_OF_THE_SEA(ReforgeStone(ReforgeType.SEABORN.ref, "Soul of the Sea", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTExM2VlNjEwODQxZGVkMjE1YWNkMmI0Y2FhZWVmODdkZmQ2ZTNkNDc2OGU3YWI0ZTE5ZWI3NmIzZDgxMjFjZiJ9fX0=")),
+    PERFECT_PRISM(
+        ReforgeStone(
+            ReforgeType.REFRACTING.ref,
+            "Perfect Prism",
+            Rarity.LEGENDARY,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWE4NjY1MmY5ZmFiNTNkZjM5NjdlZjExMGY1NzAxMTY2NmNmODBkMjNlMGM5OGQ0YTllYTZjODcwMWJhNTBkZSJ9fX0="
+        )
+    ),
+    ROTTING_FLESH(
+        ReforgeStone(
+            ReforgeType.NECROTIC.ref,
+            "Rotting Flesh",
+            Rarity.RARE,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjc1NjkyMmMyMWJjMTUxOGJmNjAzNTM1MDkzMGMzYjFmNGM5Yjc0YjEwYjBkNjIxYmFiYWE0ZTQxMTA5YzE3ZiJ9fX0="
+        )
+    ),
+    HARNESSED_JEWEL(
+        ReforgeStone(
+            ReforgeType.ORNATE.ref,
+            "Harnessed Jewel",
+            Rarity.EPIC,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWIzNGI0ODk2ZTQzNGVjNGVmMTY2OWQ2MzQzYjZkYTA2Y2Q4MzBkYzkyOTI3ZDYxZTNkODgzMDE3NjgzYzQyMiJ9fX0="
+        )
+    ),
+    AZURE_GEODE(
+        ReforgeStone(
+            ReforgeType.UNDULANT.ref,
+            "Azure Geode",
+            Rarity.LEGENDARY,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzhiZjcyOWEzN2M3NDcyNTk5YjA0YWViMmNkMTkwNGNkMzZiN2E1Y2I0NDNiZTlkMmZmNjM2MGE3NWZiZTE3YSJ9fX0="
+        )
+    ),
+    CRIMSON_GEODE(
+        ReforgeStone(
+            ReforgeType.RELENTLESS.ref,
+            "Crimson Geode",
+            Rarity.LEGENDARY,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGVjNjVmYzg3YzUwNDQxNWVmZjczMGEyZjRmZTdkMDZkMmYxMTZlYTJhMzEzNDgxZjM2MmQwYTI1ZDY1ZTUwMCJ9fX0="
+        )
+    ),
+    DRAGON_HORN(
+        ReforgeStone(
+            ReforgeType.RENOWNED.ref,
+            "Dragon Horn",
+            Rarity.EPIC,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc0NGM4MTA5OWMxYWViZjIwZjY3N2ZhZWQyNGNhY2U1MjBhMjk0Y2Y0NmJkZWI2YTI1N2Y0MzZhMzIzYTFkOCJ9fX0="
+        )
+    ),
+    SEAFOAM_CAKE(
+        ReforgeStone(
+            ReforgeType.FOAMY.ref,
+            "Seafoam Cake",
+            Rarity.EPIC,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2MzMGIzMDc4ZmFiYmRkZDAxNWJjYmI1OTU0Y2YyZmJhM2FmZDEzNjM0NmMwYzAwZTgwODIyZjlmNTc2NjNlOSJ9fX0="
+        )
+    ),
+    SEA_PICKLES(
+        ReforgeStone(
+            ReforgeType.ABUNDANT.ref,
+            "Sea Pickles",
+            Rarity.EPIC,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWFlZjVlNGViOTU4OWI1ZjQ4NmRhMDU0ZWMzNjY0NjEzYTQ5MTBlM2UyZjBmNjNlY2U1OTg1MTIwYjQxMzUzMCJ9fX0="
+        )
+    ),
+    BURIED_TREASURE(
+        ReforgeStone(
+            ReforgeType.MOURNING.ref,
+            "Buried Treasure",
+            Rarity.LEGENDARY,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjc0ZDEzYjUxMDE2OGM3YWNiNDRiNjQ0MTY4NmFkN2FiMWNiNWI3NDg4ZThjZGY5ZDViMjJiNDdjNDgzZjIzIn19fQ=="
+        )
+    ),
+    SOUL_OF_THE_SEA(
+        ReforgeStone(
+            ReforgeType.SEABORN.ref,
+            "Soul of the Sea",
+            Rarity.LEGENDARY,
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTExM2VlNjEwODQxZGVkMjE1YWNkMmI0Y2FhZWVmODdkZmQ2ZTNkNDc2OGU3YWI0ZTE5ZWI3NmIzZDgxMjFjZiJ9fX0="
+        )
+    ),
 
     ;
 

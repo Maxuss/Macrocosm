@@ -252,8 +252,8 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
         state += minePerTick
         if (state >= 1f) {
             // checking if item is a container
-            if(breaking is Chest || breaking is Barrel) {
-                for(drop in breaking.drops) {
+            if (breaking is Chest || breaking is Barrel) {
+                for (drop in breaking.drops) {
                     val loc = breaking.location
                     loc.world.dropItemNaturally(loc, drop)
                 }

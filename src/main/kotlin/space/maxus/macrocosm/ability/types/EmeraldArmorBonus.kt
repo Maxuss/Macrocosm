@@ -6,10 +6,10 @@ import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.ability.FullSetBonus
+import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.loot.Drop
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.loot.MacrocosmDrop
-import space.maxus.macrocosm.events.BlockDropItemsEvent
 import space.maxus.macrocosm.stats.Statistic
 
 object EmeraldArmorBonus : FullSetBonus(

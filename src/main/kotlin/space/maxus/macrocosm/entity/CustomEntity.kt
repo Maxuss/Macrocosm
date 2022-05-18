@@ -85,7 +85,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
 
-        if(EntityRegistry.hasSounds(id)) {
+        if (EntityRegistry.hasSounds(id)) {
             val soundBank = EntityRegistry.findSounds(id)
             soundBank.playRandom(entity.location, SoundType.DAMAGED)
         }
@@ -114,7 +114,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
 
-        if(EntityRegistry.hasSounds(id)) {
+        if (EntityRegistry.hasSounds(id)) {
             val soundBank = EntityRegistry.findSounds(id)
             soundBank.playRandom(entity.location, SoundType.DEATH)
         }

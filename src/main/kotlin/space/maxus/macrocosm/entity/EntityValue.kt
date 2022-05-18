@@ -16,20 +16,28 @@ import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
 enum class EntityValue(val entity: MacrocosmEntity) {
-    TEST_ENTITY(EntityBase(
-        comp("<gold>Mr. Sketchpad"),
-        EntityType.ZOMBIE,
-        LootRegistry.register(id("test_pool"), LootPool.of(vanilla(Material.DIAMOND, 1.0, DropRarity.UNBELIEVABLE, 1..3))),
-        stats {
-            health = 500000f
-            damage = 100f
-            strength = 500f
-        },
-        mainHand = ItemValue.SCYLLA.item,
-        helmet = Armor.AMETHYST_ARMOR.helmet(),
-        disguiseSkin = "Mr_Sketchpad",
-        sounds = EntitySoundBank.from(SoundType.DAMAGED to (Sound.ENTITY_IRON_GOLEM_HURT to 0.5f), SoundType.DEATH to (Sound.ENTITY_WITHER_DEATH to 0.7f))
-    ))
+    TEST_ENTITY(
+        EntityBase(
+            comp("<gold>Mr. Sketchpad"),
+            EntityType.ZOMBIE,
+            LootRegistry.register(
+                id("test_pool"),
+                LootPool.of(vanilla(Material.DIAMOND, 1.0, DropRarity.UNBELIEVABLE, 1..3))
+            ),
+            stats {
+                health = 500000f
+                damage = 100f
+                strength = 500f
+            },
+            mainHand = ItemValue.SCYLLA.item,
+            helmet = Armor.AMETHYST_ARMOR.helmet(),
+            disguiseSkin = "Mr_Sketchpad",
+            sounds = EntitySoundBank.from(
+                SoundType.DAMAGED to (Sound.ENTITY_IRON_GOLEM_HURT to 0.5f),
+                SoundType.DEATH to (Sound.ENTITY_WITHER_DEATH to 0.7f)
+            )
+        )
+    )
     ;
 
     companion object {
@@ -41,7 +49,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
                 for (entity in values()) {
                     pool.execute {
                         val id = id(entity.name.lowercase())
-                        if(entity.entity is EntityBase) entity.entity.register(id)
+                        if (entity.entity is EntityBase) entity.entity.register(id)
                         else EntityRegistry.register(id(entity.name.lowercase()), entity.entity)
                     }
                 }

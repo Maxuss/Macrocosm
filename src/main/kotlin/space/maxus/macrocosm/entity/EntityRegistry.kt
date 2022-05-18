@@ -20,7 +20,7 @@ object EntityRegistry {
     private val sounds: ConcurrentHashMap<Identifier, EntitySoundBank> = ConcurrentHashMap(hashMapOf())
 
     fun registerDisguise(name: Identifier, skin: String, raw: Boolean = false) {
-        if(raw) {
+        if (raw) {
             disguises[name] = skin
             return
         }

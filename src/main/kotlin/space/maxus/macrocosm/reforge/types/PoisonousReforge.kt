@@ -20,7 +20,7 @@ object PoisonousReforge : ReforgeBase(
 
     @EventHandler
     fun ability(e: PlayerDealDamageEvent) {
-        if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+        if (!ensureRequirements(e.player, EquipmentSlot.HAND))
             return
         if (e.crit)
             return

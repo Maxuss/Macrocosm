@@ -14,7 +14,7 @@ import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.stats
 import kotlin.math.roundToInt
 
-object UndulantReforge: ReforgeBase(
+object UndulantReforge : ReforgeBase(
     "Undulant",
     "Swirling Mana",
     "Reduces <aqua>Mana Cost<gray> and <green>Cooldown<gray> of abilities by <blue>25%<gray>.",
@@ -27,7 +27,7 @@ object UndulantReforge: ReforgeBase(
 ) {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onCalculate(e: AbilityCostApplyEvent) {
-        if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+        if (!ensureRequirements(e.player, EquipmentSlot.HAND))
             return
         e.mana = (e.mana * .75f).roundToInt()
         e.cooldown = (e.cooldown * .75f).roundToInt()
@@ -35,7 +35,7 @@ object UndulantReforge: ReforgeBase(
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onAbilityCompile(e: AbilityCompileEvent) {
-        if(e.item.reforge == null || e.item.reforge != this)
+        if (e.item.reforge == null || e.item.reforge != this)
             return
         val cost = e.ability.cost ?: return
         val clonedCost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, (cost.cooldown * .75).roundToInt())

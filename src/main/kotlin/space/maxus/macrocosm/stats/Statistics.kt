@@ -225,9 +225,9 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
             }
         }
 
-        if(buffs != null && buffs.isNotEmpty()) {
-            for((buff, lvl) in buffs) {
-                if(lvl <= 0)
+        if (buffs != null && buffs.isNotEmpty()) {
+            for ((buff, lvl) in buffs) {
+                if (lvl <= 0)
                     continue
                 val tmp = zero()
                 tmp.increase(buff.stats(item, lvl))
@@ -266,8 +266,8 @@ value class Statistics(private val self: TreeMap<Statistic, Float>) {
             }
 
             // buffs
-            for((buff, stats) in dissolvedBuffs) {
-                if(stats[stat] != 0f) {
+            for ((buff, stats) in dissolvedBuffs) {
+                if (stats[stat] != 0f) {
                     val amount = stats[stat]
                     formatted = formatted.append(" ".toComponent().append(buff.buildFancy(amount.toInt())))
                 }

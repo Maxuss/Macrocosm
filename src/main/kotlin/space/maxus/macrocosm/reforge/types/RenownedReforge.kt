@@ -8,7 +8,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.stats
 
-object RenownedReforge: ReforgeBase(
+object RenownedReforge : ReforgeBase(
     "Renowned",
     "Stat Boost",
     "Boosts <blue>all<gray> your stats by <yellow>3%<gray>.",
@@ -25,7 +25,14 @@ object RenownedReforge: ReforgeBase(
 ) {
     @EventHandler
     fun onStatCalculate(e: PlayerCalculateStatsEvent) {
-        if(!ensureRequirements(e.player, EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.CHEST, EquipmentSlot.FEET))
+        if (!ensureRequirements(
+                e.player,
+                EquipmentSlot.HEAD,
+                EquipmentSlot.CHEST,
+                EquipmentSlot.CHEST,
+                EquipmentSlot.FEET
+            )
+        )
             return
         e.stats.multiply(1.03f)
     }

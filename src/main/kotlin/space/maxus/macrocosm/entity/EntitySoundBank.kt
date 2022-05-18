@@ -15,7 +15,7 @@ class EntitySoundBank private constructor(private val sounds: HashMultimap<Sound
     companion object {
         fun from(vararg sounds: Pair<SoundType, Pair<Sound, Float>>): EntitySoundBank {
             val mm = HashMultimap.create<SoundType, Pair<Sound, Float>>()
-            for((type, pair) in sounds) {
+            for ((type, pair) in sounds) {
                 mm.put(type, pair)
             }
             return EntitySoundBank(mm)
@@ -25,7 +25,7 @@ class EntitySoundBank private constructor(private val sounds: HashMultimap<Sound
     fun playRandom(at: Location, type: SoundType, deltaPitch: Float = .1f) {
         val (sound, pitch) = sounds[type].random()
         sound(sound) {
-            this.pitch = pitch + if(Random.nextBoolean()) deltaPitch else -deltaPitch
+            this.pitch = pitch + if (Random.nextBoolean()) deltaPitch else -deltaPitch
             playAt(at)
         }
     }

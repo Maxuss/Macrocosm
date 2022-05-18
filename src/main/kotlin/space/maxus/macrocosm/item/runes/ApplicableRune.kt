@@ -70,7 +70,7 @@ enum class VanillaRune(private val char: String, private val color: TextColor, p
 
     companion object {
         fun init() {
-            for(v in values()) {
+            for (v in values()) {
                 BuffRegistry.registerRune(v.id, v)
             }
         }

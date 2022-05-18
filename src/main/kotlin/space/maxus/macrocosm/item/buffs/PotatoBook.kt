@@ -7,12 +7,12 @@ import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
 
-object PotatoBook: MinorItemBuff {
+object PotatoBook : MinorItemBuff {
     override val id: Identifier = id("potato_book")
 
     override fun stats(item: MacrocosmItem, tier: Int): Statistics {
         return space.maxus.macrocosm.stats.stats {
-            if(item.type.armor) {
+            if (item.type.armor) {
                 health = tier * 4f
                 defense = tier * 4f
             } else {

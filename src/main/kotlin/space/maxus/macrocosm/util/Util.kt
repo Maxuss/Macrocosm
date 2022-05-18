@@ -8,6 +8,6 @@ import org.bukkit.entity.Player
 
 val GSON = GsonBuilder().create()
 
-fun <L: PacketListener, P: Packet<L>>Player.sendPacket(packet: P) {
+fun <L : PacketListener, P : Packet<L>> Player.sendPacket(packet: P) {
     (this as CraftPlayer).handle.networkManager.send(packet)
 }

@@ -40,7 +40,7 @@ fun levelFromStats(stats: Statistics, extraWeight: Float = 0f): Int {
     return max((weight / 100f).roundToInt(), 1)
 }
 
-interface MacrocosmEntity: Listener {
+interface MacrocosmEntity : Listener {
     var mainHand: MacrocosmItem?
     var offHand: MacrocosmItem?
     var helmet: MacrocosmItem?
@@ -178,7 +178,7 @@ interface MacrocosmEntity: Listener {
         entity.loadNbt(nbt)
 
         // disguises
-        if(DisguiseAPI.isDisguised(entity)) {
+        if (DisguiseAPI.isDisguised(entity)) {
             val disguise = DisguiseAPI.getDisguise(entity) as? PlayerDisguise ?: return
             disguise.name = nameMm(builtName)
         }

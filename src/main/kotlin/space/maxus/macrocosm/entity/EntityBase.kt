@@ -33,10 +33,10 @@ class EntityBase(
 
     fun register(id: Identifier) {
         EntityRegistry.register(id, this)
-        if(disguiseSkin != null) {
+        if (disguiseSkin != null) {
             EntityRegistry.registerDisguise(id, disguiseSkin)
         }
-        if(sounds != null) {
+        if (sounds != null) {
             EntityRegistry.registerSounds(id, sounds)
         }
     }
@@ -61,7 +61,7 @@ class EntityBase(
         super.loadChanges(entity)
 
         val id = EntityRegistry.nameOf(this)!!
-        if(EntityRegistry.shouldDisguise(id)) {
+        if (EntityRegistry.shouldDisguise(id)) {
             val skin = EntityRegistry.findDisguise(id)
             val disguise = PlayerDisguise(nameMm(buildName()), skin)
             DisguiseAPI.disguiseEntity(entity, disguise)

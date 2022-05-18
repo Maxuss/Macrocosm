@@ -16,7 +16,6 @@ import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.Identifier
 import java.util.*
-import kotlin.collections.HashMap
 
 internal val SPLIT_THIS =
     listOf("HOE", "PICKAXE", "AXE", "SWORD", "SHOVEL", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS")

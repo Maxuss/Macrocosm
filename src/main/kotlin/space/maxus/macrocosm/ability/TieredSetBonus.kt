@@ -23,8 +23,8 @@ open class TieredSetBonus(name: String, description: String) : AbilityBase(Abili
 
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
-        val (_, tier) = if(player != null) getArmorTier(player) else Pair(false, 0)
-        val name = if(tier <= 1) "<dark_gray>Tiered Bonus: $name ($tier/4)" else "<gold>Tiered Bonus: $name ($tier/4)"
+        val (_, tier) = if (player != null) getArmorTier(player) else Pair(false, 0)
+        val name = if (tier <= 1) "<dark_gray>Tiered Bonus: $name ($tier/4)" else "<gold>Tiered Bonus: $name ($tier/4)"
         tmp.add(comp(name).noitalic())
         for (desc in description.reduceToList()) {
             tmp.add(comp("<gray>$desc</gray>").noitalic())

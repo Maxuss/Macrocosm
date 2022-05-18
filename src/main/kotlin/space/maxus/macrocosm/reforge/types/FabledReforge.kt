@@ -11,7 +11,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 import kotlin.random.Random
 
-object FabledReforge: ReforgeBase(
+object FabledReforge : ReforgeBase(
     "Fabled",
     "Cold-Blooded",
     "Grants a <blue>20%<gray> chance to deal <red>150% ${Statistic.DAMAGE.display}<gray> on critical hit",
@@ -24,11 +24,11 @@ object FabledReforge: ReforgeBase(
 ) {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onDealDamage(e: PlayerDealDamageEvent) {
-        if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+        if (!ensureRequirements(e.player, EquipmentSlot.HAND))
             return
-        if(!e.crit)
+        if (!e.crit)
             return
-        if(Random.nextFloat() > .2f)
+        if (Random.nextFloat() > .2f)
             return
 
         e.damage *= 1.5f

@@ -24,9 +24,13 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
 import java.util.*
-import kotlin.collections.HashMap
 
-class ReforgeStone(private val reforgeType: Reforge, private val stoneName: String, override var rarity: Rarity, private val headSkin: String): MacrocosmItem {
+class ReforgeStone(
+    private val reforgeType: Reforge,
+    private val stoneName: String,
+    override var rarity: Rarity,
+    private val headSkin: String
+) : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
@@ -49,8 +53,10 @@ class ReforgeStone(private val reforgeType: Reforge, private val stoneName: Stri
         lore.add(0, comp("<dark_gray>Reforge Stone").noitalic())
 
         val it = reforgeType.applicable.first()
-        val itStr = if(it.armor) "Armor" else if(it == ItemType.BOW) "Bows" else if(it.weapon) "Weapons" else if(it.tool) "Tools" else it.name.capitalized() + "s"
-        val str = "Can be used on a <yellow>Reforge Anvil<gray> to apply the <gold>${reforgeType.name}<gray> reforge to <blue>${itStr}<gray>."
+        val itStr =
+            if (it.armor) "Armor" else if (it == ItemType.BOW) "Bows" else if (it.weapon) "Weapons" else if (it.tool) "Tools" else it.name.capitalized() + "s"
+        val str =
+            "Can be used on a <yellow>Reforge Anvil<gray> to apply the <gold>${reforgeType.name}<gray> reforge to <blue>${itStr}<gray>."
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         reduced.add("".toComponent())
@@ -58,7 +64,7 @@ class ReforgeStone(private val reforgeType: Reforge, private val stoneName: Stri
         val stats = reforgeType.stats(Rarity.LEGENDARY)
         reduced.addAll(stats.formatSimple())
         reduced.add("".toComponent())
-        if(reforgeType.abilityName != null) {
+        if (reforgeType.abilityName != null) {
             reduced.add(comp("<blue>Special Ability: <gold><bold><obfuscated>${reforgeType.abilityName}").noitalic())
             reduced.add("".toComponent())
         }

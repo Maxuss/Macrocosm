@@ -402,7 +402,7 @@ object DamageHandlers : Listener {
         if (entity.isDead)
             return
         val event = EntityActivateFerocityEvent(damager, entity)
-        if(!event.callEvent())
+        if (!event.callEvent())
             return
 
         if (entity is Player) {
@@ -423,7 +423,7 @@ object DamageHandlers : Listener {
         sound(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR) {
             this.pitch = 2f
             this.volume = 1f
-            if(damager is Player)
+            if (damager is Player)
                 playFor(damager)
             else
                 playAt(entity.location)
