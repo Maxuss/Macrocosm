@@ -51,6 +51,7 @@ fun testCraftingTable() = command("crafting_test") {
 
 fun testEntityCommand() = command("testsummon") {
     runs {
-        EntityValue.TEST_ENTITY.entity.spawn(this.player.location)
+        val e = EntityValue.TEST_ENTITY.entity
+        e.spawn(player.location)
     }
 }

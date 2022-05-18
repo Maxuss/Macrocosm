@@ -1,5 +1,7 @@
 package space.maxus.macrocosm.listeners
 
+import me.libraryaddict.disguise.DisguiseAPI
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
 import net.axay.kspigot.extensions.bukkit.kill
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.extensions.geometry.increase
@@ -37,6 +39,8 @@ import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 import kotlin.random.Random
 import kotlin.random.nextInt
+
+fun Entity.isPlayerDisguise() = DisguiseAPI.isDisguised(this) && DisguiseAPI.getDisguise(this) is PlayerDisguise
 
 object DamageHandlers : Listener {
     @EventHandler
@@ -419,7 +423,10 @@ object DamageHandlers : Listener {
         sound(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR) {
             this.pitch = 2f
             this.volume = 1f
-            playAt(entity.location)
+            if(damager is Player)
+                playFor(damager)
+            else
+                playAt(entity.location)
         }
         summonDamageIndicator(entity.location, damage, if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
     }

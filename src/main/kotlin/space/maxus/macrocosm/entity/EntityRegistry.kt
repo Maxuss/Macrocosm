@@ -13,7 +13,21 @@ val LivingEntity.macrocosm: MacrocosmEntity? get() = EntityRegistry.toMacrocosm(
 
 @Suppress("unused")
 object EntityRegistry {
+    var DO_MOJANG_API_REQUESTS = true
+
     private val entities: ConcurrentHashMap<Identifier, MacrocosmEntity> = ConcurrentHashMap(hashMapOf())
+    private val disguises: ConcurrentHashMap<Identifier, String> = ConcurrentHashMap(hashMapOf())
+    private val sounds: ConcurrentHashMap<Identifier, EntitySoundBank> = ConcurrentHashMap(hashMapOf())
+
+    fun registerDisguise(name: Identifier, skin: String, raw: Boolean = false) {
+        if(raw) {
+            disguises[name] = skin
+            return
+        }
+        // probably not that efficient, however it should only be done at startup,
+        // and concurrently, hopefully not that much of a logic speed impact
+        disguises[name] = skin.replace("\n", "").replace("\\s+".toRegex(), "")
+    }
 
     fun register(name: Identifier, entity: MacrocosmEntity): MacrocosmEntity {
         if (entities.containsKey(name))
@@ -22,6 +36,19 @@ object EntityRegistry {
         pluginManager.registerEvents(entity, Macrocosm)
         return entity
     }
+
+    fun registerSounds(name: Identifier, bank: EntitySoundBank): EntitySoundBank {
+        sounds[name] = bank
+        return bank
+    }
+
+    fun hasSounds(id: Identifier) = sounds.containsKey(id)
+
+    fun findSounds(id: Identifier) = sounds[id]!!
+
+    fun shouldDisguise(id: Identifier) = disguises.containsKey(id)
+
+    fun findDisguise(id: Identifier) = disguises[id]!!
 
     fun nameOf(ref: MacrocosmEntity) = entities.filter { (_, v) -> v == ref }.map { (k, _) -> k }.firstOrNull()
 

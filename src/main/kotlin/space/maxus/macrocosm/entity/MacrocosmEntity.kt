@@ -1,17 +1,20 @@
 package space.maxus.macrocosm.entity
 
+import me.libraryaddict.disguise.DisguiseAPI
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
 import net.axay.kspigot.extensions.bukkit.toComponent
-import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
+import org.bukkit.craftbukkit.v1_18_R2.CraftWorld
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.noitalic
@@ -116,10 +119,20 @@ interface MacrocosmEntity: Listener {
     fun kill(damager: Entity? = null)
 
     fun spawn(at: Location): LivingEntity {
-        val entity = server.worlds.first().spawnEntity(at, type) as LivingEntity
-        loadChanges(entity)
-        return entity
-        }
+        val craftWorld = at.world as CraftWorld
+        val level = craftWorld.handle
+        val types = net.minecraft.world.entity.EntityType.byString(type.key.asString())
+        val nmsEntity = (if (types.isPresent) {
+            val entityTypes = types.get()
+            entityTypes.create(level)
+        } else null) ?: throw RuntimeException("Can not spawn an entity of type $type!")
+        val bukkit = nmsEntity.bukkitEntity as LivingEntity
+        loadChanges(bukkit)
+
+        bukkit.teleport(at)
+        level.addFreshEntity(nmsEntity, CreatureSpawnEvent.SpawnReason.CUSTOM)
+        return bukkit
+    }
 
     fun loadChanges(entity: LivingEntity) {
         if (entity.type != type)
@@ -144,7 +157,8 @@ interface MacrocosmEntity: Listener {
         }
         entity.isCustomNameVisible = true
         // name
-        entity.customName(buildName())
+        val builtName = buildName()
+        entity.customName(builtName)
 
         // actual data
         val nbt = entity.readNbt()
@@ -162,6 +176,12 @@ interface MacrocosmEntity: Listener {
 
         nbt.put(MACROCOSM_TAG, tag)
         entity.loadNbt(nbt)
+
+        // disguises
+        if(DisguiseAPI.isDisguised(entity)) {
+            val disguise = DisguiseAPI.getDisguise(entity) as? PlayerDisguise ?: return
+            disguise.name = nameMm(builtName)
+        }
     }
 }
 

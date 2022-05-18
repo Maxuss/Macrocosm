@@ -1,6 +1,9 @@
 package space.maxus.macrocosm.entity
 
+import me.libraryaddict.disguise.DisguiseAPI
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
@@ -23,8 +26,21 @@ class EntityBase(
     override var chestplate: MacrocosmItem? = null,
     override var leggings: MacrocosmItem? = null,
     override var boots: MacrocosmItem? = null,
+    private val disguiseSkin: String? = null,
+    private val sounds: EntitySoundBank? = null
 ) : MacrocosmEntity {
     override var currentHealth: Float = baseStats.health
+
+    fun register(id: Identifier) {
+        EntityRegistry.register(id, this)
+        if(disguiseSkin != null) {
+            EntityRegistry.registerDisguise(id, disguiseSkin)
+        }
+        if(sounds != null) {
+            EntityRegistry.registerSounds(id, sounds)
+        }
+    }
+
     override fun lootPool(player: MacrocosmPlayer?): LootPool {
         return pool
     }
@@ -40,4 +56,19 @@ class EntityBase(
     override fun getId(entity: LivingEntity): Identifier {
         return EntityRegistry.nameOf(this) ?: Identifier.NULL
     }
+
+    override fun loadChanges(entity: LivingEntity) {
+        super.loadChanges(entity)
+
+        val id = EntityRegistry.nameOf(this)!!
+        if(EntityRegistry.shouldDisguise(id)) {
+            val skin = EntityRegistry.findDisguise(id)
+            val disguise = PlayerDisguise(nameMm(buildName()), skin)
+            DisguiseAPI.disguiseEntity(entity, disguise)
+        }
+    }
+}
+
+fun nameMm(comp: Component): String {
+    return MiniMessage.miniMessage().serialize(comp).replace("<!italic>", "")
 }

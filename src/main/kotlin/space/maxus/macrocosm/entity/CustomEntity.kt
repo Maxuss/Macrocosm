@@ -85,6 +85,11 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
 
+        if(EntityRegistry.hasSounds(id)) {
+            val soundBank = EntityRegistry.findSounds(id)
+            soundBank.playRandom(entity.location, SoundType.DAMAGED)
+        }
+
         currentHealth -= amount
         if (currentHealth <= 0) {
             if (damager != null && damager is Player) {
@@ -106,15 +111,23 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
     override fun kill(damager: Entity?) {
         if (paper == null)
             return
+
+        val entity = paper!!
+
+        if(EntityRegistry.hasSounds(id)) {
+            val soundBank = EntityRegistry.findSounds(id)
+            soundBank.playRandom(entity.location, SoundType.DEATH)
+        }
+
         currentHealth = 0f
         val killer = (damager as? Player)?.macrocosm
         var pool = lootPool(killer)
-        val event = EntityDropItemsEvent(damager, paper!!, pool)
+        val event = EntityDropItemsEvent(damager, entity, pool)
         val cancelled = !event.callEvent()
         pool = event.pool
-        val loc = paper!!.location
-        loadChanges(paper!!)
-        paper!!.kill()
+        val loc = entity.location
+        loadChanges(entity)
+        entity.kill()
         if (cancelled)
             return
 
