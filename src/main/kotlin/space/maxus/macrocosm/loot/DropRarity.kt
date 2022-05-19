@@ -13,7 +13,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
 
-class DropRarity private constructor(val broadcast: Boolean, val greet: Boolean = false, val name: String? = null) {
+class DropRarity(val broadcast: Boolean, val greet: Boolean = false, val name: String? = null) {
     companion object {
         val COMMON = DropRarity(false)
         val RARE = DropRarity(true, name = "<gold>RARE")
