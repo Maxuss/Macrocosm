@@ -205,17 +205,15 @@ enum class ItemValue(val item: MacrocosmItem) {
         }
 
         fun placeholderHead(skin: String, name: String, description: String) = itemStack(Material.PLAYER_HEAD) {
-            meta {
+            meta<SkullMeta> {
                 displayName(comp(name))
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
                 flags(*ItemFlag.values())
-                meta<SkullMeta> {
-                    val profile = Bukkit.createProfile(UUID.randomUUID())
-                    profile.setProperty(ProfileProperty("textures", skin))
-                    playerProfile = profile
+                val profile = Bukkit.createProfile(UUID.randomUUID())
+                profile.setProperty(ProfileProperty("textures", skin))
+                this.playerProfile = profile
 
-                    lore(description.reduceToList().map { comp(it) })
-                }
+                lore(description.reduceToList().map { comp(it) })
             }
         }
 

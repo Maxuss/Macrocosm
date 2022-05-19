@@ -51,7 +51,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
                     pool.execute {
                         val id = id(entity.name.lowercase())
                         if (entity.entity is EntityBase) entity.entity.register(id)
-                        else EntityRegistry.register(id(entity.name.lowercase()), entity.entity)
+                        else EntityRegistry.register(id, entity.entity)
                     }
                 }
 

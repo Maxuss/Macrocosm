@@ -7,6 +7,8 @@ import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.entity.EntityValue
+import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.pets.PetValue
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.skills.SkillType
@@ -16,6 +18,12 @@ fun testStatsCommand() = command("stats") {
         for (comp in player.macrocosm?.stats()?.formatFancy()!!) {
             player.sendMessage(comp)
         }
+    }
+}
+
+fun testPetsCommand() = command("spawnpet") {
+    runs {
+        PetValue.TEST_PET.pet.spawn(player.macrocosm!!, Rarity.LEGENDARY, 100)
     }
 }
 

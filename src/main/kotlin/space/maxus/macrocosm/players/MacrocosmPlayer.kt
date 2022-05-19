@@ -30,6 +30,7 @@ import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
@@ -42,6 +43,7 @@ import space.maxus.macrocosm.util.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -65,6 +67,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var unlockedRecipes: MutableList<Identifier> = mutableListOf()
     var skills: Skills = Skills.default()
     var collections: Collections = Collections.default()
+    var ownedPets: List<Identifier> = listOf()
+    var activePet: PetInstance? = null
 
     private var statCache: Statistics? = null
     private var specialCache: SpecialStatistics? = null

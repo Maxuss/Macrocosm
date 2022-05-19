@@ -15,6 +15,7 @@ import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
+import space.maxus.macrocosm.pets.PetValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
@@ -54,6 +55,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -64,6 +66,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         VanillaRune.init()
         Buffs.init()
         EntityValue.init()
+        PetValue.init()
 
         playtimeCommand()
         rankCommand()
@@ -82,6 +85,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         addPotatoBooks()
         unlockGemsCommand()
 
+        testPetsCommand()
         testStatsCommand()
         testLevelUp()
         testCollUp()
