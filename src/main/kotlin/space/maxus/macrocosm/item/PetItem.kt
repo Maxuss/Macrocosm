@@ -1,0 +1,110 @@
+package space.maxus.macrocosm.item
+
+import com.destroystokyo.paper.profile.ProfileProperty
+import net.axay.kspigot.extensions.bukkit.toComponent
+import net.kyori.adventure.text.Component
+import net.minecraft.nbt.CompoundTag
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
+import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.pets.PetRegistry
+import space.maxus.macrocosm.pets.StoredPet
+import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.stats.SpecialStatistics
+import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.getId
+import java.util.*
+
+class PetItem(override val id: Identifier, private var nameStr: String, private val headSkin: String, var stored: StoredPet? = null) : MacrocosmItem {
+    override var stats: Statistics = Statistics.zero()
+    override var specialStats: SpecialStatistics = SpecialStatistics()
+    override var amount: Int = 1
+    override var stars: Int = 0
+    override val type: ItemType = ItemType.OTHER
+    override var name: Component = Component.empty()
+    override val base: Material = Material.PLAYER_HEAD
+    override var rarity: Rarity = stored?.rarity ?: Rarity.COMMON
+    override var rarityUpgraded: Boolean = false
+    override var reforge: Reforge? = null
+    override val abilities: MutableList<ItemAbility> = mutableListOf()
+    override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
+    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
+    override var breakingPower: Int = 0
+    override val maxStars: Int = 0
+
+    override fun buildName(): Component {
+        return comp("<gray>[Lvl ${stored!!.level}] <${stored!!.rarity.color.asHexString()}>$nameStr").noitalic()
+    }
+
+    override fun addExtraMeta(meta: ItemMeta) {
+        val skull = meta as SkullMeta
+        val profile = Bukkit.createProfile(UUID.randomUUID())
+        profile.setProperty(ProfileProperty("textures", headSkin))
+        skull.playerProfile = profile
+    }
+
+    override fun addExtraNbt(cmp: CompoundTag) {
+        if(stored != null) {
+            val st = stored!!
+            val pet = CompoundTag()
+            pet.putInt("LVL", st.level)
+            pet.putDouble("Overflow", st.overflow)
+            pet.putInt("Rarity", st.rarity.ordinal)
+            cmp.put("Pet", pet)
+        }
+    }
+
+    override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
+        val base = super.convert(from, nbt) as PetItem
+        val petTag = nbt.getCompound("Pet")
+        val stored = StoredPet(nbt.getId("ID"), Rarity.values()[petTag.getInt("Rarity")], petTag.getInt("LVL"), petTag.getDouble("Overflow"))
+        base.stored = stored
+        base.rarity = stored.rarity
+        return base
+    }
+
+    override fun buildLore(lore: MutableList<Component>) {
+        val pet = stored!!
+        val base = PetRegistry.find(pet.id)
+
+        val newLore = mutableListOf<Component>()
+        newLore.add(comp("<dark_gray>${base.preferredSkill.inst.name} Pet").noitalic())
+        newLore.add("".toComponent())
+
+        val stats = base.stats(pet.level, pet.rarity).formatSimple(this)
+        newLore.addAll(stats)
+        newLore.add("".toComponent())
+
+        for(cmp in newLore.reversed()) {
+            lore.add(0, cmp)
+        }
+
+        for(ability in base.abilitiesForRarity(pet.rarity)) {
+            lore.addAll(ability.description(pet))
+            lore.add("".toComponent())
+        }
+    }
+
+    override fun enchant(enchantment: Enchantment, level: Int): Boolean {
+        return false
+    }
+
+    override fun addRune(gem: ApplicableRune, tier: Int): Boolean {
+        return false
+    }
+
+    override fun clone(): MacrocosmItem {
+        return PetItem(id, nameStr, headSkin, null)
+    }
+}

@@ -86,6 +86,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         unlockGemsCommand()
 
         testPetsCommand()
+        testGivePetCommand()
         testStatsCommand()
         testLevelUp()
         testCollUp()

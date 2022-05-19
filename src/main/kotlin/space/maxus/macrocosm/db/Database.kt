@@ -58,6 +58,15 @@ object Database {
                 )
                 """.trimIndent()
             )
+            st.executeUpdate(
+                """
+                CREATE TABLE Pets(
+                UUID VARCHAR PRIMARY KEY,
+                ACTIVE_PET VARCHAR,
+                PETS VARCHAR DEFAULT('[]')
+                )
+                """.trimIndent()
+            )
             var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
             for (stat in Statistic.values()) {
                 statQuery += ", ${stat.name} REAL"

@@ -29,8 +29,12 @@ import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.pets.PetInstance
+import space.maxus.macrocosm.pets.PetRegistry
+import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
@@ -67,7 +71,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var unlockedRecipes: MutableList<Identifier> = mutableListOf()
     var skills: Skills = Skills.default()
     var collections: Collections = Collections.default()
-    var ownedPets: List<Identifier> = listOf()
+    var ownedPets: HashMap<String, StoredPet> = hashMapOf()
     var activePet: PetInstance? = null
 
     private var statCache: Statistics? = null
@@ -159,6 +163,15 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     @Suppress("UNUSED_PARAMETER")
     fun isRecipeLocked(recipe: Identifier): Boolean {
         return unlockedRecipes.contains(recipe)
+    }
+
+    fun addPet(type: Identifier, rarity: Rarity, level: Int, overflow: Double = .0): String {
+        val stored = StoredPet(type, rarity, level, overflow)
+        val key = "$type@${stored.hashCode().toString(16)}"
+        if(ownedPets.containsKey(key))
+            return key
+        ownedPets[key] = stored
+        return key
     }
 
     fun addSkillExperience(skill: SkillType, exp: Double) {
@@ -354,6 +367,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
             cloned.increase(item.stats())
         }
+        if(activePet != null) {
+            cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
+        }
+
         val event = PlayerCalculateStatsEvent(this, cloned)
         event.callEvent()
 
@@ -379,6 +396,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     stats.increase(special)
                 }
             }
+        }
+        if(activePet != null) {
+            stats.increase(activePet!!.prototype.specialStats(activePet!!.level(this), activePet!!.rarity(this)))
         }
         specialCache = stats.clone()
 
@@ -422,6 +442,14 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val recipes = GSON.toJson(unlockedRecipes.map { it.toString() })
         stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
         stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
+
+        val active = if(activePet != null) {
+            val ac = activePet!!
+            ac.hashKey
+        } else ""
+        val pets = GSON.toJson(ownedPets)
+
+        stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
         stmt.close()
     }
 
@@ -469,6 +497,18 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     .map { Identifier.parse(it) }
             player.unlockedRecipes = recipes.toMutableList()
 
+            // pets
+            val petsRes = stmt.executeQuery("SELECT * FROM Pets WHERE UUID = '$id'")
+            if(!petsRes.next())
+                return null
+            player.ownedPets = GSON.fromJson(petsRes.getString("PETS"), object: TypeToken<HashMap<String, StoredPet>>() { }.type)
+            val active = petsRes.getString("ACTIVE_PET")
+            if(active.isNotEmpty()) {
+                val pet = player.ownedPets[active]!!
+
+                // delaying task just in case if the player did not finish initializing for some reason
+                PetRegistry.find(pet.id).spawn(player, active)
+            }
             stmt.close()
             return player
         }
