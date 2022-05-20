@@ -30,13 +30,13 @@ class DropRarity(val broadcast: Boolean, val greet: Boolean = false, val name: S
         val mf = player.macrocosm!!.stats()!!.magicFind
         val message = comp(
             "<bold>$name DROP!</bold> ${
-                MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))
+                MiniMessage.miniMessage().serialize(item.buildName())
             } <aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"
         )
         player.sendMessage(message)
         if (greet) {
             for (i in 0..5) {
-                taskRunLater(i * 3L) {
+                taskRunLater(i * 2L) {
                     sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                         pitch = 1 + i * 0.2f
                         playFor(player)
@@ -44,16 +44,16 @@ class DropRarity(val broadcast: Boolean, val greet: Boolean = false, val name: S
                 }
             }
         }
-        if (this == UNBELIEVABLE) {
+        if (this == UNBELIEVABLE || this == INSANE) {
             broadcast(
                 comp(
                     "<red><bold>WOW</bold><gold> ${
                         MiniMessage.miniMessage().serialize(player.displayName())
-                    }<gold> has found ${MiniMessage.miniMessage().serialize(item.name.color(item.rarity.color))}<gold>!"
+                    }<gold> has found ${MiniMessage.miniMessage().serialize(item.buildName())}<gold>!"
                 )
             )
-            player.sendTitlePart(TitlePart.TITLE, comp("<#2ACE7C><bold>UNBELIEVABLE DROP!"))
-            player.sendTitlePart(TitlePart.SUBTITLE, item.name.color(item.rarity.color))
+            player.sendTitlePart(TitlePart.TITLE, comp("<bold>${this.name} DROP!"))
+            player.sendTitlePart(TitlePart.SUBTITLE, item.buildName())
             taskRunLater(18L) {
                 sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {
                     pitch = 1.4f

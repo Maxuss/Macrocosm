@@ -10,6 +10,7 @@ import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.loot.GlobalLootPool
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.loot.LootRegistry
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -134,6 +135,13 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         val items = pool.roll(killer)
         for (item in items) {
             loc.world.dropItemNaturally(loc, item ?: continue)
+        }
+
+        if(damager is Player) {
+            val universal = GlobalLootPool.of(damager.macrocosm!!, this)
+            for(item in universal.roll(killer)) {
+                loc.world.dropItemNaturally(loc, item ?: continue)
+            }
         }
     }
 }

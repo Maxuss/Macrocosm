@@ -27,11 +27,11 @@ import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
+import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
-import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.PetRegistry
 import space.maxus.macrocosm.pets.StoredPet
@@ -47,7 +47,6 @@ import space.maxus.macrocosm.util.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -302,11 +301,21 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         )
     }
 
-    fun kill(reason: Component? = null) {
+    fun kill(source: Component? = null) {
         if (paper == null)
             return
 
-        purse /= 2f
+        val event = PlayerDeathEvent(this, source, purse / 2f)
+        if(!event.callEvent()) {
+            sound(Sound.ENTITY_ITEM_BREAK) {
+                pitch = 0f
+                playAt(paper!!.location)
+            }
+            return
+        }
+
+        val reason = event.source
+        purse -= event.reduceCoins
 
         if (reason == null) {
             broadcast(comp("<red>☠ <gray>").append(paper!!.displayName().append(comp("<gray> died."))))

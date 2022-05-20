@@ -525,5 +525,12 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
         for (item in items) {
             loc.world.dropItemNaturally(loc, item ?: continue)
         }
+
+        if(damager is Player) {
+            val universal = GlobalLootPool.of(damager.macrocosm!!, this)
+            for(item in universal.roll(killer)) {
+                loc.world.dropItemNaturally(loc, item ?: continue)
+            }
+        }
     }
 }

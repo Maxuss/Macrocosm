@@ -17,8 +17,11 @@ open class PetAbility(val name: String, val description: String) {
     fun description(pet: StoredPet): List<Component> {
         val tmp = mutableListOf<Component>()
         tmp.add(comp("<gold>$name").noitalic())
-        for (desc in description.reduceToList()) {
-            tmp.add(comp("<gray>${parseLine(desc, pet.level)}</gray>").noitalic())
+        for (desc in description.split("<br>")) {
+            val moreSplit = desc.reduceToList()
+            for(it in moreSplit) {
+                tmp.add(comp("<gray>${parseLine(it, pet.level)}</gray>").noitalic())
+            }
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
