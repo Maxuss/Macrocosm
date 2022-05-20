@@ -23,7 +23,7 @@ object PhoenixPet: Pet(
     SkillType.COMBAT,
     listOf(
         PetAbility("Eternal", "Lose <green>[1]%<gray> less <gold>Coins<gray> on death."),
-        PetAbility("Fiery Rebirth", "On death, <yellow>reborn<gray> with full ${Statistic.HEALTH.display}<gray>, and gain <red>+[2] ${Statistic.STRENGTH.display}<gray> for <green>[0.2]s<gray>.<br><dark_gray>1 Minute Cooldown."),
+        PetAbility("Fiery Rebirth", "On death, <yellow>rekindle<gray> with full ${Statistic.HEALTH.display}<gray>, and gain <red>+[2] ${Statistic.STRENGTH.display}<gray> for <green>[0.2]s<gray>.<br><dark_gray>1 Minute Cooldown."),
         PetAbility("Last Wish", "Deal <red>[0.5]% ${Statistic.DAMAGE.display}<gray> when below <gray>25% Health<gray>.")
     ),
     stats {
