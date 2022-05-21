@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.pets
 
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.pets.types.*
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
@@ -11,7 +10,8 @@ enum class PetValue(val pet: Pet) {
     PET_PHOENIX(PhoenixPet),
     PET_BEE(BeePet),
     PET_ENDER_DRAGON(EnderDragonPet),
-    PET_MOLTEN_DRAGON(MoltenDragonPet)
+    PET_MOLTEN_DRAGON(MoltenDragonPet),
+    PET_WASP(WaspPet)
     ;
 
     companion object {
@@ -33,7 +33,7 @@ enum class PetValue(val pet: Pet) {
                 if (!success)
                     throw IllegalStateException("Could not execute all tasks in the thread pool!")
 
-                info("Successfully registered ${EntityValue.values().size} pets")
+                info("Successfully registered ${PetValue.values().size} pets")
             }
         }
     }
