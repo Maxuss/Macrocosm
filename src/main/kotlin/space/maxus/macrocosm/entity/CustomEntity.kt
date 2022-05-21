@@ -12,9 +12,9 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.loot.GlobalLootPool
 import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.loot.LootRegistry
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistic
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
@@ -77,7 +77,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
     }
 
     override fun lootPool(player: MacrocosmPlayer?): LootPool {
-        return LootRegistry.findOrNull(lootPool) ?: LootPool.of()
+        return Registry.LOOT_POOL.findOrNull(lootPool) ?: LootPool.of()
     }
 
     override fun damage(amount: Float, damager: Entity?) {
@@ -86,8 +86,8 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
 
-        if (EntityRegistry.hasSounds(id)) {
-            val soundBank = EntityRegistry.findSounds(id)
+        if (Registry.SOUND.has(id)) {
+            val soundBank = Registry.SOUND.find(id)
             soundBank.playRandom(entity.location, SoundType.DAMAGED)
         }
 
@@ -115,8 +115,8 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
 
-        if (EntityRegistry.hasSounds(id)) {
-            val soundBank = EntityRegistry.findSounds(id)
+        if (Registry.SOUND.has(id)) {
+            val soundBank = Registry.SOUND.find(id)
             soundBank.playRandom(entity.location, SoundType.DEATH)
         }
 

@@ -12,13 +12,14 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.util.EulerAngle
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.util.Identifier
 import java.util.*
 
 
 class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey: String) {
-    val prototype: Pet get() = PetRegistry.find(base)
+    val prototype: Pet get() = Registry.PET.find(base)
     private val entity: LivingEntity? get() = Bukkit.getEntity(entityId) as? LivingEntity
 
     fun referring(player: MacrocosmPlayer): StoredPet {

@@ -17,16 +17,14 @@ import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.DamageCalculator
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
-import space.maxus.macrocosm.pets.PetRegistry
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.macrocosm
-import space.maxus.macrocosm.recipes.RecipeRegistry
 import space.maxus.macrocosm.recipes.recipeBrowser
 import space.maxus.macrocosm.recipes.recipeViewer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
@@ -43,17 +41,17 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
         val compound = createRectCompound<Identifier>(
             Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = {
-                ItemRegistry.find(it).build()!!
+                Registry.ITEM.find(it).build()!!
             },
             onClick = { e, it ->
                 if (e.bukkitEvent.click.isLeftClick)
-                    e.player.inventory.addItem(ItemRegistry.find(it).build(e.player.macrocosm)!!)
+                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!)
                 else
-                    e.player.inventory.addItem(ItemRegistry.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
+                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
                 e.bukkitEvent.isCancelled = true
             }
         )
-        compound.addContent(ItemRegistry.items.keys().toList())
+        compound.addContent(Registry.ITEM.iter().keys.toList())
         compound.sortContentBy { it.path }
         compoundScroll(
             Slots.RowOneSlotNine,
@@ -70,7 +68,7 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
 fun viewRecipeCommand() = command("viewrecipe") {
     argument("recipe", ResourceLocationArgument.id()) {
         suggestList { ctx ->
-            RecipeRegistry.recipes.keys
+            Registry.RECIPE.iter().keys
                 .filter { it.path.contains(ctx.getArgumentOrNull<ResourceLocation>("recipe")?.path?.lowercase() ?: "") }
         }
 
@@ -235,7 +233,7 @@ fun spawnPetCommand() = command("spawnpet") {
             val pet = getArgument<String>("pet")
             val stored = player.macrocosm!!.ownedPets[pet]!!
             player.macrocosm!!.activePet?.despawn(player.macrocosm!!)
-            player.macrocosm!!.activePet = PetRegistry.find(stored.id).spawn(player.macrocosm!!, pet)
+            player.macrocosm!!.activePet = Registry.PET.find(stored.id).spawn(player.macrocosm!!, pet)
         }
     }
 }
@@ -247,7 +245,7 @@ fun addPetCommand() = command("addpet") {
 
     argument("type", ResourceLocationArgument.id()) {
         suggestListSuspending {
-            ItemRegistry.items.filter { item -> item.value is PetItem }.keys.filter { k ->
+            Registry.ITEM.iter().filter { item -> item.value is PetItem }.keys.filter { k ->
                 k.path.contains(it.getArgumentOrNull("type") ?: "")
             }
         }
@@ -278,7 +276,7 @@ fun givePetItemCommand() = command("givepet") {
 
     argument("type", ResourceLocationArgument.id()) {
         suggestListSuspending {
-            ItemRegistry.items.filter { item -> item.value is PetItem }.keys.filter { k ->
+            Registry.ITEM.iter().filter { item -> item.value is PetItem }.keys.filter { k ->
                 k.path.contains(it.getArgumentOrNull("type") ?: "")
             }
         }
@@ -296,7 +294,7 @@ fun givePetItemCommand() = command("givepet") {
                     val rarity = Rarity.valueOf(getArgument<String>("rarity").uppercase())
                     val level = getArgument<Int>("level")
                     val stored = StoredPet(pet, rarity, level, .0)
-                    val petItem = ItemRegistry.find(pet) as PetItem
+                    val petItem = Registry.ITEM.find(pet) as PetItem
                     petItem.stored = stored
                     petItem.rarity = stored.rarity
                     player.inventory.addItem(petItem.build(player.macrocosm!!)!!)

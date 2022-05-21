@@ -1,18 +1,94 @@
 package space.maxus.macrocosm.registry
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.entity.EntitySoundBank
+import space.maxus.macrocosm.entity.MacrocosmEntity
+import space.maxus.macrocosm.fishing.FishingTreasure
+import space.maxus.macrocosm.fishing.SeaCreature
+import space.maxus.macrocosm.fishing.TrophyFish
+import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.pets.Pet
+import space.maxus.macrocosm.recipes.MacrocosmRecipe
+import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.util.GSON
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.zone.Zone
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.writeText
 
-interface Registry<T> {
-    fun iter(): ConcurrentHashMap<Identifier, T>
-    fun register(id: Identifier, value: T): T
-    fun byValue(value: T) = iter().filter { it.value == value }.toList().firstOrNull()
-    fun find(id: Identifier): T = iter()[id]!!
-    fun findOrNull(id: Identifier): T? = iter()[id]
+abstract class Registry<T>(val name: Identifier) {
+    val delegates: AtomicInteger = AtomicInteger(0)
+    protected val logger: Logger = LoggerFactory.getLogger("$name")
+    abstract fun iter(): ConcurrentHashMap<Identifier, out T>
+    abstract fun register(id: Identifier, value: T): T
+    open fun byValue(value: T): Identifier? {
+        return if(value is Identified) value.id else iter().filter { it.value == value }.map { it.key }.firstOrNull()
+    }
+    open fun find(id: Identifier): T = iter()[id]!!
+    open fun findOrNull(id: Identifier): T? = iter()[id]
+    open fun has(id: Identifier): Boolean = iter().containsKey(id)
+
+    inline fun delegateRegistration(values: List<Pair<Identifier, T>>, crossinline delegate: (Identifier, T) -> Unit = { _, _ -> }) {
+        Threading.start("$name Delegate #${delegates.incrementAndGet()}") {
+            this.info("Starting '$name' registry Delegate ${delegates.get()}")
+            val pool = Threading.pool()
+
+            for((id, value) in values) {
+                pool.execute {
+                    register(id, value)
+                    delegate(id, value)
+                }
+            }
+
+            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+            if (!success)
+                throw IllegalStateException("Could not execute all tasks in the thread pool!")
+            this.info("Successfully registered ${values.size} elements in delegate.")
+            delegates.decrementAndGet()
+        }
+    }
+
+    fun dumpToFile(file: Path) {
+        file.deleteIfExists()
+        logger.info("Dumping data on registry '$name'...")
+        file.writeText(GSON.toJson(iter()))
+    }
 
     companion object {
         fun <V> register(registry: Registry<V>, id: Identifier, value: V) = registry.register(id, value)
         fun <V> register(registry: Registry<V>, id: String, value: V) = registry.register(id(id), value)
+
+        private fun <V> makeDefaulted(name: Identifier) = DefaultedRegistry<V>(name)
+        private fun <V> makeCloseable(name: Identifier): CloseableRegistry<V> {
+            val reg = CloseableRegistry<V>(name)
+            reg.open()
+            return reg
+        }
+        private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) = DelegatedRegistry(name, delegate)
+
+        val ITEM = makeDefaulted<MacrocosmItem>(id("item"))
+        val ABILITY = makeDefaulted<ItemAbility>(id("ability"))
+        val ENTITY = makeDefaulted<MacrocosmEntity>(id("entity"))
+        val DISGUISE = makeDefaulted<String>(id("entity_disguise"))
+        val SOUND = makeDefaulted<EntitySoundBank>(id("entity_sound"))
+        val ZONE = makeDefaulted<Zone>(id("zone"))
+        val REFORGE = makeDefaulted<Reforge>(id("reforge"))
+        val ENCHANT = makeDefaulted<Enchantment>(id("enchant"))
+        val PET = makeDefaulted<Pet>(id("pet"))
+        val RECIPE = makeDefaulted<MacrocosmRecipe>(id("recipe"))
+        val LOOT_POOL = makeDefaulted<LootPool>(id("loot_pool"))
+        val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))
+        val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
+        val FISHING_TREASURE = makeDefaulted<FishingTreasure>(id("fishing_treasure"))
     }
 }

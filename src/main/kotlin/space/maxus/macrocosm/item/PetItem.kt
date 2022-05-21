@@ -15,9 +15,9 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
-import space.maxus.macrocosm.pets.PetRegistry
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
@@ -87,7 +87,7 @@ class PetItem(
 
     override fun buildLore(lore: MutableList<Component>) {
         val pet = stored!!
-        val base = PetRegistry.find(pet.id)
+        val base = Registry.PET.find(pet.id)
 
         val newLore = mutableListOf<Component>()
         newLore.add(comp("<dark_gray>${base.preferredSkill.inst.name} Pet").noitalic())

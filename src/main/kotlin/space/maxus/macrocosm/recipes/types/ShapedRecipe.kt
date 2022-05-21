@@ -7,7 +7,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeContext
-import space.maxus.macrocosm.recipes.SbRecipe
+import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
 
@@ -16,14 +16,14 @@ fun shapedRecipe(
     result: MacrocosmItem,
     matrix: List<String>,
     vararg ingredients: Pair<Char, Pair<Identifier, Int>>
-): SbRecipe = ShapedRecipe(id(id), matrix, ingredients.toMap(), result)
+): MacrocosmRecipe = ShapedRecipe(id(id), matrix, ingredients.toMap(), result)
 
 class ShapedRecipe(
     override val id: Identifier,
     pattern: List<String>,
     private val ingredientMap: Map<Char, Pair<Identifier, Int>>,
     private val result: MacrocosmItem
-) : SbRecipe {
+) : MacrocosmRecipe {
     private val ingredients: List<List<Pair<Identifier, Int>>>
 
     init {

@@ -12,6 +12,6 @@ data class CraftingTableContext(val items: List<MacrocosmItem>) : RecipeContext 
 
     override fun mostImportantItem(): MacrocosmItem? {
         return items.filter { it.type != ItemType.OTHER || it.reforge != null }
-            .sortedBy { it.rarity.ordinal + it.enchantments.size }.lastOrNull()
+            .maxByOrNull { it.rarity.ordinal + it.enchantments.size }
     }
 }

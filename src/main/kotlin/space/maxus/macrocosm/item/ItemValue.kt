@@ -17,9 +17,11 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.reforge.ReforgeType
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.id
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -195,7 +197,7 @@ enum class ItemValue(val item: MacrocosmItem) {
     ;
 
     companion object {
-        fun enchanted(type: Material) = ItemRegistry.find(Identifier.macro("enchanted_${type.name.lowercase()}"))
+        fun enchanted(type: Material) = Registry.ITEM.find(Identifier.macro("enchanted_${type.name.lowercase()}"))
         fun placeholder(type: Material) = itemStack(type) {
             meta {
                 displayName(Component.empty())
@@ -314,7 +316,7 @@ enum class ItemValue(val item: MacrocosmItem) {
                     val mat = Material.valueOf(allowed)
                     val item = EnchantedItem(mat, rarityFromMaterial(mat).next())
 
-                    ItemRegistry.register(Identifier.macro("enchanted_${allowed.lowercase()}"), item)
+                    Registry.ITEM.register(Identifier.macro("enchanted_${allowed.lowercase()}"), item)
                 }
             }
 
@@ -332,6 +334,8 @@ enum class ItemValue(val item: MacrocosmItem) {
                 initEnchanted()
             }
 
+            Registry.ITEM.delegateRegistration(values().map { id(it.name.lowercase()) to it.item }) { _, _ -> }
+
             Threading.start("Item Registry", true) {
                 info("Starting Item Registry daemon...")
                 // using thread pools to not create a bottleneck
@@ -340,7 +344,7 @@ enum class ItemValue(val item: MacrocosmItem) {
                 for (item in values().toList().parallelStream()) {
                     pool.execute {
                         info("Registering ${item.name} item...")
-                        ItemRegistry.register(Identifier.macro(item.name.lowercase()), item.item)
+                        Registry.ITEM.register(Identifier.macro(item.name.lowercase()), item.item)
                     }
                 }
 

@@ -71,7 +71,8 @@ object WaspPet: Pet(
                 if(!ok)
                     continue
                 val nearest =
-                    player.paper!!.getNearbyEntities(8.0, 2.0, 8.0).filter { it is LivingEntity && it !is ArmorStand }.firstOrNull() as? LivingEntity
+                    player.paper!!.getNearbyEntities(8.0, 2.0, 8.0)
+                        .firstOrNull { it is LivingEntity && it !is ArmorStand } as? LivingEntity
                         ?: continue
                 val dmg = DamageCalculator.calculateMagicDamage(1500 * pet!!.level, .2f, player.stats()!!)
                 nearest.macrocosm!!.damage(dmg)

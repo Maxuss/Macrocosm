@@ -1,9 +1,7 @@
 package space.maxus.macrocosm.fishing
 
-import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.item.ItemRegistry
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
-import java.util.concurrent.TimeUnit
 
 enum class TrophyFishes(val fish: TrophyFish) {
 //    TESTFIN(TrophyFish(
@@ -16,24 +14,8 @@ enum class TrophyFishes(val fish: TrophyFish) {
     ;
     companion object {
         fun init() {
-            Threading.start("Trophy Fish Daemon") {
-                info("Starting trophy fish daemon")
-
-                val pool = Threading.pool()
-                for(fish in values()) {
-                    pool.execute {
-                        val id = id(fish.name.lowercase())
-                        FishingRegistry.register(id, fish.fish)
-                        ItemRegistry.register(id, fish.fish)
-                    }
-                }
-
-                pool.shutdown()
-                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-                if (!success)
-                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
-
-                info("Successfully registered ${values().size} trophy fishes")
+            Registry.TROPHY_FISH.delegateRegistration(values().map { id(it.name.lowercase()) to it.fish }) { id, v ->
+                Registry.ITEM.register(id, v)
             }
         }
     }

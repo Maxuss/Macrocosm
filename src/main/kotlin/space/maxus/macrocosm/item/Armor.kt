@@ -5,6 +5,7 @@ import space.maxus.macrocosm.ability.types.AmethystArmorBonus
 import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.runes.VanillaRune
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
@@ -46,10 +47,10 @@ object Armor {
     }
 
     private fun internalRegisterSingle(item: ArmorItem) {
-        ItemRegistry.register(id("${item.baseId}_helmet"), item.helmet())
-        ItemRegistry.register(id("${item.baseId}_chestplate"), item.chestplate())
-        ItemRegistry.register(id("${item.baseId}_leggings"), item.leggings())
-        ItemRegistry.register(id("${item.baseId}_boots"), item.boots())
+        Registry.ITEM.register(id("${item.baseId}_helmet"), item.helmet())
+        Registry.ITEM.register(id("${item.baseId}_chestplate"), item.chestplate())
+        Registry.ITEM.register(id("${item.baseId}_leggings"), item.leggings())
+        Registry.ITEM.register(id("${item.baseId}_boots"), item.boots())
     }
 
     fun init() {

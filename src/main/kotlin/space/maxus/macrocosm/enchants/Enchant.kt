@@ -2,14 +2,13 @@ package space.maxus.macrocosm.enchants
 
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
-import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.enchants.type.*
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.Identifier
-import java.util.concurrent.TimeUnit
+import space.maxus.macrocosm.util.id
 
 enum class Enchant(private val enchant: Enchantment) {
     SHARPNESS(
@@ -483,24 +482,7 @@ enum class Enchant(private val enchant: Enchantment) {
 
     companion object {
         fun init() {
-            Threading.start("Enchant Registry Daemon") {
-                info("Starting Enchant daemon...")
-
-                val pool = Threading.pool()
-                val values = values().toList().parallelStream()
-                for (ench in values) {
-                    pool.execute {
-                        EnchantmentRegistry.register(Identifier.macro(ench.name.lowercase()), ench.enchant)
-                    }
-                }
-
-                pool.shutdown()
-
-                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-                if (!success)
-                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
-                info("Successfully registered ${values().size} enchantments from ${Enchant::class.qualifiedName}!")
-            }
+            Registry.ENCHANT.delegateRegistration(values().map { id(it.name.lowercase()) to it.enchant })
         }
     }
 }

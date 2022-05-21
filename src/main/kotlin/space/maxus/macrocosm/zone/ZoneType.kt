@@ -3,10 +3,9 @@ package space.maxus.macrocosm.zone
 import com.google.common.base.Predicates
 import org.bukkit.Location
 import org.bukkit.block.Biome
-import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
-import java.util.concurrent.TimeUnit
 
 enum class ZoneType(val zone: Zone) {
     // these only contains special zones, others are just biomes mostly
@@ -44,53 +43,17 @@ enum class ZoneType(val zone: Zone) {
             Biome.WINDSWEPT_HILLS to "<gold>Windswept Hills"
         )
         private fun initBiomes() {
-            val pool = Threading.pool()
-
-            for((biome, name) in allowedBiomes) {
-                pool.execute {
-                    val id = id(biome.name.lowercase())
-                    ZoneRegistry.register(id, BiomeZone(id, name, biome))
-                }
-            }
-
-            pool.shutdown()
-            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-            if (!success)
-                throw IllegalStateException("Could not execute all tasks in the thread pool!")
         }
 
         fun init() {
-            Threading.start("Zone Registry Daemon") {
-                info("Starting Zone Registry daemon...")
-
-                val pool = Threading.pool()
-                for (zone in values()) {
-                    pool.execute {
-                        val id = id(zone.name.lowercase())
-                        ZoneRegistry.register(id, zone.zone)
-                    }
-                }
-
-                pool.shutdown()
-                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-                if (!success)
-                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
-
-                info("Successfully registered ${values().size} zones")
-            }
-            Threading.start("Biome-bound Zone Daemon") {
-                info("Starting Biome-bound Zone Registry daemon...")
-
-                initBiomes()
-
-                info("Successfully registered ${allowedBiomes.size} biome-bound zones")
-            }
+            Registry.ZONE.delegateRegistration(values().map { id(it.name.lowercase()) to it.zone })
+            Registry.ZONE.delegateRegistration(allowedBiomes.map { id(it.key.name.lowercase()) to BiomeZone(id(it.key.name.lowercase()), it.value, it.key) })
         }
     }
 
 }
 
-class BiomeZone(id: Identifier, name: String, val biome: Biome): Zone(id, name) {
+class BiomeZone(id: Identifier, name: String, private val biome: Biome): Zone(id, name) {
     override fun contains(location: Location): Boolean {
         return location.block.biome == biome
     }

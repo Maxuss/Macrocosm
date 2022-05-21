@@ -24,8 +24,8 @@ import space.maxus.macrocosm.damage.truncateEntityHealth
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.loot.LootRegistry
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
@@ -77,7 +77,7 @@ interface MacrocosmEntity : Listener {
         return if (nbt.contains(MACROCOSM_TAG))
             nbt.getCompound(MACROCOSM_TAG).getId("ID")
         else
-            EntityRegistry.nameOf(this) ?: Identifier("minecraft", type.name.lowercase())
+            Registry.ENTITY.byValue(this) ?: Identifier("minecraft", type.name.lowercase())
     }
 
     fun calculateStats(): Statistics {
@@ -169,7 +169,7 @@ interface MacrocosmEntity : Listener {
         tag.put("Specials", baseSpecials.compound())
         tag.putFloat("CurrentHealth", currentHealth)
         tag.putString("BaseName", GsonComponentSerializer.gson().serialize(name))
-        val lootId = LootRegistry.nameOrNull(lootPool(null)) ?: Identifier.NULL
+        val lootId = Registry.LOOT_POOL.byValue(lootPool(null)) ?: Identifier.NULL
         tag.putId("LootID", lootId)
         tag.putString("ID", getId(entity).toString())
 

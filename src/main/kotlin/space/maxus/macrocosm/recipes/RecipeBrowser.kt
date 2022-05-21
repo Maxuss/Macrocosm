@@ -3,10 +3,10 @@ package space.maxus.macrocosm.recipes
 import net.axay.kspigot.gui.*
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.Identifier
@@ -25,14 +25,14 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                         "<gray><!italic>This recipe is locked!"
                     )
                 else
-                    RecipeRegistry.find(it)?.resultItem() ?: ItemStack(Material.AIR)
+                    Registry.RECIPE.findOrNull(it)?.resultItem() ?: ItemStack(Material.AIR)
             },
             onClick = { e, it ->
                 e.bukkitEvent.isCancelled = true
                 player.paper?.openGUI(recipeViewer(it, player))
             }
         )
-        compound.addContent(RecipeRegistry.recipes.keys().toList())
+        compound.addContent(Registry.RECIPE.iter().keys().toList())
         compoundScroll(
             Slots.RowOneSlotOne,
             ItemValue.placeholder(Material.ARROW, "<red><!italic>Previous Page"), compound, scrollTimes = 4
@@ -51,7 +51,7 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
 fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType.FIVE_BY_NINE) {
     title = comp("<dark_gray>Recipe Browser")
     defaultPage = 0
-    val recipes = RecipeRegistry.using(item)
+    val recipes = Recipes.using(item)
     for (i in recipes.indices) {
         val recipe = recipes[i]
         page(i) {
@@ -71,7 +71,7 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
                 e.bukkitEvent.isCancelled = true
                 if (!it.type.isAir) {
                     val id = it.macrocosm?.id ?: Identifier.NULL
-                    val rec = RecipeRegistry.find(id)
+                    val rec = Registry.RECIPE.findOrNull(id)
                     if (rec != null)
                         player.paper?.openGUI(recipeViewer(id, player))
                 }
@@ -79,7 +79,7 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    val its = ItemRegistry.find(v.first).build() ?: ItemStack(Material.AIR)
+                    val its = Registry.ITEM.find(v.first).build() ?: ItemStack(Material.AIR)
                     its.amount = v.second
                     its
                 }
@@ -104,7 +104,7 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
 
 fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> =
     kSpigotGUI(GUIType.FIVE_BY_NINE) {
-        title = comp("<dark_gray>${ItemRegistry.find(item).name.str()}<dark_gray> Recipe")
+        title = comp("<dark_gray>${Registry.ITEM.find(item).name.str()}<dark_gray> Recipe")
         page(1) {
             // # # # # # # # # #
             // #      # # # # #
@@ -118,7 +118,7 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiv
             )
             placeholder(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotFour, ItemStack(Material.AIR))
             // crafting grid
-            val compound = createRectCompound<ItemStack>(
+            val compound = createRectCompound(
                 Slots.RowTwoSlotTwo, Slots.RowFourSlotFour,
                 iconGenerator = {
                     it
@@ -127,16 +127,16 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiv
                 e.bukkitEvent.isCancelled = true
                 if (!it.type.isAir) {
                     val id = it.macrocosm?.id ?: Identifier.NULL
-                    val recipe = RecipeRegistry.find(id)
+                    val recipe = Registry.RECIPE.findOrNull(id)
                     if (recipe != null)
                         player.paper?.openGUI(recipeViewer(id, player))
                 }
             }
-            val recipe = RecipeRegistry.find(item) ?: return@page
+            val recipe = Registry.RECIPE.findOrNull(item) ?: return@page
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    val its = ItemRegistry.find(v.first).build() ?: ItemStack(Material.AIR)
+                    val its = Registry.ITEM.find(v.first).build() ?: ItemStack(Material.AIR)
                     its.amount = v.second
                     its
                 }

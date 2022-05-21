@@ -1,10 +1,10 @@
 package space.maxus.macrocosm.reforge
 
-import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.reforge.types.*
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.id
 
 enum class ReforgeType(val ref: Reforge) {
     SPICY(SimpleReforge("Spicy", ItemType.melee(), stats {
@@ -97,13 +97,7 @@ enum class ReforgeType(val ref: Reforge) {
 
     companion object {
         fun init() {
-            Threading.start("Reforge Registry", true) {
-                info("Starting ${javaClass.simpleName} daemon...")
-                for (reforge in ReforgeType.values()) {
-                    info("Registering ${reforge.name} reforge")
-                    ReforgeRegistry.register(Identifier.macro(reforge.name.lowercase()), reforge.ref)
-                }
-            }
+            Registry.REFORGE.delegateRegistration(values().map { id(it.name.lowercase()) to it.ref })
         }
     }
 }

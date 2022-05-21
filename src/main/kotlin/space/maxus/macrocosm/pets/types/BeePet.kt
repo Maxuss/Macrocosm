@@ -1,3 +1,5 @@
+@file:Suppress("EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod")
+
 package space.maxus.macrocosm.pets.types
 
 import net.axay.kspigot.extensions.geometry.vec

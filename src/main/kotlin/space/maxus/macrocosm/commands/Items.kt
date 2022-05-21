@@ -12,14 +12,11 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.ability.AbilityRegistry
-import space.maxus.macrocosm.enchants.EnchantmentRegistry
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.item.types.WitherScrollAbility
 import space.maxus.macrocosm.players.macrocosm
-import space.maxus.macrocosm.reforge.ReforgeRegistry
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.util.macrocosm
@@ -75,7 +72,7 @@ fun addScrollCommand() = command("addscroll") {
             }
             val macrocosm = item.macrocosm as? WitherBlade ?: return@runs
             val reforge = getArgument<ResourceLocation>("scroll").macrocosm
-            macrocosm.addScroll(AbilityRegistry.find(reforge)!! as WitherScrollAbility)
+            macrocosm.addScroll(Registry.ABILITY.find(reforge) as WitherScrollAbility)
             player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
         }
     }
@@ -124,7 +121,7 @@ fun reforgeCommand() = command("reforge") {
     requires { it.hasPermission(4) }
     argument("reforge", ResourceLocationArgument.id()) {
         suggestList { ctx ->
-            ReforgeRegistry.reforges.keys.filter {
+            Registry.REFORGE.iter().keys.filter {
                 it.path.contains(
                     ctx.getArgumentOrNull<ResourceLocation>("reforge")?.path ?: ""
                 )
@@ -139,7 +136,7 @@ fun reforgeCommand() = command("reforge") {
             }
             val macrocosm = item.macrocosm
             val reforge = getArgument<ResourceLocation>("reforge").macrocosm
-            macrocosm!!.reforge(ReforgeRegistry.find(reforge)!!)
+            macrocosm!!.reforge(Registry.REFORGE.find(reforge))
             player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
         }
     }
@@ -149,7 +146,7 @@ fun enchantCommand() = command("enchantme") {
     requires { it.hasPermission(4) }
     argument("enchant", ResourceLocationArgument.id()) {
         suggestList { ctx ->
-            EnchantmentRegistry.enchants.keys.filter {
+            Registry.ENCHANT.iter().keys.filter {
                 it.path.contains(
                     ctx.getArgumentOrNull<ResourceLocation>("enchant")?.path ?: ""
                 )
@@ -160,7 +157,7 @@ fun enchantCommand() = command("enchantme") {
             suggestList { ctx ->
                 val name =
                     ctx.getArgumentOrNull<ResourceLocation>("enchant")?.macrocosm ?: return@suggestList listOf("!")
-                val ench = EnchantmentRegistry.find(name) ?: return@suggestList listOf("!")
+                val ench = Registry.ENCHANT.find(name)
                 ench.levels.map { it.toString() }
             }
 
@@ -173,7 +170,7 @@ fun enchantCommand() = command("enchantme") {
                 val level = getArgument<Int>("level")
                 val macrocosm = item.macrocosm
                 val enchant = getArgument<ResourceLocation>("enchant").macrocosm
-                macrocosm!!.enchant(EnchantmentRegistry.find(enchant)!!, level)
+                macrocosm!!.enchant(Registry.ENCHANT.find(enchant), level)
                 player.inventory.setItemInMainHand(macrocosm.build(player.macrocosm))
             }
         }
@@ -185,7 +182,7 @@ fun itemCommand() = command("getitem") {
     argument("player", EntityArgument.player()) {
         argument("item", ResourceLocationArgument.id()) {
             suggestList { ctx ->
-                ItemRegistry.items.keys.filter {
+                Registry.ITEM.iter().keys.filter {
                     it.path.contains(
                         ctx.getArgumentOrNull<ResourceLocation>("item")?.path ?: ""
                     )
@@ -196,7 +193,7 @@ fun itemCommand() = command("getitem") {
                 val player = getArgument<EntitySelector>("player").findSinglePlayer(this.nmsContext.source).bukkitEntity
                 val item = getArgument<ResourceLocation>("item").macrocosm
 
-                val stack = ItemRegistry.find(item).build(player.macrocosm) ?: ItemStack(Material.AIR)
+                val stack = Registry.ITEM.find(item).build(player.macrocosm) ?: ItemStack(Material.AIR)
                 player.inventory.addItem(stack)
                 this.player.sendMessage(
                     comp(

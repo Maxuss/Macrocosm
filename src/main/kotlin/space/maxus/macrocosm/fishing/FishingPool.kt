@@ -8,10 +8,9 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.FishHook
 import org.bukkit.entity.Item
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.entity.EntityRegistry
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.Chance
 import space.maxus.macrocosm.util.Pools
@@ -45,13 +44,13 @@ class FishingPool(private val creatures: List<SeaCreature>, private val treasure
 
     fun summonSeaCreature(creature: SeaCreature, player: MacrocosmPlayer, hook: FishHook) {
         player.sendMessage("<green>${creature.greeting}")
-        val entity = EntityRegistry.find(creature.entity)!!.spawn(hook.location)
+        val entity = Registry.ENTITY.find(creature.entity).spawn(hook.location)
         val diff = entity.location.toVector().subtract(player.paper!!.location.toVector()).normalize()
         entity.velocity = diff
     }
 
     fun announceTreasure(treasure: FishingTreasure, player: MacrocosmPlayer, hook: FishHook) {
-        val item = ItemRegistry.find(treasure.item).build(player)!!
+        val item = Registry.ITEM.find(treasure.item).build(player)!!
         player.sendMessage("<bold><gold>TREASURE!</bold><green> You've caught ${item.displayName().str()}!")
         if(hook.hookedEntity == null) {
             val eI = createItem(item, hook.location)

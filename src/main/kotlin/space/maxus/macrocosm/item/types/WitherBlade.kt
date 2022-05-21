@@ -23,7 +23,6 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.ability.AbilityRegistry
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
@@ -42,6 +41,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
@@ -204,7 +204,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
         val base = super.convert(from, nbt)
         val list = nbt.getList("WitherScrolls", 8)
         for (ability in 0 until list.size) {
-            base.abilities.add(AbilityRegistry.find(Identifier.parse(list.getString(ability)))!!)
+            base.abilities.add(Registry.ABILITY.find(Identifier.parse(list.getString(ability))))
         }
         return base
     }

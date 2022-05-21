@@ -8,11 +8,11 @@ import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -45,11 +45,11 @@ abstract class Pet(
     }
 
     fun registerItem() {
-        ItemRegistry.register(id, PetItem(id, name, headSkin))
+        Registry.ITEM.register(id, PetItem(id, name, headSkin))
     }
 
     fun buildItem(player: MacrocosmPlayer, value: StoredPet): ItemStack {
-        val found = ItemRegistry.findOrNull(this.id) as? PetItem
+        val found = Registry.ITEM.findOrNull(this.id) as? PetItem
         if (found == null) {
             val item = PetItem(
                 id(value.id.path),
@@ -57,7 +57,7 @@ abstract class Pet(
                 headSkin,
                 value
             )
-            ItemRegistry.register(id, item)
+            Registry.ITEM.register(id, item)
             return item.build(player)!!
         }
         found.stored = value

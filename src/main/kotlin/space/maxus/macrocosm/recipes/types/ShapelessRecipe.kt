@@ -7,18 +7,18 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeContext
-import space.maxus.macrocosm.recipes.SbRecipe
+import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.id
 
-fun shapelessRecipe(id: String, result: MacrocosmItem, vararg ingredients: Pair<Identifier, Int>): SbRecipe =
+fun shapelessRecipe(id: String, result: MacrocosmItem, vararg ingredients: Pair<Identifier, Int>): MacrocosmRecipe =
     ShapelessRecipe(id(id), ingredients.toList(), result)
 
 class ShapelessRecipe(
     override val id: Identifier,
     private val ingredients: List<Pair<Identifier, Int>>,
     private val result: MacrocosmItem
-) : SbRecipe {
+) : MacrocosmRecipe {
     @Suppress("KotlinConstantConditions")
     override fun matches(
         player: MacrocosmPlayer,

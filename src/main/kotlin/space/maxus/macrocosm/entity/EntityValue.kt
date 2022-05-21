@@ -8,8 +8,8 @@ import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.loot.DropRarity
 import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.loot.LootRegistry
 import space.maxus.macrocosm.loot.vanilla
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
@@ -20,7 +20,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
         EntityBase(
             comp("<gold>Mr. Sketchpad"),
             EntityType.ZOMBIE,
-            LootRegistry.register(
+            Registry.LOOT_POOL.register(
                 id("test_pool"),
                 LootPool.of(vanilla(Material.DIAMOND, 1.0, DropRarity.UNBELIEVABLE, 1..3))
             ),
@@ -51,7 +51,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
                     pool.execute {
                         val id = id(entity.name.lowercase())
                         if (entity.entity is EntityBase) entity.entity.register(id)
-                        else EntityRegistry.register(id, entity.entity)
+                        else Registry.ENTITY.register(id, entity.entity)
                     }
                 }
 

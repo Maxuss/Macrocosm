@@ -10,6 +10,7 @@ import org.bukkit.entity.LivingEntity
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.Identifier
@@ -32,12 +33,12 @@ open class EntityBase(
     override var currentHealth: Float = baseStats.health
 
     fun register(id: Identifier) {
-        EntityRegistry.register(id, this)
+        Registry.ENTITY.register(id, this)
         if (disguiseSkin != null) {
-            EntityRegistry.registerDisguise(id, disguiseSkin)
+            Registry.DISGUISE.register(id, disguiseSkin)
         }
         if (sounds != null) {
-            EntityRegistry.registerSounds(id, sounds)
+            Registry.SOUND.register(id, sounds)
         }
     }
 
@@ -54,15 +55,15 @@ open class EntityBase(
     }
 
     override fun getId(entity: LivingEntity): Identifier {
-        return EntityRegistry.nameOf(this) ?: Identifier.NULL
+        return Registry.ENTITY.byValue(this) ?: Identifier.NULL
     }
 
     override fun loadChanges(entity: LivingEntity) {
         super.loadChanges(entity)
 
-        val id = EntityRegistry.nameOf(this)!!
-        if (EntityRegistry.shouldDisguise(id)) {
-            val skin = EntityRegistry.findDisguise(id)
+        val id = Registry.ENTITY.byValue(this)!!
+        if (Registry.DISGUISE.has(id)) {
+            val skin = Registry.DISGUISE.find(id)
             val disguise = PlayerDisguise(nameMm(buildName()), skin)
             DisguiseAPI.disguiseEntity(entity, disguise)
         }

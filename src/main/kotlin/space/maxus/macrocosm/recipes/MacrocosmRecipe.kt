@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.util.Identifier
 
-interface SbRecipe {
+interface MacrocosmRecipe {
     val id: Identifier
     fun matches(
         player: MacrocosmPlayer,

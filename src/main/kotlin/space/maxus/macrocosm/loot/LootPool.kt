@@ -5,12 +5,12 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.collections.Section
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -59,7 +59,7 @@ class LootPool private constructor(val drops: List<Drop>) {
             } else if (it.item.path.contains("pet")) {
                 val (id, rarity) = it.item.path.split("@")
                 val newId = id(id)
-                val basePet = ItemRegistry.find(newId) as PetItem
+                val basePet = Registry.ITEM.find(newId) as PetItem
                 val rar = Rarity.valueOf(rarity.uppercase())
                 basePet.stored = StoredPet(newId, rar, 1, .0)
                 basePet.rarity = rar
@@ -68,7 +68,7 @@ class LootPool private constructor(val drops: List<Drop>) {
                 }
                 basePet.build(player)
             } else {
-                val item = ItemRegistry.find(it.item)
+                val item = Registry.ITEM.find(it.item)
                 var amount = it.amount.random()
                 val collType = CollectionType.from(it.item)
                 if (collType != null) {
@@ -100,6 +100,6 @@ class LootPool private constructor(val drops: List<Drop>) {
         if (it.item.path == "minecraft")
             ItemStack(Material.valueOf(it.item.path.uppercase()), it.amount.random())
         else
-            ItemRegistry.find(it.item).build()!!.apply { amount = it.amount.random() }
+            Registry.ITEM.find(it.item).build()!!.apply { amount = it.amount.random() }
     }
 }

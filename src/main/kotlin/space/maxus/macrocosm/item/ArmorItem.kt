@@ -7,6 +7,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.id
@@ -36,7 +37,7 @@ class ArmorItem(
     }
 
     fun helmet(): MacrocosmItem {
-        val cached = ItemRegistry.findOrNull(id("${baseId}_helmet"))
+        val cached = Registry.ITEM.findOrNull(id("${baseId}_helmet"))
         if (cached != null)
             return cached
 
@@ -69,7 +70,7 @@ class ArmorItem(
     }
 
     fun chestplate(): MacrocosmItem {
-        val cached = ItemRegistry.findOrNull(id("${baseId}_chestplate"))
+        val cached = Registry.ITEM.findOrNull(id("${baseId}_chestplate"))
         if (cached != null)
             return cached
 
@@ -95,7 +96,7 @@ class ArmorItem(
     }
 
     fun leggings(): MacrocosmItem {
-        val cached = ItemRegistry.findOrNull(id("${baseId}_leggings"))
+        val cached = Registry.ITEM.findOrNull(id("${baseId}_leggings"))
         if (cached != null)
             return cached
 
@@ -121,7 +122,7 @@ class ArmorItem(
     }
 
     fun boots(): MacrocosmItem {
-        val cached = ItemRegistry.findOrNull(id("${baseId}_boots"))
+        val cached = Registry.ITEM.findOrNull(id("${baseId}_boots"))
         if (cached != null)
             return cached
 

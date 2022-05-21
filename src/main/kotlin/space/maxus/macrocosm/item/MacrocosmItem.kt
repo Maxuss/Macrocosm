@@ -17,7 +17,6 @@ import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
-import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.AbilityCompileEvent
 import space.maxus.macrocosm.events.ItemCalculateStatsEvent
@@ -29,7 +28,7 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
-import space.maxus.macrocosm.reforge.ReforgeRegistry
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
@@ -46,7 +45,7 @@ private fun starColor(star: Int): TextColor {
 
 const val MACROCOSM_TAG = "MacrocosmValues"
 
-val ItemStack.macrocosm: MacrocosmItem? get() = ItemRegistry.toMacrocosm(this)
+val ItemStack.macrocosm: MacrocosmItem? get() = Items.toMacrocosm(this)
 fun ItemStack.macrocosmTag(): CompoundTag {
     val nbt = this.nbtData
     if (nbt.contains(MACROCOSM_TAG))
@@ -201,14 +200,14 @@ interface MacrocosmItem : Ingredient {
 
         val reforge = nbt.getId("Reforge")
         if (reforge.isNotNull()) {
-            reforge(ReforgeRegistry.find(reforge)!!)
+            reforge(Registry.REFORGE.find(reforge))
         }
 
         val enchants = nbt.getCompound("Enchantments")
         for (k in enchants.allKeys) {
             if (k == "macrocosm:null")
                 continue
-            enchantments[EnchantmentRegistry.find(Identifier.parse(k))!!] = enchants.getInt(k)
+            enchantments[Registry.ENCHANT.find(Identifier.parse(k))] = enchants.getInt(k)
         }
 
         this.stars = nbt.getInt("Stars")
@@ -237,7 +236,7 @@ interface MacrocosmItem : Ingredient {
     }
 
     fun enchantUnsafe(enchantment: Enchantment, lvl: Int) {
-        val name = EnchantmentRegistry.nameOf(enchantment)
+        val name = Registry.ENCHANT.byValue(enchantment)
         enchantments.filter { (ench, _) ->
             ench.conflicts.contains(Identifier.macro("all"))
         }.forEach { (ench, _) ->
@@ -443,14 +442,14 @@ interface MacrocosmItem : Ingredient {
 
         // reforges
         if (reforge != null)
-            nbt.putId("Reforge", ReforgeRegistry.nameOf(reforge!!) ?: Identifier.NULL)
+            nbt.putId("Reforge", Registry.REFORGE.byValue(  reforge!!) ?: Identifier.NULL)
         else
             nbt.putId("Reforge", Identifier.NULL)
 
         // enchants
         val enchants = CompoundTag()
         for ((ench, level) in enchantments) {
-            enchants.putInt((EnchantmentRegistry.nameOf(ench) ?: Identifier.NULL).toString(), level)
+            enchants.putInt((Registry.ENCHANT.byValue(ench) ?: Identifier.NULL).toString(), level)
         }
         nbt.put("Enchantments", enchants)
 

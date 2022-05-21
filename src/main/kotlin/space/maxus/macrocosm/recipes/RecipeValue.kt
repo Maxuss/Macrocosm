@@ -1,14 +1,14 @@
 package space.maxus.macrocosm.recipes
 
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.recipes.types.shapedRecipe
 import space.maxus.macrocosm.recipes.types.shapelessRecipe
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
-enum class RecipeValue(private val recipe: SbRecipe) {
+enum class RecipeValue(private val recipe: MacrocosmRecipe) {
     ASPECT_OF_THE_END(
         shapedRecipe(
             "aspect_of_the_end", ItemValue.ASPECT_OF_THE_END.item, listOf(" P ", " P ", " D "),
@@ -23,9 +23,9 @@ enum class RecipeValue(private val recipe: SbRecipe) {
 
             for (mat in ItemValue.allowedEnchantedMats.toList().parallelStream()) {
                 pool.execute {
-                    val result = ItemRegistry.find(id("enchanted_${mat.lowercase()}"))
+                    val result = Registry.ITEM.find(id("enchanted_${mat.lowercase()}"))
                     val pair = id("minecraft", mat.lowercase()) to 32
-                    RecipeRegistry.register(
+                    Registry.RECIPE.register(
                         id("enchanted_${mat.lowercase()}"), shapelessRecipe(
                             "enchanted_${mat.lowercase()}",
                             result,
@@ -49,7 +49,7 @@ enum class RecipeValue(private val recipe: SbRecipe) {
             val pool = Threading.pool()
 
             for (recipe in values().toList().parallelStream()) {
-                pool.execute { RecipeRegistry.register(id(recipe.name.lowercase()), recipe.recipe) }
+                pool.execute { Registry.RECIPE.register(id(recipe.name.lowercase()), recipe.recipe) }
             }
 
             pool.shutdown()
@@ -66,7 +66,6 @@ enum class RecipeValue(private val recipe: SbRecipe) {
             Threading.start("Enchanted Recipe Registry", true) {
                 info("Starting Enchanted Recipe daemon...")
                 initEnchanted()
-
             }
         }
     }

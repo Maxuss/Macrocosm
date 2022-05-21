@@ -2,7 +2,7 @@ package space.maxus.macrocosm.enchants
 
 import java.util.*
 
-private val ROMAN_LOOKUP = TreeMap<Int, String>(
+private val ROMAN_LOOKUP = TreeMap(
     hashMapOf(
         1000 to "M",
         900 to "CM",

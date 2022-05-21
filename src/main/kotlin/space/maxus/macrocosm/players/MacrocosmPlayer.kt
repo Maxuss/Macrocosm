@@ -29,14 +29,14 @@ import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
-import space.maxus.macrocosm.item.ItemRegistry
+import space.maxus.macrocosm.item.Items
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.PetInstance
-import space.maxus.macrocosm.pets.PetRegistry
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.ranks.Rank
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -378,7 +378,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val baseItem = paper!!.inventory.getItem(it)
             if (baseItem.type == Material.AIR)
                 return@forEach
-            val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
+            val item = Items.toMacrocosm(baseItem) ?: return@forEach
             cloned.increase(item.stats())
         }
         if (activePet != null) {
@@ -404,7 +404,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if (baseItem.type == Material.AIR)
                 return@forEach
 
-            val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
+            val item = Items.toMacrocosm(baseItem) ?: return@forEach
 
             stats.increase(item.specialStats)
             if (item.enchantments.isNotEmpty()) {
@@ -526,7 +526,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 val pet = player.ownedPets[active]!!
                 // delaying spawning pet, to prevent weird bugs
                 task(delay = 20L) {
-                    player.activePet = PetRegistry.find(pet.id).spawn(player, active)
+                    player.activePet = Registry.PET.find(pet.id).spawn(player, active)
                 }
             }
             stmt.close()
