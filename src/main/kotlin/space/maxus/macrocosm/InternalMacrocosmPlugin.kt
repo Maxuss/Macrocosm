@@ -9,6 +9,9 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
+import space.maxus.macrocosm.fishing.FishingHandler
+import space.maxus.macrocosm.fishing.SeaCreatures
+import space.maxus.macrocosm.fishing.TrophyFishes
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
@@ -23,6 +26,7 @@ import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.skills.AlchemyReward
+import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
 
 class InternalMacrocosmPlugin : KSpigot() {
@@ -58,6 +62,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -69,6 +74,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         Buffs.init()
         EntityValue.init()
         PetValue.init()
+        ZoneType.init()
+
+        SeaCreatures.init()
+        TrophyFishes.init()
 
         MoltenDragonPet.init()
         WaspPet.init()

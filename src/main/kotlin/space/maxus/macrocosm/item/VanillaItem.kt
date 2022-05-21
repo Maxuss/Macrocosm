@@ -17,20 +17,21 @@ import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.Identifier
 import java.util.*
 
-internal val SPLIT_THIS =
+private val SPLIT_THIS =
     listOf("HOE", "PICKAXE", "AXE", "SWORD", "SHOVEL", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS")
 
-internal fun typeFromMaterial(mat: Material): ItemType {
+private fun typeFromMaterial(mat: Material): ItemType {
     if (SPLIT_THIS.any { mat.name.contains(it) })
         return ItemType.valueOf(mat.name.split("_").last())
     return when (mat) {
         Material.ELYTRA -> ItemType.CLOAK
         Material.BOW, Material.CROSSBOW -> ItemType.BOW
+        Material.FISHING_ROD -> ItemType.FISHING_ROD
         else -> ItemType.OTHER
     }
 }
 
-internal fun specialStatsFromMaterial(mat: Material) = specialStats {
+private fun specialStatsFromMaterial(mat: Material) = specialStats {
     if (mat.name.contains("NETHERITE")) {
         fireResistance = 0.2f
         knockbackResistance = 0.1f
@@ -40,7 +41,7 @@ internal fun specialStatsFromMaterial(mat: Material) = specialStats {
     }
 }
 
-internal fun statsFromMaterial(mat: Material) = stats {
+private fun statsFromMaterial(mat: Material) = stats {
     when (mat) {
         // weapons
 

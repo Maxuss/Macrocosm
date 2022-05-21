@@ -14,11 +14,11 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.Identifier
 
-class EntityBase(
+open class EntityBase(
     override val name: Component,
     override val type: EntityType,
     private val pool: LootPool,
-    override var baseStats: Statistics = Statistics.zero(),
+    final override var baseStats: Statistics = Statistics.zero(),
     override var baseSpecials: SpecialStatistics = SpecialStatistics(),
     override var mainHand: MacrocosmItem? = null,
     override var offHand: MacrocosmItem? = null,
