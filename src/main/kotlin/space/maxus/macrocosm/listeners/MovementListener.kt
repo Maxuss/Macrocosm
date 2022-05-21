@@ -6,10 +6,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import space.maxus.macrocosm.players.macrocosm
 
-object MovementListener: Listener {
+object MovementListener : Listener {
     @EventHandler
     fun onMove(e: PlayerMoveEvent) {
-        if(e.from.blockLoc == e.to.blockLoc)
+        if (e.from.blockLoc == e.to.blockLoc)
             return
         val mc = e.player.macrocosm ?: return
 

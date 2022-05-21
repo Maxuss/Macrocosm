@@ -167,7 +167,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     fun addPet(type: Identifier, rarity: Rarity, level: Int, overflow: Double = .0): String {
         val stored = StoredPet(type, rarity, level, overflow)
         val key = "$type@${stored.hashCode().toString(16)}"
-        if(ownedPets.containsKey(key))
+        if (ownedPets.containsKey(key))
             return key
         ownedPets[key] = stored
         return key
@@ -309,7 +309,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             return
 
         val event = PlayerDeathEvent(this, source, purse / 2f)
-        if(!event.callEvent()) {
+        if (!event.callEvent()) {
             sound(Sound.ENTITY_ITEM_BREAK) {
                 pitch = 0f
                 playAt(paper!!.location)
@@ -379,7 +379,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val item = ItemRegistry.toMacrocosm(baseItem) ?: return@forEach
             cloned.increase(item.stats())
         }
-        if(activePet != null) {
+        if (activePet != null) {
             cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
         }
 
@@ -409,7 +409,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 }
             }
         }
-        if(activePet != null) {
+        if (activePet != null) {
             stats.increase(activePet!!.prototype.specialStats(activePet!!.level(this), activePet!!.rarity(this)))
         }
         specialCache = stats.clone()
@@ -455,7 +455,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
         stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
 
-        val active = if(activePet != null) {
+        val active = if (activePet != null) {
             activePet!!.hashKey
         } else ""
         val pets = GSON.toJson(ownedPets)
@@ -510,11 +510,12 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
             // pets
             val petsRes = stmt.executeQuery("SELECT * FROM Pets WHERE UUID = '$id'")
-            if(!petsRes.next())
+            if (!petsRes.next())
                 return null
-            player.ownedPets = GSON.fromJson(petsRes.getString("PETS"), object: TypeToken<HashMap<String, StoredPet>>() { }.type)
+            player.ownedPets =
+                GSON.fromJson(petsRes.getString("PETS"), object : TypeToken<HashMap<String, StoredPet>>() {}.type)
             val active = petsRes.getString("ACTIVE_PET")
-            if(active.isNotEmpty()) {
+            if (active.isNotEmpty()) {
                 val pet = player.ownedPets[active]!!
                 // delaying spawning pet, to prevent weird bugs
                 task(delay = 20L) {

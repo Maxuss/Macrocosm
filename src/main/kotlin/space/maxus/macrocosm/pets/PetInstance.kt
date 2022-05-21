@@ -43,20 +43,20 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
 
     fun despawn(player: MacrocosmPlayer) {
         val e = entity
-        if(e != null && !e.isDead)
+        if (e != null && !e.isDead)
             e.remove()
         player.activePet = null
         player.sendMessage("<green>You despawned your <${rarity(player).color.asHexString()}>${prototype.name}<green>.")
     }
 
     fun addExperience(player: MacrocosmPlayer, amount: Double, skill: SkillType) {
-        if(player.activePet != this)
+        if (player.activePet != this)
             return
 
-        val amt = if(prototype.preferredSkill != skill) amount * .4 else amount
+        val amt = if (prototype.preferredSkill != skill) amount * .4 else amount
         modifySave(player) {
             this.overflow += amt
-            if(prototype.table.shouldLevelUp(this.level, this.overflow, .0)) {
+            if (prototype.table.shouldLevelUp(this.level, this.overflow, .0)) {
                 this.level++
                 this.overflow = .0
                 player.sendMessage("<green>Your <${rarity.color.asHexString()}>${prototype.name}<green> leveled up to level $level!")
@@ -101,28 +101,28 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         val e = entity
         val cachedRarity = rarity(player)
         task(period = 1L) {
-            if(player.activePet != this) {
+            if (player.activePet != this) {
                 it.cancel()
                 return@task
             }
 
             val paper = player.paper
-            if(paper == null) {
+            if (paper == null) {
                 despawn(player)
                 it.cancel()
                 return@task
             }
 
             // ticking
-            if(negative)
+            if (negative)
                 ticker++
             else
                 ticker--
 
 
-            if(ticker <= -10)
+            if (ticker <= -10)
                 negative = true
-            else if(ticker >= 10)
+            else if (ticker >= 10)
                 negative = false
 
             // calculating movement
@@ -131,7 +131,9 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
                 return@task
             }
 
-            val dir = (((paper.eyeLocation.direction.normalize() multiply -4.8).normalize() multiply 4.3).rotateAroundY(Math.toRadians(75.0)) multiply 3.4).normalize()
+            val dir = (((paper.eyeLocation.direction.normalize() multiply -4.8).normalize() multiply 4.3).rotateAroundY(
+                Math.toRadians(75.0)
+            ) multiply 3.4).normalize()
             var location = dir.toLocation(pos.world)
 
             entity.headPose = EulerAngle(.0, Math.toRadians(paper.eyeLocation.yaw.toDouble()), .0)

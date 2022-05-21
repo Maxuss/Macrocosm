@@ -9,7 +9,7 @@ object PetRegistry {
     val pets: ConcurrentHashMap<Identifier, Pet> = ConcurrentHashMap(hashMapOf())
 
     fun register(id: Identifier, pet: Pet): Pet {
-        if(pets.containsKey(id))
+        if (pets.containsKey(id))
             return pets[id]!!
         pets[id] = pet
         pluginManager.registerEvents(pet, Macrocosm)

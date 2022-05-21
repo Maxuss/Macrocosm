@@ -18,7 +18,11 @@ interface PetParticles {
     fun spawn(at: Location)
 }
 
-data class DefaultPetParticle(private val particle: Particle, private val amount: Int = 1, private val offset: Vector? = null): PetParticles {
+data class DefaultPetParticle(
+    private val particle: Particle,
+    private val amount: Int = 1,
+    private val offset: Vector? = null
+) : PetParticles {
     override fun spawn(at: Location) {
         particle(this.particle) {
             this.amount = this@DefaultPetParticle.amount
@@ -28,7 +32,11 @@ data class DefaultPetParticle(private val particle: Particle, private val amount
     }
 }
 
-data class BlockPetParticle(private val block: Material, private val amount: Int = 1, private val offset: Vector? = null): PetParticles {
+data class BlockPetParticle(
+    private val block: Material,
+    private val amount: Int = 1,
+    private val offset: Vector? = null
+) : PetParticles {
     private val cachedData = block.createBlockData()
 
     override fun spawn(at: Location) {
@@ -41,7 +49,12 @@ data class BlockPetParticle(private val block: Material, private val amount: Int
     }
 }
 
-data class DustPetParticle(private val color: Int, private val size: Float = 1f, private val amount: Int = 1, private val offset: Vector? = null): PetParticles {
+data class DustPetParticle(
+    private val color: Int,
+    private val size: Float = 1f,
+    private val amount: Int = 1,
+    private val offset: Vector? = null
+) : PetParticles {
     private val cachedData = DustOptions(Color.fromRGB(color), size)
 
     override fun spawn(at: Location) {
@@ -55,19 +68,19 @@ data class DustPetParticle(private val color: Int, private val size: Float = 1f,
 }
 
 @JvmInline
-value class FixedPetEffects(val particles: List<PetParticles>): PetEffects {
+value class FixedPetEffects(val particles: List<PetParticles>) : PetEffects {
     override fun spawnParticles(at: Location, tier: Rarity) {
-        for(particle in particles) {
+        for (particle in particles) {
             particle.spawn(at)
         }
     }
 }
 
-class TieredPetEffects(vararg particles: Pair<Rarity, List<PetParticles>>): PetEffects {
+class TieredPetEffects(vararg particles: Pair<Rarity, List<PetParticles>>) : PetEffects {
     private val particleMap = HashMultimap.create<Rarity, PetParticles>()
 
     init {
-        for((rarity, effects) in particles) {
+        for ((rarity, effects) in particles) {
             particleMap.putAll(rarity, effects)
         }
     }

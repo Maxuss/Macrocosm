@@ -56,14 +56,14 @@ class LootPool private constructor(val drops: List<Drop>) {
                     it.rarity.announceEntityDrop(player.paper!!, item.macrocosm ?: return@map null)
                 }
                 item.macrocosm?.build(player) ?: return@map null
-            } else if(it.item.path.contains("pet")) {
+            } else if (it.item.path.contains("pet")) {
                 val (id, rarity) = it.item.path.split("@")
                 val newId = id(id)
                 val basePet = ItemRegistry.find(newId) as PetItem
                 val rar = Rarity.valueOf(rarity.uppercase())
                 basePet.stored = StoredPet(newId, rar, 1, .0)
                 basePet.rarity = rar
-                if(player?.paper != null) {
+                if (player?.paper != null) {
                     it.rarity.announceEntityDrop(player.paper!!, basePet)
                 }
                 basePet.build(player)

@@ -19,7 +19,7 @@ open class PetAbility(val name: String, val description: String) {
         tmp.add(comp("<gold>$name").noitalic())
         for (desc in description.split("<br>")) {
             val moreSplit = desc.reduceToList()
-            for(it in moreSplit) {
+            for (it in moreSplit) {
                 tmp.add(comp("<gray>${parseLine(it, pet.level)}</gray>").noitalic())
             }
         }

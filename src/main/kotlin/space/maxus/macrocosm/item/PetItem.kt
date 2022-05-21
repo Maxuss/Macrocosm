@@ -25,7 +25,12 @@ import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.getId
 import java.util.*
 
-class PetItem(override val id: Identifier, private var nameStr: String, private val headSkin: String, var stored: StoredPet? = null) : MacrocosmItem {
+class PetItem(
+    override val id: Identifier,
+    private var nameStr: String,
+    private val headSkin: String,
+    var stored: StoredPet? = null
+) : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
@@ -55,7 +60,7 @@ class PetItem(override val id: Identifier, private var nameStr: String, private 
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {
-        if(stored != null) {
+        if (stored != null) {
             val st = stored!!
             val pet = CompoundTag()
             pet.putInt("LVL", st.level)
@@ -68,7 +73,12 @@ class PetItem(override val id: Identifier, private var nameStr: String, private 
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt) as PetItem
         val petTag = nbt.getCompound("Pet")
-        val stored = StoredPet(nbt.getId("ID"), Rarity.values()[petTag.getInt("Rarity")], petTag.getInt("LVL"), petTag.getDouble("Overflow"))
+        val stored = StoredPet(
+            nbt.getId("ID"),
+            Rarity.values()[petTag.getInt("Rarity")],
+            petTag.getInt("LVL"),
+            petTag.getDouble("Overflow")
+        )
         base.stored = stored
         base.rarity = stored.rarity
         return base
@@ -86,11 +96,11 @@ class PetItem(override val id: Identifier, private var nameStr: String, private 
         newLore.addAll(stats)
         newLore.add("".toComponent())
 
-        for(cmp in newLore.reversed()) {
+        for (cmp in newLore.reversed()) {
             lore.add(0, cmp)
         }
 
-        for(ability in base.abilitiesForRarity(pet.rarity)) {
+        for (ability in base.abilitiesForRarity(pet.rarity)) {
             lore.addAll(ability.description(pet))
             lore.add("".toComponent())
         }

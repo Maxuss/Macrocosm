@@ -23,14 +23,17 @@ import space.maxus.macrocosm.util.id
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-object PhoenixPet: Pet(
+object PhoenixPet : Pet(
     id("pet_phoenix"),
     "Phoenix",
     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjNhYWY3YjFhNzc4OTQ5Njk2Y2I5OWQ0ZjA0YWQxYWE1MThjZWVlMjU2YzcyZTVlZDY1YmZhNWMyZDg4ZDllIn19fQ==",
     SkillType.COMBAT,
     listOf(
         PetAbility("Eternal", "Lose <green>[1]%<gray> less <gold>Coins<gray> on death."),
-        PetAbility("Fiery Rebirth", "On death, <yellow>rekindle<gray> with full ${Statistic.HEALTH.display}<gray>, and gain <red>+[2] ${Statistic.STRENGTH.display}<gray> for <green>[0.2]s<gray>.<br><dark_gray>1 Minute Cooldown."),
+        PetAbility(
+            "Fiery Rebirth",
+            "On death, <yellow>rekindle<gray> with full ${Statistic.HEALTH.display}<gray>, and gain <red>+[2] ${Statistic.STRENGTH.display}<gray> for <green>[0.2]s<gray>.<br><dark_gray>1 Minute Cooldown."
+        ),
         PetAbility("Last Wish", "Deal <red>[0.5]% ${Statistic.DAMAGE.display}<gray> when below <gray>25% Health<gray>.")
     ),
     stats {
@@ -50,7 +53,7 @@ object PhoenixPet: Pet(
     @EventHandler
     fun eternalAbility(e: PlayerDeathEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Eternal")
-        if(!ok)
+        if (!ok)
             return
         e.reduceCoins = e.reduceCoins * (1f - (pet!!.level / 100f))
     }
@@ -58,25 +61,25 @@ object PhoenixPet: Pet(
     @EventHandler
     fun fieryRebirthAbility(e: PlayerDeathEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Fiery Rebirth")
-        if(!ok)
+        if (!ok)
             return
         val abilId = id("pet_fiery_rebirth")
         val cdMillis = TimeUnit.SECONDS.toMillis(60)
         val now = Instant.now().toEpochMilli()
 
-        if(!e.player.lastAbilityUse.contains(abilId)) {
+        if (!e.player.lastAbilityUse.contains(abilId)) {
             e.player.lastAbilityUse[abilId] = now
-        } else if(e.player.lastAbilityUse[abilId]!! + cdMillis > now) {
+        } else if (e.player.lastAbilityUse[abilId]!! + cdMillis > now) {
             return
         }
-        for(i in 0..10) {
+        for (i in 0..10) {
             particle(Particle.REDSTONE) {
                 data = DustOptions(Color.BLACK, 2f)
                 offset = Vector.getRandom()
                 spawnAt(e.player.paper!!.location)
             }
         }
-        for(i in 0..10) {
+        for (i in 0..10) {
             particle(Particle.FLAME) {
                 spawnAt(e.player.paper!!.location)
             }
@@ -102,10 +105,10 @@ object PhoenixPet: Pet(
     @EventHandler
     fun lastWishAbility(e: PlayerDealDamageEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Last Wish")
-        if(!ok)
+        if (!ok)
             return
         val maxHealth = e.player.stats()!!.health
-        if(e.player.currentHealth / maxHealth <= .25f) {
+        if (e.player.currentHealth / maxHealth <= .25f) {
             e.damage *= .005f * pet!!.level
         }
     }

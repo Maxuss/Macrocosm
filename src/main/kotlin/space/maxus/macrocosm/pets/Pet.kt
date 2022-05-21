@@ -8,7 +8,10 @@ import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.item.*
+import space.maxus.macrocosm.item.ItemRegistry
+import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.item.PetItem
+import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -27,16 +30,16 @@ abstract class Pet(
     val abilities: List<PetAbility> = listOf(),
     private val baseStats: Statistics = Statistics.zero(),
     private val baseSpecials: SpecialStatistics = SpecialStatistics()
-): Listener {
+) : Listener {
     abstract val effects: PetEffects
     abstract val table: LevelingTable
 
     fun abilitiesForRarity(rarity: Rarity): List<PetAbility> {
-        return if(rarity <= Rarity.UNCOMMON)
+        return if (rarity <= Rarity.UNCOMMON)
             listOf(abilities[0])
-        else if(rarity <= Rarity.EPIC)
+        else if (rarity <= Rarity.EPIC)
             listOf(abilities[0], abilities[1])
-        else if(rarity == Rarity.LEGENDARY)
+        else if (rarity == Rarity.LEGENDARY)
             listOf(abilities[0], abilities[1], abilities[2])
         else abilities
     }
@@ -47,7 +50,7 @@ abstract class Pet(
 
     fun buildItem(player: MacrocosmPlayer, value: StoredPet): ItemStack {
         val found = ItemRegistry.findOrNull(this.id) as? PetItem
-        if(found == null) {
+        if (found == null) {
             val item = PetItem(
                 id(value.id.path),
                 name,
@@ -66,12 +69,13 @@ abstract class Pet(
         player.paper ?: return Pair(false, null)
         val active = player.activePet?.base
         val ref = player.activePet?.referring(player)
-        if(active == this.id && ref != null && abilitiesForRarity(ref.rarity).map { it.name }.contains(ability))
+        if (active == this.id && ref != null && abilitiesForRarity(ref.rarity).map { it.name }.contains(ability))
             return Pair(true, player.ownedPets[player.activePet!!.hashKey])
         return Pair(false, null)
     }
 
-    protected fun buildName(level: Int, player: MacrocosmPlayer, rarity: Rarity): Component = comp("<dark_gray>[<gray>Lvl $level<dark_gray>] <${rarity.color.asHexString()}> ${player.paper?.name}'s $name")
+    protected fun buildName(level: Int, player: MacrocosmPlayer, rarity: Rarity): Component =
+        comp("<dark_gray>[<gray>Lvl $level<dark_gray>] <${rarity.color.asHexString()}> ${player.paper?.name}'s $name")
 
     fun stats(level: Int, rarity: Rarity): Statistics {
         val clone = baseStats.clone()
@@ -86,8 +90,8 @@ abstract class Pet(
     }
 
     fun spawn(player: MacrocosmPlayer, key: String): PetInstance? {
-        if(player.activePet != null) {
-            if(player.activePet!!.hashKey == key) {
+        if (player.activePet != null) {
+            if (player.activePet!!.hashKey == key) {
                 player.activePet!!.despawn(player)
             } else
                 player.activePet?.despawn(player)
