@@ -10,6 +10,9 @@ import space.maxus.macrocosm.players.macrocosm
 object EquipListener : Listener {
     @EventHandler
     fun onEquip(e: PlayerArmorChangeEvent) {
+        if(e.player.macrocosm == null)
+            return
+
         val new = e.newItem
         if (new == null || new.type.isAir)
             return

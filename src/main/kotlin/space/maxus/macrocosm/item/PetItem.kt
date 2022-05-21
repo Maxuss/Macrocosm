@@ -21,6 +21,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.Identifier
 import space.maxus.macrocosm.util.getId
 import java.util.*
@@ -92,8 +93,12 @@ class PetItem(
         newLore.add(comp("<dark_gray>${base.preferredSkill.inst.name} Pet").noitalic())
         newLore.add("".toComponent())
 
-        val stats = base.stats(pet.level, pet.rarity).formatSimple(this)
-        newLore.addAll(stats)
+        for((stat, amount) in base.stats(pet.level, pet.rarity).iter()) {
+            if(amount == 0f)
+                continue
+            newLore.add(comp("<gray>$stat: <red>${stat.type.formatSigned(amount, false)?.str()}").noitalic())
+        }
+
         newLore.add("".toComponent())
 
         for (cmp in newLore.reversed()) {

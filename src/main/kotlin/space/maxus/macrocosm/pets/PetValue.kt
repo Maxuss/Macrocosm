@@ -2,14 +2,16 @@ package space.maxus.macrocosm.pets
 
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.entity.EntityValue
-import space.maxus.macrocosm.pets.types.PhoenixPet
-import space.maxus.macrocosm.pets.types.TestPet
+import space.maxus.macrocosm.pets.types.*
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
 enum class PetValue(val pet: Pet) {
     PICKLE_PET(TestPet),
-    PET_PHOENIX(PhoenixPet)
+    PET_PHOENIX(PhoenixPet),
+    PET_BEE(BeePet),
+    PET_ENDER_DRAGON(EnderDragonPet),
+    PET_MOLTEN_DRAGON(MoltenDragonPet)
     ;
 
     companion object {

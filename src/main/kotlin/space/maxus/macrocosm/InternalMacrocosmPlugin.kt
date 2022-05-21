@@ -16,6 +16,7 @@ import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.pets.PetValue
+import space.maxus.macrocosm.pets.types.MoltenDragonPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
@@ -67,6 +68,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Buffs.init()
         EntityValue.init()
         PetValue.init()
+        MoltenDragonPet.init()
 
         playtimeCommand()
         rankCommand()

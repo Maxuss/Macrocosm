@@ -26,6 +26,7 @@ import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.enchants.roman
+import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.item.ItemRegistry
@@ -85,7 +86,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 it.cancel()
                 return@task
             }
-            recalculateSpecialStats()
+            val specials = recalculateSpecialStats()
             val stats = recalculateStats()
 
             if (currentMana < stats.intelligence)
@@ -94,7 +95,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     PotionEffectType.POISON
                 )
             ) {
-                currentHealth = min(currentHealth + (stats.health / 20f), stats.health)
+                currentMana = min(currentMana, stats.intelligence)
+                currentHealth = min(currentHealth + (stats.health / 20f) + specials.extraRegen, stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
@@ -382,6 +384,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (activePet != null) {
             cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
         }
+        if(specialCache != null && specialCache!!.statBoost != 0f) {
+            cloned.multiply(1 + specialCache!!.statBoost)
+        }
 
         val event = PlayerCalculateStatsEvent(this, cloned)
         event.callEvent()
@@ -412,9 +417,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (activePet != null) {
             stats.increase(activePet!!.prototype.specialStats(activePet!!.level(this), activePet!!.rarity(this)))
         }
-        specialCache = stats.clone()
+        val e = PlayerCalculateSpecialStatsEvent(this, stats)
+        e.callEvent()
+        specialCache = e.stats.clone()
 
-        return stats
+        return e.stats.clone()
     }
 
     fun stats(): Statistics? {

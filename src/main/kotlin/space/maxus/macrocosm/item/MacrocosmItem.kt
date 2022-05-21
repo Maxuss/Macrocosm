@@ -20,6 +20,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.EnchantmentRegistry
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.buffs.PotatoBook
@@ -123,7 +124,10 @@ interface MacrocosmItem : Ingredient {
         base.multiply(1 + special.statBoost)
         // 2% boost from stars
         base.multiply(1 + (stars * .02f))
-        return base
+
+        val e = ItemCalculateStatsEvent(this, base)
+        e.callEvent()
+        return e.stats
     }
 
     fun specialStats(): SpecialStatistics {

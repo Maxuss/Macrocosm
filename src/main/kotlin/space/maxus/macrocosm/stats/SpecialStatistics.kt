@@ -45,6 +45,12 @@ class SpecialStatistics {
             self[SpecialStatistic.STAT_BOOST] = value
         }
 
+    var extraRegen: Float
+        get() = self[SpecialStatistic.EXTRA_REGEN]!!
+        set(value) {
+            self[SpecialStatistic.EXTRA_REGEN] = value
+        }
+
     operator fun set(stat: SpecialStatistic, value: Float) = this.self.put(stat, value)
 
     fun clone(): SpecialStatistics {
