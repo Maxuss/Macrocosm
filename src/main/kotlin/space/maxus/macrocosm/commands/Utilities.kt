@@ -19,6 +19,10 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.item.ItemRegistry
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.item.PetItem
+import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.pets.PetRegistry
+import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeRegistry
 import space.maxus.macrocosm.recipes.recipeBrowser
@@ -216,4 +220,88 @@ fun giveCoinsCommand() = command("givecoins") {
         }
     }
 
+}
+
+fun spawnPetCommand() = command("spawnpet") {
+    requires { it.hasPermission(4) }
+    argument("pet", StringArgumentType.string()) {
+        suggestListSuspending {
+            it.source.playerOrException.bukkitEntity.macrocosm!!.ownedPets.keys.filter { pet ->
+                pet.contains(it.getArgumentOrNull("pet") ?: "")
+            }
+        }
+
+        runs {
+            val pet = getArgument<String>("pet")
+            val stored = player.macrocosm!!.ownedPets[pet]!!
+            player.macrocosm!!.activePet?.despawn(player.macrocosm!!)
+            player.macrocosm!!.activePet = PetRegistry.find(stored.id).spawn(player.macrocosm!!, pet)
+        }
+    }
+}
+
+fun addPetCommand() = command("addpet") {
+    requires {
+        it.hasPermission(4)
+    }
+
+    argument("type", ResourceLocationArgument.id()) {
+        suggestListSuspending {
+            ItemRegistry.items.filter { item -> item.value is PetItem }.keys.filter { k ->
+                k.path.contains(it.getArgumentOrNull("type") ?: "")
+            }
+        }
+
+        argument("rarity", StringArgumentType.word()) {
+            suggestListSuspending {
+                Rarity.values().map { rarity -> rarity.name.lowercase() }.filter { rarity ->
+                    rarity.contains(it.getArgumentOrNull("rarity") ?: "")
+                }
+            }
+
+            argument("level", IntegerArgumentType.integer(1, 100)) {
+                runs {
+                    val pet = getArgument<ResourceLocation>("type").macrocosm
+                    val rarity = Rarity.valueOf(getArgument<String>("rarity").uppercase())
+                    val level = getArgument<Int>("level")
+                    player.macrocosm!!.addPet(pet, rarity, level, .0)
+                }
+            }
+        }
+    }
+}
+
+fun givePetItemCommand() = command("givepet") {
+    requires {
+        it.hasPermission(4)
+    }
+
+    argument("type", ResourceLocationArgument.id()) {
+        suggestListSuspending {
+            ItemRegistry.items.filter { item -> item.value is PetItem }.keys.filter { k ->
+                k.path.contains(it.getArgumentOrNull("type") ?: "")
+            }
+        }
+
+        argument("rarity", StringArgumentType.word()) {
+            suggestListSuspending {
+                Rarity.values().map { rarity -> rarity.name.lowercase() }.filter { rarity ->
+                    rarity.contains(it.getArgumentOrNull("rarity") ?: "")
+                }
+            }
+
+            argument("level", IntegerArgumentType.integer(1, 100)) {
+                runs {
+                    val pet = getArgument<ResourceLocation>("type").macrocosm
+                    val rarity = Rarity.valueOf(getArgument<String>("rarity").uppercase())
+                    val level = getArgument<Int>("level")
+                    val stored = StoredPet(pet, rarity, level, .0)
+                    val petItem = ItemRegistry.find(pet) as PetItem
+                    petItem.stored = stored
+                    petItem.rarity = stored.rarity
+                    player.inventory.addItem(petItem.build(player.macrocosm!!)!!)
+                }
+            }
+        }
+    }
 }

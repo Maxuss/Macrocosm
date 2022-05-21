@@ -86,6 +86,12 @@ abstract class Pet(
     }
 
     fun spawn(player: MacrocosmPlayer, key: String): PetInstance? {
+        if(player.activePet != null) {
+            if(player.activePet!!.hashKey == key) {
+                player.activePet!!.despawn(player)
+            } else
+                player.activePet?.despawn(player)
+        }
         val paper = player.paper ?: return null
         val stored = player.ownedPets[key]!!
         val stand = paper.world.spawnEntity(paper.location, EntityType.ARMOR_STAND) as ArmorStand
@@ -99,7 +105,7 @@ abstract class Pet(
         stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
         stand.equipment.helmet = ItemValue.placeholderHead(headSkin, "PetEntity", "")
 
-        player.sendMessage("<green>You spawned your <${stored.rarity.color.asHexString()}>$name")
+        player.sendMessage("<green>You spawned your <${stored.rarity.color.asHexString()}>$name<green>.")
         val instance = PetInstance(stand.uniqueId, id, key)
         player.activePet = instance
         instance.teleport(player)

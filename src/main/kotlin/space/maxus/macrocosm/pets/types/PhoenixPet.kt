@@ -1,8 +1,15 @@
 package space.maxus.macrocosm.pets.types
 
+import net.axay.kspigot.extensions.geometry.vec
+import net.axay.kspigot.particles.particle
 import net.axay.kspigot.runnables.taskRunLater
+import net.axay.kspigot.sound.sound
+import org.bukkit.Color
 import org.bukkit.Particle
+import org.bukkit.Particle.DustOptions
+import org.bukkit.Sound
 import org.bukkit.event.EventHandler
+import org.bukkit.util.Vector
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.item.Rarity
@@ -32,10 +39,10 @@ object PhoenixPet: Pet(
     }
 ) {
     override val effects: PetEffects = TieredPetEffects(
-        Rarity.EPIC to listOf(DefaultPetParticle(Particle.FLAME, 2)),
+        Rarity.EPIC to listOf(DefaultPetParticle(Particle.DRIP_LAVA, 1, vec(.1, .1, .1))),
         Rarity.LEGENDARY to listOf(
-            DefaultPetParticle(Particle.FLAME, 1),
-            DustPetParticle(0xDC7217, .4f, 2)
+            DustPetParticle(0x383838, 1f, 1, vec()),
+            DustPetParticle(0xDC7217, 1.1f, 1, vec())
         )
     )
     override val table: LevelingTable = SkillTable
@@ -45,7 +52,7 @@ object PhoenixPet: Pet(
         val (ok, pet) = ensureRequirement(e.player, "Eternal")
         if(!ok)
             return
-        e.reduceCoins *= (1f - (pet!!.level / 100f))
+        e.reduceCoins = e.reduceCoins * (1f - (pet!!.level / 100f))
     }
 
     @EventHandler
@@ -56,15 +63,36 @@ object PhoenixPet: Pet(
         val abilId = id("pet_fiery_rebirth")
         val cdMillis = TimeUnit.SECONDS.toMillis(60)
         val now = Instant.now().toEpochMilli()
+
         if(!e.player.lastAbilityUse.contains(abilId)) {
             e.player.lastAbilityUse[abilId] = now
         } else if(e.player.lastAbilityUse[abilId]!! + cdMillis > now) {
             return
         }
+        for(i in 0..10) {
+            particle(Particle.REDSTONE) {
+                data = DustOptions(Color.BLACK, 2f)
+                offset = Vector.getRandom()
+                spawnAt(e.player.paper!!.location)
+            }
+        }
+        for(i in 0..10) {
+            particle(Particle.FLAME) {
+                spawnAt(e.player.paper!!.location)
+            }
+        }
+        sound(Sound.ENTITY_ZOMBIE_VILLAGER_CURE) {
+            playAt(e.player.paper!!.location)
+        }
+        sound(Sound.ENTITY_GENERIC_EXTINGUISH_FIRE) {
+            pitch = 0f
+            playAt(e.player.paper!!.location)
+        }
         e.player.lastAbilityUse[abilId] = now
         e.isCancelled = true
         e.player.currentHealth = e.player.stats()!!.health
         e.player.tempStats.strength += 2 * pet!!.level
+        e.player.sendMessage("<red><bold>REKINDLE!</bold><gold> Your Phoenix saved you from death!")
 
         taskRunLater(4L * pet.level) {
             e.player.tempStats.strength -= 2 * pet.level

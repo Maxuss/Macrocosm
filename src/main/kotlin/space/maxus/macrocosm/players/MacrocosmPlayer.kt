@@ -204,6 +204,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             sendSkillLevelUp(skill)
             skill.inst.rewards[lvl - 1].reward(this, lvl)
         }
+
+        // giving experience to pet
+        activePet?.addExperience(this, exp, skill)
     }
 
     fun addCollectionAmount(collection: CollectionType, amount: Int) {
@@ -320,7 +323,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (reason == null) {
             broadcast(comp("<red>☠ <gray>").append(paper!!.displayName().append(comp("<gray> died."))))
             if (purse > 0f) {
-                paper!!.sendMessage(comp("<red>You died and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
+                paper!!.sendMessage(comp("<red>You died and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
             } else {
                 paper!!.sendMessage(comp("<red>You died!"))
             }
@@ -330,10 +333,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     paper!!.displayName().append(comp("<gray> died because of ").append(reason))
                 )
             )
-            if (purse > 0f) {
+            if (event.reduceCoins > 0f) {
                 paper!!.sendMessage(
                     comp("<red>You died because of ").append(reason)
-                        .append(comp("<red> and lost ${Formatting.withCommas(purse.toBigDecimal())} coins!"))
+                        .append(comp("<red> and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
                 )
             } else {
                 paper!!.sendMessage(comp("<red>You died because of ").append(reason).append(comp("<red>!")))
@@ -453,8 +456,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
 
         val active = if(activePet != null) {
-            val ac = activePet!!
-            ac.hashKey
+            activePet!!.hashKey
         } else ""
         val pets = GSON.toJson(ownedPets)
 
@@ -514,9 +516,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val active = petsRes.getString("ACTIVE_PET")
             if(active.isNotEmpty()) {
                 val pet = player.ownedPets[active]!!
-
-                // delaying task just in case if the player did not finish initializing for some reason
-                PetRegistry.find(pet.id).spawn(player, active)
+                // delaying spawning pet, to prevent weird bugs
+                task(delay = 20L) {
+                    player.activePet = PetRegistry.find(pet.id).spawn(player, active)
+                }
             }
             stmt.close()
             return player

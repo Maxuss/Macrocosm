@@ -84,9 +84,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         setGemsCommand()
         addPotatoBooks()
         unlockGemsCommand()
+        givePetItemCommand()
+        addPetCommand()
+        spawnPetCommand()
 
-        testPetsCommand()
-        testGivePetCommand()
         testStatsCommand()
         testLevelUp()
         testCollUp()
