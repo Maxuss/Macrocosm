@@ -28,6 +28,8 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.registry.Clone
+import space.maxus.macrocosm.registry.Identified
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -53,13 +55,12 @@ fun ItemStack.macrocosmTag(): CompoundTag {
     return CompoundTag()
 }
 
-interface MacrocosmItem : Ingredient {
+interface MacrocosmItem : Ingredient, Clone, Identified {
     var stats: Statistics
     var specialStats: SpecialStatistics
     var amount: Int
     var stars: Int
 
-    val id: Identifier
     val type: ItemType
     var name: Component
     val base: Material
@@ -275,7 +276,7 @@ interface MacrocosmItem : Ingredient {
             to.enchantments[enchant] = lvl
         }
         if (reforge != null) {
-            to.reforge = reforge
+            to.reforge = reforge?.clone()
         }
         to.stars = stars
         to.buffs.putAll(this.buffs)
@@ -420,6 +421,10 @@ interface MacrocosmItem : Ingredient {
             // unbreakable
             isUnbreakable = true
 
+            // enchanted glint if enchanted
+            if(enchantments.isNotEmpty())
+                this.addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
+
             // adding extra meta
             addExtraMeta(this)
         }
@@ -489,5 +494,7 @@ interface MacrocosmItem : Ingredient {
         return nms.asBukkitCopy()
     }
 
-    fun clone(): MacrocosmItem
+    override fun clone(): MacrocosmItem {
+        throw IllegalStateException("Override the clone method of MacrocosmItem!")
+    }
 }

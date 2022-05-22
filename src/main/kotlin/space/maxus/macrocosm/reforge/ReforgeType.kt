@@ -20,7 +20,7 @@ enum class ReforgeType(val ref: Reforge) {
         attackSpeed = 1f
     })),
 
-    SILKY(SimpleReforge("Silky", ItemType.melee(), stats {
+    SILKY(SimpleReforge("Silky", ItemType.weapons(), stats {
         strength = -2f
         critDamage = 20f
         attackSpeed = -1f

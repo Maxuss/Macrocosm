@@ -85,10 +85,13 @@ abstract class Registry<T>(val name: Identifier) {
             return register(name, reg) as CloseableRegistry<V>
         }
 
+        private fun <V: Clone> makeImmutable(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit = { _, _ -> })
+            = register(name, ImmutableRegistry(name, delegate)) as Registry<V>
+
         private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) =
             register(name, DelegatedRegistry(name, delegate)) as Registry<V>
 
-        val ITEM = makeDefaulted<MacrocosmItem>(id("item"))
+        val ITEM = makeImmutable<MacrocosmItem>(id("item"))
         val ABILITY = makeDelegated<ItemAbility>(id("ability")) { _, v ->
             v.registerListeners()
         }

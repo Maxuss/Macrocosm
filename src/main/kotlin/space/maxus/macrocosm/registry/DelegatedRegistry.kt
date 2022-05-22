@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.registry
 
-class DelegatedRegistry<R>(
+open class DelegatedRegistry<R>(
     name: Identifier,
     private val delegate: DelegatedRegistry<R>.(id: Identifier, value: R) -> Unit
 ) : DefaultedRegistry<R>(name) {

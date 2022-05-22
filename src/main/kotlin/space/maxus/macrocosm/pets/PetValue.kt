@@ -9,7 +9,7 @@ enum class PetValue(val pet: Pet) {
     PET_PHOENIX(PhoenixPet),
     PET_BEE(BeePet),
     PET_ENDER_DRAGON(EnderDragonPet),
-    PET_MOLTEN_DRAGON(MoltenDragonPet),
+    PET_PYROCLASTIC_TOAD(PyroclasticToadPet),
     PET_WASP(WaspPet)
     ;
 

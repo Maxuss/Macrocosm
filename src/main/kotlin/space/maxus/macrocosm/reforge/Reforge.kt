@@ -7,11 +7,12 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.registry.Clone
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 
 @Suppress("unused")
-interface Reforge : Listener {
+interface Reforge : Listener, Clone {
     val abilityName: String?
     val abilityDescription: String?
     val name: String
@@ -29,5 +30,7 @@ interface Reforge : Listener {
         lore.add("".toComponent())
     }
 
-    fun clone(): Reforge
+    override fun clone(): Reforge {
+        throw IllegalStateException("Override the clone method inside Reforge")
+    }
 }

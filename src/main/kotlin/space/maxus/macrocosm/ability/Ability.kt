@@ -1,9 +1,6 @@
 package space.maxus.macrocosm.ability
 
-import space.maxus.macrocosm.ability.types.AmethystArmorBonus
-import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
-import space.maxus.macrocosm.ability.types.EmeraldPickaxeBonus
-import space.maxus.macrocosm.ability.types.InstantTransmission
+import space.maxus.macrocosm.ability.types.*
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
@@ -21,7 +18,12 @@ enum class Ability(val ability: ItemAbility) {
     EMERALD_AFFECTION(EmeraldArmorBonus),
     EMERALD_AFFECTION_PICKAXE(EmeraldPickaxeBonus),
 
-    DEFLECTION(AmethystArmorBonus)
+    DEFLECTION(AmethystArmorBonus),
+    HONEY_BARRAGE(BeekeeperArmorBonus),
+
+    SHORTBOW_GENERIC(ShortbowAbility),
+
+    HONEYCOMB_BULWARK(HoneycombBulwarkAbility)
 
     ;
 

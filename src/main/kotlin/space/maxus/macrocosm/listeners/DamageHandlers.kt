@@ -7,6 +7,7 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.extensions.geometry.increase
 import net.axay.kspigot.extensions.geometry.reduce
 import net.axay.kspigot.extensions.geometry.vec
+import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.runnables.taskRunLater
 import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
@@ -21,6 +22,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
+import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
@@ -43,24 +45,10 @@ import kotlin.random.nextInt
 fun Entity.isPlayerDisguise() = DisguiseAPI.isDisguised(this) && DisguiseAPI.getDisguise(this) is PlayerDisguise
 
 object DamageHandlers : Listener {
-    @EventHandler
-    fun handleEntityDamage(e: EntityDamageByEntityEvent) {
-        e.damage = 0.0
-        val damager = e.damager
-        val damaged = e.entity
-        if (damaged is ArmorStand) {
-            if (damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "ignore_damage")))
-                return
-            damaged.kill()
-            return
-        }
-
-        if (damager !is LivingEntity || damaged !is LivingEntity)
-            return
-
+    private fun internalHandleDamage(damager: LivingEntity, damaged: LivingEntity, checkAts: Boolean = true /* e: EntityDamageEvent */) {
         if (damager is Player) {
             val mc = damager.macrocosm!!
-            if (mc.onAtsCooldown)
+            if (checkAts && mc.onAtsCooldown)
                 return
         }
 
@@ -69,7 +57,7 @@ object DamageHandlers : Listener {
         else
             Pair(damager.macrocosm!!.calculateStats(), damager.macrocosm!!.specialStats())
 
-        if (damager is Player) {
+        if (damager is Player && checkAts) {
             damager.macrocosm!!.onAtsCooldown = true
             // 0.45s is default attack speed, becomes 0.2s at 100 attack speed
             taskRunLater((((1.2 - (damagerStats.attackSpeed / 100f))) * 9f).roundToLong()) {
@@ -109,7 +97,7 @@ object DamageHandlers : Listener {
 
         val received = DamageCalculator.calculateStandardReceived(damage, damagedStats)
 
-        damaged.lastDamageCause = e
+        // damaged.lastDamageCause = e
 
         if (damaged is Player) {
             damaged.macrocosm!!.damage(received, damagerName)
@@ -132,6 +120,48 @@ object DamageHandlers : Listener {
         summonDamageIndicator(damaged.location, received, if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
 
         processFerocity(received, crit, damagerStats, damaged, damagerName, damager)
+    }
+
+    @EventHandler
+    fun onStandardDamage(e: EntityDamageByEntityEvent) {
+        e.damage = 0.0
+        val damager = e.damager
+        val damaged = e.entity
+        if (damaged is ArmorStand) {
+            if (damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "ignore_damage")))
+                return
+            damaged.kill()
+            return
+        }
+
+        if (damager !is LivingEntity || damaged !is LivingEntity)
+            return
+
+        internalHandleDamage(damager, damaged)
+    }
+
+    @EventHandler
+    fun onProjectileHit(e: ProjectileHitEvent) {
+        if(e.entity.persistentDataContainer.has(pluginKey("despawn_me")))
+            e.entity.remove()
+        val shooter = e.entity.shooter
+        if(shooter == null || shooter !is LivingEntity || e.hitEntity is ArmorStand) {
+            e.isCancelled = true
+            return
+        }
+        val damaged = e.hitEntity
+        if(damaged == null || damaged !is LivingEntity)
+            return
+
+        if (damaged is ArmorStand) {
+            if (damaged.persistentDataContainer.has(NamespacedKey(Macrocosm, "ignore_damage")))
+                return
+            damaged.kill()
+            return
+        }
+
+
+        internalHandleDamage(shooter, damaged, false)
     }
 
     @EventHandler

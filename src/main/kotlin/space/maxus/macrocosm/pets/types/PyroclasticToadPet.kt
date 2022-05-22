@@ -29,16 +29,15 @@ import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.id
 import kotlin.math.roundToInt
 
-object MoltenDragonPet : Pet(
-    id("pet_molten_dragon"),
-    "Molten Dragon",
+object PyroclasticToadPet : Pet(
+    id("pet_pyroclastic_toad"),
+    "Pyroclastic Toad",
     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg0NTg3NTg4ODg5NmFiNmI2ZTVmMjlkNjZhYzllZjZiNDFmMjI3ZTEyNjg1ZGU0Y2IxMzQ5ZTMwYzBlMzVjOCJ9fX0=",
     SkillType.MINING,
     listOf(
         PetAbility("Molten Fury", "Deal <red>+[1]% ${Statistic.DAMAGE.display}<gray> when on fire."),
         PetAbility("Sleeping Wrath", "Boosts <gold>all<gray> your stats by <red>[0.1]%<gray> while standing still."),
-        PetAbility(
-            "Profaned Rage",
+        PetAbility("Profaned Rage",
             "Every <green>10 seconds<gray>, cast a <gold>Fire Storm<gray>, dealing <red>[100]%<gray> of your ${Statistic.STRENGTH.display}<gray> to all nearby enemies."
         ),
     ),

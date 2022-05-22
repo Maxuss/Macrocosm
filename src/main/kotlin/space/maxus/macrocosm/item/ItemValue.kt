@@ -15,6 +15,7 @@ import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Identifier
@@ -86,6 +87,14 @@ enum class ItemValue(val item: MacrocosmItem) {
         miningSpeed = 1000f
         miningFortune = 300f
     }, breakingPower = 8)),
+
+    // shortbows
+    THE_QUEENS_STINGER(Shortbow("The Queen's Stinger", Rarity.LEGENDARY, stats = stats {
+        damage = 250f
+        strength = 200f
+        critDamage = 150f
+        critChance = 25f
+    }, extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability), runes = listOf(VanillaRune.REDSTONE, VanillaRune.EMERALD))),
 
     // reforge stones
     WITHER_BLOOD(
@@ -193,6 +202,34 @@ enum class ItemValue(val item: MacrocosmItem) {
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTExM2VlNjEwODQxZGVkMjE1YWNkMmI0Y2FhZWVmODdkZmQ2ZTNkNDc2OGU3YWI0ZTE5ZWI3NmIzZDgxMjFjZiJ9fX0="
         )
     ),
+
+    COLORED_LEATHER_HELMET(
+        ColoredEntityArmor(
+            Material.LEATHER_HELMET,
+            0
+        )
+    ),
+    COLORED_LEATHER_CHESTPLATE(
+        ColoredEntityArmor(
+            Material.LEATHER_CHESTPLATE,
+            0
+        )
+    ),
+    COLORED_LEATHER_LEGGINGS(
+        ColoredEntityArmor(
+            Material.LEATHER_LEGGINGS,
+            0
+        )
+    ),
+    COLORED_LEATHER_BOOTS(
+        ColoredEntityArmor(
+            Material.LEATHER_BOOTS,
+            0
+        )
+    ),
+    SKULL_ENTITY_HEAD(
+        SkullEntityHead("null")
+    )
 
     ;
 
@@ -335,24 +372,6 @@ enum class ItemValue(val item: MacrocosmItem) {
             }
 
             Registry.ITEM.delegateRegistration(values().map { id(it.name.lowercase()) to it.item }) { _, _ -> }
-
-            Threading.start("Item Registry", true) {
-                info("Starting Item Registry daemon...")
-                // using thread pools to not create a bottleneck
-                val pool = Threading.pool()
-
-                for (item in values().toList().parallelStream()) {
-                    pool.execute {
-                        info("Registering ${item.name} item...")
-                        Registry.ITEM.register(Identifier.macro(item.name.lowercase()), item.item)
-                    }
-                }
-
-                pool.shutdown()
-                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-                if (!success)
-                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
-            }
         }
     }
 }

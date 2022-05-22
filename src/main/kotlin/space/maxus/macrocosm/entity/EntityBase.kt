@@ -43,6 +43,7 @@ open class EntityBase(
         if (sounds != null) {
             Registry.SOUND.register(id, sounds)
         }
+        Registry.LOOT_POOL.register(id, pool)
     }
 
     override fun lootPool(player: MacrocosmPlayer?): LootPool {

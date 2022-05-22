@@ -6,7 +6,6 @@ import net.axay.kspigot.extensions.geometry.vec
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.Rarity
@@ -29,12 +28,12 @@ object BeePet : Pet(
         ),
         PetAbility(
             "Sweet Honey",
-            "Additionally, regenerate <green>[0.02]%<gray> of your maximum ${Statistic.HEALTH.display}<gray> every second."
+            "Regenerate <green>[0.02]%<gray> of your maximum ${Statistic.HEALTH.display}<gray> every second."
         ),
         PetAbility(
-            "Bumblebee's Flight",
-            "Increases stats of the <dark_purple>Beekeeper Set<gray> and <gold>The Queen's Stinger<gray> by <red>[0.1]%<gray>."
-        )
+            "Nest Builder",
+            "Grants you <green>+[0.1] ${Statistic.DEFENSE.display}<gray> for every <gold>${Statistic.FARMING_FORTUNE.display}<gray> you have."
+        ),
     ),
     stats {
         intelligence = 8f
@@ -83,7 +82,11 @@ object BeePet : Pet(
     }
 
     @EventHandler
-    fun bumblebeeFlightAbility(e: ItemCalculateStatsEvent) {
-        // item checks, etc.
+    fun nestBuilderAbility(e: PlayerCalculateStatsEvent) {
+        val (ok, pet) = ensureRequirement(e.player, "Weaponized Honey")
+        if (!ok)
+            return
+        val modifier = pet!!.level * .1f
+        e.stats.defense += e.stats.farmingFortune * modifier
     }
 }

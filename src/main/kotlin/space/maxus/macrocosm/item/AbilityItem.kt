@@ -30,7 +30,7 @@ open class AbilityItem(
                 return
             else field = value
         }
-    override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_"))
+    override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", ""))
     override var name: Component = comp(itemName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null

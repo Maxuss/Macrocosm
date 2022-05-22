@@ -20,7 +20,7 @@ import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.pets.PetValue
-import space.maxus.macrocosm.pets.types.MoltenDragonPet
+import space.maxus.macrocosm.pets.types.PyroclasticToadPet
 import space.maxus.macrocosm.pets.types.WaspPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
@@ -61,9 +61,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(PickupListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -80,7 +81,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         SeaCreatures.init()
         TrophyFishes.init()
 
-        MoltenDragonPet.init()
+        PyroclasticToadPet.init()
         WaspPet.init()
 
         playtimeCommand()

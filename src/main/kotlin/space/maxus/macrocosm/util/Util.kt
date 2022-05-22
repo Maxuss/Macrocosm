@@ -2,16 +2,21 @@ package space.maxus.macrocosm.util
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import net.axay.kspigot.extensions.pluginKey
 import net.kyori.adventure.text.Component
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
+import space.maxus.macrocosm.listeners.FallingBlockListener
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.IdentifierTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
@@ -45,4 +50,18 @@ fun EntityType.summon(location: Location): Entity {
     } else null) ?: throw RuntimeException("Can not spawn an entity of type $this!")
     nmsEntity.bukkitEntity.teleport(location)
     return nmsEntity.bukkitEntity
+}
+
+fun createFloatingBlock(loc: Location, item: ItemStack): ArmorStand {
+    val hologram: ArmorStand = loc.world.spawnEntity(loc, EntityType.ARMOR_STAND) as ArmorStand
+    hologram.setGravity(false)
+    hologram.canPickupItems = false
+    hologram.isVisible = false
+    hologram.isMarker = true
+    hologram.persistentDataContainer.set(pluginKey("ignore_damage"), PersistentDataType.BYTE, 0)
+    val fallingBlock = loc.world.spawnFallingBlock(loc, item.type.createBlockData())
+    fallingBlock.dropItem = false
+    FallingBlockListener.stands.add(fallingBlock.uniqueId)
+    hologram.addPassenger(fallingBlock)
+    return hologram
 }

@@ -107,7 +107,7 @@ class ArmorItem(
         specClone.multiply(LEGGINGS_MODIFIER)
         specClone.round()
         return AbilityItem(
-            ItemType.CHESTPLATE,
+            ItemType.LEGGINGS,
             "$baseName Leggings",
             baseRarity,
             Material.valueOf("${baseMaterial}_LEGGINGS"),
@@ -133,7 +133,7 @@ class ArmorItem(
         specClone.multiply(BOOT_MODIFIER)
         specClone.round()
         return AbilityItem(
-            ItemType.CHESTPLATE,
+            ItemType.BOOTS,
             "$baseName Boots",
             baseRarity,
             Material.valueOf("${baseMaterial}_BOOTS"),

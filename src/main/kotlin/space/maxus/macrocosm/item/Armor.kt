@@ -2,6 +2,7 @@ package space.maxus.macrocosm.item
 
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import space.maxus.macrocosm.ability.types.AmethystArmorBonus
+import space.maxus.macrocosm.ability.types.BeekeeperArmorBonus
 import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.runes.VanillaRune
@@ -41,6 +42,28 @@ object Armor {
         leather.setColor(org.bukkit.Color.fromRGB(0x50177F))
     }, runes = listOf(VanillaRune.AMETHYST, VanillaRune.DIAMOND)))
 
+    val BEEKEEPER_ARMOR = register(ArmorItem("Beekeeper", "beekeeper", "LEATHER", Rarity.EPIC, stats {
+        health = 150f
+        defense = 35f
+        speed = 15f
+        strength = 15f
+        critDamage = 10f
+    }, abilities = listOf(BeekeeperArmorBonus),
+        headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjY0MTY5MDc2ZGJkYjg3ZjI3OTQ0OGQ1YTE2ZmY3OGJiMGEyYjU3NTAzYzIxOGUyMTczMmRiYTlmN2Y5ZjU1YSJ9fX0=",
+    chestMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0xF1BE66))
+    },
+    legsMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0xECB34F))
+    },
+    bootMeta = {
+        val leather = it as LeatherArmorMeta
+        leather.setColor(org.bukkit.Color.fromRGB(0xECAA38))
+    },
+    runes = listOf(VanillaRune.REDSTONE, VanillaRune.EMERALD)))
+
     private fun register(item: ArmorItem): ArmorItem {
         cache.add(item)
         return item
@@ -54,6 +77,7 @@ object Armor {
     }
 
     fun init() {
+
         Threading.start("Armor Registry", true) {
             info("Initializing Armor Registry daemon...")
 
