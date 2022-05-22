@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.util
 
-import net.minecraft.nbt.*
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.NamespacedKey
 import space.maxus.macrocosm.registry.Identifier

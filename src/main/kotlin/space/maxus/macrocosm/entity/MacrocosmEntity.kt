@@ -25,11 +25,11 @@ import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
 import kotlin.math.max

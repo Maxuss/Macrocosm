@@ -31,7 +31,7 @@ import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 import kotlin.math.roundToInt
 
-object MoltenDragonPet: Pet(
+object MoltenDragonPet : Pet(
     id("pet_molten_dragon"),
     "Molten Dragon",
     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg0NTg3NTg4ODg5NmFiNmI2ZTVmMjlkNjZhYzllZjZiNDFmMjI3ZTEyNjg1ZGU0Y2IxMzQ5ZTMwYzBlMzVjOCJ9fX0=",
@@ -39,8 +39,11 @@ object MoltenDragonPet: Pet(
     listOf(
         PetAbility("Molten Fury", "Deal <red>+[1]% ${Statistic.DAMAGE.display}<gray> when on fire."),
         PetAbility("Sleeping Wrath", "Boosts <gold>all<gray> your stats by <red>[0.1]%<gray> while standing still."),
-        PetAbility("Profaned Rage", "Every <green>10 seconds<gray>, cast a <gold>Fire Storm<gray>, dealing <red>[100]%<gray> of your ${Statistic.STRENGTH.display}<gray> to all nearby enemies."),
+        PetAbility(
+            "Profaned Rage",
+            "Every <green>10 seconds<gray>, cast a <gold>Fire Storm<gray>, dealing <red>[100]%<gray> of your ${Statistic.STRENGTH.display}<gray> to all nearby enemies."
         ),
+    ),
     stats {
         strength = 30f
         critDamage = 10f
@@ -65,9 +68,9 @@ object MoltenDragonPet: Pet(
     @EventHandler
     fun moltenFuryAbility(e: PlayerDealDamageEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Molten Fury")
-        if(!ok)
+        if (!ok)
             return
-        if(e.player.paper!!.fireTicks <= 0)
+        if (e.player.paper!!.fireTicks <= 0)
             return
         e.damage *= (.01f * pet!!.level)
         sound(Sound.ITEM_FIRECHARGE_USE) {
@@ -79,29 +82,34 @@ object MoltenDragonPet: Pet(
     @EventHandler
     fun sleepingWrathAbility(e: PlayerCalculateSpecialStatsEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Molten Fury")
-        if(!ok)
+        if (!ok)
             return
         val len = e.player.paper!!.velocity.length()
-        if(len > 0.13f)
+        if (len > 0.13f)
             return
         e.stats.statBoost += (.001f * pet!!.level)
     }
 
     fun init() {
         task(period = 10L * 20L) {
-            for((_, player) in Macrocosm.onlinePlayers) {
+            for ((_, player) in Macrocosm.onlinePlayers) {
                 val (ok, pet) = ensureRequirement(player, "Profaned Rage")
-                if(!ok)
+                if (!ok)
                     continue
-                val dmg = DamageCalculator.calculateMagicDamage((pet!!.level * player.stats()!!.intelligence).roundToInt(), .01f, player.stats()!!)
+                val dmg = DamageCalculator.calculateMagicDamage(
+                    (pet!!.level * player.stats()!!.intelligence).roundToInt(),
+                    .01f,
+                    player.stats()!!
+                )
 
                 val nearest = player.paper!!.getNearbyEntities(10.0, 2.0, 10.0)
                     .firstOrNull { it is LivingEntity && it !is ArmorStand && it !is Player } as? LivingEntity
-                if(nearest != null) {
+                if (nearest != null) {
                     val iter = BlockIterator(
                         nearest.world,
                         player.paper!!.location.toVector(),
-                        player.paper!!.location.toVector().subtract(nearest.location.toVector()).normalize().multiply(-1f),
+                        player.paper!!.location.toVector().subtract(nearest.location.toVector()).normalize()
+                            .multiply(-1f),
                         1.0,
                         10
                     )
@@ -127,7 +135,7 @@ object MoltenDragonPet: Pet(
                                 DamageHandlers.summonDamageIndicator(entity.location, dmg, DamageType.FIRE)
                             }
                         }
-                        if(iteration >= 10)
+                        if (iteration >= 10)
                             break
                     }
                     sound(Sound.ENTITY_BLAZE_SHOOT) {

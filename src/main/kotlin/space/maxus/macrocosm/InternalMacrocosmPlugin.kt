@@ -112,10 +112,11 @@ class InternalMacrocosmPlugin : KSpigot() {
         testCraftingTable()
         testEntityCommand()
 
-        if(DUMP_TEST_DATA) {
+        if (DUMP_TEST_DATA) {
             DataGenerators.registries()
         }
     }
+
     private val DUMP_TEST_DATA: Boolean = true
 
     override fun shutdown() {

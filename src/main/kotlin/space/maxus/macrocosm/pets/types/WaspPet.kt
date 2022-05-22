@@ -20,15 +20,24 @@ import space.maxus.macrocosm.util.LevelingTable
 import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 
-object WaspPet: Pet(
+object WaspPet : Pet(
     id("pet_wasp"),
     "Wasp",
     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTc0YTM1MzI0MzhmNzQ2NmE2MDI4NDFiZjUxODcxOWNhYjJlNGNlYjk4ODkyZjIyNjAyOTUxNmExOWQwZGFkZCJ9fX0=",
     SkillType.FORAGING,
     listOf(
-        PetAbility("Weaponized Honey", "Every <green>10 seconds<gray> shoots a <yellow>stinger<gray> at nearest enemy, dealing <red>[1500] ${Statistic.DAMAGE.display}<gray>."),
-        PetAbility("Nest Builder", "Grants you <green>+[0.1] ${Statistic.DEFENSE.display}<gray> for every <gold>${Statistic.FORAGING_FORTUNE.display}<gray> you have."),
-        PetAbility("Furious", "Grants you <yellow>+[0.1] ${Statistic.BONUS_ATTACK_SPEED.display}<gray> for every ${Statistic.SPEED.display}<gray> you have over <green>300<gray>.")
+        PetAbility(
+            "Weaponized Honey",
+            "Every <green>10 seconds<gray> shoots a <yellow>stinger<gray> at nearest enemy, dealing <red>[1500] ${Statistic.DAMAGE.display}<gray>."
+        ),
+        PetAbility(
+            "Nest Builder",
+            "Grants you <green>+[0.1] ${Statistic.DEFENSE.display}<gray> for every <gold>${Statistic.FORAGING_FORTUNE.display}<gray> you have."
+        ),
+        PetAbility(
+            "Furious",
+            "Grants you <yellow>+[0.1] ${Statistic.BONUS_ATTACK_SPEED.display}<gray> for every ${Statistic.SPEED.display}<gray> you have over <green>300<gray>."
+        )
     ),
     stats {
         speed = 15f
@@ -48,7 +57,7 @@ object WaspPet: Pet(
     @EventHandler
     fun nestBuilderAbility(e: PlayerCalculateStatsEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Weaponized Honey")
-        if(!ok)
+        if (!ok)
             return
         val modifier = pet!!.level * .1f
         e.stats.defense += e.stats.foragingFortune * modifier
@@ -57,18 +66,18 @@ object WaspPet: Pet(
     @EventHandler
     fun furiousAbility(e: PlayerCalculateStatsEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Weaponized Honey")
-        if(!ok)
+        if (!ok)
             return
         val modifier = pet!!.level * .1f
-        if(e.stats.speed >= 300)
+        if (e.stats.speed >= 300)
             e.stats.attackSpeed += (e.stats.speed - 300) * modifier
     }
 
     fun init() {
         task(period = 10 * 20L) {
-            for((_, player) in Macrocosm.onlinePlayers) {
+            for ((_, player) in Macrocosm.onlinePlayers) {
                 val (ok, pet) = ensureRequirement(player, "Weaponized Honey")
-                if(!ok)
+                if (!ok)
                     continue
                 val nearest =
                     player.paper!!.getNearbyEntities(8.0, 2.0, 8.0)

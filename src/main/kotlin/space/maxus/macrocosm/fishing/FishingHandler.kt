@@ -12,17 +12,17 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.zone.Zones
 
-object FishingHandler: Listener {
+object FishingHandler : Listener {
     @EventHandler
     fun onPullHook(e: PlayerFishEvent) {
-        if(e.state != PlayerFishEvent.State.CAUGHT_FISH)
+        if (e.state != PlayerFishEvent.State.CAUGHT_FISH)
             return
         possibleRewards(e.player.location, e.player.macrocosm!!).roll(e.player.macrocosm!!, e.hook)
     }
 
     @EventHandler
     fun onHookInLava(e: EntityDeathEvent) {
-        if(e.entityType != EntityType.FISHING_HOOK)
+        if (e.entityType != EntityType.FISHING_HOOK)
             return
         e.isCancelled = true
     }

@@ -11,7 +11,7 @@ abstract class Zone(val id: Identifier, val name: String) {
 
     abstract fun contains(location: Location): Boolean
 
-    private class Impl(id: Identifier, name: String, val handler: Predicate<Location>): Zone(id, name) {
+    private class Impl(id: Identifier, name: String, val handler: Predicate<Location>) : Zone(id, name) {
         override fun contains(location: Location): Boolean = handler.test(location)
     }
 }

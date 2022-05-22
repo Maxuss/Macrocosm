@@ -12,12 +12,12 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.LevelingTable
 import space.maxus.macrocosm.util.id
 

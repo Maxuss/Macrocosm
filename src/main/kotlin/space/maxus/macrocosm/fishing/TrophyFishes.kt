@@ -12,6 +12,7 @@ enum class TrophyFishes(val fish: TrophyFish) {
 //    ))
 
     ;
+
     companion object {
         fun init() {
             Registry.TROPHY_FISH.delegateRegistration(values().map { id(it.name.lowercase()) to it.fish }) { id, v ->

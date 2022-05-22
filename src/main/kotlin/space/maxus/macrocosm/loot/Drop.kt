@@ -4,12 +4,13 @@ import org.bukkit.Material
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.pets.Pet
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.Chance
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 
-abstract class Drop(val rarity: DropRarity, override val chance: Double, val item: Identifier, val amount: IntRange): Chance
+abstract class Drop(val rarity: DropRarity, override val chance: Double, val item: Identifier, val amount: IntRange) :
+    Chance
 
 class VanillaDrop(material: Material, amount: IntRange, rarity: DropRarity, chance: Double) :
     Drop(rarity, chance, Identifier("minecraft", material.name.lowercase()), amount)

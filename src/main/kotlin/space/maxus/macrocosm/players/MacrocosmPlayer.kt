@@ -36,6 +36,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.ranks.Rank
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
@@ -44,7 +45,6 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.GSON
-import space.maxus.macrocosm.registry.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
@@ -384,7 +384,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (activePet != null) {
             cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
         }
-        if(specialCache != null && specialCache!!.statBoost != 0f) {
+        if (specialCache != null && specialCache!!.statBoost != 0f) {
             cloned.multiply(1 + specialCache!!.statBoost)
         }
 

@@ -12,9 +12,9 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.util.EulerAngle
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
 

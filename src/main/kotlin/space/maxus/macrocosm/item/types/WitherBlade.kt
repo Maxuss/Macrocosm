@@ -41,11 +41,11 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 
 val WITHER_SCROLL_IMPLOSION = WitherScrollAbility(

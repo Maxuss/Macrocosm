@@ -24,11 +24,11 @@ import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.recipeBrowser
 import space.maxus.macrocosm.recipes.recipeViewer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 

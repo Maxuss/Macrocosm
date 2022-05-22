@@ -2,7 +2,7 @@ package space.maxus.macrocosm.registry
 
 import java.util.concurrent.ConcurrentHashMap
 
-class CloseableRegistry<R>(name: Identifier): Registry<R>(name) {
+class CloseableRegistry<R>(name: Identifier) : Registry<R>(name) {
     private var accepting: Boolean = false
 
     private val values: ConcurrentHashMap<Identifier, R> = ConcurrentHashMap()
@@ -12,11 +12,11 @@ class CloseableRegistry<R>(name: Identifier): Registry<R>(name) {
     }
 
     override fun register(id: Identifier, value: R): R {
-        if(!accepting) {
+        if (!accepting) {
             logger.warn("Tried to register key '$id' while registry was closed!")
             return value
         }
-        if(values.containsKey(id)) {
+        if (values.containsKey(id)) {
             logger.warn("Tried to register duplicate key '$id'!")
             return values[id]!!
         }

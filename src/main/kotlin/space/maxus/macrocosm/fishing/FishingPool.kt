@@ -20,9 +20,9 @@ import kotlin.random.Random
 data class FishingDrop<T>(
     val item: T,
     override val chance: Double
-): Chance
+) : Chance
 
-data class TrophyTier(val name: String, val modifier: String, override val chance: Double): Chance
+data class TrophyTier(val name: String, val modifier: String, override val chance: Double) : Chance
 
 val DEFAULT_TROPHY_TIERS = listOf(
     TrophyTier("<#CD7F32>BRONZE", "bronze", .5),
@@ -32,14 +32,18 @@ val DEFAULT_TROPHY_TIERS = listOf(
 )
 
 
-class FishingPool(private val creatures: List<SeaCreature>, private val treasures: List<FishingTreasure>, private val trophies: List<TrophyFish>) {
+class FishingPool(
+    private val creatures: List<SeaCreature>,
+    private val treasures: List<FishingTreasure>,
+    private val trophies: List<TrophyFish>
+) {
     companion object {
         private val trash: List<Material> = listOf(
             Material.ROTTEN_FLESH, Material.LEATHER,
             Material.BONE, Material.COD,
             Material.SALMON, Material.TROPICAL_FISH,
             Material.PUFFERFISH, Material.STRING
-            )
+        )
     }
 
     fun summonSeaCreature(creature: SeaCreature, player: MacrocosmPlayer, hook: FishHook) {
@@ -52,7 +56,7 @@ class FishingPool(private val creatures: List<SeaCreature>, private val treasure
     fun announceTreasure(treasure: FishingTreasure, player: MacrocosmPlayer, hook: FishHook) {
         val item = Registry.ITEM.find(treasure.item).build(player)!!
         player.sendMessage("<bold><gold>TREASURE!</bold><green> You've caught ${item.displayName().str()}!")
-        if(hook.hookedEntity == null) {
+        if (hook.hookedEntity == null) {
             val eI = createItem(item, hook.location)
             hook.hookedEntity = eI
             (hook.location.world as CraftWorld).handle.addFreshEntity((eI as CraftItem).handle)
@@ -66,7 +70,7 @@ class FishingPool(private val creatures: List<SeaCreature>, private val treasure
     fun announceTrophy(trophy: TrophyFish, player: MacrocosmPlayer, hook: FishHook) {
         val item = trophy.build(player)!!
         player.sendMessage("<bold><gold>TROPHY!</bold><green> You've caught ${trophy.name.str()}!")
-        if(hook.hookedEntity == null) {
+        if (hook.hookedEntity == null) {
             val eI = createItem(item, hook.location)
             hook.hookedEntity = eI
             (hook.location.world as CraftWorld).handle.addFreshEntity((eI as CraftItem).handle)
@@ -84,18 +88,18 @@ class FishingPool(private val creatures: List<SeaCreature>, private val treasure
         val shouldCatchEntity = Random.nextFloat() <= stats.seaCreatureChance / 100f
         println("ENTITY: $shouldCatchEntity")
 
-        if(shouldCatchEntity) {
+        if (shouldCatchEntity) {
             val creature = Pools.roll(creatures, stats.magicFind).randomOrNull()
-            if(creature != null) {
+            if (creature != null) {
                 summonSeaCreature(creature, player, hook)
                 return
             }
         }
         val shouldCatchTreasure = Random.nextFloat() <= stats.treasureChance / 100f
         println("TREASURE: $shouldCatchTreasure")
-        if(shouldCatchTreasure) {
+        if (shouldCatchTreasure) {
             val treasure = Pools.roll(treasures, stats.magicFind).randomOrNull()
-            if(treasure != null) {
+            if (treasure != null) {
                 announceTreasure(treasure, player, hook)
                 return
             }
@@ -103,9 +107,9 @@ class FishingPool(private val creatures: List<SeaCreature>, private val treasure
         // constant chance to catch trophies: 0.34
         val shouldCatchTrophy = Random.nextFloat() <= .34f
         println("TROPHY: $shouldCatchTreasure")
-        if(shouldCatchTrophy) {
+        if (shouldCatchTrophy) {
             val trophy = Pools.roll(trophies, stats.magicFind).randomOrNull()
-            if(trophy != null) {
+            if (trophy != null) {
                 val tier = Pools.roll(DEFAULT_TROPHY_TIERS, stats.magicFind).lastOrNull() ?: DEFAULT_TROPHY_TIERS[0]
                 trophy.tier = tier
                 announceTrophy(trophy, player, hook)
@@ -114,7 +118,7 @@ class FishingPool(private val creatures: List<SeaCreature>, private val treasure
         }
 
         // rolling trash instead
-        if(hook.hookedEntity == null) {
+        if (hook.hookedEntity == null) {
             val eI = createItem(ItemStack(trash.random(), (1..3).random()).macrocosm!!.build(player)!!, hook.location)
             hook.hookedEntity = eI
             (hook.location.world as CraftWorld).handle.addFreshEntity((eI as CraftItem).handle)

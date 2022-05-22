@@ -6,8 +6,8 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
+import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 

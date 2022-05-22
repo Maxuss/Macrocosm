@@ -22,20 +22,29 @@ import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Chance
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.Zone
 import java.util.*
 import java.util.function.Predicate
-import kotlin.collections.HashMap
 
-data class CatchConditions(val description: String, val predicate: Predicate<Pair<MacrocosmPlayer, Zone>>, val chance: Float)
+data class CatchConditions(
+    val description: String,
+    val predicate: Predicate<Pair<MacrocosmPlayer, Zone>>,
+    val chance: Float
+)
 
-class TrophyFish(private val baseName: String, private val headSkin: String, val conditions: CatchConditions, override var rarity: Rarity, var tier: TrophyTier? = null) : MacrocosmItem, Chance {
+class TrophyFish(
+    private val baseName: String,
+    private val headSkin: String,
+    val conditions: CatchConditions,
+    override var rarity: Rarity,
+    var tier: TrophyTier? = null
+) : MacrocosmItem, Chance {
     override var stats: Statistics = Statistics.zero()
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
@@ -45,7 +54,7 @@ class TrophyFish(private val baseName: String, private val headSkin: String, val
     override val type: ItemType = ItemType.OTHER
     override var name: Component
         get() = comp("$baseName <bold>${tier?.name}")
-        set(@Suppress("UNUSED_PARAMETER") value) { }
+        set(@Suppress("UNUSED_PARAMETER") value) {}
     override val base: Material = Material.PLAYER_HEAD
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null

@@ -33,18 +33,22 @@ abstract class Registry<T>(val name: Identifier) {
     abstract fun iter(): ConcurrentHashMap<Identifier, T>
     abstract fun register(id: Identifier, value: T): T
     open fun byValue(value: T): Identifier? {
-        return if(value is Identified) value.id else iter().filter { it.value == value }.map { it.key }.firstOrNull()
+        return if (value is Identified) value.id else iter().filter { it.value == value }.map { it.key }.firstOrNull()
     }
+
     open fun find(id: Identifier): T = iter()[id]!!
     open fun findOrNull(id: Identifier): T? = iter()[id]
     open fun has(id: Identifier): Boolean = iter().containsKey(id)
 
-    inline fun delegateRegistration(values: List<Pair<Identifier, T>>, crossinline delegate: (Identifier, T) -> Unit = { _, _ -> }) {
+    inline fun delegateRegistration(
+        values: List<Pair<Identifier, T>>,
+        crossinline delegate: (Identifier, T) -> Unit = { _, _ -> }
+    ) {
         Threading.start("$name Delegate #${delegates.incrementAndGet()}") {
             this.info("Starting '$name' registry Delegate ${delegates.get()}")
             val pool = Threading.pool()
 
-            for((id, value) in values) {
+            for ((id, value) in values) {
                 pool.execute {
                     register(id, value)
                     delegate(id, value)
@@ -65,18 +69,22 @@ abstract class Registry<T>(val name: Identifier) {
         file.writeText(GSON_PRETTY.toJson(iter()))
     }
 
-    companion object: DefaultedRegistry<Registry<*>>(id("global")) {
+    companion object : DefaultedRegistry<Registry<*>>(id("global")) {
         private val registries: ConcurrentHashMap<Identifier, Registry<*>> = ConcurrentHashMap()
         fun <V> register(registry: Registry<V>, id: Identifier, value: V) = registry.register(id, value)
         fun <V> register(registry: Registry<V>, id: String, value: V) = registry.register(id(id), value)
 
-        private fun <V> makeDefaulted(name: Identifier): Registry<V> = register(name, DefaultedRegistry<V>(name)) as Registry<V>
+        private fun <V> makeDefaulted(name: Identifier): Registry<V> =
+            register(name, DefaultedRegistry<V>(name)) as Registry<V>
+
         private fun <V> makeCloseable(name: Identifier): CloseableRegistry<V> {
             val reg = CloseableRegistry<V>(name)
             reg.open()
             return register(name, reg) as CloseableRegistry<V>
         }
-        private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) = register(name, DelegatedRegistry(name, delegate)) as Registry<V>
+
+        private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) =
+            register(name, DelegatedRegistry(name, delegate)) as Registry<V>
 
         val ITEM = makeDefaulted<MacrocosmItem>(id("item"))
         val ABILITY = makeDefaulted<ItemAbility>(id("ability"))

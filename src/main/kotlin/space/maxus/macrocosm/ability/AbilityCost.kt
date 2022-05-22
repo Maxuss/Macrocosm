@@ -4,8 +4,8 @@ import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.events.AbilityCostApplyEvent
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.text.comp
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 

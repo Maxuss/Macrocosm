@@ -3,18 +3,31 @@ package space.maxus.macrocosm.zone
 import com.google.common.base.Predicates
 import org.bukkit.Location
 import org.bukkit.block.Biome
-import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
 
 enum class ZoneType(val zone: Zone) {
     // these only contains special zones, others are just biomes mostly
     NONE(Zone.impl(id("null"), "<dark_gray>None", Predicates.alwaysTrue())),
-    OVERWORLD(Zone.impl(id("overworld"), "<green>Overworld") { return@impl it.world.environment == org.bukkit.World.Environment.NORMAL }),
-    NETHER(Zone.impl(id("nether"), "<red>Nether") { return@impl it.world.environment == org.bukkit.World.Environment.NETHER }),
-    THE_END(Zone.impl(id("the_end"), "<dark_purple>The End") { return@impl it.world.environment == org.bukkit.World.Environment.THE_END }),
+    OVERWORLD(
+        Zone.impl(
+            id("overworld"),
+            "<green>Overworld"
+        ) { return@impl it.world.environment == org.bukkit.World.Environment.NORMAL }),
+    NETHER(
+        Zone.impl(
+            id("nether"),
+            "<red>Nether"
+        ) { return@impl it.world.environment == org.bukkit.World.Environment.NETHER }),
+    THE_END(
+        Zone.impl(
+            id("the_end"),
+            "<dark_purple>The End"
+        ) { return@impl it.world.environment == org.bukkit.World.Environment.THE_END }),
 
     ;
+
     companion object {
         private val allowedBiomes: HashMap<Biome, String> = hashMapOf(
             Biome.FOREST to "<green>Forest",
@@ -42,18 +55,25 @@ enum class ZoneType(val zone: Zone) {
             Biome.SAVANNA to "<gold>Savanna",
             Biome.WINDSWEPT_HILLS to "<gold>Windswept Hills"
         )
+
         private fun initBiomes() {
         }
 
         fun init() {
             Registry.ZONE.delegateRegistration(values().map { id(it.name.lowercase()) to it.zone })
-            Registry.ZONE.delegateRegistration(allowedBiomes.map { id(it.key.name.lowercase()) to BiomeZone(id(it.key.name.lowercase()), it.value, it.key) })
+            Registry.ZONE.delegateRegistration(allowedBiomes.map {
+                id(it.key.name.lowercase()) to BiomeZone(
+                    id(it.key.name.lowercase()),
+                    it.value,
+                    it.key
+                )
+            })
         }
     }
 
 }
 
-class BiomeZone(id: Identifier, name: String, private val biome: Biome): Zone(id, name) {
+class BiomeZone(id: Identifier, name: String, private val biome: Biome) : Zone(id, name) {
     override fun contains(location: Location): Boolean {
         return location.block.biome == biome
     }

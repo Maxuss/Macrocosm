@@ -32,6 +32,7 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
+
 fun <L : PacketListener, P : Packet<L>> Player.sendPacket(packet: P) {
     (this as CraftPlayer).handle.networkManager.send(packet)
 }
