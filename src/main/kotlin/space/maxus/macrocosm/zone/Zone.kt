@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.zone
 
 import org.bukkit.Location
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import java.util.function.Predicate
 
 abstract class Zone(val id: Identifier, val name: String) {

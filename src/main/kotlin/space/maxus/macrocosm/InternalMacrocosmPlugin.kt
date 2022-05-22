@@ -6,6 +6,7 @@ import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
+import space.maxus.macrocosm.data.DataGenerators
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
@@ -110,7 +111,12 @@ class InternalMacrocosmPlugin : KSpigot() {
         itemsCommand()
         testCraftingTable()
         testEntityCommand()
+
+        if(DUMP_TEST_DATA) {
+            DataGenerators.registries()
+        }
     }
+    private val DUMP_TEST_DATA: Boolean = true
 
     override fun shutdown() {
         Threading.start {

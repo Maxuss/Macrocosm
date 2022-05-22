@@ -18,7 +18,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 abstract class EnchantmentBase(
     override val name: String,
@@ -96,10 +96,10 @@ abstract class EnchantmentBase(
                 )
             )
         }.toMutableList()
-        val specPlaceholders = special.map().map { (k, v) ->
+        val specPlaceholders = special.iter().map { (k, v) ->
             Placeholder.unparsed(k.name.lowercase(), Formatting.stats(v.toBigDecimal(), false))
         }
-        val extraSpecPlaceholders = special.map().map { (k, v) ->
+        val extraSpecPlaceholders = special.iter().map { (k, v) ->
             Placeholder.unparsed("${k.name.lowercase()}_whole", Formatting.stats((100 * v).toBigDecimal(), true))
         }
         basePlaceholders.addAll(specPlaceholders)

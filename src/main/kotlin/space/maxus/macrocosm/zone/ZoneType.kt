@@ -4,7 +4,7 @@ import com.google.common.base.Predicates
 import org.bukkit.Location
 import org.bukkit.block.Biome
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 
 enum class ZoneType(val zone: Zone) {

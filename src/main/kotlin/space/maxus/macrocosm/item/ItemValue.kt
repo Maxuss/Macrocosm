@@ -20,7 +20,7 @@ import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 import java.util.*
 import java.util.concurrent.TimeUnit

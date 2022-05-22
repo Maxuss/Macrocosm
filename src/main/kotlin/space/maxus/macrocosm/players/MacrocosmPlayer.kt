@@ -44,7 +44,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.GSON
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import java.sql.Statement
 import java.time.Instant
 import java.util.*

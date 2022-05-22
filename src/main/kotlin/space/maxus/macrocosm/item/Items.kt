@@ -4,7 +4,7 @@ import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.getId
 
 @Suppress("UNUSED")

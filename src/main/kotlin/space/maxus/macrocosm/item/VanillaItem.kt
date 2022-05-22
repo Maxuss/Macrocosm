@@ -14,7 +14,7 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
 private val SPLIT_THIS =

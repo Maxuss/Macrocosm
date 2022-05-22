@@ -3,7 +3,7 @@ package space.maxus.macrocosm.recipes
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 interface MacrocosmRecipe {
     val id: Identifier

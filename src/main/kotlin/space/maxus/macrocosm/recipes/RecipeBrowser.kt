@@ -9,7 +9,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
     title = comp("<dark_gray>Recipe Browser")

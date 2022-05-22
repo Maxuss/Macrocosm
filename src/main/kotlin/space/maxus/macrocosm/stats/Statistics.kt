@@ -17,9 +17,7 @@ import kotlin.math.roundToInt
 inline fun defaultStats(builder: Statistics.() -> Unit) = Statistics.default().apply(builder)
 inline fun stats(builder: Statistics.() -> Unit) = Statistics.zero().apply(builder)
 
-@Suppress("unused")
-@JvmInline
-value class Statistics(private val self: TreeMap<Statistic, Float>) {
+data class Statistics(private val self: TreeMap<Statistic, Float>) {
     companion object {
         @JvmStatic
         fun zero(): Statistics {

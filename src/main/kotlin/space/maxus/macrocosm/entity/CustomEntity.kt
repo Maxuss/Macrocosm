@@ -19,7 +19,7 @@ import space.maxus.macrocosm.stats.SpecialStatistic
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.getId
 import java.util.*
 

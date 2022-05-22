@@ -10,7 +10,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 internal fun colorFromLevel(lvl: Int, max: Int): TextColor {
     return if (lvl == max)

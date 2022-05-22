@@ -67,7 +67,7 @@ class SpecialStatistics {
         }
     }
 
-    fun map() = self
+    fun iter() = self
 
     fun compound(): CompoundTag {
         val cmp = CompoundTag()

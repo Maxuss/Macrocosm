@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package space.maxus.macrocosm.registry
 
 import org.slf4j.Logger
@@ -15,8 +17,7 @@ import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.reforge.Reforge
-import space.maxus.macrocosm.util.GSON
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.Zone
 import java.nio.file.Path
@@ -29,7 +30,7 @@ import kotlin.io.path.writeText
 abstract class Registry<T>(val name: Identifier) {
     val delegates: AtomicInteger = AtomicInteger(0)
     protected val logger: Logger = LoggerFactory.getLogger("$name")
-    abstract fun iter(): ConcurrentHashMap<Identifier, out T>
+    abstract fun iter(): ConcurrentHashMap<Identifier, T>
     abstract fun register(id: Identifier, value: T): T
     open fun byValue(value: T): Identifier? {
         return if(value is Identified) value.id else iter().filter { it.value == value }.map { it.key }.firstOrNull()
@@ -58,23 +59,24 @@ abstract class Registry<T>(val name: Identifier) {
         }
     }
 
-    fun dumpToFile(file: Path) {
+    open fun dumpToFile(file: Path) {
         file.deleteIfExists()
-        logger.info("Dumping data on registry '$name'...")
-        file.writeText(GSON.toJson(iter()))
+        logger.info("Saving data on registry '$name'...")
+        file.writeText(GSON_PRETTY.toJson(iter()))
     }
 
-    companion object {
+    companion object: DefaultedRegistry<Registry<*>>(id("global")) {
+        private val registries: ConcurrentHashMap<Identifier, Registry<*>> = ConcurrentHashMap()
         fun <V> register(registry: Registry<V>, id: Identifier, value: V) = registry.register(id, value)
         fun <V> register(registry: Registry<V>, id: String, value: V) = registry.register(id(id), value)
 
-        private fun <V> makeDefaulted(name: Identifier) = DefaultedRegistry<V>(name)
+        private fun <V> makeDefaulted(name: Identifier): Registry<V> = register(name, DefaultedRegistry<V>(name)) as Registry<V>
         private fun <V> makeCloseable(name: Identifier): CloseableRegistry<V> {
             val reg = CloseableRegistry<V>(name)
             reg.open()
-            return reg
+            return register(name, reg) as CloseableRegistry<V>
         }
-        private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) = DelegatedRegistry(name, delegate)
+        private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) = register(name, DelegatedRegistry(name, delegate)) as Registry<V>
 
         val ITEM = makeDefaulted<MacrocosmItem>(id("item"))
         val ABILITY = makeDefaulted<ItemAbility>(id("ability"))
@@ -90,5 +92,15 @@ abstract class Registry<T>(val name: Identifier) {
         val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))
         val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
         val FISHING_TREASURE = makeDefaulted<FishingTreasure>(id("fishing_treasure"))
+
+        override fun register(id: Identifier, value: Registry<*>): Registry<*> {
+            val r = super.register(id, value)
+            logger.info("Prepared registry '$id'")
+            return r
+        }
+
+        override fun dumpToFile(file: Path) {
+
+        }
     }
 }

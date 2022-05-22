@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.recipes
 
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 object Recipes {
     fun using(item: Identifier): List<MacrocosmRecipe> {

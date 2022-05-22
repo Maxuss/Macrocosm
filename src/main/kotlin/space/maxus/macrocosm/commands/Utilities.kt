@@ -28,7 +28,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 

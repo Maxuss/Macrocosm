@@ -6,7 +6,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 class RecipeReward(val recipe: Identifier, override val isHidden: Boolean = false) : Reward {
     override fun reward(player: MacrocosmPlayer, lvl: Int) {

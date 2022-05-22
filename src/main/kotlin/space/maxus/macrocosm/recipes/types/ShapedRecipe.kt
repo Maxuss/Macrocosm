@@ -8,7 +8,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 
 fun shapedRecipe(
@@ -103,11 +103,13 @@ class ShapedRecipe(
         return Pair(true, cachedIndices)
     }
 
-    private val gridIndices = listOf(
-        listOf(10, 11, 12),
-        listOf(19, 20, 21),
-        listOf(28, 29, 30)
-    )
+    companion object {
+        private val gridIndices = listOf(
+            listOf(10, 11, 12),
+            listOf(19, 20, 21),
+            listOf(28, 29, 30)
+        )
+    }
 
     override fun assemble(ctx: RecipeContext, player: MacrocosmPlayer): ItemStack {
         val important = ctx.mostImportantItem() ?: return result.clone().build() ?: ItemStack(Material.AIR)

@@ -42,12 +42,12 @@ class MobEnchantment(
     conflicts: List<String>,
     levels: IntRange = 1..7,
     applicable: List<ItemType> = ItemType.melee(),
-    private val multiplier: Float = .15f
+    private val dmgMultiplier: Float = .15f
 ) : EnchantmentBase(name, "NULL", levels, applicable, conflicts = conflicts) {
     override fun description(level: Int): List<Component> {
         val str = familyToDescription(affectedMobs.toMutableList()).replace(
             "{{MUL}}",
-            Formatting.stats((level * multiplier * 100).toBigDecimal(), true)
+            Formatting.stats((level * dmgMultiplier * 100).toBigDecimal(), true)
         )
         val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
@@ -59,7 +59,7 @@ class MobEnchantment(
         val (ok, level) = ensureRequirements(e.player, EquipmentSlot.HAND)
         if (!ok || !affectedMobs.contains(e.damaged.type))
             return
-        val modifier = 1 + (level * multiplier)
+        val modifier = 1 + (level * dmgMultiplier)
         e.damage *= modifier
     }
 }

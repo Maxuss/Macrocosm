@@ -8,7 +8,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 
 fun shapelessRecipe(id: String, result: MacrocosmItem, vararg ingredients: Pair<Identifier, Int>): MacrocosmRecipe =
@@ -74,9 +74,11 @@ class ShapelessRecipe(
         return listOf(ingredients)
     }
 
-    private val gridIndices = listOf(
-        listOf(10, 11, 12),
-        listOf(19, 20, 21),
-        listOf(28, 29, 30)
-    )
+    companion object {
+        private val gridIndices = listOf(
+            listOf(10, 11, 12),
+            listOf(19, 20, 21),
+            listOf(28, 29, 30)
+        )
+    }
 }

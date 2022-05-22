@@ -8,7 +8,7 @@ import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.id
 
 interface ApplicableRune {

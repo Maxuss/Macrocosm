@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.registry
 
-import space.maxus.macrocosm.util.Identifier
 import java.util.concurrent.ConcurrentHashMap
 
 class CloseableRegistry<R>(name: Identifier): Registry<R>(name) {

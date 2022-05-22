@@ -14,7 +14,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
 

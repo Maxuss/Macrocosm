@@ -2,7 +2,7 @@ package space.maxus.macrocosm.collections
 
 import org.bukkit.Material
 import space.maxus.macrocosm.collections.Section.*
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 // todo: collection recipes
 enum class CollectionType(val inst: Collection) {

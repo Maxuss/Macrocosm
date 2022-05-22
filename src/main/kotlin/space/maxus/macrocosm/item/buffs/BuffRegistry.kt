@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.item.buffs
 
 import space.maxus.macrocosm.item.runes.ApplicableRune
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 object BuffRegistry {
     private val runes: HashMap<Identifier, ApplicableRune> = hashMapOf()

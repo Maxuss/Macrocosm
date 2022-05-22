@@ -64,7 +64,7 @@ enum class Enchant(private val enchant: Enchantment) {
             "Ender Slayer",
             listOf(EntityType.ENDERMAN, EntityType.ENDERMITE, EntityType.SHULKER),
             listOf("SHARPNESS", "BANE_OF_ARTHROPODS", "COLD_TOUCH", "CUBISM", "SMITE"),
-            multiplier = .2f
+            dmgMultiplier = .2f
         )
     ),
     DRAGON_HUNTER(
@@ -73,7 +73,7 @@ enum class Enchant(private val enchant: Enchantment) {
             listOf(EntityType.ENDER_DRAGON),
             listOf(),
             1..6,
-            multiplier = .1f,
+            dmgMultiplier = .1f,
             applicable = ItemType.weapons()
         )
     ),
@@ -83,7 +83,7 @@ enum class Enchant(private val enchant: Enchantment) {
             listOf(EntityType.GUARDIAN, EntityType.ELDER_GUARDIAN, EntityType.SQUID, EntityType.GLOW_SQUID),
             listOf(),
             levels = 1..5,
-            multiplier = .15f,
+            dmgMultiplier = .15f,
             applicable = ItemType.weapons()
         )
     ),

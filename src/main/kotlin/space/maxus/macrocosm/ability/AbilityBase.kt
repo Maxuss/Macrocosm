@@ -6,7 +6,7 @@ import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.Identifier
+import space.maxus.macrocosm.registry.Identifier
 
 abstract class AbilityBase(
     override val type: AbilityType, override val name: String, override val description: String,
