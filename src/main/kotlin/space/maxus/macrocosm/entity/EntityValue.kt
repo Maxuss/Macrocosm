@@ -1,44 +1,68 @@
 package space.maxus.macrocosm.entity
 
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.item.Armor
-import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.loot.DropRarity
-import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.loot.vanilla
+import space.maxus.macrocosm.fishing.FishingPool
+import space.maxus.macrocosm.item.coloredArmor
+import space.maxus.macrocosm.item.skull
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
 enum class EntityValue(val entity: MacrocosmEntity) {
-    TEST_ENTITY(
-        EntityBase(
-            comp("<gold>Mr. Sketchpad"),
-            EntityType.ZOMBIE,
-            Registry.LOOT_POOL.register(
-                id("test_pool"),
-                LootPool.of(vanilla(Material.DIAMOND, 1.0, DropRarity.UNBELIEVABLE, 1..3))
-            ),
-            stats {
-                health = 500000f
-                damage = 100f
-                strength = 500f
-                speed = 400f
-            },
-            mainHand = ItemValue.SCYLLA.item,
-            helmet = Armor.AMETHYST_ARMOR.helmet(),
-            disguiseSkin = "Mr_Sketchpad",
-            sounds = EntitySoundBank.from(
-                SoundType.DAMAGED to (Sound.ENTITY_IRON_GOLEM_HURT to 0.5f),
-                SoundType.DEATH to (Sound.ENTITY_WITHER_DEATH to 0.7f)
-            )
-        )
+    AMOGUS(EntityBase(
+        comp("<red>Imposter"),
+        EntityType.GUARDIAN,
+        FishingPool.pool(10f).build(),
+        1000.0,
+        stats {
+            health = 1_500_000f
+            damage = 250f
+            strength = 100f
+        },
+        disguiseSkin = "noobmaster5513",
     )
+    ),
+
+    // sea creatures
+    SEA_WALKER(EntityBase(
+        comp("Sea Walker"),
+        EntityType.ZOMBIE,
+        FishingPool.pool(1f).build(),
+        102.0,
+        stats {
+            health = 2000f
+            damage = 50f
+            defense = 10f
+        },
+        rewardingSkill = SkillType.FISHING,
+        helmet = skull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODk3NzI2ZjU3ZTk0ODc4MDBkZGIyZjRlOGY1MmVhNTM0ODgyNWQxMmRhYWRmZmU2N2E0NjJkYmY5NjBjMDU3YiJ9fX0="),
+        chestplate = coloredArmor(Material.LEATHER_CHESTPLATE, 0x276ACC),
+        leggings = coloredArmor(Material.LEATHER_LEGGINGS, 0x276ACC),
+        boots = coloredArmor(Material.LEATHER_BOOTS, 0x276ACC)
+        )
+    ),
+
+    SEA_ARCHER(EntityBase(
+        comp("Sea Archer"),
+        EntityType.SKELETON,
+        FishingPool.pool(1.8f).build(),
+        201.0,
+        stats {
+            health = 15000f
+            damage = 200f
+            strength = 50f
+            defense = 150f
+        },
+        rewardingSkill = SkillType.FISHING,
+        chestplate = coloredArmor(Material.LEATHER_CHESTPLATE, 0x176ACC),
+        leggings = coloredArmor(Material.LEATHER_LEGGINGS, 0x176ACC),
+        boots = coloredArmor(Material.LEATHER_BOOTS, 0x276ACC)
+    ))
     ;
 
     companion object {

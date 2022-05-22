@@ -8,7 +8,6 @@ import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_SHIELD
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
 
@@ -28,7 +27,7 @@ enum class Ability(val ability: ItemAbility) {
 
     companion object {
         fun init() {
-            Registry.ABILITY.delegateRegistration(values().map { id(it.name.lowercase()) to it.ability }) { _: Identifier, _: ItemAbility -> }
+            Registry.ABILITY.delegateRegistration(values().map { id(it.name.lowercase()) to it.ability })
         }
     }
 }

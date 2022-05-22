@@ -27,18 +27,19 @@ import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 fun levelFromStats(stats: Statistics, extraWeight: Float = 0f): Int {
-    val weight =
-        (stats.damage + stats.strength + stats.critDamage + stats.defense + stats.health) + stats.critChance + extraWeight
-    return max((weight / 100f).roundToInt(), 1)
+    val weight = stats.damage + stats.strength * 10 + stats.critDamage * 10 + stats.defense * 10 + stats.health / 10f + stats.critChance + extraWeight
+    return max(ceil(weight / 100f).roundToInt(), 1)
 }
 
 interface MacrocosmEntity : Listener {
@@ -55,6 +56,8 @@ interface MacrocosmEntity : Listener {
     val type: EntityType
     var baseStats: Statistics
     var baseSpecials: SpecialStatistics
+    val rewardingSkill: SkillType
+    val experience: Double
 
     val level get() = levelFromStats(calculateStats(), extraWeight())
 
@@ -66,6 +69,10 @@ interface MacrocosmEntity : Listener {
 
     fun addExtraNbt(nbt: CompoundTag) {
 
+    }
+
+    fun rewardExperience(player: MacrocosmPlayer) {
+        player.addSkillExperience(rewardingSkill, experience)
     }
 
     fun preModify(entity: LivingEntity) {
@@ -172,6 +179,8 @@ interface MacrocosmEntity : Listener {
         val lootId = Registry.LOOT_POOL.byValue(lootPool(null)) ?: Identifier.NULL
         tag.putId("LootID", lootId)
         tag.putString("ID", getId(entity).toString())
+        tag.putDouble("Experience", experience)
+        tag.putString("Skill", rewardingSkill.name)
 
         addExtraNbt(tag)
 

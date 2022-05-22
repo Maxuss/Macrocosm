@@ -4,7 +4,6 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.ChatColor
-import org.bukkit.event.Listener
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
@@ -12,7 +11,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.comp
 
 @Suppress("unused")
-interface ItemAbility : Listener {
+interface ItemAbility {
     val name: String
     val description: String
     val type: AbilityType

@@ -18,6 +18,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.*
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.*
 import java.util.*
 import kotlin.math.max
@@ -417,6 +418,17 @@ fun dropsFromType(ty: EntityType): List<Drop> {
     }
 }
 
+private fun skillFromType(type: EntityType, level: Int): Pair<Double, SkillType> {
+    return when(type) {
+        EntityType.SQUID, EntityType.GLOW_SQUID -> Pair(12.0, SkillType.FISHING)
+        EntityType.COD, EntityType.SALMON -> Pair(4.0, SkillType.FISHING)
+        EntityType.TROPICAL_FISH, EntityType.PUFFERFISH -> Pair(5.0, SkillType.FISHING)
+        EntityType.GUARDIAN -> Pair(30.0, SkillType.FISHING)
+        EntityType.ELDER_GUARDIAN -> Pair(120.0, SkillType.FISHING)
+        else -> Pair(level * 5.0, SkillType.COMBAT)
+    }
+}
+
 class VanillaEntity(val id: UUID) : MacrocosmEntity {
     companion object {
         fun from(entity: LivingEntity): VanillaEntity {
@@ -461,6 +473,14 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
 
     override var baseStats: Statistics = statsFromEntity(paper)
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
+    override val rewardingSkill: SkillType
+    override val experience: Double
+
+    init {
+        val (exp, skill) = skillFromType(type, level)
+        rewardingSkill = skill
+        experience = exp
+    }
 
     override fun lootPool(player: MacrocosmPlayer?): LootPool {
         return LootPool.of(*dropsFromType(paper!!.type).toTypedArray())
@@ -531,6 +551,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
             for (item in universal.roll(killer)) {
                 loc.world.dropItemNaturally(loc, item ?: continue)
             }
+            rewardExperience(damager.macrocosm!!)
         }
     }
 }

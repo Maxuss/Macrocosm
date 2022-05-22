@@ -9,6 +9,8 @@ import org.bukkit.entity.FishHook
 import org.bukkit.entity.Item
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.loot.LootPoolBuilder
+import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
@@ -44,6 +46,14 @@ class FishingPool(
             Material.SALMON, Material.TROPICAL_FISH,
             Material.PUFFERFISH, Material.STRING
         )
+
+        fun pool(withStrength: Float) = LootPoolBuilder(mutableListOf(
+            vanilla(Material.COD, .7, amount = 1..3),
+            vanilla(Material.SALMON, .7, amount = 1..3),
+            vanilla(Material.PUFFERFISH, .4, amount = 1..3),
+            vanilla(Material.LILY_PAD, 1.0, amount = 2..3),
+
+            )).multiplyAmount(withStrength)
     }
 
     fun summonSeaCreature(creature: SeaCreature, player: MacrocosmPlayer, hook: FishHook) {

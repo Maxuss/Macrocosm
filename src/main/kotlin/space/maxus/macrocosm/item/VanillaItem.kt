@@ -1,8 +1,17 @@
 package space.maxus.macrocosm.item
 
+import com.destroystokyo.paper.profile.ProfileProperty
 import net.axay.kspigot.extensions.bukkit.toComponent
+import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
+import net.minecraft.nbt.CompoundTag
+import org.bukkit.Bukkit
+import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.LeatherArmorMeta
+import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
@@ -19,6 +28,18 @@ import java.util.*
 
 private val SPLIT_THIS =
     listOf("HOE", "PICKAXE", "AXE", "SWORD", "SHOVEL", "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS")
+
+fun coloredArmor(type: Material, color: Int): MacrocosmItem = VanillaItem(type, 1) {
+    val leather = (it as LeatherArmorMeta)
+    leather.setColor(Color.fromRGB(color))
+}
+
+fun skull(skin: String): MacrocosmItem = VanillaItem(Material.PLAYER_HEAD, 1) {
+    val skull = (it as SkullMeta)
+    val profile = Bukkit.createProfile(UUID.randomUUID())
+    profile.setProperty(ProfileProperty("textures", skin))
+    skull.playerProfile = profile
+}
 
 private fun typeFromMaterial(mat: Material): ItemType {
     if (SPLIT_THIS.any { mat.name.contains(it) })
@@ -243,7 +264,7 @@ private fun getGemsForItem(item: Material): List<ApplicableRune> {
     return listOf()
 }
 
-class VanillaItem(override val base: Material, override var amount: Int = 1) : MacrocosmItem {
+class VanillaItem(override val base: Material, override var amount: Int = 1, private val metaModifier: (ItemMeta) -> Unit = { }) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
     override var stars: Int = 0
@@ -273,16 +294,25 @@ class VanillaItem(override val base: Material, override var amount: Int = 1) : M
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = bpFromMat(base)
 
+    override fun addExtraMeta(meta: ItemMeta) {
+        metaModifier(meta)
+    }
+
+    override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
+        val base = super.convert(from, nbt) as VanillaItem
+        from.meta(metaModifier)
+        return base
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun clone(): MacrocosmItem {
-        val vanilla = VanillaItem(base)
+        val vanilla = VanillaItem(base, amount, metaModifier)
         vanilla.stats = stats.clone()
         vanilla.specialStats = specialStats.clone()
         vanilla.rarity = rarity
         vanilla.rarityUpgraded = rarityUpgraded
         vanilla.reforge = reforge?.clone()
         vanilla.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
-        vanilla.amount = amount
         vanilla.runes.putAll(runes)
         return vanilla
     }

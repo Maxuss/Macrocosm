@@ -17,8 +17,6 @@ import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.LevelingTable
-import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -48,7 +46,6 @@ object PhoenixPet : Pet(
             DustPetParticle(0xDC7217, 1.1f, 1, vec())
         )
     )
-    override val table: LevelingTable = SkillTable
 
     @EventHandler
     fun eternalAbility(e: PlayerDeathEvent) {

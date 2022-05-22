@@ -15,12 +15,17 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
+import space.maxus.macrocosm.util.LevelingTable
 import java.util.*
 
 
 class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey: String) {
     val prototype: Pet get() = Registry.PET.find(base)
     private val entity: LivingEntity? get() = Bukkit.getEntity(entityId) as? LivingEntity
+
+    fun table(player: MacrocosmPlayer): LevelingTable {
+        return ProgressivePetTable((referring(player).rarity.ordinal + 1) / 7.3f)
+    }
 
     fun referring(player: MacrocosmPlayer): StoredPet {
         return player.ownedPets[hashKey]!!
@@ -40,6 +45,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         player.ownedPets.remove(hashKey)
         this.hashKey = newHash
         player.ownedPets[newHash] = modified
+        entity?.customName(prototype.buildName(modified.level, player, modified.rarity))
     }
 
     fun despawn(player: MacrocosmPlayer) {
@@ -57,7 +63,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         val amt = if (prototype.preferredSkill != skill) amount * .4 else amount
         modifySave(player) {
             this.overflow += amt
-            if (prototype.table.shouldLevelUp(this.level, this.overflow, .0)) {
+            if (this.level < 100 && table(player).shouldLevelUp(this.level, this.overflow, .0)) {
                 this.level++
                 this.overflow = .0
                 player.sendMessage("<green>Your <${rarity.color.asHexString()}>${prototype.name}<green> leveled up to level $level!")
@@ -65,6 +71,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
                     pitch = 2f
                     playFor(player.paper!!)
                 }
+
             }
         }
     }

@@ -16,6 +16,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistic
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
@@ -35,6 +36,8 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
     override val type: EntityType
     override var baseStats: Statistics = Statistics.zero()
     override var baseSpecials: SpecialStatistics = SpecialStatistics()
+    override val rewardingSkill: SkillType
+    override val experience: Double
     override var currentHealth: Float = baseStats.health
 
     private val lootPool: Identifier
@@ -70,6 +73,8 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         currentHealth = tag.getFloat("CurrentHealth")
         lootPool = tag.getId("LootID")
         id = tag.getId("ID")
+        rewardingSkill = SkillType.valueOf(tag.getString("Skill"))
+        experience = tag.getDouble("Experience")
     }
 
     override fun getId(entity: LivingEntity): Identifier {
@@ -142,6 +147,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             for (item in universal.roll(killer)) {
                 loc.world.dropItemNaturally(loc, item ?: continue)
             }
+            rewardExperience(damager.macrocosm!!)
         }
     }
 }

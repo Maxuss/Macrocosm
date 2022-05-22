@@ -15,8 +15,6 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.LevelingTable
-import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 
 object BeePet : Pet(
@@ -63,7 +61,6 @@ object BeePet : Pet(
             DustPetParticle(0xF9D59D, 0.8f, 2, vec()),
         )
     )
-    override val table: LevelingTable = SkillTable
 
     @EventHandler
     fun buzzyBeesAbility(e: PlayerCalculateStatsEvent) {

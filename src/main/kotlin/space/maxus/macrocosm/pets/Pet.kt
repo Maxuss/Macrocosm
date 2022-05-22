@@ -18,7 +18,6 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
-import space.maxus.macrocosm.util.LevelingTable
 import space.maxus.macrocosm.util.id
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -32,7 +31,6 @@ abstract class Pet(
     private val baseSpecials: SpecialStatistics = SpecialStatistics()
 ) : Listener {
     abstract val effects: PetEffects
-    abstract val table: LevelingTable
 
     fun abilitiesForRarity(rarity: Rarity): List<PetAbility> {
         return if (rarity <= Rarity.UNCOMMON)
@@ -74,7 +72,7 @@ abstract class Pet(
         return Pair(false, null)
     }
 
-    protected fun buildName(level: Int, player: MacrocosmPlayer, rarity: Rarity): Component =
+    internal fun buildName(level: Int, player: MacrocosmPlayer, rarity: Rarity): Component =
         comp("<dark_gray>[<gray>Lvl $level<dark_gray>] <${rarity.color.asHexString()}> ${player.paper?.name}'s $name")
 
     fun stats(level: Int, rarity: Rarity): Statistics {

@@ -12,6 +12,7 @@ import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -19,6 +20,7 @@ open class EntityBase(
     override val name: Component,
     override val type: EntityType,
     private val pool: LootPool,
+    override val experience: Double,
     final override var baseStats: Statistics = Statistics.zero(),
     override var baseSpecials: SpecialStatistics = SpecialStatistics(),
     override var mainHand: MacrocosmItem? = null,
@@ -28,7 +30,8 @@ open class EntityBase(
     override var leggings: MacrocosmItem? = null,
     override var boots: MacrocosmItem? = null,
     private val disguiseSkin: String? = null,
-    private val sounds: EntitySoundBank? = null
+    private val sounds: EntitySoundBank? = null,
+    override val rewardingSkill: SkillType = SkillType.COMBAT,
 ) : MacrocosmEntity {
     override var currentHealth: Float = baseStats.health
 

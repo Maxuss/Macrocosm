@@ -8,8 +8,6 @@ import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.LevelingTable
-import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 
 object TestPet : Pet(id("pickle_pet"),
@@ -27,7 +25,6 @@ object TestPet : Pet(id("pickle_pet"),
         ferocity = 10f
     }) {
     override val effects: PetEffects = FixedPetEffects(listOf(BlockPetParticle(Material.SEA_PICKLE)))
-    override val table: LevelingTable = SkillTable
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {

@@ -20,10 +20,10 @@ import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
 
 val GSON: Gson = GsonBuilder()
-    .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
-    .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
-    .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
-    .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
+//    .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
+//    .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
+//    .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
+//    .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .create()
 val GSON_PRETTY: Gson = GsonBuilder()
     .disableHtmlEscaping()

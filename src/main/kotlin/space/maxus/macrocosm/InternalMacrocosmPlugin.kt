@@ -102,22 +102,22 @@ class InternalMacrocosmPlugin : KSpigot() {
         givePetItemCommand()
         addPetCommand()
         spawnPetCommand()
+        itemsCommand()
+        summonCommand()
 
         testStatsCommand()
         testLevelUp()
         testCollUp()
         skillExp()
         collAmount()
-        itemsCommand()
         testCraftingTable()
-        testEntityCommand()
 
-        if (DUMP_TEST_DATA) {
+        if (dumpTestData) {
             DataGenerators.registries()
         }
     }
 
-    private val DUMP_TEST_DATA: Boolean = true
+    private val dumpTestData: Boolean = false
 
     override fun shutdown() {
         Threading.start {

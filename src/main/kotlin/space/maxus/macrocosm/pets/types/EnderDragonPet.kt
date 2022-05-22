@@ -12,8 +12,6 @@ import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.LevelingTable
-import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 
 object EnderDragonPet : Pet(
@@ -45,7 +43,6 @@ object EnderDragonPet : Pet(
             DustPetParticle(0x140221, 1.5f, 2, vec(.5, .0, .5))
         )
     )
-    override val table: LevelingTable = SkillTable
 
     @EventHandler
     fun enderianAbility(e: PlayerCalculateSpecialStatsEvent) {

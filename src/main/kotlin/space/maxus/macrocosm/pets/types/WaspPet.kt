@@ -16,8 +16,6 @@ import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.LevelingTable
-import space.maxus.macrocosm.util.SkillTable
 import space.maxus.macrocosm.util.id
 
 object WaspPet : Pet(
@@ -52,7 +50,6 @@ object WaspPet : Pet(
             DustPetParticle(0x000000, 1.5f, 2, vec())
         )
     )
-    override val table: LevelingTable = SkillTable
 
     @EventHandler
     fun nestBuilderAbility(e: PlayerCalculateStatsEvent) {

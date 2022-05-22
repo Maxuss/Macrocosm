@@ -2,8 +2,10 @@
 
 package space.maxus.macrocosm.registry
 
+import net.axay.kspigot.extensions.pluginManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.ItemAbility
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.enchants.Enchantment
@@ -87,14 +89,24 @@ abstract class Registry<T>(val name: Identifier) {
             register(name, DelegatedRegistry(name, delegate)) as Registry<V>
 
         val ITEM = makeDefaulted<MacrocosmItem>(id("item"))
-        val ABILITY = makeDefaulted<ItemAbility>(id("ability"))
-        val ENTITY = makeDefaulted<MacrocosmEntity>(id("entity"))
+        val ABILITY = makeDelegated<ItemAbility>(id("ability")) { _, v ->
+            v.registerListeners()
+        }
+        val ENTITY = makeDelegated<MacrocosmEntity>(id("entity")) { _, v ->
+            pluginManager.registerEvents(v, Macrocosm)
+        }
         val DISGUISE = makeDefaulted<String>(id("entity_disguise"))
         val SOUND = makeDefaulted<EntitySoundBank>(id("entity_sound"))
         val ZONE = makeDefaulted<Zone>(id("zone"))
-        val REFORGE = makeDefaulted<Reforge>(id("reforge"))
-        val ENCHANT = makeDefaulted<Enchantment>(id("enchant"))
-        val PET = makeDefaulted<Pet>(id("pet"))
+        val REFORGE = makeDelegated<Reforge>(id("reforge")) { _, v ->
+            pluginManager.registerEvents(v, Macrocosm)
+        }
+        val ENCHANT = makeDelegated<Enchantment>(id("enchant")) { _, v ->
+            pluginManager.registerEvents(v, Macrocosm)
+        }
+        val PET = makeDelegated<Pet>(id("pet")) { _, v ->
+            pluginManager.registerEvents(v, Macrocosm)
+        }
         val RECIPE = makeDefaulted<MacrocosmRecipe>(id("recipe"))
         val LOOT_POOL = makeDefaulted<LootPool>(id("loot_pool"))
         val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))

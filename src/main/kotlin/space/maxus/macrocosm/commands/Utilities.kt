@@ -133,6 +133,19 @@ fun itemsCommand() = command("items") {
     }
 }
 
+fun summonCommand() = command("spawnmob") {
+    requires { it.hasPermission(4) }
+    argument("entity", ResourceLocationArgument.id()) {
+        suggestListSuspending {
+            Registry.ENTITY.iter().keys.filter { k -> k.path.contains(it.getArgumentOrNull<ResourceLocation>("entity")?.path ?: "") }
+        }
+
+        runs {
+            Registry.ENTITY.find(getArgument<ResourceLocation>("entity").macrocosm).spawn(player.location)
+        }
+    }
+}
+
 fun playtimeCommand() = command("playtime") {
     runs {
         val mc = player.macrocosm!!

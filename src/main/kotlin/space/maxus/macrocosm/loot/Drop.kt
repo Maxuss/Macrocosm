@@ -9,8 +9,12 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.Chance
 import space.maxus.macrocosm.util.id
 
-abstract class Drop(val rarity: DropRarity, override val chance: Double, val item: Identifier, val amount: IntRange) :
-    Chance
+abstract class Drop(val rarity: DropRarity, override val chance: Double, val item: Identifier, var amount: IntRange) :
+    Chance {
+        fun clone(): Drop {
+            return MacrocosmDrop(item, rarity, chance, amount)
+        }
+    }
 
 class VanillaDrop(material: Material, amount: IntRange, rarity: DropRarity, chance: Double) :
     Drop(rarity, chance, Identifier("minecraft", material.name.lowercase()), amount)
