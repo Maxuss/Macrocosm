@@ -10,7 +10,21 @@ import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.comp
 
+/**
+ * Represents a tiered set bonus, that increases buffs based on amount of armor pieces worn
+ *
+ * @constructor Constructs a new tiered set bonus
+ *
+ * @param name Name of this ability, supports MM tags
+ * @param description Description of this ability, will later be partitioned to 25 chars per line
+ */
 open class TieredSetBonus(name: String, description: String) : AbilityBase(AbilityType.PASSIVE, name, description) {
+    /**
+     * Gets amount of armor pieces worn by player, and whether the player meets the requirements
+     *
+     * @param player Player to be used for checks
+     * @return Pair of (True if ability should be executed, Amount of armor pieces worn)
+     */
     protected fun getArmorTier(player: MacrocosmPlayer): Pair<Boolean, Int> {
         val tier = listOf(
             player.helmet,

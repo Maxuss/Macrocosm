@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -40,7 +40,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     override var rarity: Rarity = rarityFromEnchants(enchantments)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<ItemAbility> = mutableListOf()
+    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0

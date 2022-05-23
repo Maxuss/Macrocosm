@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
@@ -42,7 +42,7 @@ object UltimateWiseEnchantment :
 
         val cost = e.ability.cost ?: return
         val clonedCost = AbilityCost((cost.mana * (1 - (lvl * .1f))).roundToInt(), cost.health, cost.cooldown)
-        val interceptor = ItemAbility.Interceptor(e.ability, cost = clonedCost)
+        val interceptor = MacrocosmAbility.Interceptor(e.ability, cost = clonedCost)
 
         val outputLore = mutableListOf<Component>()
         interceptor.buildLore(outputLore, null)
@@ -76,7 +76,7 @@ object UltimateBulkEnchantment :
 
         val cost = e.ability.cost ?: return
         val clonedCost = AbilityCost(cost.mana, (cost.health * (1 - (lvl * .1f))).roundToInt(), cost.cooldown)
-        val interceptor = ItemAbility.Interceptor(e.ability, cost = clonedCost)
+        val interceptor = MacrocosmAbility.Interceptor(e.ability, cost = clonedCost)
 
         val outputLore = mutableListOf<Component>()
         interceptor.buildLore(outputLore, null)

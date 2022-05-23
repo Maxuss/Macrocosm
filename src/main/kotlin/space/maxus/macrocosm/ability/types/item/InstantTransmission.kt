@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.ability.types
+package space.maxus.macrocosm.ability.types.item
 
 import net.axay.kspigot.event.listen
 import org.bukkit.inventory.EquipmentSlot

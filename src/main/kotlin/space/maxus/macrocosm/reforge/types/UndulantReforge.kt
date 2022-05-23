@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.events.AbilityCompileEvent
 import space.maxus.macrocosm.events.AbilityCostApplyEvent
 import space.maxus.macrocosm.item.ItemType
@@ -39,7 +39,7 @@ object UndulantReforge : ReforgeBase(
             return
         val cost = e.ability.cost ?: return
         val clonedCost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, (cost.cooldown * .75).roundToInt())
-        val interceptor = ItemAbility.Interceptor(e.ability, cost = clonedCost)
+        val interceptor = MacrocosmAbility.Interceptor(e.ability, cost = clonedCost)
 
         val outputLore = mutableListOf<Component>()
         interceptor.buildLore(outputLore, null)

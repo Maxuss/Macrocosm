@@ -5,7 +5,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -20,7 +20,7 @@ class ArmorItem(
     private val baseRarity: Rarity,
     private val baseStats: Statistics = Statistics.zero(),
     private val baseSpecials: SpecialStatistics = SpecialStatistics(),
-    private val abilities: List<ItemAbility> = listOf(),
+    private val abilities: List<MacrocosmAbility> = listOf(),
     private val headMeta: (ItemMeta) -> Unit = { },
     private val chestMeta: (ItemMeta) -> Unit = { },
     private val legsMeta: (ItemMeta) -> Unit = { },

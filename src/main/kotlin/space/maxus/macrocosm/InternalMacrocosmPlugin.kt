@@ -42,7 +42,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     override fun load() {
         INSTANCE = this
-        Threading.start {
+        Threading.runAsync {
             Database.connect()
             playersLazy = Database.readAllPlayers().toMutableList()
         }
@@ -125,7 +125,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     private val dumpTestData: Boolean = false
 
     override fun shutdown() {
-        Threading.start {
+        Threading.runAsync {
             for ((id, v) in onlinePlayers) {
                 println("Saving data for player $id...")
                 v.storeSelf(Database.statement)

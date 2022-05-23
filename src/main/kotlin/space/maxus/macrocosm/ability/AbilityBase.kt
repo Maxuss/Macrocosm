@@ -8,12 +8,31 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 
+/**
+ * An abstract wrapper class for the [MacrocosmAbility] interface, allowing for easier abstraction
+ *
+ * @property type Type of this ability, only used for visual lore display
+ * @property name Name of this ability. It is later parsed using MiniMessage, therefore may contain MM tags
+ * @property description Description of this ability. Will later be partitioned for every 25 characters, not including MM tags
+ * @property cost Cost to perform this ability
+ */
 abstract class AbilityBase(
     override val type: AbilityType, override val name: String, override val description: String,
     override val cost: AbilityCost? = null
-) : ItemAbility {
+) : MacrocosmAbility {
+    /**
+     * ID of this ability, got from the [Registry.ABILITY])
+     */
     val id: Identifier get() = Registry.ABILITY.byValue(this) ?: Identifier.NULL
 
+    /**
+     * Ensures that the provided [player] has item with this ability in the [slot], as well as doing
+     * the [AbilityCost.ensureRequirements] checks.
+     *
+     * @param player Player against which the requirements will be checked
+     * @param slot Slot, in which the player must hold this item
+     * @return True if the item and cost requirements are met, false otherwise
+     */
     @Suppress("SameParameterValue")
     protected open fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot): Boolean {
         val item = player.paper!!.inventory.getItem(slot)

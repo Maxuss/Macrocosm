@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.ability.types
+package space.maxus.macrocosm.ability.types.armor
 
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.particles.particle

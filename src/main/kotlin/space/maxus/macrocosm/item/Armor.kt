@@ -1,9 +1,9 @@
 package space.maxus.macrocosm.item
 
 import org.bukkit.inventory.meta.LeatherArmorMeta
-import space.maxus.macrocosm.ability.types.AmethystArmorBonus
-import space.maxus.macrocosm.ability.types.BeekeeperArmorBonus
-import space.maxus.macrocosm.ability.types.EmeraldArmorBonus
+import space.maxus.macrocosm.ability.types.armor.AmethystArmorBonus
+import space.maxus.macrocosm.ability.types.armor.BeekeeperArmorBonus
+import space.maxus.macrocosm.ability.types.armor.EmeraldArmorBonus
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.registry.Registry
@@ -78,10 +78,10 @@ object Armor {
 
     fun init() {
 
-        Threading.start("Armor Registry", true) {
+        Threading.runAsync("Armor Registry", true) {
             info("Initializing Armor Registry daemon...")
 
-            val pool = Threading.pool()
+            val pool = Threading.newCachedPool()
 
             for (element in cache) {
                 pool.execute {

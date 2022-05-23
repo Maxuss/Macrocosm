@@ -72,10 +72,10 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     companion object {
 
         fun init() {
-            Threading.start("Entity Registry Daemon") {
+            Threading.runAsync("Entity Registry Daemon") {
                 info("Starting Entity Registry daemon...")
 
-                val pool = Threading.pool()
+                val pool = Threading.newCachedPool()
                 for (entity in values()) {
                     pool.execute {
                         val id = id(entity.name.lowercase())

@@ -9,19 +9,39 @@ import space.maxus.macrocosm.text.comp
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
+/**
+ * Cost of the ability in mana, health and cooldown
+ *
+ * @property mana Required mana
+ * @property health Required health
+ * @property cooldown Cooldown to wait **in seconds**
+ */
 data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int = 0) {
+    /**
+     * Builds this cost lore and inserts it into the provided [lore] list
+     *
+     * @param lore List to be used for lore insertion
+     */
     fun buildLore(lore: MutableList<Component>) {
         if (mana > 0) {
             lore.add(comp("<dark_gray>Mana Cost: <dark_aqua>$mana").noitalic())
         }
         if (health > 0) {
-            lore.add(comp("<dark_gray>Health Cost: <dark_red>$health").noitalic())
+            lore.add(comp("<dark_gray>Health Cost: <red>$health").noitalic())
         }
         if (cooldown > 0) {
             lore.add(comp("<dark_gray>Cooldown: <green>${cooldown}s").noitalic())
         }
     }
 
+    /**
+     * Ensures that the provided [player] has requirements to use the ability.
+     *
+     * @param player Player against which the checks will be done
+     * @param ability ID of the ability. This is stored internally to ensure that the cooldown's time elapsed
+     * @param loud Whether to loudly send player an action bar message that they do not have enough mana/health
+     * @return True if all checks passed, false otherwise
+     */
     fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier, loud: Boolean = true): Boolean {
         val event = AbilityCostApplyEvent(player, mana, health, cooldown)
         event.callEvent()

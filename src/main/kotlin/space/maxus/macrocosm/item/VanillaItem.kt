@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -287,7 +287,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1, pri
     override var rarity: Rarity = rarityFromMaterial(base)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override var abilities: MutableList<ItemAbility> = mutableListOf()
+    override var abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> =
         HashMap(getGemsForItem(base).associateWith { RuneState.ZERO })

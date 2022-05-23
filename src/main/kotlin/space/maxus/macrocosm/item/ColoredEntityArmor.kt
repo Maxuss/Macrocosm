@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -33,7 +33,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
     override var rarity: Rarity = Rarity.SPECIAL
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<ItemAbility> = mutableListOf()
+    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
@@ -91,7 +91,7 @@ class SkullEntityHead(private var skin: String) : MacrocosmItem {
     override var rarity: Rarity = Rarity.SPECIAL
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<ItemAbility> = mutableListOf()
+    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()

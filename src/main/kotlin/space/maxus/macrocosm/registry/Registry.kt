@@ -6,7 +6,7 @@ import net.axay.kspigot.extensions.pluginManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.EntitySoundBank
@@ -46,9 +46,9 @@ abstract class Registry<T>(val name: Identifier) {
         values: List<Pair<Identifier, T>>,
         crossinline delegate: (Identifier, T) -> Unit = { _, _ -> }
     ) {
-        Threading.start("$name Delegate #${delegates.incrementAndGet()}") {
+        Threading.runAsync("$name Delegate #${delegates.incrementAndGet()}") {
             this.info("Starting '$name' registry Delegate ${delegates.get()}")
-            val pool = Threading.pool()
+            val pool = Threading.newCachedPool()
 
             for ((id, value) in values) {
                 pool.execute {
@@ -92,7 +92,7 @@ abstract class Registry<T>(val name: Identifier) {
             register(name, DelegatedRegistry(name, delegate)) as Registry<V>
 
         val ITEM = makeImmutable<MacrocosmItem>(id("item"))
-        val ABILITY = makeDelegated<ItemAbility>(id("ability")) { _, v ->
+        val ABILITY = makeDelegated<MacrocosmAbility>(id("ability")) { _, v ->
             v.registerListeners()
         }
         val ENTITY = makeDelegated<MacrocosmEntity>(id("entity")) { _, v ->

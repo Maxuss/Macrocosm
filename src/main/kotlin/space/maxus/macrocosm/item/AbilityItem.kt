@@ -3,7 +3,7 @@ package space.maxus.macrocosm.item
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -17,7 +17,7 @@ import space.maxus.macrocosm.text.comp
 open class AbilityItem(
     override val type: ItemType, private val itemName: String, override var rarity: Rarity, override val base: Material,
     override var stats: Statistics,
-    override val abilities: MutableList<ItemAbility> = mutableListOf(),
+    override val abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
     override var breakingPower: Int = 0,
     applicableRunes: List<ApplicableRune> = listOf(),

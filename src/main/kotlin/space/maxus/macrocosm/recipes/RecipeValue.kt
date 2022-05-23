@@ -19,7 +19,7 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
 
     companion object {
         private fun initEnchanted() {
-            val pool = Threading.pool()
+            val pool = Threading.newCachedPool()
 
             for (mat in ItemValue.allowedEnchantedMats.toList().parallelStream()) {
                 pool.execute {
@@ -46,7 +46,7 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
         }
 
         private fun initBasic() {
-            val pool = Threading.pool()
+            val pool = Threading.newCachedPool()
 
             for (recipe in values().toList().parallelStream()) {
                 pool.execute { Registry.RECIPE.register(id(recipe.name.lowercase()), recipe.recipe) }
@@ -59,11 +59,11 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
         }
 
         fun init() {
-            Threading.start("Basic Recipe Registry", true) {
+            Threading.runAsync("Basic Recipe Registry", true) {
                 info("Starting Basic Recipe daemon...")
                 initBasic()
             }
-            Threading.start("Enchanted Recipe Registry", true) {
+            Threading.runAsync("Enchanted Recipe Registry", true) {
                 info("Starting Enchanted Recipe daemon...")
                 initEnchanted()
             }

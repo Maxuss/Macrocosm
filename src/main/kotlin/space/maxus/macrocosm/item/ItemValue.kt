@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.ability.Ability
-import space.maxus.macrocosm.ability.types.InstantTransmission
+import space.maxus.macrocosm.ability.types.item.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.runes.VanillaRune
@@ -346,7 +346,7 @@ enum class ItemValue(val item: MacrocosmItem) {
         )
 
         private fun initEnchanted() {
-            val pool = Threading.pool()
+            val pool = Threading.newCachedPool()
 
             for (allowed in allowedEnchantedMats.parallelStream()) {
                 pool.execute {
@@ -366,7 +366,7 @@ enum class ItemValue(val item: MacrocosmItem) {
         fun init() {
             Ability.init()
 
-            Threading.start("Enchanted Item Generator", true) {
+            Threading.runAsync("Enchanted Item Generator", true) {
                 info("Initializing enchanted items...")
                 initEnchanted()
             }

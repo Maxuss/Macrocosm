@@ -1,6 +1,12 @@
 package space.maxus.macrocosm.ability
 
-import space.maxus.macrocosm.ability.types.*
+import space.maxus.macrocosm.ability.types.armor.AmethystArmorBonus
+import space.maxus.macrocosm.ability.types.armor.BeekeeperArmorBonus
+import space.maxus.macrocosm.ability.types.armor.EmeraldArmorBonus
+import space.maxus.macrocosm.ability.types.item.EmeraldPickaxeBonus
+import space.maxus.macrocosm.ability.types.item.HoneycombBulwarkAbility
+import space.maxus.macrocosm.ability.types.item.InstantTransmission
+import space.maxus.macrocosm.ability.types.other.ShortbowAbility
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
@@ -8,7 +14,12 @@ import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_SHIELD
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
 
-enum class Ability(val ability: ItemAbility) {
+/**
+ * Enum used to easily access most simple ability types
+ *
+ * @property ability The ability itself stored inside this enum
+ */
+enum class Ability(val ability: MacrocosmAbility) {
     INSTANT_TRANSMISSION(InstantTransmission),
     IMPLOSION(WITHER_SCROLL_IMPLOSION),
     WITHER_SHIELD(WITHER_SCROLL_WITHER_SHIELD),
@@ -28,6 +39,10 @@ enum class Ability(val ability: ItemAbility) {
     ;
 
     companion object {
+        /**
+         * Initializes this ability, storing all data inside the [Registry.ABILITY]
+         *
+         */
         fun init() {
             Registry.ABILITY.delegateRegistration(values().map { id(it.name.lowercase()) to it.ability })
         }

@@ -14,7 +14,7 @@ import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.UltimateEnchantment
@@ -67,7 +67,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     var rarity: Rarity
     var rarityUpgraded: Boolean
     var reforge: Reforge?
-    val abilities: MutableList<ItemAbility>
+    val abilities: MutableList<MacrocosmAbility>
     val enchantments: HashMap<Enchantment, Int>
     val maxStars: Int get() = 20
     val runes: HashMap<ApplicableRune, RuneState>

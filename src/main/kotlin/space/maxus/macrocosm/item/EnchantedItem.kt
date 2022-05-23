@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
@@ -35,7 +35,7 @@ class EnchantedItem(
     override var name: Component = comp(baseName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<ItemAbility> = mutableListOf()
+    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()

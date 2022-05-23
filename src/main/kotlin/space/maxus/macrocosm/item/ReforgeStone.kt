@@ -9,7 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
-import space.maxus.macrocosm.ability.ItemAbility
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
@@ -41,7 +41,7 @@ class ReforgeStone(
     override val base: Material = Material.PLAYER_HEAD
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<ItemAbility> = mutableListOf()
+    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
