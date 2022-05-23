@@ -502,7 +502,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
         get() = paper?.type ?: EntityType.UNKNOWN
 
     override fun damage(amount: Float, damager: Entity?) {
-        if (paper == null)
+        if (paper == null || paper!!.isDead)
             return
 
         val entity = paper!!
@@ -527,13 +527,14 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     }
 
     override fun kill(damager: Entity?) {
-        if (paper == null)
+        if (paper == null || paper!!.isDead)
             return
         currentHealth = 0f
         val killer = (damager as? Player)?.macrocosm
         var pool = lootPool(killer)
         val event = EntityDropItemsEvent(damager, paper!!, pool)
         val cancelled = !event.callEvent()
+
         pool = event.pool
         val loc = paper!!.location
         loadChanges(paper!!)

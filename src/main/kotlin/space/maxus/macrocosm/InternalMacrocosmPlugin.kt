@@ -116,6 +116,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         if (dumpTestData) {
             DataGenerators.registries()
         }
+
+        // enable once resource pack textures and stuff
+        // EmbedPackProvider.prepare()
+
     }
 
     private val dumpTestData: Boolean = false
