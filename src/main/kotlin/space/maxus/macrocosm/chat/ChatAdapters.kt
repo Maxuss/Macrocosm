@@ -6,6 +6,9 @@ import com.google.gson.stream.JsonWriter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 
+/**
+ * Adapter for fancy json serialization of components
+ */
 object ComponentTypeAdapter : TypeAdapter<Component>() {
     override fun write(o: JsonWriter, value: Component?) {
         if (value == null)

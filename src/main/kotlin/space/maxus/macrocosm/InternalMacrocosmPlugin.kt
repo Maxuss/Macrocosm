@@ -4,7 +4,6 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.chat.ChatHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.data.DataGenerators
 import space.maxus.macrocosm.db.Database
@@ -19,6 +18,7 @@ import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.runes.VanillaRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
+import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
 import space.maxus.macrocosm.pets.types.PyroclasticToadPet
 import space.maxus.macrocosm.pets.types.WaspPet
@@ -63,8 +63,9 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
+        // server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -117,9 +118,15 @@ class InternalMacrocosmPlugin : KSpigot() {
             DataGenerators.registries()
         }
 
-        // enable once resource pack textures and stuff
-        // EmbedPackProvider.prepare()
+        val cfgFile = dataFolder.resolve("config.yml")
+        if(!cfgFile.exists()) {
+            saveConfig()
+            reloadConfig()
+        }
 
+        config.load(cfgFile)
+
+        PackProvider.init()
     }
 
     private val dumpTestData: Boolean = false

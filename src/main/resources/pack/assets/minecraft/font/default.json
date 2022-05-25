@@ -1,0 +1,13 @@
+{
+    "providers": [
+        {
+            "file": "macrocosm:font/owner.png",
+            "chars": [
+                "\uE238"
+            ],
+            "height": 12,
+            "ascent": 8,
+            "type": "bitmap"
+        }
+    ]
+}

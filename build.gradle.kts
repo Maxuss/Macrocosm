@@ -21,6 +21,7 @@ dependencies {
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
+    implementation("com.dropbox.core:dropbox-core-sdk:5.2.0")
 }
 
 tasks {
