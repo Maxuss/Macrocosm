@@ -23,13 +23,13 @@ import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
+import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.deleteIfExists
 
-val GSON: Gson = GsonBuilder()
-//    .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
-//    .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
-//    .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
-//    .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
-    .create()
+val GSON: Gson = GsonBuilder().create()
 val GSON_PRETTY: Gson = GsonBuilder()
     .disableHtmlEscaping()
     .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
@@ -64,4 +64,26 @@ fun createFloatingBlock(loc: Location, item: ItemStack): ArmorStand {
     FallingBlockListener.stands.add(fallingBlock.uniqueId)
     hologram.addPassenger(fallingBlock)
     return hologram
+}
+
+fun File.recreateFile() {
+    if(this.exists())
+        this.delete()
+    this.createNewFile()
+}
+
+fun File.recreateDir() {
+    if(this.exists())
+        this.deleteRecursively()
+    this.mkdirs()
+}
+
+fun Path.recreateFile() {
+    this.deleteIfExists()
+    this.createFile()
+}
+
+fun Path.recreateDir() {
+    this.deleteIfExists()
+    this.createDirectories()
 }

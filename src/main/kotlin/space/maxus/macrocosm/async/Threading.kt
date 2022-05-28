@@ -46,12 +46,11 @@ object Threading {
     inline fun runAsyncRaw(
         isDaemon: Boolean = false,
         crossinline runnable: () -> Unit
-    ) {
+    ) =
         thread(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
             runnable()
             activeThreads.decrementAndGet()
         }
-    }
 
     /**
      * Constructs a new cached thread pool, delegating to [Executors.newCachedThreadPool]
@@ -59,4 +58,12 @@ object Threading {
      * @return New [ExecutorService] provided by cached thread pool
      */
     fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool()
+
+    /**
+     * Constructs a new fixed thread pool, with [max] amount of active threads at once
+     *
+     * @param max Max amount of threads
+     * @return New [ExecutorService] provided by fixed thread pool
+     */
+    fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(max)
 }
