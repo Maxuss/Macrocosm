@@ -19,7 +19,8 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
 
     companion object {
         private fun initEnchanted() {
-            val pool = Threading.newCachedPool()
+            // preventing a memory leak
+            val pool = Threading.newFixedPool(12)
 
             for (mat in ItemValue.allowedEnchantedMats.toList().parallelStream()) {
                 pool.execute {

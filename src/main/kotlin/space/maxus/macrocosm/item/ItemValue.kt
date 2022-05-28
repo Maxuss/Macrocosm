@@ -346,7 +346,8 @@ enum class ItemValue(val item: MacrocosmItem) {
         )
 
         private fun initEnchanted() {
-            val pool = Threading.newCachedPool()
+            // preventing a huge memory leak
+            val pool = Threading.newFixedPool(12)
 
             for (allowed in allowedEnchantedMats.parallelStream()) {
                 pool.execute {

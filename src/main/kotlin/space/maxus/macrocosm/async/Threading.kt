@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.async
 
+import space.maxus.macrocosm.util.threadScoped
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -46,11 +47,13 @@ object Threading {
     inline fun runAsyncRaw(
         isDaemon: Boolean = false,
         crossinline runnable: () -> Unit
-    ) =
-        thread(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
+    ) {
+        threadScoped(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
             runnable()
             activeThreads.decrementAndGet()
+            interrupt()
         }
+    }
 
     /**
      * Constructs a new cached thread pool, delegating to [Executors.newCachedThreadPool]
