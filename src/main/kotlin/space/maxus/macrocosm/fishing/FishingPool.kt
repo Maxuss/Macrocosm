@@ -47,13 +47,13 @@ class FishingPool(
             Material.PUFFERFISH, Material.STRING
         )
 
-        fun pool(withStrength: Float) = LootPoolBuilder(mutableListOf(
+        fun withStrength(str: Float) = LootPoolBuilder(mutableListOf(
             vanilla(Material.COD, .7, amount = 1..3),
             vanilla(Material.SALMON, .7, amount = 1..3),
             vanilla(Material.PUFFERFISH, .4, amount = 1..3),
             vanilla(Material.LILY_PAD, 1.0, amount = 2..3),
 
-            )).multiplyAmount(withStrength)
+            )).multiplyAmount(str)
     }
 
     fun summonSeaCreature(creature: SeaCreature, player: MacrocosmPlayer, hook: FishHook) {
@@ -97,6 +97,7 @@ class FishingPool(
         println("ROLLING")
         val shouldCatchEntity = Random.nextFloat() <= stats.seaCreatureChance / 100f
         println("ENTITY: $shouldCatchEntity")
+        println("SUITABLE ENTITIES: $creatures")
 
         if (shouldCatchEntity) {
             val creature = Pools.roll(creatures, stats.magicFind).randomOrNull()

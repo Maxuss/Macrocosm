@@ -1,10 +1,59 @@
 package space.maxus.macrocosm.fishing
 
+import space.maxus.macrocosm.fishing.predicates.FishPredicates
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.id
 
 enum class SeaCreatures(val creature: SeaCreature) {
-//    EXAMPLE_CREATURE(SeaCreature("An example creature emerges from the water, lmao.", id("test_entity"), 0, Predicates.alwaysTrue(), 0.9))
+    SQUID(
+        SeaCreature(
+            "A squid emerges from the water.",
+            id("minecraft", "squid"),
+            1,
+            FishPredicates.IN_WATER.build(),
+            .6
+        )
+    ),
+
+    LAVA_SQUID(
+        SeaCreature(
+            "A lava squid rises from the lava!",
+            id("lava_squid"),
+            17,
+            FishPredicates.IN_LAVA.build(),
+            .4
+        )
+    ),
+
+    RADIOACTIVE_SQUID(
+        SeaCreature(
+            "A melting <dark_green>Radioactive Kraken<green> rises from the depths!",
+            id("radioactive_squid"),
+            23,
+            FishPredicates.IN_LAVA.or { p, _, _ -> java.util.concurrent.TimeUnit.MILLISECONDS.toHours(p.playtimeMillis()) >= 12 }.build(),
+            .05
+        )
+    ),
+
+    SEA_WALKER(
+        SeaCreature(
+            "A sea walker appears from the water.",
+            id("sea_walker"),
+            2,
+            FishPredicates.IN_WATER.build(),
+            .6
+        )
+    ),
+
+    SEA_ARCHER(
+        SeaCreature(
+            "A sea archer appears from the water.",
+            id("sea_archer"),
+            3,
+            FishPredicates.IN_WATER.build(),
+            .8
+        )
+    )
 
     ;
 

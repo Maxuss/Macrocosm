@@ -1,1 +1,5 @@
-dropbox-key: ''
+pack:
+    access-token: ''
+    refresh-token: ''
+    app-key: ''
+    app-secret: ''

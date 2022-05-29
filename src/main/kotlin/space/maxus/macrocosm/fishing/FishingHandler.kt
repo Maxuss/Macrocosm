@@ -2,6 +2,7 @@ package space.maxus.macrocosm.fishing
 
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.FishHook
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
@@ -17,7 +18,7 @@ object FishingHandler : Listener {
     fun onPullHook(e: PlayerFishEvent) {
         if (e.state != PlayerFishEvent.State.CAUGHT_FISH)
             return
-        possibleRewards(e.player.location, e.player.macrocosm!!).roll(e.player.macrocosm!!, e.hook)
+        possibleRewards(e.player.location, e.player.macrocosm!!, e.hook).roll(e.player.macrocosm!!, e.hook)
     }
 
     @EventHandler
@@ -27,12 +28,12 @@ object FishingHandler : Listener {
         e.isCancelled = true
     }
 
-    private fun possibleRewards(location: Location, player: MacrocosmPlayer): FishingPool {
+    private fun possibleRewards(location: Location, player: MacrocosmPlayer, hook: FishHook): FishingPool {
         val zones = Zones.matching(location).values
         val level = player.skills.level(SkillType.FISHING)
         val tuple: Triple<List<SeaCreature>, List<TrophyFish>, List<FishingTreasure>> = Triple(
             Registry.SEA_CREATURE.iter().values.filter { sc ->
-                zones.any { zone -> sc.requiredLevel <= level && sc.predicate.test(Pair(player, zone)) }
+                zones.any { zone -> sc.requiredLevel <= level && sc.predicate.test(Triple(player, zone, hook)) }
             },
             Registry.TROPHY_FISH.iter().values.filter { trophy ->
                 zones.any { zone -> trophy.conditions.predicate.test(Pair(player, zone)) }

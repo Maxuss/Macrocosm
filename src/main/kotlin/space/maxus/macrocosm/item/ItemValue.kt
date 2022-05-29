@@ -81,12 +81,12 @@ enum class ItemValue(val item: MacrocosmItem) {
         miningFortune = 150f
     }, mutableListOf(Ability.EMERALD_AFFECTION_PICKAXE.ability), breakingPower = 6)),
 
-    TEST_DRILL(AbilityItem(ItemType.DRILL, "Test Drill", Rarity.SPECIAL, Material.PRISMARINE_SHARD, stats {
-        damage = 50f
-        defense = 150f
-        miningSpeed = 1000f
-        miningFortune = 300f
-    }, breakingPower = 8)),
+    RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {
+        damage = 250f
+        critChance = 100f
+        critDamage = 250f
+    }).apply { enchantUnsafe(space.maxus.macrocosm.enchants.Enchant.THUNDERBOLT.enchant, 7) }
+    ),
 
     // shortbows
     THE_QUEENS_STINGER(Shortbow("The Queen's Stinger", Rarity.LEGENDARY, stats = stats {

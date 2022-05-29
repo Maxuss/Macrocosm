@@ -10,7 +10,7 @@ import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.id
 
-enum class Enchant(private val enchant: Enchantment) {
+enum class Enchant(val enchant: Enchantment) {
     SHARPNESS(
         SimpleEnchantment(
             "Sharpness",

@@ -120,7 +120,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         val cfgFile = dataFolder.resolve("config.yml")
         if(!cfgFile.exists()) {
-            saveConfig()
+            saveDefaultConfig()
             reloadConfig()
         }
 

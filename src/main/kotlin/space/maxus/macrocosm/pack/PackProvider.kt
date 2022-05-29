@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.pack
 
 import com.dropbox.core.DbxRequestConfig
+import com.dropbox.core.oauth.DbxCredential
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
 import org.bukkit.event.EventHandler
@@ -19,7 +20,10 @@ import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlin.io.path.*
+import kotlin.io.path.inputStream
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.outputStream
 
 
 object PackProvider: Listener {
@@ -46,8 +50,11 @@ object PackProvider: Listener {
 
             // uploading stuff
             val path = Path.of(System.getProperty("user.dir"), "macrocosm")
-            val key = Macrocosm.config.getString("dropbox-api")!!
-            val link = upload(path.resolve(PACK_NAME).toFile(), key).replace(
+            val accessToken = Macrocosm.config.getString("pack.access-token")!!
+            val refreshToken = Macrocosm.config.getString("pack.refresh-token")!!
+            val appKey = Macrocosm.config.getString("pack.app-key")
+            val appSecret = Macrocosm.config.getString("pack.app-secret")
+            val link = upload(path.resolve(PACK_NAME).toFile(), DbxCredential(accessToken, 14400, refreshToken, appKey, appSecret)).replace(
                 "dropbox.com",
                 "dl.dropboxusercontent.com"
             )
@@ -98,19 +105,25 @@ object PackProvider: Listener {
         }
 
         zip.close()
+        zip.flush()
         Macrocosm.logger.info("Finished zipping resource pack, calculating hash...")
 
         // calculating sha1 hash
+        val packFile = Path.of(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME)
+        val bytes = packFile.toFile().inputStream().readAllBytes()
         val hasher = MessageDigest.getInstance("SHA-1")
-        val digest = BigInteger(1, hasher.digest(out.readBytes())).toString(16)
-        Macrocosm.logger.info("Resource pack SHA-1 hash: $digest")
+        val digest = hasher.digest(bytes)
+        val hash = BigInteger(1, digest).toString(16)
+        Macrocosm.logger.info("Resource pack SHA-1 hash: $hash")
 
-        RESOURCE_PACK_HASH = digest
+        RESOURCE_PACK_HASH = hash
     }
 
-    private fun upload(file: File, accessToken: String): String {
+    private fun upload(file: File, credential: DbxCredential): String {
         val config = DbxRequestConfig.newBuilder("Macrocosm/Pack-Uploader").build()
-        val client = DbxClientV2(config, accessToken)
+        val client = DbxClientV2(config, credential)
+        if(credential.aboutToExpire())
+            client.refreshAccessToken()
 
         val stream = file.inputStream()
         client.files()
