@@ -1,12 +1,10 @@
 package space.maxus.macrocosm.reforge.types
 
-import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.events.AbilityCostApplyEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.reforge.Reforge
@@ -34,16 +32,11 @@ object UndulantReforge : ReforgeBase(
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    fun onAbilityCompile(e: AbilityCompileEvent) {
+    fun onAbilityCompile(e: CostCompileEvent) {
         if (e.item.reforge == null || e.item.reforge != this)
             return
-        val cost = e.ability.cost ?: return
-        val clonedCost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, (cost.cooldown * .75).roundToInt())
-        val interceptor = MacrocosmAbility.Interceptor(e.ability, cost = clonedCost)
-
-        val outputLore = mutableListOf<Component>()
-        interceptor.buildLore(outputLore, null)
-        e.lore = outputLore
+        val cost = e.cost ?: return
+        e.cost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, (cost.cooldown * .75).roundToInt())
     }
 
     override fun clone(): Reforge {

@@ -1,15 +1,15 @@
 package space.maxus.macrocosm.events
 
-import net.kyori.adventure.text.Component
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.players.MacrocosmPlayer
 
-class AbilityCompileEvent(
+class CostCompileEvent(
+    val player: MacrocosmPlayer?,
     val item: MacrocosmItem,
-    val ability: MacrocosmAbility,
-    var lore: MutableList<Component>
+    var cost: AbilityCost?
 ) : Event() {
 
     companion object {

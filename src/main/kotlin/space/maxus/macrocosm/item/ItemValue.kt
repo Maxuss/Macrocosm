@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.ability.Ability
+import space.maxus.macrocosm.ability.types.item.AOTDAbility
 import space.maxus.macrocosm.ability.types.item.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
@@ -80,6 +81,12 @@ enum class ItemValue(val item: MacrocosmItem) {
         miningSpeed = 450f
         miningFortune = 150f
     }, mutableListOf(Ability.EMERALD_AFFECTION_PICKAXE.ability), breakingPower = 6)),
+
+    ASPECT_OF_THE_DRAGONS(AbilityItem(ItemType.SWORD, "Aspect of the Dragons", Rarity.LEGENDARY, Material.DIAMOND_SWORD, stats {
+        damage = 225f
+        strength = 100f
+        critChance = 15f
+    }, mutableListOf(AOTDAbility), applicableRunes = listOf(DefaultRune.CRYING_PEARL, DefaultRune.ADAMANTITE, DefaultRune.DIAMOND))),
 
     RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {
         damage = 250f

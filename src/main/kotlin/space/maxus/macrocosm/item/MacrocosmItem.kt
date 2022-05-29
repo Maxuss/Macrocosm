@@ -20,7 +20,7 @@ import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.UltimateEnchantment
-import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
@@ -400,9 +400,11 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             for (ability in abilities) {
                 val tmp = mutableListOf<Component>()
                 ability.buildLore(tmp, player)
-                val event = AbilityCompileEvent(this@MacrocosmItem, ability, tmp)
+                val event = CostCompileEvent(player, this@MacrocosmItem, ability.cost?.copy())
                 event.callEvent()
-                lore.addAll(event.lore)
+                lore.addAll(tmp)
+                event.cost?.buildLore(lore)
+                lore.add("".toComponent())
             }
 
             // reforge

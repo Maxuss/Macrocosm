@@ -21,11 +21,11 @@ object BeekeeperArmorBonus: FullSetBonus(
 
     override fun registerListeners() {
         listen<PlayerReceiveDamageEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
 
             val hits = amount[e.player.paper!!.uniqueId]
-            if(hits != null && hits > 0) {
+            if (hits != null && hits > 0) {
                 amount[e.player.paper!!.uniqueId] = hits - 1
                 e.isCancelled = true
                 particle(Particle.BLOCK_CRACK) {
@@ -42,7 +42,7 @@ object BeekeeperArmorBonus: FullSetBonus(
             }
 
             val ok = cost.ensureRequirements(e.player, id("honey_barrage"), false)
-            if(!ok)
+            if (!ok)
                 return@listen
 
             // can regenerate shield

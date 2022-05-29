@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.ability
 
 import space.maxus.macrocosm.ability.types.armor.*
+import space.maxus.macrocosm.ability.types.item.AOTDAbility
 import space.maxus.macrocosm.ability.types.item.EmeraldPickaxeBonus
 import space.maxus.macrocosm.ability.types.item.HoneycombBulwarkAbility
 import space.maxus.macrocosm.ability.types.item.InstantTransmission
@@ -40,7 +41,8 @@ enum class Ability(val ability: MacrocosmAbility) {
     SUPERIOR_DRAGON(SuperiorDragonBonus),
     UNSTABLE_DRAGON(UnstableDragonBonus),
     WISE_DRAGON(WiseDragonBonus),
-    YOUNG_DRAGON(YoungDragonBonus)
+    YOUNG_DRAGON(YoungDragonBonus),
+    AOTD(AOTDAbility)
 
     ;
 

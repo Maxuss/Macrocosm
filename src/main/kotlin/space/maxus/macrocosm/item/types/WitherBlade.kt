@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.item.types
 
 import net.axay.kspigot.event.listen
-import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.axay.kspigot.particles.particle
 import net.axay.kspigot.runnables.task
@@ -241,11 +240,9 @@ class WitherScrollAbility(
         for (desc in description.reduceToList()) {
             tmp.add(comp("<gray>$desc</gray>").noitalic())
         }
-        cost!!.buildLore(tmp)
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }
         lore.addAll(tmp)
-        lore.add("".toComponent())
     }
 }

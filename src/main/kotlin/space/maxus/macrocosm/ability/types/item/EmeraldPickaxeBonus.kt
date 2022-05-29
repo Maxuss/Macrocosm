@@ -42,7 +42,6 @@ object EmeraldPickaxeBonus : AbilityBase(
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }
         lore.addAll(tmp)
-        lore.add("".toComponent())
     }
 
     override fun registerListeners() {

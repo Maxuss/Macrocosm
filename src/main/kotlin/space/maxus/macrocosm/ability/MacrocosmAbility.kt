@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.ability
 
-import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.ChatColor
@@ -63,21 +62,5 @@ interface MacrocosmAbility {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }
         lore.addAll(tmp)
-        cost?.buildLore(lore)
-
-        lore.add("".toComponent())
     }
-
-    /**
-     * Small interceptor class used for updating ability lore
-     *
-     * @param abil Inner ability
-     */
-    class Interceptor(
-        abil: MacrocosmAbility,
-        override val name: String = abil.name,
-        override val description: String = abil.description,
-        override val type: AbilityType = abil.type,
-        override val cost: AbilityCost? = abil.cost,
-    ) : MacrocosmAbility
 }

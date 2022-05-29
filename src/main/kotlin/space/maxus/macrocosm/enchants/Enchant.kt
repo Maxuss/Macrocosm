@@ -421,7 +421,7 @@ enum class Enchant(val enchant: Enchantment) {
     GROWTH(
         SimpleEnchantment(
             "Growth",
-            "Increases your ${Statistic.HEALTH.display}<gray> by <green><health><gray>.",
+            "Increases your ${Statistic.HEALTH.display}<gray> by <green>[25]<gray>.",
             1..7,
             ItemType.armor(),
             stats {
@@ -431,7 +431,7 @@ enum class Enchant(val enchant: Enchantment) {
     PROTECTION(
         SimpleEnchantment(
             "Protection",
-            "Increases your ${Statistic.DEFENSE.display}<gray> by <green><defense><gray>.",
+            "Increases your ${Statistic.DEFENSE.display}<gray> by <green>[15]<gray>.",
             1..7,
             ItemType.armor(),
             stats {
@@ -441,7 +441,7 @@ enum class Enchant(val enchant: Enchantment) {
     TRUE_PROTECTION(
         SimpleEnchantment(
             "True Protection",
-            "Increases your ${Statistic.TRUE_DEFENSE.display}<gray> by <green><true_defense><gray>.",
+            "Increases your ${Statistic.TRUE_DEFENSE.display}<gray> by <green>[5]<gray>.",
             1..3,
             listOf(ItemType.CHESTPLATE),
             stats {
@@ -453,7 +453,7 @@ enum class Enchant(val enchant: Enchantment) {
     DISTURBANCE(
         SimpleEnchantment(
             "Disturbance",
-            "Increases your ${Statistic.STRENGTH.display}<gray> by <green><strength><gray>.",
+            "Increases your ${Statistic.STRENGTH.display}<gray> by <green>[10]<gray>.",
             1..2,
             listOf(ItemType.CHESTPLATE),
             stats {
@@ -464,7 +464,7 @@ enum class Enchant(val enchant: Enchantment) {
     // ultimate
     SUPERIOR(UltimateEnchantment(
         "Superior",
-        "Increases <blue>ALL<gray> your stats by <red><stat_boost_whole>%<gray>.",
+        "Increases <blue>ALL<gray> your stats by <red>[5]%<gray>.",
         1..5,
         ItemType.weapons(),
         multiplier = 1f,

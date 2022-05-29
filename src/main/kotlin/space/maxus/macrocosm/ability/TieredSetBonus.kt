@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.ability
 
-import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.ChatColor
@@ -47,8 +46,5 @@ open class TieredSetBonus(name: String, description: String) : AbilityBase(Abili
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }
         lore.addAll(tmp)
-        cost?.buildLore(lore)
-
-        lore.add("".toComponent())
     }
 }

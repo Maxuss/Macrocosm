@@ -1,12 +1,10 @@
 package space.maxus.macrocosm.enchants.type
 
-import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.UltimateEnchantment
-import space.maxus.macrocosm.events.AbilityCompileEvent
+import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.events.AbilityCostApplyEvent
 import space.maxus.macrocosm.item.ItemType
 import kotlin.math.roundToInt
@@ -23,18 +21,13 @@ object UltimateWiseEnchantment :
     }
 
     @EventHandler
-    fun onAbilityCompile(e: AbilityCompileEvent) {
+    fun onAbilityCompile(e: CostCompileEvent) {
         val (ok, lvl) = ensureRequirements(e.item)
         if (!ok)
             return
 
-        val cost = e.ability.cost ?: return
-        val clonedCost = AbilityCost((cost.mana * (1 - (lvl * .1f))).roundToInt(), cost.health, cost.cooldown)
-        val interceptor = MacrocosmAbility.Interceptor(e.ability, cost = clonedCost)
-
-        val outputLore = mutableListOf<Component>()
-        interceptor.buildLore(outputLore, null)
-        e.lore = outputLore
+        val cost = e.cost ?: return
+        e.cost = AbilityCost((cost.mana * (1 - (lvl * .1f))).roundToInt(), cost.health, cost.cooldown)
     }
 }
 
@@ -50,17 +43,12 @@ object UltimateBulkEnchantment :
     }
 
     @EventHandler
-    fun onAbilityCompile(e: AbilityCompileEvent) {
+    fun onAbilityCompile(e: CostCompileEvent) {
         val (ok, lvl) = ensureRequirements(e.item)
         if (!ok)
             return
 
-        val cost = e.ability.cost ?: return
-        val clonedCost = AbilityCost(cost.mana, (cost.health * (1 - (lvl * .1f))).roundToInt(), cost.cooldown)
-        val interceptor = MacrocosmAbility.Interceptor(e.ability, cost = clonedCost)
-
-        val outputLore = mutableListOf<Component>()
-        interceptor.buildLore(outputLore, null)
-        e.lore = outputLore
+        val cost = e.cost ?: return
+        e.cost = AbilityCost(cost.mana, (cost.health * (1 - (lvl * .1f))).roundToInt(), cost.cooldown)
     }
 }
