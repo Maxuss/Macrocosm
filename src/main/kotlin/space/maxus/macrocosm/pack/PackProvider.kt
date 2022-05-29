@@ -14,16 +14,12 @@ import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.recreateFile
 import java.io.BufferedInputStream
 import java.io.File
-import java.math.BigInteger
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlin.io.path.inputStream
-import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.outputStream
+import kotlin.io.path.*
 
 
 object PackProvider: Listener {
@@ -35,6 +31,7 @@ object PackProvider: Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onJoin(e: PlayerJoinEvent) {
+        println("Applying pack: $RESOURCE_PACK_LINK | $RESOURCE_PACK_HASH")
         if(RESOURCE_PACK_LINK == null) {
             e.player.kick(comp("<red>Macrocosm is loading, please wait!"))
             return
@@ -54,12 +51,23 @@ object PackProvider: Listener {
             val refreshToken = Macrocosm.config.getString("pack.refresh-token")!!
             val appKey = Macrocosm.config.getString("pack.app-key")
             val appSecret = Macrocosm.config.getString("pack.app-secret")
-            val link = upload(path.resolve(PACK_NAME).toFile(), DbxCredential(accessToken, 14400, refreshToken, appKey, appSecret)).replace(
+            val link = upload(path.resolve(PACK_NAME).toFile(), if(path.resolve("link.old").exists()) path.resolve("link.old").readText() else null, DbxCredential(accessToken, 14400, refreshToken, appKey, appSecret)).replace(
                 "dropbox.com",
                 "dl.dropboxusercontent.com"
             )
+            path.resolve("link.old").writeText(link)
             Macrocosm.logger.info("Finished uploading resource pack to server! Link: $link")
             RESOURCE_PACK_LINK = link
+
+            // calculating sha1 hash
+            val packFile = path.resolve(PACK_NAME)
+            val bytes = packFile.toFile().inputStream().readAllBytes()
+            val hasher = MessageDigest.getInstance("SHA-1")
+            val digest = hasher.digest(bytes)
+            val hash = bytesToHex(digest)
+            Macrocosm.logger.info("Resource pack SHA-1 hash: $hash")
+
+            RESOURCE_PACK_HASH = hash
         }
     }
 
@@ -107,19 +115,19 @@ object PackProvider: Listener {
         zip.close()
         zip.flush()
         Macrocosm.logger.info("Finished zipping resource pack, calculating hash...")
-
-        // calculating sha1 hash
-        val packFile = Path.of(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME)
-        val bytes = packFile.toFile().inputStream().readAllBytes()
-        val hasher = MessageDigest.getInstance("SHA-1")
-        val digest = hasher.digest(bytes)
-        val hash = BigInteger(1, digest).toString(16)
-        Macrocosm.logger.info("Resource pack SHA-1 hash: $hash")
-
-        RESOURCE_PACK_HASH = hash
     }
 
-    private fun upload(file: File, credential: DbxCredential): String {
+    private fun bytesToHex(arrayBytes: ByteArray): String {
+        val stringBuffer = StringBuffer()
+        for (i in arrayBytes.indices) {
+            stringBuffer.append(
+                ((arrayBytes[i].toInt() and 0xff) + 0x100).toString(16)
+                    .substring(1)
+            )
+        }
+        return stringBuffer.toString()
+    }
+    private fun upload(file: File, oldLink: String?, credential: DbxCredential): String {
         val config = DbxRequestConfig.newBuilder("Macrocosm/Pack-Uploader").build()
         val client = DbxClientV2(config, credential)
         if(credential.aboutToExpire())
@@ -130,10 +138,12 @@ object PackProvider: Listener {
             .uploadBuilder("/${file.name}")
             .withMode(WriteMode.OVERWRITE)
             .uploadAndFinish(stream, Long.MAX_VALUE)
+        if(oldLink != null)
+            client.sharing().revokeSharedLink(oldLink.replace("dl.dropboxusercontent.com", "dropbox.com"))
         return try {
             client.sharing().createSharedLinkWithSettings("/${file.name}").url
         } catch(e: Exception) {
-            return "https://www.dl.dropboxusercontent.com/s/yuvxnq7erb41mxq/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
+            return "https://www.dropbox.com/s/yuvxnq7erb41mxq/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
         }
     }
 }
