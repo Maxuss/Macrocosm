@@ -2,7 +2,6 @@ package space.maxus.macrocosm.enchants
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -18,7 +17,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import java.math.BigDecimal
 
 abstract class EnchantmentBase(
     override val name: String,
@@ -85,45 +84,10 @@ abstract class EnchantmentBase(
         base.multiply(multiplier * level)
         special.multiply(multiplier * level)
         val mm = MiniMessage.miniMessage()
-        val basePlaceholders = base.iter().map { (k, v) ->
-            Placeholder.parsed(
-                k.name.lowercase(), mm.serialize(
-                    if (!k.hidden) {
-                        k.type.formatSigned(v) ?: comp("0").color(k.type.color)
-                    } else {
-                        k.type.formatSigned(v * 100, true) ?: comp("0").color(k.type.color)
-                    }
-                )
-            )
-        }.toMutableList()
-        val specPlaceholders = special.iter().map { (k, v) ->
-            Placeholder.unparsed(k.name.lowercase(), Formatting.stats(v.toBigDecimal(), false))
+        val regulatedDescription = "\\[\\d.]+".toRegex().replace(description) {
+            Formatting.stats(BigDecimal.valueOf(java.lang.Double.parseDouble(it.value.removeSurrounding("[", "]")) * level * multiplier))
         }
-        val extraSpecPlaceholders = special.iter().map { (k, v) ->
-            Placeholder.unparsed("${k.name.lowercase()}_whole", Formatting.stats((100 * v).toBigDecimal(), true))
-        }
-        basePlaceholders.addAll(specPlaceholders)
-        basePlaceholders.addAll(extraSpecPlaceholders)
-        basePlaceholders.add(
-            Placeholder.unparsed(
-                "multiplier",
-                Formatting.stats((level * multiplier).toBigDecimal(), false)
-            )
-        )
-        basePlaceholders.add(
-            Placeholder.unparsed(
-                "multiplier_percents",
-                Formatting.stats((100 * level * multiplier).toBigDecimal())
-            )
-        )
-        basePlaceholders.add(
-            Placeholder.unparsed(
-                "multiplier_whole",
-                Formatting.stats((100 * level * multiplier).toBigDecimal(), true)
-            )
-        )
-        val arr = basePlaceholders.toTypedArray()
-        val reduced = description.reduceToList(25).map { mm.deserialize("<gray>$it", *arr).noitalic() }.toMutableList()
+        val reduced = regulatedDescription.reduceToList(25).map { mm.deserialize("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }

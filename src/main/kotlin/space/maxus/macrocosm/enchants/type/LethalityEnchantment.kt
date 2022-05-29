@@ -1,33 +1,18 @@
 package space.maxus.macrocosm.enchants.type
 
-import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.axay.kspigot.extensions.pluginKey
-import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.persistence.PersistentDataType
-import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
-import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
 
 object LethalityEnchantment :
-    EnchantmentBase("Lethality", "", 1..6, ItemType.melee(), conflicts = listOf("EXHALATION")) {
-    override fun description(level: Int): List<Component> {
-        val str =
-            "Reduces the ${Statistic.DEFENSE.display}<gray> of your target by <green>${Formatting.stats((level * 1.2f).toBigDecimal())}%<gray> each time you hit them. Stacks up to <green>${level + 1}<gray> times."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        return reduced
-    }
-
+    EnchantmentBase("Lethality", "Reduces the ${Statistic.DEFENSE.display}<gray> of your target by <green>[1.2]%<gray> each time yoy hit them. Stacks up to <green>[1]<gray> times.", 1..6, ItemType.melee(), conflicts = listOf("EXHALATION")) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead || e.damaged is Player)
@@ -57,15 +42,7 @@ object LethalityEnchantment :
 }
 
 object ExhalationEnchantment :
-    EnchantmentBase("Exhalation", "", 1..6, ItemType.melee(), conflicts = listOf("LETHALITY")) {
-    override fun description(level: Int): List<Component> {
-        val str =
-            "Reduces the ${Statistic.DAMAGE.display}<gray> of your target by <green>${Formatting.stats((level * .6f).toBigDecimal())}%<gray> each time you hit them. Stacks up to <green>${level + 1}<gray> times."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        return reduced
-    }
-
+    EnchantmentBase("Exhalation", "Reduces the ${Statistic.DAMAGE.display}<gray> of your target by <green>[0.6]%<gray> each time you git them. Stacks up to <green>[1]<gray> times.", 1..6, ItemType.melee(), conflicts = listOf("LETHALITY")) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead || e.damaged is Player)
@@ -81,7 +58,7 @@ object ExhalationEnchantment :
             pdc[pluginKey("exhalation_stacks"), PersistentDataType.BYTE] = 0
         }
         val stacks = pdc[pluginKey("exhalation_stacks"), PersistentDataType.BYTE]!!
-        if (stacks >= (lvl + 1))
+        if (stacks >= lvl)
             return
 
         pdc[pluginKey("exhalation_stacks"), PersistentDataType.BYTE] = (stacks + 1).toByte()

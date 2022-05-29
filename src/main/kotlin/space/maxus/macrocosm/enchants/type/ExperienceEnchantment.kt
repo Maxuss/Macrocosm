@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 object ExperienceEnchantment : EnchantmentBase(
     "Experience",
-    "Grants a <green><multiplier_whole>%<gray> chance for mobs and ores to drop <blue>double<gray> experience orbs.",
+    "Grants a <green>[12.5]%<gray> chance for mobs and ores to drop <blue>double<gray> experience orbs.",
     1..4,
     listOf(
         ItemType.PICKAXE,

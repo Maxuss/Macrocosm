@@ -1,35 +1,16 @@
 package space.maxus.macrocosm.enchants.type
 
-import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.axay.kspigot.extensions.pluginKey
-import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.persistence.PersistentDataType
-import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
-import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
 
 object FirstStrikeEnchantment :
-    EnchantmentBase("First Strike", "", 1..5, ItemType.melee(), conflicts = listOf("TRIPLE_STRIKE")) {
-    override fun description(level: Int): List<Component> {
-        val str = "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${
-            Formatting.stats(
-                (level * 25f).toBigDecimal(),
-                true
-            )
-        }%<gray> for the first hit on a mob."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        return reduced
-    }
-
+    EnchantmentBase("First Strike", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <blue>[25]%<gray> for the first hit on a mob.", 1..5, ItemType.melee(), conflicts = listOf("TRIPLE_STRIKE")) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead)
@@ -48,19 +29,7 @@ object FirstStrikeEnchantment :
 }
 
 object TripleStrikeEnchantment :
-    EnchantmentBase("Triple-Strike", "", 1..5, ItemType.melee(), conflicts = listOf("FIRST_STRIKE")) {
-    override fun description(level: Int): List<Component> {
-        val str = "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${
-            Formatting.stats(
-                (level * 10f).toBigDecimal(),
-                true
-            )
-        }%<gray> for the first three hits on a mob."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        return reduced
-    }
-
+    EnchantmentBase("Triple-Strike", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <blue>[10]%<gray> for the first three hits on a mob.", 1..5, ItemType.melee(), conflicts = listOf("FIRST_STRIKE")) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead)

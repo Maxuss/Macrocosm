@@ -14,7 +14,7 @@ enum class Enchant(val enchant: Enchantment) {
     SHARPNESS(
         SimpleEnchantment(
             "Sharpness",
-            "Increases all damage you deal towards your enemies by <damage_boost>%<gray>.",
+            "Increases all damage you deal towards your enemies by [10]%<gray>.",
             1..7,
             ItemType.melee(),
             stats {
@@ -93,7 +93,7 @@ enum class Enchant(val enchant: Enchantment) {
     VICIOUS(
         SimpleEnchantment(
             "Vicious",
-            "Increases your ${Statistic.FEROCITY.display}<gray> by <ferocity><gray>, which allows you to sometimes strike enemies <blue>twice<gray>.",
+            "Increases your ${Statistic.FEROCITY.display}<gray> by <red>[4]<gray>, which allows you to sometimes strike enemies <blue>twice<gray>.",
             1..4,
             multiplier = 1f,
             applicable = ItemType.weapons(),
@@ -106,7 +106,7 @@ enum class Enchant(val enchant: Enchantment) {
     RUTHLESS(
         SimpleEnchantment(
             "Ruthless",
-            "Increases your ${Statistic.BONUS_ATTACK_SPEED.display}<gray> by <bonus_attack_speed><gray>, which allows you to attack your enemies <blue>more often<gray>.",
+            "Increases your ${Statistic.BONUS_ATTACK_SPEED.display}<gray> by <yellow>[5]<gray>, which allows you to attack your enemies <blue>more often<gray>.",
             1..4,
             multiplier = 1f,
             applicable = ItemType.weapons(),
@@ -119,7 +119,7 @@ enum class Enchant(val enchant: Enchantment) {
     CRITICAL(
         SimpleEnchantment(
             "Critical",
-            "Increases your ${Statistic.CRIT_DAMAGE.display}<gray> by <crit_damage><gray>, which allows you to do more critical hit damage.",
+            "Increases your ${Statistic.CRIT_DAMAGE.display}<gray> by <blue>[10]<gray>, which allows you to do more critical hit damage.",
             1..7,
             multiplier = 1f,
             applicable = ItemType.melee(),
@@ -132,7 +132,7 @@ enum class Enchant(val enchant: Enchantment) {
     PRECISE(
         SimpleEnchantment(
             "Precise",
-            "Increases your ${Statistic.CRIT_CHANCE.display}<gray> by <crit_chance><gray>, which allows you to deal <blue>critical hits<gray> more often.",
+            "Increases your ${Statistic.CRIT_CHANCE.display}<gray> by <blue>[5]<gray>, which allows you to deal <blue>critical hits<gray> more often.",
             1..7,
             multiplier = 0.5f,
             applicable = ItemType.melee(),
@@ -145,7 +145,7 @@ enum class Enchant(val enchant: Enchantment) {
     KNOCKBACK(
         SimpleEnchantment(
             "Knockback",
-            "Increases your <green>Bonus Knockback<gray> by <green><kb_boost>%<gray>, which allows you to strike enemies further from you.",
+            "Increases your <green>Bonus Knockback<gray> by <green>[10]%<gray>, which allows you to strike enemies further from you.",
             1..3,
             multiplier = 1f,
             applicable = ItemType.weapons(),
@@ -157,7 +157,7 @@ enum class Enchant(val enchant: Enchantment) {
     LUCK(
         SimpleEnchantment(
             "Luck",
-            "Increases your ${Statistic.MAGIC_FIND.display}<gray> by <green><magic_find><gray>, which grants higher chance of getting rare drops.",
+            "Increases your ${Statistic.MAGIC_FIND.display}<gray> by <aqua>[3]<gray>, which grants higher chance of getting rare drops.",
             1..4,
             multiplier = 2f,
             applicable = ItemType.weapons(),

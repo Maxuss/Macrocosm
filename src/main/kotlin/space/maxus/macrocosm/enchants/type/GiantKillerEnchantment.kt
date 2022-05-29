@@ -1,35 +1,16 @@
 package space.maxus.macrocosm.enchants.type
 
-import net.axay.kspigot.extensions.bukkit.toLegacyString
-import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
-import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
-import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
 import kotlin.math.min
 
 object GiantKillerEnchantment :
-    EnchantmentBase("Giant Killer", "", 1..7, ItemType.melee(), conflicts = listOf("TITAN_KILLER")) {
-    override fun description(level: Int): List<Component> {
-        val str =
-            "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((0.02 * level).toBigDecimal())}%<gray> for each percent of extra ${Statistic.HEALTH.display}<gray> that your target has above you up to <green>${
-                Formatting.stats(
-                    (5 * level).toBigDecimal(),
-                    true
-                )
-            }%<gray>."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        return reduced
-    }
+    EnchantmentBase("Giant Killer", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>[0.02]%<gray> for each percent of extra ${Statistic.HEALTH.display}<gray> that your target has above you up to <green>[5]%<gray>.", 1..7, ItemType.melee(), conflicts = listOf("TITAN_KILLER")) {
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
@@ -55,19 +36,7 @@ object GiantKillerEnchantment :
 }
 
 object TitanKillerEnchantment :
-    EnchantmentBase("Titan Killer", "", 1..7, ItemType.melee(), conflicts = listOf("GIANT_KILLER")) {
-    override fun description(level: Int): List<Component> {
-        val str =
-            "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>${Formatting.stats((2 * level).toBigDecimal())}%<gray> for each percent of extra ${Statistic.DEFENSE.display}<gray> that your target has above you up to <green>${
-                Formatting.stats(
-                    (10 * level).toBigDecimal(),
-                    true
-                )
-            }%<gray>."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        return reduced
-    }
+    EnchantmentBase("Titan Killer", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>[2]%<gray> for each percent of extra ${Statistic.DEFENSE.display}<gray> that your target has above you up to <green>[10]%<gray>.", 1..7, ItemType.melee(), conflicts = listOf("GIANT_KILLER")) {
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {

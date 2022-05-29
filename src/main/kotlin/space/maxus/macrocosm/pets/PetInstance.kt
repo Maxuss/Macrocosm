@@ -21,6 +21,7 @@ import java.util.*
 
 class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey: String) {
     val prototype: Pet get() = Registry.PET.find(base)
+    var floatingPaused: Boolean = false
     private val entity: LivingEntity? get() = Bukkit.getEntity(entityId) as? LivingEntity
 
     fun table(player: MacrocosmPlayer): LevelingTable {
@@ -113,6 +114,9 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
                 it.cancel()
                 return@task
             }
+
+            if(floatingPaused)
+                return@task
 
             val paper = player.paper
             if (paper == null) {
