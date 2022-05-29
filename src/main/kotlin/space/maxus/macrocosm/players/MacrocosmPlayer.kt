@@ -379,7 +379,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if (baseItem.type == Material.AIR)
                 return@forEach
             val item = Items.toMacrocosm(baseItem) ?: return@forEach
-            cloned.increase(item.stats())
+            cloned.increase(item.stats(this))
         }
         if (activePet != null) {
             cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
@@ -391,9 +391,14 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val event = PlayerCalculateStatsEvent(this, cloned)
         event.callEvent()
 
-        statCache = event.stats.clone()
+        val cache = event.stats.clone()
+        val capBoost = if(specialCache != null) {
+            specialCache!!.speedCapBoost
+        } else 0f
+        cache.speed = min(400 + capBoost, cache.speed)
+        statCache = cache.clone()
 
-        return event.stats
+        return cache
     }
 
     private fun recalculateSpecialStats(): SpecialStatistics {

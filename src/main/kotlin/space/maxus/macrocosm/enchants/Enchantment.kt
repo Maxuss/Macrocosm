@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.event.Listener
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.item.ItemType
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -29,7 +30,7 @@ interface Enchantment : Listener {
 
     fun description(level: Int): List<Component>
 
-    fun stats(level: Int): Statistics = Statistics.zero()
+    fun stats(level: Int, player: MacrocosmPlayer? = null): Statistics = Statistics.zero()
     fun special(level: Int): SpecialStatistics = SpecialStatistics()
 
     fun displayFancy(lore: MutableList<Component>, level: Int) {

@@ -15,7 +15,7 @@ import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.item.InstantTransmission
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.item.runes.VanillaRune
+import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Identifier
@@ -94,7 +94,7 @@ enum class ItemValue(val item: MacrocosmItem) {
         strength = 200f
         critDamage = 150f
         critChance = 25f
-    }, extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability), runes = listOf(VanillaRune.REDSTONE, VanillaRune.EMERALD))),
+    }, extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability), runes = listOf(DefaultRune.REDSTONE, DefaultRune.EMERALD))),
 
     // reforge stones
     WITHER_BLOOD(

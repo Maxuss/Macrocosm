@@ -82,7 +82,7 @@ class TrophyFish(
 
     }
 
-    override fun stats(): Statistics {
+    override fun stats(player: MacrocosmPlayer?): Statistics {
         return Statistics.zero()
     }
 

@@ -9,11 +9,13 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.nbt.CompoundTag
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.LeatherArmorMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
@@ -37,6 +39,8 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
+
+fun colorMeta(color: Int): (ItemMeta) -> Unit = { (it as LeatherArmorMeta).setColor(Color.fromRGB(color)) }
 
 private fun starColor(star: Int): TextColor {
     return if (star >= 15) NamedTextColor.GREEN
@@ -108,11 +112,11 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         reforge = ref
     }
 
-    fun stats(): Statistics {
+    fun stats(player: MacrocosmPlayer? = null): Statistics {
         val base = stats.clone()
         val special = specialStats()
         for ((ench, level) in enchantments) {
-            base.increase(ench.stats(level))
+            base.increase(ench.stats(level, player))
         }
         base.increase(reforge?.stats(rarity))
         for ((rune, state) in runes) {
@@ -125,7 +129,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         // 2% boost from stars
         base.multiply(1 + (stars * .02f))
 
-        val e = ItemCalculateStatsEvent(this, base)
+        val e = ItemCalculateStatsEvent(player, this, base)
         e.callEvent()
         return e.stats
     }
@@ -317,7 +321,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             }
 
             // stats
-            val formattedStats = stats().formatSimple(this@MacrocosmItem)
+            val formattedStats = stats(player).formatSimple(this@MacrocosmItem)
             lore.addAll(formattedStats)
             if (formattedStats.isNotEmpty())
                 lore.add("".toComponent())

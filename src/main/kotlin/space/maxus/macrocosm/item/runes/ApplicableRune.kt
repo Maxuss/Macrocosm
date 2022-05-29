@@ -37,13 +37,18 @@ private fun colorFromTier(tier: Int): TextColor {
     }
 }
 
-enum class VanillaRune(private val char: String, private val color: TextColor, private val baseStats: Statistics) :
-    ApplicableRune {
-    EMERALD("◎", TextColor.color(0x50CC8E), stats { critDamage = 5f }),
+enum class DefaultRune(private val char: String, private val color: TextColor, private val baseStats: Statistics): ApplicableRune {
+    EMERALD("◎", TextColor.color(0x20FB58), stats { critDamage = 5f }),
     DIAMOND("◆", TextColor.color(0x50B6CC), stats { intelligence = 10f }),
-    REDSTONE("☄", TextColor.color(0xCC6350), stats { strength = 4f }),
-    AMETHYST("▒", TextColor.color(0x9950CC), stats { defense = 15f })
-
+    REDSTONE("☄", TextColor.color(0xCC6350), stats { health = 10f }),
+    AMETHYST("▒", TextColor.color(0x9950CC), stats { defense = 15f }),
+    SILVER("★", TextColor.color(0xF6FDFA), stats { critChance = 2f }),
+    MITHRIL("⚑", TextColor.color(0x70EFBC), stats { miningSpeed = 10f; miningFortune = 5f }),
+    ADAMANTITE("\uD83D\uDD25", TextColor.color(0xFB7420), stats { strength = 6f }),
+    CRYING_PEARL("∞", TextColor.color(0xFDFC6B), stats { attackSpeed = 2.5f }),
+    MOONSTONE("☽", TextColor.color(0xFFEEB8), stats { intelligence = 5f; abilityDamage = 2.5f }),
+    PRISMARITE("⚓", TextColor.color(0x15C38B), stats { seaCreatureChance = .5f }),
+    CRYSTALLITE("\uD83C\uDFA3", TextColor.color(0x2485EC), stats { treasureChance = .5f })
     ;
 
     override val id: Identifier = id(name.lowercase())

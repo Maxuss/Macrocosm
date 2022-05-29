@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.commands
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
@@ -233,6 +234,30 @@ fun itemCommand() = command("getitem") {
                     )
                 )
             }
+        }
+    }
+}
+
+fun armorCommand() = command("getarmor") {
+    requires { it.hasPermission(4) }
+    argument("item", StringArgumentType.string()) {
+        suggestList { ctx ->
+            Registry.ITEM.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull("item") ?: ""
+                )
+            }
+        }
+
+        runs {
+            val item = getArgument<String>("item")
+            val p = player.macrocosm!!
+            val boots = Registry.ITEM.find(id("${item}_boots"))
+            val legs = Registry.ITEM.find(id("${item}_leggings"))
+            val chest = Registry.ITEM.find(id("${item}_chestplate"))
+            val helmet = Registry.ITEM.find(id("${item}_helmet"))
+
+            player.inventory.addItem(boots.build(p)!!, legs.build(p)!!, chest.build(p)!!, helmet.build(p)!!)
         }
     }
 }

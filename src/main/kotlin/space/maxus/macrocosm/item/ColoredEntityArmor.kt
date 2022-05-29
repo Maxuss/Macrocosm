@@ -15,6 +15,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -52,7 +53,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
         leather.setColor(Color.fromRGB(this.color))
     }
 
-    override fun stats(): Statistics {
+    override fun stats(player: MacrocosmPlayer?): Statistics {
         return Statistics.zero()
     }
 
@@ -112,7 +113,7 @@ class SkullEntityHead(private var skin: String) : MacrocosmItem {
         skull.playerProfile = profile
     }
 
-    override fun stats(): Statistics {
+    override fun stats(player: MacrocosmPlayer?): Statistics {
         return Statistics.zero()
     }
 

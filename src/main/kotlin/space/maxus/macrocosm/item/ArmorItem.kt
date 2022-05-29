@@ -13,7 +13,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.id
 import java.util.*
 
-class ArmorItem(
+open class ArmorItem(
     val baseName: String,
     val baseId: String,
     private val baseMaterial: String,

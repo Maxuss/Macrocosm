@@ -15,7 +15,7 @@ import space.maxus.macrocosm.fishing.TrophyFishes
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
-import space.maxus.macrocosm.item.runes.VanillaRune
+import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.pack.PackProvider
@@ -73,7 +73,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Enchant.init()
         RecipeValue.init()
         Armor.init()
-        VanillaRune.init()
+        DefaultRune.init()
         Buffs.init()
         EntityValue.init()
         PetValue.init()
@@ -107,6 +107,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         itemsCommand()
         summonCommand()
         giveAdminItemCommand()
+        armorCommand()
 
         testStatsCommand()
         testLevelUp()

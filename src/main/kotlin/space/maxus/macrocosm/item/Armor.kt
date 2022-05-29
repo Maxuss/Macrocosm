@@ -1,11 +1,10 @@
 package space.maxus.macrocosm.item
 
 import org.bukkit.inventory.meta.LeatherArmorMeta
-import space.maxus.macrocosm.ability.types.armor.AmethystArmorBonus
-import space.maxus.macrocosm.ability.types.armor.BeekeeperArmorBonus
-import space.maxus.macrocosm.ability.types.armor.EmeraldArmorBonus
+import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.item.runes.VanillaRune
+import space.maxus.macrocosm.item.runes.DefaultRune
+import space.maxus.macrocosm.item.types.DragonArmor
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.id
@@ -18,11 +17,11 @@ object Armor {
         health = 100f
         miningFortune = 30f
         defense = 30f
-        strength = 20f
+        strength = 10f
     }, abilities = listOf(EmeraldArmorBonus), commonMeta = {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
-    }, runes = listOf(VanillaRune.EMERALD, VanillaRune.DIAMOND)))
+    }, runes = listOf(DefaultRune.EMERALD, DefaultRune.DIAMOND)))
 
     val AMETHYST_ARMOR = register(ArmorItem("Amethyst", "amethyst", "LEATHER", Rarity.RARE, stats {
         health = 80f
@@ -40,14 +39,14 @@ object Armor {
     }, bootMeta = {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0x50177F))
-    }, runes = listOf(VanillaRune.AMETHYST, VanillaRune.DIAMOND)))
+    }, runes = listOf(DefaultRune.AMETHYST, DefaultRune.DIAMOND)))
 
     val BEEKEEPER_ARMOR = register(ArmorItem("Beekeeper", "beekeeper", "LEATHER", Rarity.EPIC, stats {
-        health = 150f
+        health = 100f
         defense = 35f
         speed = 15f
-        strength = 15f
-        critDamage = 10f
+        strength = 8f
+        critDamage = 5f
     }, abilities = listOf(BeekeeperArmorBonus),
         headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjY0MTY5MDc2ZGJkYjg3ZjI3OTQ0OGQ1YTE2ZmY3OGJiMGEyYjU3NTAzYzIxOGUyMTczMmRiYTlmN2Y5ZjU1YSJ9fX0=",
     chestMeta = {
@@ -62,7 +61,126 @@ object Armor {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0xECAA38))
     },
-    runes = listOf(VanillaRune.REDSTONE, VanillaRune.EMERALD)))
+    runes = listOf(DefaultRune.REDSTONE, DefaultRune.EMERALD)))
+
+    // todo: dragon pet bonus
+    val SUPERIOR_DRAGON_ARMOR = register(DragonArmor(
+        "Superior",
+        "superior_dragon",
+        stats {
+            health = 150f
+            defense = 190f
+            speed = 3f
+            critChance = 2f
+            strength = 15f
+            intelligence = 25f
+            critDamage = 15f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU1OGVmYmU2Njk3NjA5OWNmZDYyNzYwZDllMDUxNzBkMmJiOGY1MWU2ODgyOWFiOGEwNTFjNDhjYmM0MTVjYiJ9fX0=",
+        0xF2DF11,
+        0xF2DF11,
+        0xF25D18,
+        abilities = mutableListOf(SuperiorDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.EMERALD, DefaultRune.CRYSTALLITE, DefaultRune.ADAMANTITE),
+    ))
+
+    val STRONG_DRAGON_ARMOR = register(DragonArmor(
+        "Strong",
+        "strong_dragon",
+        stats {
+            strength = 25f
+            health = 120f
+            defense = 160f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWZkZTA5NjAzYjAyMjViOWQyNGE3M2EwZDNmM2UzYWYyOTA1OGQ0NDhjY2Q3Y2U1YzY3Y2QwMmZhYjBmZjY4MiJ9fX0=",
+        0xD91E41,
+        0xE09419,
+        0xF0D124,
+        abilities = mutableListOf(StrongDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.REDSTONE, DefaultRune.AMETHYST, DefaultRune.ADAMANTITE),
+    ))
+
+    val OLD_DRAGON_ARMOR = register(DragonArmor(
+        "Old",
+        "old_dragon",
+        stats {
+            health = 200f
+            defense = 160f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTllOWU1NjAwNDEwYzFkMDI1NDQ3NGE4MWZlY2ZiMzg4NWMxY2Y2ZjUwNDE5MGQ4NTZmMGVjN2M5ZjA1NWM0MiJ9fX0=",
+        0xF0E6AA,
+        0xF0E6AA,
+        0xF0E6AA,
+        abilities = mutableListOf(OldDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.AMETHYST, DefaultRune.REDSTONE, DefaultRune.ADAMANTITE),
+    ))
+
+    val YOUNG_DRAGON_ARMOR = register(DragonArmor(
+        "Young",
+        "young_dragon",
+        stats {
+            health = 120f
+            defense = 160f
+            speed = 20f
+            attackSpeed = 10f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWM0ODZhZjNiODgyNzY2ZTgyYTBiYzE2NjVmZjAyZWI2ZTg3M2I2ZTBkNzcxZjNhZGFiYzc1OWI3MjAyMjZhIn19fQ==",
+        0xDDE4F0,
+        0xDDE4F0,
+        0xCCFD6B,
+        abilities = mutableListOf(YoungDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.CRYING_PEARL, DefaultRune.SILVER, DefaultRune.ADAMANTITE)
+    ))
+
+    val UNSTABLE_DRAGON_ARMOR = register(DragonArmor(
+        "Unstable",
+        "unstable_dragon",
+        stats {
+            health = 120f
+            defense = 160f
+            critChance = 5f
+            critDamage = 15f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjkyMmI1ZjhkNTU0Y2E5MjNmOTY4MzJhNWE0ZTkxNjliYzJjZGIzNjBhMmIwNmViZWMwOWI2YTZhZjQ2MThlMyJ9fX0=",
+        0xB212E3,
+        0xB212E3,
+        0x2C013A,
+        abilities = mutableListOf(UnstableDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.EMERALD, DefaultRune.SILVER, DefaultRune.AMETHYST)
+    ))
+
+    val PROTECTOR_DRAGON_ARMOR = register(DragonArmor(
+        "Protector",
+        "protector_dragon",
+        stats {
+            health = 100f
+            defense = 250f
+            trueDefense = 25f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3YTU5NmNkYzRiMTFhOTk0OGZmYTM4YzJhYTNjNjk0MmVmNDQ5ZWIwYTM5ODIyODFkM2E1YjVhMTRlZjZhZSJ9fX0=",
+        0x99978B,
+        0x99978B,
+        0x99978B,
+        abilities = mutableListOf(ProtectorDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.AMETHYST, DefaultRune.REDSTONE, DefaultRune.MITHRIL)
+    ))
+
+    val WISE_DRAGON_ARMOR = register(DragonArmor(
+        "Wise",
+        "wise_dragon",
+        stats {
+            health = 120f
+            defense = 160f
+            intelligence = 80f
+            abilityDamage = 8f
+        },
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWEyOTg0Y2YwN2M0OGRhOTcyNDgxNmE4ZmYwODY0YmM2OGJjZTY5NGNlOGJkNmRiMjExMmI2YmEwMzEwNzBkZSJ9fX0=",
+        0x29F0E9,
+        0xACF7F4,
+        0x29F0E9,
+        abilities = mutableListOf(WiseDragonBonus),
+        applicableRuns = mutableListOf(DefaultRune.MOONSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST)
+    ))
 
     private fun register(item: ArmorItem): ArmorItem {
         cache.add(item)
@@ -85,7 +203,6 @@ object Armor {
 
             for (element in cache) {
                 pool.execute {
-                    info("Registering ${element.baseName} armor set")
                     internalRegisterSingle(element)
                 }
             }

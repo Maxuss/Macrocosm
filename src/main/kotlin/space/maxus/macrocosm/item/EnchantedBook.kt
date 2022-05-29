@@ -10,6 +10,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -49,7 +50,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
 
     }
 
-    override fun stats(): Statistics {
+    override fun stats(player: MacrocosmPlayer?): Statistics {
         return Statistics.zero()
     }
 

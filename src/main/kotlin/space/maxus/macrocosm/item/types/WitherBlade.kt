@@ -38,7 +38,7 @@ import space.maxus.macrocosm.item.AbilityItem
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
-import space.maxus.macrocosm.item.runes.VanillaRune
+import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -176,7 +176,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     rarity,
     base,
     stats,
-    applicableRunes = listOf(VanillaRune.REDSTONE, VanillaRune.DIAMOND, VanillaRune.EMERALD)
+    applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.DIAMOND, DefaultRune.EMERALD)
 ) {
     fun addScroll(scroll: WitherScrollAbility) {
         if (abilities.contains(WITHER_SCROLL_WITHER_IMPACT))

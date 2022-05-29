@@ -1,8 +1,6 @@
 package space.maxus.macrocosm.ability
 
-import space.maxus.macrocosm.ability.types.armor.AmethystArmorBonus
-import space.maxus.macrocosm.ability.types.armor.BeekeeperArmorBonus
-import space.maxus.macrocosm.ability.types.armor.EmeraldArmorBonus
+import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.ability.types.item.EmeraldPickaxeBonus
 import space.maxus.macrocosm.ability.types.item.HoneycombBulwarkAbility
 import space.maxus.macrocosm.ability.types.item.InstantTransmission
@@ -34,7 +32,15 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     SHORTBOW_GENERIC(ShortbowAbility),
 
-    HONEYCOMB_BULWARK(HoneycombBulwarkAbility)
+    HONEYCOMB_BULWARK(HoneycombBulwarkAbility),
+
+    OLD_DRAGON(OldDragonBonus),
+    PROTECTOR_DRAGON(ProtectorDragonBonus),
+    STRONG_DRAGON(StrongDragonBonus),
+    SUPERIOR_DRAGON(SuperiorDragonBonus),
+    UNSTABLE_DRAGON(UnstableDragonBonus),
+    WISE_DRAGON(WiseDragonBonus),
+    YOUNG_DRAGON(YoungDragonBonus)
 
     ;
 

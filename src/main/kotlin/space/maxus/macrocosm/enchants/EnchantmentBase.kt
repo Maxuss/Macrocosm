@@ -10,6 +10,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.events.EnchantCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
@@ -66,10 +67,12 @@ abstract class EnchantmentBase(
     }
 
 
-    override fun stats(level: Int): Statistics {
+    override fun stats(level: Int, player: MacrocosmPlayer?): Statistics {
         val clone = baseStats.clone()
         clone.multiply(multiplier * level)
-        return clone
+        val event = EnchantCalculateStatsEvent(player, this, clone)
+        event.callEvent()
+        return event.stats
     }
 
     override fun special(level: Int): SpecialStatistics {

@@ -511,7 +511,7 @@ object DamageHandlers : Listener {
                 comp("<white>❄ <aqua>$damageDisplay<white> ❄")
             }
             DamageType.ELECTRIC -> {
-                comp("<white>\uD83D\uDDF2 <yellow>$damageDisplay<white> \uD83D\uDDF2")
+                comp("<white>⚡ <yellow>$damageDisplay<white> ⚡")
             }
             DamageType.MAGIC -> {
                 comp("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")

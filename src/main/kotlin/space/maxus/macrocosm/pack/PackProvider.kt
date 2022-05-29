@@ -143,7 +143,7 @@ object PackProvider: Listener {
         return try {
             client.sharing().createSharedLinkWithSettings("/${file.name}").url
         } catch(e: Exception) {
-            return "https://www.dropbox.com/s/yuvxnq7erb41mxq/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
+            return "https://www.dl.dropboxusercontent.com/s/a53olrtucx8b2u5/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
         }
     }
 }

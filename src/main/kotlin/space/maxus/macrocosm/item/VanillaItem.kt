@@ -17,7 +17,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.item.runes.RuneState
-import space.maxus.macrocosm.item.runes.VanillaRune
+import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -237,12 +237,12 @@ private fun getGemsForItem(item: Material): List<ApplicableRune> {
 
     // weapons
     when (item) {
-        Material.STONE_SWORD, Material.STONE_AXE -> return listOf(VanillaRune.AMETHYST)
-        Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_HOE -> return listOf(VanillaRune.DIAMOND)
+        Material.STONE_SWORD, Material.STONE_AXE -> return listOf(DefaultRune.AMETHYST)
+        Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_HOE -> return listOf(DefaultRune.DIAMOND)
         Material.NETHERITE_SWORD, Material.NETHERITE_AXE -> return listOf(
-            VanillaRune.AMETHYST,
-            VanillaRune.REDSTONE,
-            VanillaRune.EMERALD
+            DefaultRune.AMETHYST,
+            DefaultRune.REDSTONE,
+            DefaultRune.EMERALD
         )
         else -> {}
     }
@@ -250,16 +250,16 @@ private fun getGemsForItem(item: Material): List<ApplicableRune> {
     // other equipment
     val name = item.name
     if (name.contains("GOLD"))
-        return listOf(VanillaRune.EMERALD)
+        return listOf(DefaultRune.EMERALD)
     if (name.contains("LEATHER"))
-        return listOf(VanillaRune.AMETHYST)
+        return listOf(DefaultRune.AMETHYST)
     if (name.contains("IRON"))
-        return listOf(VanillaRune.REDSTONE)
+        return listOf(DefaultRune.REDSTONE)
     if (name.contains("DIAMOND")) {
-        return listOf(VanillaRune.DIAMOND, VanillaRune.AMETHYST)
+        return listOf(DefaultRune.DIAMOND, DefaultRune.AMETHYST)
     }
     if (name.contains("NETHERITE")) {
-        return listOf(VanillaRune.EMERALD, VanillaRune.REDSTONE, VanillaRune.DIAMOND)
+        return listOf(DefaultRune.EMERALD, DefaultRune.REDSTONE, DefaultRune.DIAMOND)
     }
     return listOf()
 }
