@@ -4,6 +4,7 @@ import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.oauth.DbxCredential
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
+import com.google.common.io.BaseEncoding
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -24,7 +25,7 @@ import kotlin.io.path.*
 
 object PackProvider: Listener {
     private var RESOURCE_PACK_LINK: String? = null
-    private var RESOURCE_PACK_HASH: String = "null"
+    private var RESOURCE_PACK_HASH: ByteArray = ByteArray(1)
 
     const val PACK_NAME = "§5§lMacrocosm §d§lPack.zip"
     private const val BUFFER_SIZE = 4096
@@ -36,7 +37,7 @@ object PackProvider: Listener {
             e.player.kick(comp("<red>Macrocosm is loading, please wait!"))
             return
         }
-        e.player.setResourcePack(RESOURCE_PACK_LINK!!, RESOURCE_PACK_HASH, true, comp("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"))
+        e.player.setResourcePack(RESOURCE_PACK_LINK!!, RESOURCE_PACK_HASH, comp("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"), true)
     }
 
     fun init() {
@@ -64,10 +65,9 @@ object PackProvider: Listener {
             val bytes = packFile.toFile().inputStream().readAllBytes()
             val hasher = MessageDigest.getInstance("SHA-1")
             val digest = hasher.digest(bytes)
-            val hash = bytesToHex(digest)
-            Macrocosm.logger.info("Resource pack SHA-1 hash: $hash")
+            Macrocosm.logger.info("Resource pack SHA-1 hash: ${BaseEncoding.base16().encode(digest)}")
 
-            RESOURCE_PACK_HASH = hash
+            RESOURCE_PACK_HASH = digest
         }
     }
 

@@ -12,6 +12,8 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.item.LimitedEditionItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.item.types.WitherScrollAbility
@@ -35,6 +37,34 @@ fun recombobulateCommand() = command("recombobulate") {
     }
 }
 
+fun giveAdminItemCommand() = command("giveadminstuff") {
+    requires { it.hasPermission(4) }
+    argument("to", EntityArgument.player()) {
+        argument("item", ResourceLocationArgument.id()) {
+            suggestList {
+                Registry.ITEM.iter().filter { (_, v) -> v is LimitedEditionItem }.keys
+                    .filter { k -> k.path.contains(it.getArgumentOrNull<ResourceLocation>("item")?.path ?: "") }
+            }
+
+            runs {
+                val id = getArgument<ResourceLocation>("item").macrocosm
+                val item = Registry.ITEM.find(id)
+                if (item !is LimitedEditionItem)
+                    return@runs
+                val to = getArgument<EntitySelector>("to").findSinglePlayer(this.nmsContext.source).bukkitEntity
+                val toDisplay = to.displayName()
+                val fromDisplay = player.displayName()
+                val edition = Database.Limited.incrementGet(id)
+                item.givenTo = toDisplay
+                item.givenBy = fromDisplay
+                item.edition = edition
+                player.sendMessage(comp("<green>You have given ").append(toDisplay).append(comp("<green> #$edition ${item.nameStr}!")))
+                to.sendMessage(fromDisplay.append(comp("<gold> has given you <red>#$edition ${item.nameStr}<gold>! <aqua><bold>WOW!")))
+                to.inventory.addItem(item.build(to.macrocosm!!)!!)
+            }
+        }
+    }
+}
 
 fun setStarsCommand() = command("setstars") {
     requires { it.hasPermission(4) }

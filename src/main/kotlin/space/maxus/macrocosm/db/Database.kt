@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.db
 
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.Statistic
 import java.nio.file.Path
 import java.sql.Connection
@@ -67,6 +68,14 @@ object Database {
                 )
                 """.trimIndent()
             )
+            st.executeUpdate(
+                """
+                CREATE TABLE LimitedEdition(
+                ITEM VARCHAR PRIMARY KEY,
+                AMOUNT INT
+                )
+                """.trimIndent()
+            )
             var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
             for (stat in Statistic.values()) {
                 statQuery += ", ${stat.name} REAL"
@@ -88,5 +97,16 @@ object Database {
         }
         stmt.close()
         return out
+    }
+
+    object Limited {
+        fun incrementGet(item: Identifier): Int {
+            val stmt = statement
+            val res = stmt.executeQuery("SELECT * FROM LimitedEdition WHERE ITEM='$item'")
+            val edition = (if(res.next()) res.getInt("AMOUNT") else 0) + 1
+            stmt.executeUpdate("INSERT OR REPLACE INTO LimitedEdition VALUES('$item', $edition)")
+            stmt.close()
+            return edition
+        }
     }
 }

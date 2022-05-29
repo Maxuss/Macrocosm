@@ -229,6 +229,16 @@ enum class ItemValue(val item: MacrocosmItem) {
     ),
     SKULL_ENTITY_HEAD(
         SkullEntityHead("null")
+    ),
+
+    // admin items
+    MAXUS_CAT_PLUSHIE(
+        LimitedEditionItem(ItemType.OTHER, "Maxus' Cat Plushie", Rarity.SPECIAL, Material.PLAYER_HEAD, stats { intelligence = -1f }, metaModifier = {
+            val skull = it as SkullMeta
+            val profile = Bukkit.createProfile(UUID.randomUUID())
+            profile.setProperty(ProfileProperty("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM1MjUzYjBjOTZhZTRmYmNkZTY2OWJjYmE4ZWRjNDk5MTRmMmU5NTVmMDUyMjU5NTkxMWE3OTE5Yjk1OTdkMyJ9fX0"))
+            skull.playerProfile = profile
+        })
     )
 
     ;

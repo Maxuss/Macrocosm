@@ -15,13 +15,13 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 
 open class AbilityItem(
-    override val type: ItemType, private val itemName: String, override var rarity: Rarity, override val base: Material,
+    override val type: ItemType, protected val itemName: String, override var rarity: Rarity, override val base: Material,
     override var stats: Statistics,
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
     override var breakingPower: Int = 0,
     applicableRunes: List<ApplicableRune> = listOf(),
-    private val metaModifier: (ItemMeta) -> Unit = { }
+    protected val metaModifier: (ItemMeta) -> Unit = { }
 ) : MacrocosmItem {
     override var amount: Int = 1
     override var stars: Int = 0

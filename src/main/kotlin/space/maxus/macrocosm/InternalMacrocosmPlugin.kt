@@ -106,6 +106,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         spawnPetCommand()
         itemsCommand()
         summonCommand()
+        giveAdminItemCommand()
 
         testStatsCommand()
         testLevelUp()
