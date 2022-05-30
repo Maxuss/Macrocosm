@@ -15,7 +15,7 @@ enum class PetValue(val pet: Pet) {
 
     companion object {
         fun init() {
-            Registry.PET.delegateRegistration(values().map { id(it.name.lowercase()) to it.pet }) { id, pet ->
+            Registry.PET.delegateRegistration(values().map { id(it.name.lowercase()) to it.pet }) { _, pet ->
                 pet.registerItem()
             }
         }

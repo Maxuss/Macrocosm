@@ -37,7 +37,9 @@ object AOTDAbility: AbilityBase(
             val damage = DamageCalculator.calculateMagicDamage(6000, .3f, e.player.stats()!!)
             val player = e.player.paper!!
             val dir = player.eyeLocation.direction.normalize()
+
             spawnHelix(dir, player)
+
             sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {
                 volume = 1f
                 playAt(player.location)
@@ -60,7 +62,6 @@ object AOTDAbility: AbilityBase(
                     nmsDamager
                 )
                 nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
-
             }
         }
     }
@@ -95,7 +96,7 @@ object AOTDAbility: AbilityBase(
         var step = 0
         val location = player.eyeLocation.add(dir.multiply(2f))
         for (x in 0 until 60) {
-            task(delay = 5L + x / 4) {
+            task(delay = 5L + x / 10) {
                 if (step > particlesCone) step = 0
                 val angle: Double = step * angularVelocity
                 val radius: Float = step * radiusGrow

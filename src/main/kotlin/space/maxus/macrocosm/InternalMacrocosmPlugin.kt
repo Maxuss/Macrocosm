@@ -12,12 +12,14 @@ import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.fishing.FishingHandler
 import space.maxus.macrocosm.fishing.SeaCreatures
 import space.maxus.macrocosm.fishing.TrophyFishes
+import space.maxus.macrocosm.generators.generate
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
+import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
 import space.maxus.macrocosm.pets.types.PyroclasticToadPet
@@ -26,7 +28,9 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
+import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
 
@@ -115,6 +119,9 @@ class InternalMacrocosmPlugin : KSpigot() {
         skillExp()
         collAmount()
         testCraftingTable()
+
+        // registering resource generators
+        Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
 
         if (dumpTestData) {
             DataGenerators.registries()

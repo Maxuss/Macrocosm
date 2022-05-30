@@ -11,9 +11,11 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.recreateFile
 import java.io.BufferedInputStream
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -110,6 +112,23 @@ object PackProvider: Listener {
             }
             zip.closeEntry()
             stream.close()
+        }
+
+        // generating extra data
+        for((_, generator) in Registry.RESOURCE_GENERATORS.iter()) {
+            for((relative, value) in generator.yieldGenerate()) {
+                val entry = ZipEntry(relative)
+                zip.putNextEntry(entry)
+
+                val stream = ByteArrayInputStream(value.toByteArray(Charsets.UTF_8)).buffered()
+
+                val buffer = ByteArray(BUFFER_SIZE)
+                var len: Int
+                while (stream.read(buffer).also { len = it } > 0) {
+                    zip.write(buffer, 0, len)
+                }
+                zip.closeEntry()
+            }
         }
 
         zip.close()

@@ -14,6 +14,7 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.fishing.FishingTreasure
 import space.maxus.macrocosm.fishing.SeaCreature
 import space.maxus.macrocosm.fishing.TrophyFish
+import space.maxus.macrocosm.generators.ResGenerator
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
@@ -115,6 +116,8 @@ abstract class Registry<T>(val name: Identifier) {
         val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))
         val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
         val FISHING_TREASURE = makeDefaulted<FishingTreasure>(id("fishing_treasure"))
+
+        val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))
 
         override fun register(id: Identifier, value: Registry<*>): Registry<*> {
             val r = super.register(id, value)
