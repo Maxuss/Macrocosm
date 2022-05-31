@@ -13,6 +13,8 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -293,6 +295,8 @@ class VanillaItem(override val base: Material, override var amount: Int = 1, pri
         HashMap(getGemsForItem(base).associateWith { RuneState.ZERO })
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = bpFromMat(base)
+    override var dye: Dye? = null
+    override var skin: SkullSkin? = null
 
     override fun addExtraMeta(meta: ItemMeta) {
         metaModifier(meta)

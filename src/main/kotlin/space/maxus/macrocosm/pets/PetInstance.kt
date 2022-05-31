@@ -46,7 +46,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         player.ownedPets.remove(hashKey)
         this.hashKey = newHash
         player.ownedPets[newHash] = modified
-        entity?.customName(prototype.buildName(modified.level, player, modified.rarity))
+        entity?.customName(prototype.buildName(modified, player))
     }
 
     fun despawn(player: MacrocosmPlayer) {

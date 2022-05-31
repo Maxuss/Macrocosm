@@ -11,6 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -47,6 +49,8 @@ class PetItem(
     override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
+    override var dye: Dye? = null
+    override var skin: SkullSkin? = null
     override val maxStars: Int = 0
 
     override fun buildName(): Component {

@@ -157,12 +157,22 @@ object PackProvider: Listener {
             .uploadBuilder("/${file.name}")
             .withMode(WriteMode.OVERWRITE)
             .uploadAndFinish(stream, Long.MAX_VALUE)
-        if(oldLink != null)
-            client.sharing().revokeSharedLink(oldLink.replace("dl.dropboxusercontent.com", "dropbox.com"))
-        return try {
-            client.sharing().createSharedLinkWithSettings("/${file.name}").url
+        try {
+            if (oldLink != null)
+                client.sharing().revokeSharedLink(oldLink.replace("dl.dropboxusercontent.com", "dropbox.com"))
+            return try {
+                client.sharing().createSharedLinkWithSettings("/${file.name}").url
+            } catch (e: Exception) {
+                return "https://www.dl.dropboxusercontent.com/s/a53olrtucx8b2u5/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
+            }
         } catch(e: Exception) {
-            return "https://www.dl.dropboxusercontent.com/s/a53olrtucx8b2u5/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
+            // deleting and uploading again
+            client.files().deleteV2("/${file.name}")
+            client.files()
+                .uploadBuilder("/${file.name}")
+                .withMode(WriteMode.OVERWRITE)
+                .uploadAndFinish(stream, Long.MAX_VALUE)
+            return client.sharing().createSharedLinkWithSettings("/${file.name}").url
         }
     }
 }

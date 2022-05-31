@@ -16,10 +16,13 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import space.maxus.macrocosm.collections.CollectionType
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.recipeBrowser
@@ -79,6 +82,29 @@ fun viewRecipeCommand() = command("viewrecipe") {
 
     }
 }
+
+fun cosmeticCommand() = command("cosmetic") {
+    requires { it.hasPermission(4) }
+
+    argument("type", ResourceLocationArgument.id()) {
+        suggestList { ctx ->
+            Registry.COSMETIC.iter().keys
+                .filter { it.path.contains(ctx.getArgumentOrNull<ResourceLocation>("type")?.path?.lowercase() ?: "") }
+        }
+
+        runs {
+            val cosmetic = Registry.COSMETIC.find(getArgument<ResourceLocation>("type").macrocosm)
+            val mc = player.inventory.itemInMainHand.macrocosm!!
+            if (cosmetic is Dye) {
+                mc.dye = cosmetic
+            } else if (cosmetic is SkullSkin) {
+                mc.skin = cosmetic
+            }
+            player.inventory.setItemInMainHand(mc.build(player.macrocosm!!)!!)
+        }
+    }
+}
+
 
 fun recipesCommand() = command("recipes") {
     runs {

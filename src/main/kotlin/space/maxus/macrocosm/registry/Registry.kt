@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.cosmetic.Cosmetic
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.EntitySoundBank
 import space.maxus.macrocosm.entity.MacrocosmEntity
@@ -116,6 +117,7 @@ abstract class Registry<T>(val name: Identifier) {
         val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))
         val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
         val FISHING_TREASURE = makeDefaulted<FishingTreasure>(id("fishing_treasure"))
+        val COSMETIC = makeDefaulted<Cosmetic>(id("cosmetic"))
 
         val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))
 

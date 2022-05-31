@@ -8,6 +8,7 @@ import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
@@ -72,8 +73,8 @@ abstract class Pet(
         return Pair(false, null)
     }
 
-    internal fun buildName(level: Int, player: MacrocosmPlayer, rarity: Rarity): Component =
-        comp("<dark_gray>[<gray>Lvl $level<dark_gray>] <${rarity.color.asHexString()}> ${player.paper?.name}'s $name")
+    internal fun buildName(pet: StoredPet, player: MacrocosmPlayer): Component =
+        comp("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if(pet.skin != null) "☆" else ""}")
 
     fun stats(level: Int, rarity: Rarity): Statistics {
         val clone = baseStats.clone()
@@ -103,9 +104,10 @@ abstract class Pet(
         // stand.isMarker = true
         stand.setGravity(false)
         stand.isCustomNameVisible = true
-        stand.customName(buildName(stored.level, player, stored.rarity))
+        stand.customName(buildName(stored, player))
         stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
-        stand.equipment.helmet = ItemValue.placeholderHead(headSkin, "PetEntity", "")
+        val skin = if(stored.skin != null) (Registry.COSMETIC.find(stored.skin) as SkullSkin).skin else headSkin
+        stand.equipment.helmet = ItemValue.placeholderHead(skin, "PetEntity", "")
 
         player.sendMessage("<green>You spawned your <${stored.rarity.color.asHexString()}>$name<green>.")
         val instance = PetInstance(stand.uniqueId, id, key)

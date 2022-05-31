@@ -11,6 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -39,6 +41,8 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
+    override var dye: Dye? = null
+    override var skin: SkullSkin? = null
 
     override fun addPotatoBooks(amount: Int) {
 
@@ -80,7 +84,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
     }
 }
 
-class SkullEntityHead(private var skin: String) : MacrocosmItem {
+class SkullEntityHead(private var eskin: String) : MacrocosmItem {
     override var stats: Statistics get() = Statistics.zero(); set(_) {}
     override var specialStats: SpecialStatistics get() = SpecialStatistics(); set(_) {}
     override var amount: Int = 1
@@ -97,19 +101,21 @@ class SkullEntityHead(private var skin: String) : MacrocosmItem {
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
+    override var dye: Dye? = null
+    override var skin: SkullSkin? = null
 
     override fun addPotatoBooks(amount: Int) {
 
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {
-        cmp.putString("HeadSkin", skin)
+        cmp.putString("HeadSkin", eskin)
     }
 
     override fun addExtraMeta(meta: ItemMeta) {
         val skull = meta as SkullMeta
         val profile = Bukkit.createProfile(UUID.randomUUID())
-        profile.setProperty(ProfileProperty("textures", skin))
+        profile.setProperty(ProfileProperty("textures", eskin))
         skull.playerProfile = profile
     }
 
@@ -130,8 +136,8 @@ class SkullEntityHead(private var skin: String) : MacrocosmItem {
 
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt) as SkullEntityHead
-        val skin = nbt.getString("HeadSkin")
-        base.skin = skin
+        val ski = nbt.getString("HeadSkin")
+        base.eskin = ski
         return base
     }
 

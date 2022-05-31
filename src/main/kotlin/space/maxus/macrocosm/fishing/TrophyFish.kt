@@ -13,6 +13,8 @@ import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.MacrocosmItem
@@ -63,6 +65,8 @@ class TrophyFish(
     override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
+    override var dye: Dye? = null
+    override var skin: SkullSkin? = null
 
     override fun buildLore(lore: MutableList<Component>) {
         val reduced = conditions.description.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()

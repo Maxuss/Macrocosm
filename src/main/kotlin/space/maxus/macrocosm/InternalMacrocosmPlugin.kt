@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.commands.*
+import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.DataGenerators
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.enchants.Enchant
@@ -82,6 +83,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         EntityValue.init()
         PetValue.init()
         ZoneType.init()
+        Cosmetics.init()
 
         SeaCreatures.init()
         TrophyFishes.init()
@@ -112,6 +114,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         summonCommand()
         giveAdminItemCommand()
         armorCommand()
+        cosmeticCommand()
 
         testStatsCommand()
         testLevelUp()

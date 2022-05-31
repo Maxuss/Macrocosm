@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.item
 
+import com.destroystokyo.paper.profile.ProfileProperty
 import net.axay.kspigot.data.nbtData
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.items.flags
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.nbt.CompoundTag
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack
@@ -16,8 +18,11 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
+import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.CostCompileEvent
@@ -39,6 +44,8 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
+import java.util.*
+import kotlin.collections.HashMap
 
 fun colorMeta(color: Int): (ItemMeta) -> Unit = { (it as LeatherArmorMeta).setColor(Color.fromRGB(color)) }
 
@@ -77,6 +84,8 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     val runes: HashMap<ApplicableRune, RuneState>
     val buffs: HashMap<MinorItemBuff, Int>
     var breakingPower: Int
+    var dye: Dye?
+    var skin: SkullSkin?
 
     override fun id(): Identifier {
         return id
@@ -229,6 +238,12 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }
             .associateWith { buffsCmp.getInt(it.id.toString()) }
         this.buffs.putAll(buffs)
+        if(nbt.contains("Dye")) {
+            this.dye = Registry.COSMETIC.find(nbt.getId("Dye")) as Dye
+        }
+        if(nbt.contains("Skin")) {
+            this.skin = Registry.COSMETIC.find(nbt.getId("Skin")) as SkullSkin
+        }
         this.amount = from.amount
         return this
     }
@@ -433,6 +448,24 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
             // adding extra meta
             addExtraMeta(this)
+
+            if(this is LeatherArmorMeta && dye != null) {
+                val d = dye!!
+                lore.add(0, "".toComponent())
+                lore.add(0, comp("<#${d.color.toString(16)}>${d.specialChar} ${d.name} Dye").noitalic())
+                setColor(Color.fromRGB(d.color))
+                lore(lore)
+            }
+
+            if(this is SkullMeta && skin != null) {
+                val s = skin!!
+                lore.add(0, "".toComponent())
+                lore.add(0, comp("<dark_gray>${skin!!.name} Skin").noitalic())
+                val profile = Bukkit.createProfile(UUID.randomUUID())
+                profile.setProperty(ProfileProperty("textures", s.skin))
+                playerProfile = profile
+                lore(lore)
+            }
         }
 
         // amount
@@ -450,6 +483,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         // rarity
         nbt.putBoolean("RarityUpgraded", rarityUpgraded)
         nbt.putInt("Rarity", rarity.ordinal)
+        if(dye != null)
+            nbt.putId("Dye", Registry.COSMETIC.byValue(dye!!)!!)
+        if(skin != null)
+            nbt.putId("Skin", Registry.COSMETIC.byValue(skin!!)!!)
 
         // reforges
         if (reforge != null)

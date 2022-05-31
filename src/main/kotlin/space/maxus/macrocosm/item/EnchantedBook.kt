@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.cosmetic.Dye
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -45,6 +47,8 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
+    override var dye: Dye? = null
+    override var skin: SkullSkin? = null
 
     override fun addPotatoBooks(amount: Int) {
 
