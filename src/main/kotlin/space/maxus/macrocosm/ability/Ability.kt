@@ -1,10 +1,7 @@
 package space.maxus.macrocosm.ability
 
 import space.maxus.macrocosm.ability.types.armor.*
-import space.maxus.macrocosm.ability.types.item.AOTDAbility
-import space.maxus.macrocosm.ability.types.item.EmeraldPickaxeBonus
-import space.maxus.macrocosm.ability.types.item.HoneycombBulwarkAbility
-import space.maxus.macrocosm.ability.types.item.InstantTransmission
+import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
@@ -42,7 +39,10 @@ enum class Ability(val ability: MacrocosmAbility) {
     UNSTABLE_DRAGON(UnstableDragonBonus),
     WISE_DRAGON(WiseDragonBonus),
     YOUNG_DRAGON(YoungDragonBonus),
-    AOTD(AOTDAbility)
+    AOTD(AOTDAbility),
+    ICE_CONE(IceConeAbility),
+    TERRAIN_TOSS(TerrainTossAbility),
+    INFINITE_TERROR(InfiniteTerrorAbility)
 
     ;
 

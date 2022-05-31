@@ -34,7 +34,7 @@ object AOTDAbility: AbilityBase(
             if(!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
-            val damage = DamageCalculator.calculateMagicDamage(6000, .3f, e.player.stats()!!)
+            val damage = DamageCalculator.calculateMagicDamage(6000, .2f, e.player.stats()!!)
             val player = e.player.paper!!
             val dir = player.eyeLocation.direction.normalize()
 
@@ -70,27 +70,6 @@ object AOTDAbility: AbilityBase(
     private var angularVelocity = Math.PI / 16
     private var radiusGrow = .01f
     private var particlesCone = 180
-
-    fun rotateAroundAxisX(v: Vector, angle: Double): Vector {
-        val y: Double
-        val z: Double
-        val cos = Mth.cos(angle.toFloat())
-        val sin = Mth.sin(angle.toFloat())
-        y = v.y * cos - v.z * sin
-        z = v.y * sin + v.z * cos
-        return v.setY(y).setZ(z)
-    }
-
-    fun rotateAroundAxisY(v: Vector, angle: Double): Vector {
-        val x: Double
-        val z: Double
-        val cos = Mth.cos(angle.toFloat())
-        val sin = Mth.sin(angle.toFloat())
-        x = v.x * cos + v.z * sin
-        z = v.x * -sin + v.z * cos
-        return v.setX(x).setZ(z)
-    }
-
 
     private fun spawnHelix(dir: Vector, player: Player) {
         var step = 0

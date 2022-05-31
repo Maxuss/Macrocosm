@@ -10,7 +10,7 @@ import space.maxus.macrocosm.item.ItemType
 import kotlin.math.roundToInt
 
 object UltimateWiseEnchantment :
-    UltimateEnchantment("Ultimate Wise", "Decreases <aqua>Mana Cost<gray> of your abilities by <yellow>[10]%<gray>.", 1..5, ItemType.weapons(), conflicts = listOf("ULTIMATE_BULK")) {
+    UltimateEnchantment("Ultimate Wise", "Decreases <aqua>Mana Cost<gray> of your abilities by <yellow>[10]%<gray>.", 1..5, ItemType.weaponsWand(), conflicts = listOf("ULTIMATE_BULK")) {
     @EventHandler
     fun onAbilityUse(e: AbilityCostApplyEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
@@ -32,7 +32,7 @@ object UltimateWiseEnchantment :
 }
 
 object UltimateBulkEnchantment :
-    UltimateEnchantment("Ultimate Bulk", "Decreases <red>Health Cost<gray> of your abilities by <yellow>[10]%<gray>.", 1..5, ItemType.weapons(), conflicts = listOf("ULTIMATE_WISE")) {
+    UltimateEnchantment("Ultimate Bulk", "Decreases <red>Health Cost<gray> of your abilities by <yellow>[10]%<gray>.", 1..5, ItemType.weaponsWand(), conflicts = listOf("ULTIMATE_WISE")) {
     @EventHandler
     fun onAbilityUse(e: AbilityCostApplyEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)

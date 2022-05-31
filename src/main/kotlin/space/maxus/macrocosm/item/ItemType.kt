@@ -45,6 +45,7 @@ enum class ItemType(
         fun melee() = listOf(AXE, SWORD, GAUNTLET)
         fun ranged() = listOf(BOW)
         fun weapons() = listOf(AXE, SWORD, GAUNTLET, BOW)
+        fun weaponsWand() = listOf(AXE, SWORD, GAUNTLET, BOW, WAND)
         fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL, FISHING_ROD)
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)

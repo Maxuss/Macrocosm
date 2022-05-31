@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.listeners
 
+import net.axay.kspigot.extensions.pluginKey
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -13,6 +14,8 @@ object EntityHandlers : Listener {
     @EventHandler
     fun entitySpawn(e: CreatureSpawnEvent) {
         val entity = e.entity
+        if(entity.persistentDataContainer.has(pluginKey("__IGNORE")))
+            return
         if (entity.readNbt().contains(MACROCOSM_TAG) || entity is Player || entity is ArmorStand)
             return
 

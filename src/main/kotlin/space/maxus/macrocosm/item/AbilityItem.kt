@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.ApplicableRune
@@ -21,7 +23,8 @@ open class AbilityItem(
     override var specialStats: SpecialStatistics = SpecialStatistics(),
     override var breakingPower: Int = 0,
     applicableRunes: List<ApplicableRune> = listOf(),
-    protected val metaModifier: (ItemMeta) -> Unit = { }
+    protected val description: String? = null,
+    protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
     override var amount: Int = 1
     override var stars: Int = 0
@@ -38,6 +41,13 @@ open class AbilityItem(
     override val runes: HashMap<ApplicableRune, RuneState> = HashMap(applicableRunes.associateWith { RuneState.ZERO })
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
 
+    override fun buildLore(lore: MutableList<Component>) {
+        super.buildLore(lore)
+        if(description != null) {
+            lore.addAll(description.reduceToList().map { comp("<dark_gray>$it").noitalic() })
+        }
+    }
+
     override fun addExtraMeta(meta: ItemMeta) {
         metaModifier(meta)
     }
@@ -52,7 +62,8 @@ open class AbilityItem(
             stats.clone(),
             abilities,
             specialStats.clone(),
-            metaModifier = metaModifier
+            metaModifier = metaModifier,
+            description = description
         )
         item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
         item.reforge = reforge?.clone()

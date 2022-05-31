@@ -12,11 +12,13 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.ability.Ability
-import space.maxus.macrocosm.ability.types.item.AOTDAbility
-import space.maxus.macrocosm.ability.types.item.InstantTransmission
+import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.runes.DefaultRune
+import space.maxus.macrocosm.item.runes.RuneItem
+import space.maxus.macrocosm.item.runes.rarityToRuneTier
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Identifier
@@ -87,6 +89,25 @@ enum class ItemValue(val item: MacrocosmItem) {
         strength = 100f
         critChance = 15f
     }, mutableListOf(AOTDAbility), applicableRunes = listOf(DefaultRune.CRYING_PEARL, DefaultRune.ADAMANTITE, DefaultRune.DIAMOND))),
+
+    ICE_SPRAY_WAND(AbilityItem(ItemType.WAND, "Ice Spray Wand", Rarity.RARE, Material.STICK, stats {
+        damage = 120f
+        intelligence = 300f
+        abilityDamage = 5f
+    }, mutableListOf(IceConeAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE))),
+
+    ETERNAL_TERROR_WAND(AbilityItem(ItemType.WAND, "Eternal Terror Wand", Rarity.EPIC, Material.BLAZE_ROD, stats {
+        damage = 80f
+        intelligence = 250f
+        health = 250f
+        abilityDamage = 15f
+    }, mutableListOf(InfiniteTerrorAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE), description = "It's morbin' time")),
+
+    YETI_SWORD(AbilityItem(ItemType.SWORD, "Yeti Sword", Rarity.LEGENDARY, Material.IRON_SWORD, stats {
+        damage = 180f
+        strength = 250f
+        intelligence = 300f
+    }, mutableListOf(TerrainTossAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE, DefaultRune.SILVER))),
 
     RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {
         damage = 250f
@@ -362,6 +383,34 @@ enum class ItemValue(val item: MacrocosmItem) {
             "NETHERITE_BLOCK"
         )
 
+        private val runeQualities = listOf(
+            Rarity.COMMON,
+            Rarity.UNCOMMON,
+            Rarity.RARE,
+            Rarity.EPIC,
+            Rarity.LEGENDARY
+        )
+        private fun initRunes() {
+            val pool = Threading.newFixedPool(5)
+
+            for (allowed in DefaultRune.values()) {
+                pool.execute {
+                    val baseName = allowed.name.replace("_", " ").capitalized()
+                    for(rarity in runeQualities) {
+                        val item = RuneItem(allowed, "${allowed.char()} <${allowed.color.asHexString()}>${rarityToRuneTier(rarity)} $baseName Rune", rarity, allowed.skin)
+
+                        Registry.ITEM.register(item.id, item)
+                    }
+                }
+            }
+
+            pool.shutdown()
+            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+            if (!success)
+                throw IllegalStateException("Could not execute all tasks in the thread pool!")
+
+        }
+
         private fun initEnchanted() {
             // preventing a huge memory leak
             val pool = Threading.newFixedPool(12)
@@ -387,6 +436,11 @@ enum class ItemValue(val item: MacrocosmItem) {
             Threading.runAsync("Enchanted Item Generator", true) {
                 info("Initializing enchanted items...")
                 initEnchanted()
+            }
+
+            Threading.runAsync("Rune Generator", true) {
+                info("Initializing runes...")
+                initRunes()
             }
 
             Registry.ITEM.delegateRegistration(values().map { id(it.name.lowercase()) to it.item }) { _, _ -> }

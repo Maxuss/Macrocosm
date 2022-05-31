@@ -94,10 +94,7 @@ class FishingPool(
     fun roll(player: MacrocosmPlayer, hook: FishHook) {
         val stats = player.stats()!!
 
-        println("ROLLING")
         val shouldCatchEntity = Random.nextFloat() <= stats.seaCreatureChance / 100f
-        println("ENTITY: $shouldCatchEntity")
-        println("SUITABLE ENTITIES: $creatures")
 
         if (shouldCatchEntity) {
             val creature = Pools.roll(creatures, stats.magicFind).randomOrNull()
@@ -107,7 +104,6 @@ class FishingPool(
             }
         }
         val shouldCatchTreasure = Random.nextFloat() <= stats.treasureChance / 100f
-        println("TREASURE: $shouldCatchTreasure")
         if (shouldCatchTreasure) {
             val treasure = Pools.roll(treasures, stats.magicFind).randomOrNull()
             if (treasure != null) {
@@ -117,7 +113,6 @@ class FishingPool(
         }
         // constant chance to catch trophies: 0.34
         val shouldCatchTrophy = Random.nextFloat() <= .34f
-        println("TROPHY: $shouldCatchTreasure")
         if (shouldCatchTrophy) {
             val trophy = Pools.roll(trophies, stats.magicFind).randomOrNull()
             if (trophy != null) {

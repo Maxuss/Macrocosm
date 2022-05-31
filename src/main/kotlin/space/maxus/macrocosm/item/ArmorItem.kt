@@ -56,7 +56,7 @@ open class ArmorItem(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            applicableRunes = runes,
         ) {
             if (it is SkullMeta) {
                 val profile = Bukkit.createProfile(UUID.randomUUID())

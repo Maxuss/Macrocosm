@@ -175,7 +175,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     rarity,
     base,
     stats,
-    applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.DIAMOND, DefaultRune.EMERALD)
+    applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.DIAMOND, DefaultRune.EMERALD),
 ) {
     fun addScroll(scroll: WitherScrollAbility) {
         if (abilities.contains(WITHER_SCROLL_WITHER_IMPACT))
