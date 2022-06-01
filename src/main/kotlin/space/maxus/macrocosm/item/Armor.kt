@@ -3,6 +3,8 @@ package space.maxus.macrocosm.item
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.generators.Model
+import space.maxus.macrocosm.generators.CMDGenerator
 import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.item.types.DragonArmor
 import space.maxus.macrocosm.registry.Registry
@@ -11,7 +13,7 @@ import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
 object Armor {
-    private val cache: MutableList<ArmorItem> = mutableListOf()
+    private val cache: MutableList<Pair<ArmorItem, Model?>> = mutableListOf()
 
     val EMERALD_ARMOR = register(ArmorItem("Emerald", "emerald", "LEATHER", Rarity.RARE, stats {
         health = 100f
@@ -182,8 +184,8 @@ object Armor {
         applicableRuns = mutableListOf(DefaultRune.MOONSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST)
     ))
 
-    private fun register(item: ArmorItem): ArmorItem {
-        cache.add(item)
+    private fun register(item: ArmorItem, model: Model? = null): ArmorItem {
+        cache.add(Pair(item, model))
         return item
     }
 
@@ -195,15 +197,16 @@ object Armor {
     }
 
     fun init() {
-
         Threading.runAsync("Armor Registry", true) {
             info("Initializing Armor Registry daemon...")
 
-            val pool = Threading.newCachedPool()
+            val pool = Threading.newFixedPool(8)
 
             for (element in cache) {
                 pool.execute {
-                    internalRegisterSingle(element)
+                    internalRegisterSingle(element.first)
+                    if(element.second != null)
+                        CMDGenerator.enqueue(element.second!!)
                 }
             }
 

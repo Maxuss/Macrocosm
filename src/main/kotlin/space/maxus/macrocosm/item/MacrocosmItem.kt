@@ -3,6 +3,7 @@ package space.maxus.macrocosm.item
 import com.destroystokyo.paper.profile.ProfileProperty
 import net.axay.kspigot.data.nbtData
 import net.axay.kspigot.extensions.bukkit.toComponent
+import net.axay.kspigot.items.customModel
 import net.axay.kspigot.items.flags
 import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
@@ -459,6 +460,11 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             // enchanted glint if enchanted
             if(enchantments.isNotEmpty())
                 this.addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
+
+            val model = Registry.MODEL_PREDICATES.findOrNull(id)
+            if(model != null) {
+                this.customModel = model.data
+            }
 
             // adding extra meta
             addExtraMeta(this)

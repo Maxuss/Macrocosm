@@ -15,7 +15,10 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.fishing.FishingTreasure
 import space.maxus.macrocosm.fishing.SeaCreature
 import space.maxus.macrocosm.fishing.TrophyFish
+import space.maxus.macrocosm.generators.Model
+import space.maxus.macrocosm.generators.CMDGenerator
 import space.maxus.macrocosm.generators.ResGenerator
+import space.maxus.macrocosm.generators.TexturedModelGenerator
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
@@ -50,7 +53,7 @@ abstract class Registry<T>(val name: Identifier) {
     ) {
         Threading.runAsync("$name Delegate #${delegates.incrementAndGet()}") {
             this.info("Starting '$name' registry Delegate ${delegates.get()}")
-            val pool = Threading.newCachedPool()
+            val pool = Threading.newFixedPool(8)
 
             for ((id, value) in values) {
                 pool.execute {
@@ -62,7 +65,7 @@ abstract class Registry<T>(val name: Identifier) {
             val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
             if (!success)
                 throw IllegalStateException("Could not execute all tasks in the thread pool!")
-            this.info("Successfully registered ${values.size} elements in delegate.")
+            this.info("Successfully registered ${values.size} elements in $name delegate.")
             delegates.decrementAndGet()
         }
     }
@@ -118,6 +121,11 @@ abstract class Registry<T>(val name: Identifier) {
         val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
         val FISHING_TREASURE = makeDefaulted<FishingTreasure>(id("fishing_treasure"))
         val COSMETIC = makeDefaulted<Cosmetic>(id("cosmetic"))
+        val MODEL_PREDICATES = makeDelegated<Model>(id("model")) { _, model ->
+            CMDGenerator.enqueue(model)
+            if(model.to.startsWith("macrocosm:"))
+                TexturedModelGenerator.enqueue(model)
+        }
 
         val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))
 

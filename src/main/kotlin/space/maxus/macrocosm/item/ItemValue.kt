@@ -16,6 +16,7 @@ import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.generators.Model
 import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.item.runes.RuneItem
 import space.maxus.macrocosm.item.runes.rarityToRuneTier
@@ -29,7 +30,7 @@ import space.maxus.macrocosm.util.id
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-enum class ItemValue(val item: MacrocosmItem) {
+enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null) {
     ENCHANTED_BOOK(EnchantedBook()),
 
     ASPECT_OF_THE_END(AbilityItem(ItemType.SWORD, "Aspect of the End", Rarity.RARE, Material.DIAMOND_SWORD, stats {
@@ -101,7 +102,9 @@ enum class ItemValue(val item: MacrocosmItem) {
         intelligence = 250f
         health = 250f
         abilityDamage = 15f
-    }, mutableListOf(InfiniteTerrorAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE), description = "It's morbin' time")),
+    }, mutableListOf(InfiniteTerrorAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE), description = "It's morbin' time"),
+    Model(120, "item/blaze_rod", "macrocosm:item/eternal_terror_wand", "item/handheld")
+    ),
 
     YETI_SWORD(AbilityItem(ItemType.SWORD, "Yeti Sword", Rarity.LEGENDARY, Material.IRON_SWORD, stats {
         damage = 180f
@@ -443,7 +446,26 @@ enum class ItemValue(val item: MacrocosmItem) {
                 initRunes()
             }
 
-            Registry.ITEM.delegateRegistration(values().map { id(it.name.lowercase()) to it.item }) { _, _ -> }
+            Threading.runAsync("macrocosm:item Delegate", true) {
+                this.info("Starting macrocosm:item registry Delegate")
+                val pool = Threading.newFixedPool(8)
+
+                for (value in ItemValue.values()) {
+                    pool.execute {
+                        val (item, model) = Pair(value.item, value.model)
+                        val id = id(value.name.lowercase())
+                        Registry.ITEM.register(id(value.name.lowercase()), item)
+                        if(model != null) {
+                            Registry.MODEL_PREDICATES.register(id, model)
+                        }
+                    }
+                }
+
+                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+                if (!success)
+                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
+                this.info("Successfully registered ${ItemValue.values().size} items in delegate.")
+            }
         }
     }
 }

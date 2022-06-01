@@ -4,7 +4,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import space.maxus.macrocosm.util.GSON_PRETTY
+import space.maxus.macrocosm.util.GSON
 
 @JsonAdapter(PackDescription.Serializer::class)
 object PackDescription {
@@ -12,7 +12,7 @@ object PackDescription {
     const val DESCRIPTION = "Macrocosm Resources"
 
     fun descript(): String {
-        return GSON_PRETTY.toJson(this)
+        return GSON.toJson(this)
     }
 
     object Serializer: TypeAdapter<PackDescription>() {
