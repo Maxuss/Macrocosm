@@ -26,6 +26,7 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
@@ -67,7 +68,18 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         reduced.add("".toComponent())
         lore.addAll(reduced)
-        lore.add(comp("<gray>Applies a <${sskin.rarity.color.asHexString()}>${sskin.name} Skin<gray>.").noitalic())
+        val cmp = if(sskin.isHelmet) {
+            val i = Registry.ITEM.find(sskin.target)
+            comp(
+                "<gray>Applicable to <${i.rarity.color.asHexString()}>${MiniMessage.miniMessage().serialize(i.name)}."
+            )
+        } else {
+            val p = Registry.PET.find(sskin.target)
+            comp(
+                "<gray>Applicable to <gold>${p.name} Pet<gray>."
+            )
+        }
+        lore.add(cmp.noitalic())
         lore.add("".toComponent())
     }
 

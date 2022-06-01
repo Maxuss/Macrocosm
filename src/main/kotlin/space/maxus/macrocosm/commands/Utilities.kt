@@ -96,9 +96,9 @@ fun cosmeticCommand() = command("cosmetic") {
             val cosmetic = Registry.COSMETIC.find(getArgument<ResourceLocation>("type").macrocosm)
             val mc = player.inventory.itemInMainHand.macrocosm!!
             if (cosmetic is Dye) {
-                mc.dye = cosmetic
+                mc.addDye(cosmetic)
             } else if (cosmetic is SkullSkin) {
-                mc.skin = cosmetic
+                mc.addSkin(cosmetic)
             }
             player.inventory.setItemInMainHand(mc.build(player.macrocosm!!)!!)
         }

@@ -111,6 +111,20 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
     }
 
+    fun addDye(dye: Dye): Boolean {
+        if(!this.base.name.contains("LEATHER"))
+            return false
+        this.dye = dye
+        return true
+    }
+
+    fun addSkin(skin: SkullSkin): Boolean {
+        if(this.id != skin.target)
+            return false
+        this.skin = skin
+        return true
+    }
+
     fun addPotatoBooks(amount: Int) {
         buffs[PotatoBook] = (buffs[PotatoBook] ?: 0) + amount
     }
