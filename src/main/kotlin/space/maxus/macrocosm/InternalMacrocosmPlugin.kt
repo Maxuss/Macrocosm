@@ -14,6 +14,7 @@ import space.maxus.macrocosm.fishing.FishingHandler
 import space.maxus.macrocosm.fishing.SeaCreatures
 import space.maxus.macrocosm.fishing.TrophyFishes
 import space.maxus.macrocosm.generators.CMDGenerator
+import space.maxus.macrocosm.generators.MetaGenerator
 import space.maxus.macrocosm.generators.TexturedModelGenerator
 import space.maxus.macrocosm.generators.generate
 import space.maxus.macrocosm.item.Armor
@@ -129,6 +130,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
         Registry.RESOURCE_GENERATORS.register(id("model_data"), CMDGenerator)
         Registry.RESOURCE_GENERATORS.register(id("model"), TexturedModelGenerator)
+        Registry.RESOURCE_GENERATORS.register(id("mcmeta"), MetaGenerator)
 
         if (dumpTestData) {
             DataGenerators.registries()

@@ -16,6 +16,9 @@ import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.generators.Animation
+import space.maxus.macrocosm.generators.AnimationData
+import space.maxus.macrocosm.generators.MetaGenerator
 import space.maxus.macrocosm.generators.Model
 import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.item.runes.RuneItem
@@ -30,7 +33,7 @@ import space.maxus.macrocosm.util.id
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null) {
+enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, private val animation: Animation? = null) {
     ENCHANTED_BOOK(EnchantedBook()),
 
     ASPECT_OF_THE_END(AbilityItem(ItemType.SWORD, "Aspect of the End", Rarity.RARE, Material.DIAMOND_SWORD, stats {
@@ -97,13 +100,24 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null) 
         abilityDamage = 5f
     }, mutableListOf(IceConeAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE))),
 
-    ETERNAL_TERROR_WAND(AbilityItem(ItemType.WAND, "Eternal Terror Wand", Rarity.EPIC, Material.BLAZE_ROD, stats {
-        damage = 80f
-        intelligence = 250f
-        health = 250f
-        abilityDamage = 15f
-    }, mutableListOf(InfiniteTerrorAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE), description = "It's morbin' time"),
-    Model(120, "item/blaze_rod", "macrocosm:item/eternal_terror_wand", "item/handheld")
+    ETERNAL_TERROR_WAND(
+        AbilityItem(
+            ItemType.WAND,
+            "Eternal Terror Wand",
+            Rarity.EPIC,
+            Material.BLAZE_ROD,
+            stats {
+                damage = 80f
+                intelligence = 250f
+                health = 250f
+                abilityDamage = 15f
+            },
+            mutableListOf(InfiniteTerrorAbility),
+            applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE),
+            description = "It's morbin' time"
+        ),
+        Model(120, "item/blaze_rod", "macrocosm:item/eternal_terror_wand", "item/handheld"),
+        Animation(10, 4, true)
     ),
 
     YETI_SWORD(AbilityItem(ItemType.SWORD, "Yeti Sword", Rarity.LEGENDARY, Material.IRON_SWORD, stats {
@@ -452,11 +466,14 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null) 
 
                 for (value in ItemValue.values()) {
                     pool.execute {
-                        val (item, model) = Pair(value.item, value.model)
+                        val (item, model, animation) = Triple(value.item, value.model, value.animation)
                         val id = id(value.name.lowercase())
                         Registry.ITEM.register(id(value.name.lowercase()), item)
                         if(model != null) {
                             Registry.MODEL_PREDICATES.register(id, model)
+                            if(animation != null) {
+                                MetaGenerator.enqueue("assets/macrocosm/textures/${model.to.replace("macrocosm:", "")}.png", AnimationData(animation))
+                            }
                         }
                     }
                 }

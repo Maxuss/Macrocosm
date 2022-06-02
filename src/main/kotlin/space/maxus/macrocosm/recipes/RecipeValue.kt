@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.recipes
 
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.recipes.types.shapedRecipe
@@ -24,7 +25,13 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
 
             for (mat in ItemValue.allowedEnchantedMats.toList().parallelStream()) {
                 pool.execute {
-                    val result = Registry.ITEM.find(id("enchanted_${mat.lowercase()}"))
+                    val id = id("enchanted_${mat.lowercase()}")
+                    var result = Registry.ITEM.findOrNull(id)
+                    while(result == null) {
+                        Macrocosm.logger.warning("Thread racing! Tried to find $id in item registry, but it was not yet registered!")
+                        Thread.sleep(1000)
+                        result = Registry.ITEM.findOrNull(id)
+                    }
                     val pair = id("minecraft", mat.lowercase()) to 32
                     Registry.RECIPE.register(
                         id("enchanted_${mat.lowercase()}"), shapelessRecipe(
