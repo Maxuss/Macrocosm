@@ -85,7 +85,7 @@ fun payCommand() = command("pay") {
                 }
                 from.purse -= amount.toFloat()
                 to.purse += amount.toFloat()
-                from.sendMessage("<green>You've paid ${to.paper!!.displayName().str()} ${Formatting.withCommas(amount.toBigDecimal())} coins!")
+                from.sendMessage("<green>You've paid ${to.paper!!.displayName().str()} ${Formatting.withCommas(amount.toBigDecimal())}<green> coins!")
                 to.paper!!.sendMessage(from.paper!!.displayName().append(comp("<green> has just paid you ${Formatting.withCommas(amount.toBigDecimal())} coins!")))
                 sound(Sound.ENTITY_VILLAGER_YES) {
                     playFor(to.paper!!)
