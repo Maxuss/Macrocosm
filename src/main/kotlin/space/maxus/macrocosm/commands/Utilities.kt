@@ -9,12 +9,15 @@ import net.axay.kspigot.gui.GUIType
 import net.axay.kspigot.gui.Slots
 import net.axay.kspigot.gui.kSpigotGUI
 import net.axay.kspigot.gui.openGUI
+import net.axay.kspigot.sound.sound
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
+import org.bukkit.Sound
+import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
@@ -32,6 +35,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 
@@ -65,6 +69,30 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
             ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
         )
 
+    }
+}
+
+fun payCommand() = command("pay") {
+    argument("who", EntityArgument.player()) {
+        argument("amount", DoubleArgumentType.doubleArg(.0)) {
+            runs {
+                val from = player.macrocosm!!
+                val to = getArgument<EntitySelector>("who").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm!!
+                val amount = getArgument<Double>("amount")
+                if(from.purse < amount) {
+                    from.sendMessage("<red>You don't have enough coins!")
+                    return@runs
+                }
+                from.purse -= amount.toFloat()
+                to.purse += amount.toFloat()
+                from.sendMessage("<green>You've paid ${to.paper!!.displayName().str()} ${Formatting.withCommas(amount.toBigDecimal())} coins!")
+                to.paper!!.sendMessage(from.paper!!.displayName().append(comp("<green> has just paid you ${Formatting.withCommas(amount.toBigDecimal())} coins!")))
+                sound(Sound.ENTITY_VILLAGER_YES) {
+                    playFor(to.paper!!)
+                    playFor(from.paper!!)
+                }
+            }
+        }
     }
 }
 

@@ -25,6 +25,8 @@ import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
 import java.io.File
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
@@ -37,6 +39,16 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
+
+fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, value: V) {
+    if(this.containsKey(key)) {
+        val v = this[key]!!
+        v.add(value)
+        this[key] = v
+    } else {
+        this[key] = ConcurrentLinkedQueue<V>().apply { add(value) }
+    }
+}
 
 fun <L : PacketListener, P : Packet<L>> Player.sendPacket(packet: P) {
     (this as CraftPlayer).handle.networkManager.send(packet)

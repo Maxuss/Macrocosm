@@ -28,5 +28,4 @@ open class Shortbow(
     specials,
     0,
     runes,
-    description = null
 )

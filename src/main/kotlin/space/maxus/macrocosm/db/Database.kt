@@ -14,9 +14,11 @@ import kotlin.io.path.notExists
 
 object Database {
     private lateinit var playerDb: Connection
+    private lateinit var bazaarDb: Connection
     private var firstStart: Boolean = false
 
     val statement: Statement get() = playerDb.createStatement()
+    val bazaar: Statement get() = bazaarDb.createStatement()
 
     fun connect() {
         val path = Path.of(System.getProperty("user.dir"), "macrocosm")

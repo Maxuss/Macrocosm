@@ -47,6 +47,7 @@ import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.math.min
 
 fun colorMeta(color: Int): (ItemMeta) -> Unit = { (it as LeatherArmorMeta).setColor(Color.fromRGB(color)) }
 
@@ -87,6 +88,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     var breakingPower: Int
     var dye: Dye?
     var skin: SkullSkin?
+    val sellPrice: Double
+        get() {
+            return 1.0 + enchantments.toList().sumOf { (ench, lvl) -> ench.levels.indexOf(lvl) * 25.0 } + (stars / min(maxStars, 1).toDouble()) * 1000 + (if(reforge != null) 1000 else 0) + if(rarityUpgraded) 15000 else 0
+        }
 
     override fun id(): Identifier {
         return id

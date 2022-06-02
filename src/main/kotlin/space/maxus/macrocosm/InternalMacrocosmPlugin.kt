@@ -118,6 +118,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         giveAdminItemCommand()
         armorCommand()
         cosmeticCommand()
+        payCommand()
 
         testStatsCommand()
         testLevelUp()
