@@ -24,6 +24,7 @@ import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.Zone
@@ -120,6 +121,23 @@ abstract class Registry<T>(val name: Identifier) {
         val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))
         val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
         val FISHING_TREASURE = makeDefaulted<FishingTreasure>(id("fishing_treasure"))
+        val SLAYER = makeDelegated<Slayer>(id("slayer")) { _, slayer ->
+            val registeredAbilities = mutableListOf<String>()
+            var minisRegistered = 0
+            for(tier in slayer.tiers) {
+                ENTITY.register(id("${slayer.id}_$tier"), slayer.bossForTier(tier))
+                for(ability in slayer.abilitiesForTier(tier)) {
+                    if(registeredAbilities.contains(ability.abilityId))
+                        continue
+                    ability.listenerRegister(ability)
+                    registeredAbilities.add(ability.abilityId)
+                }
+                for(mini in slayer.minisForTier(tier)) {
+                    ENTITY.register(id("${slayer.id}_miniboss_$minisRegistered"), mini)
+                    minisRegistered++
+                }
+            }
+        }
         val COSMETIC = makeDefaulted<Cosmetic>(id("cosmetic"))
         val MODEL_PREDICATES = makeDelegated<Model>(id("model")) { _, model ->
             CMDGenerator.enqueue(model)

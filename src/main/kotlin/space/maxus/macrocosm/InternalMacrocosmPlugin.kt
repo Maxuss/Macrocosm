@@ -34,6 +34,7 @@ import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
+import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
@@ -87,6 +88,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         PetValue.init()
         ZoneType.init()
         Cosmetics.init()
+        SlayerType.init()
 
         SeaCreatures.init()
         TrophyFishes.init()

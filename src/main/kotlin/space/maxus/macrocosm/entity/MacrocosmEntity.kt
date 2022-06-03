@@ -178,7 +178,8 @@ interface MacrocosmEntity : Listener {
         tag.putString("BaseName", GsonComponentSerializer.gson().serialize(name))
         val lootId = Registry.LOOT_POOL.byValue(lootPool(null)) ?: Identifier.NULL
         tag.putId("LootID", lootId)
-        tag.putString("ID", getId(entity).toString())
+        val id = getId(entity).toString()
+        tag.putString("ID", id)
         tag.putDouble("Experience", experience)
         tag.putString("Skill", rewardingSkill.name)
 
