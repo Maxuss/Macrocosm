@@ -86,7 +86,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
     }
 
     override fun damage(amount: Float, damager: Entity?) {
-        if (paper == null)
+        if (paper == null || paper!!.isDead)
             return
 
         val entity = paper!!
