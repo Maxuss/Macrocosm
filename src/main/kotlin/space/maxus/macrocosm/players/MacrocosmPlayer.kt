@@ -48,6 +48,7 @@ import space.maxus.macrocosm.util.GSON
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -366,9 +367,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             paper!!.removePotionEffect(PotionEffectType.ABSORPTION)
         }
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0) {
+            currentHealth = 0f
             kill(source)
-        paper!!.health = min((currentHealth / stats.health).toDouble() * 20, 20.0)
+        }
+        paper!!.health = max(min((currentHealth / stats.health).toDouble() * 20, 20.0), .1)
         sendStatBar(stats)
     }
 

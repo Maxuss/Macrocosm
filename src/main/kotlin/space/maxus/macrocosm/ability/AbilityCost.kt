@@ -39,20 +39,20 @@ data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int
      *
      * @param player Player against which the checks will be done
      * @param ability ID of the ability. This is stored internally to ensure that the cooldown's time elapsed
-     * @param loud Whether to loudly send player an action bar message that they do not have enough mana/health
+     * @param silent Whether to loudly send player an action bar message that they do not have enough mana/health
      * @return True if all checks passed, false otherwise
      */
-    fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier, loud: Boolean = true): Boolean {
+    fun ensureRequirements(player: MacrocosmPlayer, ability: Identifier, silent: Boolean = false): Boolean {
         val event = AbilityCostApplyEvent(player, mana, health, cooldown)
         event.callEvent()
 
         if (event.mana > 0 && player.currentMana < event.mana) {
-            if (loud)
+            if (!silent)
                 player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH MANA"))
             return false
         }
         if (event.health > 0 && player.currentHealth < event.health) {
-            if (loud)
+            if (!silent)
                 player.paper!!.sendActionBar(comp("<red><bold>NOT ENOUGH HEALTH"))
             return false
         }
@@ -61,7 +61,7 @@ data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Int
         val cdMillis = TimeUnit.SECONDS.toMillis(event.cooldown.toLong())
         val now = Instant.now().toEpochMilli()
         if (event.cooldown > 0 && player.lastAbilityUse.contains(ability) && lastUse!! + cdMillis > now) {
-            if (loud)
+            if (!silent)
                 player.paper!!.sendMessage(
                     comp(
                         "<red>This ability is current on cooldown for ${

@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.reforge.types
 
 import org.bukkit.event.EventHandler
-import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.reforge.Reforge
@@ -25,16 +24,11 @@ object RenownedReforge : ReforgeBase(
 ) {
     @EventHandler
     fun onStatCalculate(e: PlayerCalculateStatsEvent) {
-        if (!ensureRequirements(
-                e.player,
-                EquipmentSlot.HEAD,
-                EquipmentSlot.CHEST,
-                EquipmentSlot.CHEST,
-                EquipmentSlot.FEET
-            )
-        )
+        val amount = getArmorUsedAmount(e.player)
+        if(amount <= 0)
             return
-        e.stats.multiply(1.03f)
+
+        e.stats.multiply(1 + (.03f * amount))
     }
 
     override fun clone(): Reforge {

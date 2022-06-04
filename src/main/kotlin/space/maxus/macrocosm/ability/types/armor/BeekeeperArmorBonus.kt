@@ -41,7 +41,7 @@ object BeekeeperArmorBonus: FullSetBonus(
                 return@listen
             }
 
-            val ok = cost.ensureRequirements(e.player, id("honey_barrage"), false)
+            val ok = cost.ensureRequirements(e.player, id("honey_barrage"), true)
             if (!ok)
                 return@listen
 

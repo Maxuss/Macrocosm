@@ -32,9 +32,8 @@ enum class ItemType(
 
     DEPLOYABLE(false),
     CONSUMABLE(false),
+    REFORGE_STONE(false),
     OTHER(false, leftHand = true),
-    REFORGE_STONE(false)
-
     ;
 
     override fun toString(): String {

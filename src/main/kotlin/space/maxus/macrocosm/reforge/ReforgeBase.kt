@@ -24,6 +24,18 @@ abstract class ReforgeBase(
         }.any { it }
     }
 
+    private val armorSlots = arrayOf(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD)
+    protected fun getArmorUsedAmount(player: MacrocosmPlayer): Int {
+        val paper = player.paper ?: return 0
+        var count = 0
+        for(slot in armorSlots) {
+            val mc = paper.inventory.getItem(slot).macrocosm ?: return 0
+            if(mc.reforge == this)
+                count++
+        }
+        return count
+    }
+
     override fun stats(rarity: Rarity): Statistics {
         val clone = baseStats.clone()
         clone.multiply(1 + (multiplier * max(rarity.ordinal, 1)))

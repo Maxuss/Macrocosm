@@ -42,7 +42,8 @@ enum class Ability(val ability: MacrocosmAbility) {
     AOTD(AOTDAbility),
     ICE_CONE(IceConeAbility),
     TERRAIN_TOSS(TerrainTossAbility),
-    INFINITE_TERROR(InfiniteTerrorAbility)
+    INFINITE_TERROR(InfiniteTerrorAbility),
+    DEATH_DEFY(DeathDefyAbility)
 
     ;
 

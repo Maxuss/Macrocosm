@@ -126,6 +126,20 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         intelligence = 300f
     }, mutableListOf(TerrainTossAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE, DefaultRune.SILVER))),
 
+    HYPERIONS_RING(SkullAbilityItem(
+        ItemType.OTHER,
+        "Hyperion's Ring",
+        Rarity.LEGENDARY,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ4ZGY2ZmVmZjQxYTk4N2Y1M2ExZTAzYzI5ODAxNzc3MTc2N2IyNjM4MDgyMDMzODZiNzczN2E5Yzg2NjEzZiJ9fX0=",
+        stats {
+            intelligence = 50f
+            abilityDamage = 5f
+        },
+        mutableListOf(DeathDefyAbility),
+        description = "Only works in off hand"
+    )),
+
+    // entity-limited items
     RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {
         damage = 250f
         critChance = 100f

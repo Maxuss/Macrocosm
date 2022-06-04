@@ -335,6 +335,15 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             // lore
             val lore = this.lore()?.toMutableList() ?: mutableListOf()
 
+            // breaking power
+            if (breakingPower > 0) {
+                lore.add(comp("<dark_gray>Breaking Power $breakingPower").noitalic())
+            }
+
+            // stats
+            val formattedStats = stats(player).formatSimple(this@MacrocosmItem)
+            lore.addAll(formattedStats)
+
             // runes
             if (runes.size > 0) {
                 var gemComp = comp("")
@@ -350,14 +359,6 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                 lore.add(gemComp.noitalic())
             }
 
-            // breaking power
-            if (breakingPower > 0) {
-                lore.add(comp("<dark_gray>Breaking Power $breakingPower").noitalic())
-            }
-
-            // stats
-            val formattedStats = stats(player).formatSimple(this@MacrocosmItem)
-            lore.addAll(formattedStats)
             if (formattedStats.isNotEmpty())
                 lore.add("".toComponent())
 
