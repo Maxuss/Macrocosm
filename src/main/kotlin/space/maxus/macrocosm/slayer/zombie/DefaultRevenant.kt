@@ -18,6 +18,6 @@ class DefaultRevenant(stats: Statistics, pool: LootPool, exp: Double): EntityBas
     mainHand = VanillaItem(Material.DIAMOND_HOE),
     helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiZWUyM2I1YzcyNmFlOGUzZDAyMWU4YjRmNzUyNTYxOWFiMTAyYTRlMDRiZTk4M2I2MTQxNDM0OWFhYWM2NyJ9fX0="),
     chestplate = VanillaItem(Material.DIAMOND_CHESTPLATE),
-    leggings = VanillaItem(Material.DIAMOND_LEGGINGS),
+    leggings = VanillaItem(Material.CHAINMAIL_LEGGINGS),
     boots = VanillaItem(Material.DIAMOND_BOOTS)
 )

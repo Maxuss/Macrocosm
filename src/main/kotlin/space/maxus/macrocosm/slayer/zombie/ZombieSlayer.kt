@@ -25,7 +25,11 @@ object ZombieSlayer: Slayer(
     1..6
 ) {
     override fun abilitiesForTier(tier: Int): List<SlayerAbility> {
-        return listOf(ZombieAbilities.REGENERATION)
+        return when(tier) {
+            1 -> listOf(ZombieAbilities.REGENERATION)
+            2 -> listOf(ZombieAbilities.REGENERATION, ZombieAbilities.CRUMBLING_TOUCH)
+            else -> listOf()
+        }
     }
 
     override fun bossForTier(tier: Int): MacrocosmEntity {

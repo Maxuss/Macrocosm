@@ -8,6 +8,7 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.DataGenerators
 import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.fishing.FishingHandler
@@ -23,6 +24,7 @@ import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
+import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
@@ -38,6 +40,7 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
+import kotlin.random.Random
 
 class InternalMacrocosmPlugin : KSpigot() {
     companion object {
@@ -47,9 +50,13 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     val id: String = "macrocosm"
     val onlinePlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
+    var devEnv: Boolean = false; private set
+    lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
+        devEnv = System.getenv().containsKey("macrocosmDev")
+        integratedServer = MacrocosmServer((if(devEnv) "devMini" else "mini")+Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         Threading.runAsync {
             Database.connect()
@@ -75,6 +82,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         // server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -148,6 +156,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         config.load(cfgFile)
 
         PackProvider.init()
+
+        SidebarRenderer.init()
     }
 
     private val dumpTestData: Boolean = false

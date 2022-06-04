@@ -40,13 +40,15 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
 
-fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, value: V) {
+fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, value: V): Int {
     if(this.containsKey(key)) {
         val v = this[key]!!
         v.add(value)
         this[key] = v
+        return v.indexOf(value)
     } else {
         this[key] = ConcurrentLinkedQueue<V>().apply { add(value) }
+        return 0
     }
 }
 

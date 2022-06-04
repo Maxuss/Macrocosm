@@ -22,8 +22,8 @@ class SlayerAbility(
     val listenerRegister: SlayerAbility.() -> Unit
 ) {
     fun descript(tier: Int): List<Component> {
-        val regexed = "\\[[\\d.|]]".toRegex().replace(description) {
-            it.value.replace("[", "").replace("", "]").split("|")[tier - 1]
+        val regexed = "\\[[\\d./]]".toRegex().replace(description) {
+            it.value.replace("[", "").replace("", "]").split("/")[tier - 1]
         }
         val reduced = regexed.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
