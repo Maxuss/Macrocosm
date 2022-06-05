@@ -17,9 +17,9 @@ import space.maxus.macrocosm.stats.Statistic
 object DeathDefyAbility: AbilityBase(
     AbilityType.PASSIVE,
     "Death Defy",
-    "Resurrects you with <red>Full ${Statistic.HEALTH.display}<gray> on death, and grants <red>+50% ${Statistic.ABILITY_DAMAGE.display}<gray> for <green>5 seconds<gray>."
+    "Resurrects you with <red>Full ${Statistic.HEALTH.display}<gray> on death, and grants <green>10x ${Statistic.DEFENSE.display}<gray> and <red>+25% ${Statistic.ABILITY_DAMAGE.display}<gray> for <green>5 seconds<gray>."
 ) {
-    override val cost: AbilityCost = AbilityCost(cooldown = 90)
+    override val cost: AbilityCost = AbilityCost(cooldown = 180)
 
     override fun registerListeners() {
         listen<PlayerDeathEvent> { e ->
@@ -29,8 +29,9 @@ object DeathDefyAbility: AbilityBase(
                 return@listen
 
             e.isCancelled = true
-            e.player.sendMessage("<gradient:#FF8235:#FFB835><bold>DEATH DEFY!</bold></gradient><gold> Your Hyperion's Ring saved you from fatal blow! <red>(+50% ${Statistic.ABILITY_DAMAGE.display} for 5s)")
-            e.player.tempStats.abilityDamage += 50f
+            e.player.sendMessage("<gradient:#FF8235:#FFB835><bold>DEATH DEFY!</bold></gradient><gold> Your Hyperion's Ring saved you from fatal blow!")
+            e.player.tempStats.abilityDamage += 25f
+            e.player.tempStats.defense += e.player.stats()!!.defense * 19f
             task(delay = 5 * 20L) {
                 e.player.tempStats.abilityDamage -= 50f
             }

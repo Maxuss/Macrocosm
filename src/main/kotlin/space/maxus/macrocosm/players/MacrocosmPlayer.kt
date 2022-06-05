@@ -41,6 +41,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.stats.SpecialStatistics
+import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
@@ -162,7 +163,6 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build(this)) ?: Unit
 
-    @Suppress("UNUSED_PARAMETER")
     fun isRecipeLocked(recipe: Identifier): Boolean {
         return unlockedRecipes.contains(recipe)
     }
@@ -302,8 +302,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             ) NamedTextColor.GOLD else if (activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
 
         paper?.sendActionBar(
-            comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}❤    ").color(healthColor)
-                .append(comp("<green>${stats.defense.roundToInt()}❈ Defense    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
+            comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}${Statistic.HEALTH.display}   ").color(healthColor)
+                .append(comp("<green>${stats.defense.roundToInt()}${Statistic.DEFENSE.display}    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
         )
     }
 

@@ -38,7 +38,7 @@ object PyroclasticToadPet : Pet(
         PetAbility("Molten Fury", "Deal <red>+[1]% ${Statistic.DAMAGE.display}<gray> when on fire."),
         PetAbility("Sleeping Wrath", "Boosts <gold>all<gray> your stats by <red>[0.1]%<gray> while standing still."),
         PetAbility("Profaned Rage",
-            "Every <green>10 seconds<gray>, cast a <gold>Fire Storm<gray>, dealing <red>[100]%<gray> of your ${Statistic.STRENGTH.display}<gray> to all nearby enemies."
+            "Every <green>10 seconds<gray>, cast a <gold>Fire Storm<gray>, dealing <red>[50]%<gray> of your ${Statistic.STRENGTH.display}<gray> to all nearby enemies."
         ),
     ),
     stats {
@@ -93,7 +93,7 @@ object PyroclasticToadPet : Pet(
                 if (!ok)
                     continue
                 val dmg = DamageCalculator.calculateMagicDamage(
-                    (pet!!.level * player.stats()!!.intelligence).roundToInt(),
+                    (pet!!.level * .5 * player.stats()!!.strength).roundToInt(),
                     .01f,
                     player.stats()!!
                 )

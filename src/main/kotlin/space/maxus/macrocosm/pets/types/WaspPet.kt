@@ -40,7 +40,7 @@ object WaspPet : Pet(
         ),
         PetAbility(
             "Weaponized Honey",
-        "Every <green>10 seconds<gray> shoots a <yellow>stinger<gray> at nearest enemy, dealing <red>[1500] ${Statistic.DAMAGE.display}<gray>."
+        "Every <green>10 seconds<gray> shoots a <yellow>stinger<gray> at nearest enemy, dealing <red>[1000] ${Statistic.DAMAGE.display}<gray>."
         ),
     ),
     stats {
@@ -82,7 +82,7 @@ object WaspPet : Pet(
                     player.paper!!.getNearbyEntities(8.0, 2.0, 8.0)
                         .firstOrNull { it is LivingEntity && it !is ArmorStand } as? LivingEntity
                         ?: continue
-                val dmg = DamageCalculator.calculateMagicDamage(1500 * pet!!.level, .2f, player.stats()!!)
+                val dmg = DamageCalculator.calculateMagicDamage(1000 * pet!!.level, .15f, player.stats()!!)
                 val bi = BlockIterator(nearest.world, player.paper!!.location.toVector(), nearest.location.toVector().subtract(player.paper!!.location.toVector()).normalize(), 1.0, 10)
                 while(bi.hasNext()) {
                     val pos = bi.next()
