@@ -36,6 +36,7 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.util.Calendar
 import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 
@@ -69,6 +70,47 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
             ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
         )
 
+    }
+}
+
+fun setDateCommand() = command("date") {
+    requires { it.hasPermission(4) }
+    argument("date", IntegerArgumentType.integer(1, 21)) {
+        runs {
+            Calendar.date = getArgument("date")
+        }
+
+        argument("season", StringArgumentType.word()) {
+            suggestListSuspending {
+                Calendar.Season.values().map { it.name }.filter { s -> s.contains(it.getArgumentOrNull("season") ?: "") }
+            }
+
+            runs {
+                Calendar.date = getArgument("date")
+                Calendar.season = Calendar.Season.valueOf(getArgument("season"))
+            }
+
+            argument("state", StringArgumentType.word()) {
+                suggestListSuspending {
+                    Calendar.SeasonState.values().map { it.name }.filter { s -> s.contains(it.getArgumentOrNull("state") ?: "") }
+                }
+
+                runs {
+                    Calendar.date = getArgument("date")
+                    Calendar.season = Calendar.Season.valueOf(getArgument("season"))
+                    Calendar.state = Calendar.SeasonState.valueOf(getArgument("state"))
+                }
+
+                argument("year", IntegerArgumentType.integer(0)) {
+                    runs {
+                        Calendar.date = getArgument("date")
+                        Calendar.season = Calendar.Season.valueOf(getArgument("season"))
+                        Calendar.state = Calendar.SeasonState.valueOf(getArgument("state"))
+                        Calendar.year = getArgument("yeara")
+                    }
+                }
+            }
+        }
     }
 }
 

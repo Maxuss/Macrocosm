@@ -1,7 +1,9 @@
 package space.maxus.macrocosm.display
 
 import net.axay.kspigot.extensions.bukkit.toComponent
+import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.runnables.task
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -15,25 +17,32 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.Ticker
-import space.maxus.macrocosm.util.setOrAppend
+import space.maxus.macrocosm.util.ticksToTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutorService
 import kotlin.math.max
 
 object SidebarRenderer: Listener {
-    private val renderQueue: ConcurrentHashMap<UUID, ConcurrentLinkedQueue<RenderComponent>> = ConcurrentHashMap()
+    private val renderQueue: ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, OrderedRenderComponent>> = ConcurrentHashMap()
     private val renderPool: ExecutorService = Threading.newFixedPool(5)
 
-    fun enqueue(player: Player, component: RenderComponent): Int {
-        return renderQueue.setOrAppend(player.uniqueId, component)
+    fun enqueue(player: Player, component: RenderComponent, priority: RenderPriority): UUID {
+        val cid = UUID.randomUUID()
+        if(renderQueue.containsKey(player.uniqueId)) {
+            renderQueue[player.uniqueId]!![cid] = OrderedRenderComponent(component, priority)
+            val sorted = ConcurrentHashMap(renderQueue[player.uniqueId]!!.toList().sortedBy { (_, v) -> v.position.priority }.toMap())
+            renderQueue[player.uniqueId] = sorted
+        } else {
+            renderQueue[player.uniqueId] = ConcurrentHashMap<UUID, OrderedRenderComponent>().apply { put(cid, OrderedRenderComponent(component, priority)) }
+        }
+        return cid
     }
 
-    fun dequeue(player: Player, component: RenderComponent) {
+    fun dequeue(player: Player, key: UUID) {
         val q = renderQueue[player.uniqueId]!!
-        q.remove(component)
-        renderQueue[player.uniqueId] = q
+        q.remove(key)
+        renderQueue[player.uniqueId] = ConcurrentHashMap(q.toList().sortedBy {  (_, v) -> v.position.priority }.toMap())
     }
 
     private val objNameMap = ChatColor.values().map { it.toString() + ChatColor.RESET.toString() }
@@ -45,7 +54,7 @@ object SidebarRenderer: Listener {
             val obj = player.scoreboard.getObjective("defaultBoard")!!
             val board = player.scoreboard
             var pos = -1
-            for (cmp in components) {
+            for ((_, cmp) in components) {
                 pos++
                 if(pos > objNameMap.size - 1)
                     break
@@ -55,6 +64,7 @@ object SidebarRenderer: Listener {
                 team.prefix(cmp.title())
                 obj.getScore(name).score = max - (pos + 2)
                 val lines = cmp.lines().toMutableList()
+
                 // padding
                 lines.add("".toComponent())
                 for(line in lines) {
@@ -110,18 +120,23 @@ object SidebarRenderer: Listener {
         player.scoreboard = board
     }
 
+    private var cachedDayTime = comp("<dark_aqua>☽ <gray>00:00")
+    private fun calculateDayTime(): Component {
+        val world = worlds[0]
+        val time = world.time
+        val minute = (1000L / 60L) * 5
+        // only update time every minute or so ingame
+        if(time % minute > 8)
+            return cachedDayTime
+        cachedDayTime = comp((if(world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
+        return cachedDayTime
+    }
+
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
         preparePlayer(e.player)
 
-        enqueue(e.player, RenderComponent.simple(
-            "<red><bold>TEST STUFF",
-            "<gray>Im just testing stuff asdasdaasd"
-        ))
-        enqueue(e.player, RenderComponent.fixed(
-            comp("<gradient:red:dark_purple><bold>Another test"),
-            listOf(comp("<gray>First line"), comp("<gray>Second line"))
-        ))
+        enqueue(e.player, RenderComponent.dynamic(space.maxus.macrocosm.util.Calendar::renderDate) { listOf(calculateDayTime()) }, RenderPriority.HIGHEST)
     }
 
     @EventHandler

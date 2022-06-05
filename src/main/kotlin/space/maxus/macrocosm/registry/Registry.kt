@@ -15,10 +15,7 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.fishing.FishingTreasure
 import space.maxus.macrocosm.fishing.SeaCreature
 import space.maxus.macrocosm.fishing.TrophyFish
-import space.maxus.macrocosm.generators.Model
-import space.maxus.macrocosm.generators.CMDGenerator
-import space.maxus.macrocosm.generators.ResGenerator
-import space.maxus.macrocosm.generators.TexturedModelGenerator
+import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
@@ -125,7 +122,7 @@ abstract class Registry<T>(val name: Identifier) {
             val registeredAbilities = mutableListOf<String>()
             var minisRegistered = 0
             for(tier in slayer.tiers) {
-                ENTITY.register(id("${slayer.id}_$tier"), slayer.bossForTier(tier))
+                ENTITY.register(id("${slayer.id}_$tier"), slayer.bossModelForTier(tier))
                 for(ability in slayer.abilitiesForTier(tier)) {
                     if(registeredAbilities.contains(ability.abilityId))
                         continue
@@ -141,7 +138,7 @@ abstract class Registry<T>(val name: Identifier) {
         val COSMETIC = makeDefaulted<Cosmetic>(id("cosmetic"))
         val MODEL_PREDICATES = makeDelegated<Model>(id("model")) { _, model ->
             CMDGenerator.enqueue(model)
-            if(model.to.startsWith("macrocosm:"))
+            if(model.to.startsWith("macrocosm:") && model !is RawModel)
                 TexturedModelGenerator.enqueue(model)
         }
 

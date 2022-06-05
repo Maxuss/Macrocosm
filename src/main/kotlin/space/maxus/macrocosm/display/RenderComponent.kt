@@ -14,6 +14,17 @@ interface RenderComponent {
     companion object {
         fun simple(title: String, description: String): RenderComponent = Simple(title, description)
         fun fixed(title: Component, lines: List<Component>): RenderComponent = Fixed(title, lines)
+        fun dynamic(title: () -> Component, lines: () -> List<Component>): RenderComponent = Dynamic(title, lines)
+    }
+
+    private data class Dynamic(val title: () -> Component, val lines: () -> List<Component>): RenderComponent {
+        override fun title(): Component {
+            return this.title.invoke()
+        }
+
+        override fun lines(): List<Component> {
+            return this.lines.invoke()
+        }
     }
 
     private data class Fixed(val title: Component, val lines: List<Component>): RenderComponent {

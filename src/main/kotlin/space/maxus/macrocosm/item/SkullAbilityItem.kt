@@ -1,11 +1,13 @@
 package space.maxus.macrocosm.item
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import net.minecraft.nbt.CompoundTag
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -32,15 +34,37 @@ open class SkullAbilityItem(
     specialStats,
     breakingPower,
     applicableRunes,
-    description,
-    metaModifier = { meta ->
+    description
+) {
+    override fun addExtraNbt(cmp: CompoundTag) {
+        cmp.putByte("BlockClicks", 1)
+    }
+
+    override fun addExtraMeta(meta: ItemMeta) {
         val skull = meta as SkullMeta
         val profile = Bukkit.createProfile(UUID.randomUUID())
         profile.setProperty(ProfileProperty("textures", skullOwner))
         skull.playerProfile = profile
-        println("APPLIED EXTRA META")
     }
-) {
-    override fun addExtraMeta(meta: ItemMeta) {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun clone(): MacrocosmItem {
+        val item = SkullAbilityItem(
+            type,
+            itemName,
+            rarity,
+            skullOwner,
+            stats.clone(),
+            abilities,
+            specialStats.clone(),
+            description = description
+        )
+        item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        item.reforge = reforge?.clone()
+        item.rarityUpgraded = rarityUpgraded
+        item.stars = stars
+        item.breakingPower = breakingPower
+        item.runes.putAll(runes)
+        return item
     }
 }

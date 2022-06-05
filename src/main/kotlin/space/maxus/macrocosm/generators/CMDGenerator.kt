@@ -11,9 +11,11 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 const val MODEL_PREFIX = 732_0000
 
-class Model(data: Int, val from: String, val to: String, val parent: String = "item/generated") {
+open class Model(data: Int, val from: String, val to: String, val parent: String = "item/generated") {
     val data: Int = MODEL_PREFIX + data
 }
+
+class RawModel(data: Int, from: String, to: String): Model(data, from, to)
 
 object CMDGenerator: ResGenerator {
     private val enqueued: ConcurrentLinkedQueue<Model> = ConcurrentLinkedQueue()

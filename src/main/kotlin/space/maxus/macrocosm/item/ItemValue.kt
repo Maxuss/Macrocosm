@@ -16,10 +16,7 @@ import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.generators.Animation
-import space.maxus.macrocosm.generators.AnimationData
-import space.maxus.macrocosm.generators.MetaGenerator
-import space.maxus.macrocosm.generators.Model
+import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.runes.DefaultRune
 import space.maxus.macrocosm.item.runes.RuneItem
 import space.maxus.macrocosm.item.runes.rarityToRuneTier
@@ -120,24 +117,26 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         Animation(10, 4, true)
     ),
 
-    YETI_SWORD(AbilityItem(ItemType.SWORD, "Yeti Sword", Rarity.LEGENDARY, Material.IRON_SWORD, stats {
-        damage = 180f
-        strength = 250f
-        intelligence = 300f
-    }, mutableListOf(TerrainTossAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE, DefaultRune.SILVER))),
-
-    HYPERIONS_RING(SkullAbilityItem(
+    HYPERIONS_RING(AbilityItem(
         ItemType.OTHER,
         "Hyperion's Ring",
         Rarity.LEGENDARY,
-        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ4ZGY2ZmVmZjQxYTk4N2Y1M2ExZTAzYzI5ODAxNzc3MTc2N2IyNjM4MDgyMDMzODZiNzczN2E5Yzg2NjEzZiJ9fX0=",
+        Material.GOLD_INGOT,
         stats {
             intelligence = 50f
             abilityDamage = 5f
         },
         mutableListOf(DeathDefyAbility),
         description = "Only works in off hand"
-    )),
+    ),
+        RawModel(121, "item/gold_ingot", "macrocosm:item/hyperions_ring")
+    ),
+
+    YETI_SWORD(AbilityItem(ItemType.SWORD, "Yeti Sword", Rarity.LEGENDARY, Material.IRON_SWORD, stats {
+        damage = 180f
+        strength = 250f
+        intelligence = 300f
+    }, mutableListOf(TerrainTossAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE, DefaultRune.SILVER))),
 
     // entity-limited items
     RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {

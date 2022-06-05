@@ -2,14 +2,14 @@ package space.maxus.macrocosm.slayer.zombie
 
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
-import space.maxus.macrocosm.entity.EntityBase
 import space.maxus.macrocosm.item.SkullEntityHead
 import space.maxus.macrocosm.item.VanillaItem
 import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.slayer.SlayerBase
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.comp
 
-class DefaultRevenant(stats: Statistics, pool: LootPool, exp: Double): EntityBase(
+class DefaultRevenant(stats: Statistics, pool: LootPool, exp: Double): SlayerBase(
     comp("<red>☠ Revenant Horror ☠"),
     EntityType.ZOMBIE,
     pool,

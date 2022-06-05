@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.commands
 
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
@@ -9,6 +10,29 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.skills.SkillType
+import space.maxus.macrocosm.slayer.SlayerQuest
+import space.maxus.macrocosm.slayer.SlayerStatus
+import space.maxus.macrocosm.slayer.SlayerType
+
+fun testBossCommand() = command("spawnboss") {
+    argument("id", StringArgumentType.string()) {
+        argument("tier", IntegerArgumentType.integer(0, 6)) {
+            runs {
+                SlayerQuest(SlayerType.valueOf(getArgument("id")), getArgument("tier"), 0f, SlayerStatus.FAIL).summonBoss(player)
+            }
+        }
+    }
+}
+
+fun testSlayerCommand() = command("slayer") {
+    argument("id", StringArgumentType.string()) {
+        argument("tier", IntegerArgumentType.integer(0, 6)) {
+            runs {
+                player.macrocosm!!.startSlayerQuest(SlayerType.valueOf(getArgument("id")), getArgument("tier"))
+            }
+        }
+    }
+}
 
 fun testStatsCommand() = command("stats") {
     runs {

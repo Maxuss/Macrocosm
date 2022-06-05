@@ -31,9 +31,11 @@ object DeathDefyAbility: AbilityBase(
             e.isCancelled = true
             e.player.sendMessage("<gradient:#FF8235:#FFB835><bold>DEATH DEFY!</bold></gradient><gold> Your Hyperion's Ring saved you from fatal blow!")
             e.player.tempStats.abilityDamage += 25f
-            e.player.tempStats.defense += e.player.stats()!!.defense * 19f
+            val def = e.player.stats()!!.defense * 19f
+            e.player.tempStats.defense += def
             task(delay = 5 * 20L) {
-                e.player.tempStats.abilityDamage -= 50f
+                e.player.tempStats.abilityDamage -= 25f
+                e.player.tempStats.defense -= def
             }
 
             val paper = e.player.paper!!

@@ -13,25 +13,25 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
 
-class DropRarity(val broadcast: Boolean, val greet: Boolean = false, val name: String? = null) {
+class DropRarity(val broadcast: Boolean, val rarity: Int,  val greet: Boolean = false, val name: String? = null) {
     companion object {
-        val COMMON = DropRarity(false)
-        val RARE = DropRarity(true, name = "<gold>RARE")
-        val VERY_RARE = DropRarity(true, greet = true, "<blue>VERY RARE")
-        val SUPER_RARE = DropRarity(true, greet = true, "<dark_purple>SUPER RARE")
-        val CRAZY_RARE = DropRarity(true, greet = true, "<light_purple>CRAZY RARE")
-        val INSANE = DropRarity(true, greet = true, "<red>INSANE")
-        val UNBELIEVABLE = DropRarity(true, greet = true, "<#2ACE7C>UNBELIEVABLE")
+        val COMMON = DropRarity(false, 0)
+        val RARE = DropRarity(true, 1, name = "<gold>RARE")
+        val VERY_RARE = DropRarity(true, 2, greet = true, "<blue>VERY RARE")
+        val SUPER_RARE = DropRarity(true, 3, greet = true, "<dark_purple>SUPER RARE")
+        val CRAZY_RARE = DropRarity(true, 4, greet = true, "<light_purple>CRAZY RARE")
+        val INSANE = DropRarity(true, 5, greet = true, "<red>INSANE")
+        val UNBELIEVABLE = DropRarity(true, 6, greet = true, "<#2ACE7C>UNBELIEVABLE")
     }
 
-    fun announceEntityDrop(player: Player, item: MacrocosmItem) {
+    fun announceEntityDrop(player: Player, item: MacrocosmItem, artificial: Boolean = false) {
         if (!broadcast)
             return
         val mf = player.macrocosm!!.stats()!!.magicFind
         val message = comp(
             "<bold>$name DROP!</bold> ${
                 MiniMessage.miniMessage().serialize(item.buildName())
-            } <aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"
+            } ${if(artificial) "<light_purple>(<dark_purple>RNGesus Meter Reward<light_purple>)" else "<aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"}"
         )
         player.sendMessage(message)
         if (greet) {

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.axay.kspigot.extensions.pluginKey
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import org.bukkit.Location
@@ -39,6 +40,26 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
+
+fun String.stripTags() = MiniMessage.miniMessage().stripTags(this)
+
+fun ticksToTime(ticks: Long): String {
+    var hours = (ticks / 1000) + 6
+    var minutes = (ticks % 1000) / (1000 / 60)
+    while(minutes >= 60) {
+        hours++
+        minutes -= 60
+    }
+    val suffix = if(hours >= 24) {
+        hours -= 24
+        "AM"
+    }
+    else if(hours > 12) {
+        hours -= 12
+        "PM"
+    } else "AM"
+    return (if (hours < 10) "0" else "") + hours + ":" + (if (minutes < 10) "0" else "") + minutes + suffix
+}
 
 fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, value: V): Int {
     if(this.containsKey(key)) {

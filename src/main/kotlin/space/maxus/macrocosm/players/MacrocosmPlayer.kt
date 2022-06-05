@@ -25,6 +25,8 @@ import space.maxus.macrocosm.collections.Collections
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.db.DatabaseStore
+import space.maxus.macrocosm.display.RenderPriority
+import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
@@ -40,6 +42,10 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
+import space.maxus.macrocosm.slayer.SlayerLevel
+import space.maxus.macrocosm.slayer.SlayerQuest
+import space.maxus.macrocosm.slayer.SlayerStatus
+import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
@@ -49,6 +55,7 @@ import space.maxus.macrocosm.util.GSON
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -75,7 +82,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var collections: Collections = Collections.default()
     var ownedPets: HashMap<String, StoredPet> = hashMapOf()
     var activePet: PetInstance? = null
+    var slayerQuest: SlayerQuest? = null
+    var slayerExperience: HashMap<SlayerType, SlayerLevel> = HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, .0) })
+    var summonedBoss: UUID? = null
 
+    private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
     private var specialCache: SpecialStatistics? = null
 
@@ -162,6 +173,33 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             return item.macrocosm
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build(this)) ?: Unit
+
+    fun startSlayerQuest(type: SlayerType, tier: Int) {
+        val p = paper ?: return
+
+        slayerQuest = SlayerQuest(type, tier, 0f, SlayerStatus.COLLECT_EXPERIENCE)
+        val requiredExp = type.slayer.requiredExp[tier - 1]
+        sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {
+            pitch = 2f
+            playFor(p)
+        }
+        sendMessage("<dark_purple><bold>SLAYER QUEST STARTED!")
+        sendMessage("<dark_purple>▶ <gray>Slay <red>${Formatting.withCommas(requiredExp.toBigDecimal())} Combat XP<gray> worth of <green>${type.slayer.entities}<gray> to summon the boss!")
+        if(slayerRenderId != null)
+            SidebarRenderer.dequeue(p, slayerRenderId!!)
+        slayerRenderId = SidebarRenderer.enqueue(p, slayerQuest!!.render(), RenderPriority.LOW)
+    }
+
+    fun updateSlayerQuest(new: SlayerQuest) {
+        val p = paper ?: return
+        if(slayerQuest == null)
+            return
+
+        slayerQuest = new
+        if(slayerRenderId != null)
+            SidebarRenderer.dequeue(p, slayerRenderId!!)
+        slayerRenderId = SidebarRenderer.enqueue(p, new.render(), RenderPriority.LOW)
+    }
 
     fun isRecipeLocked(recipe: Identifier): Boolean {
         return unlockedRecipes.contains(recipe)
@@ -476,6 +514,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val pets = GSON.toJson(ownedPets)
 
         stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
+
+        // slayers
+        val slayers = GSON.toJson(slayerExperience.mapKeys { (k, _) -> k.name })
+        stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
+
         stmt.close()
     }
 
@@ -537,6 +580,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     player.activePet = Registry.PET.find(pet.id).spawn(player, active)
                 }
             }
+
+            // slayers
+            val slayerRes = stmt.executeQuery("SELECT * FROM Slayers WHERE UUID = '$id'")
+            if(!slayerRes.next())
+                return null
+            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(petsRes.getString("EXPERIENCE"), object : TypeToken<HashMap<String, SlayerLevel>>() {}.type)
+            player.slayerExperience = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
             stmt.close()
             return player
         }

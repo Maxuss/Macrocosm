@@ -36,11 +36,13 @@ import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
+import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.util.Calendar
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.ZoneType
-import java.util.*
 import kotlin.random.Random
+import java.util.UUID
 
 class InternalMacrocosmPlugin : KSpigot() {
     companion object {
@@ -58,9 +60,12 @@ class InternalMacrocosmPlugin : KSpigot() {
         devEnv = System.getenv().containsKey("macrocosmDev")
         integratedServer = MacrocosmServer((if(devEnv) "devMini" else "mini")+Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
-        Threading.runAsync {
+        Threading.runAsyncRaw {
             Database.connect()
             playersLazy = Database.readAllPlayers().toMutableList()
+        }
+        Threading.runAsyncRaw {
+            Calendar.load()
         }
     }
 
@@ -83,6 +88,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
+
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
@@ -129,6 +136,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         armorCommand()
         cosmeticCommand()
         payCommand()
+        setDateCommand()
 
         testStatsCommand()
         testLevelUp()
@@ -136,6 +144,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         skillExp()
         collAmount()
         testCraftingTable()
+        testBossCommand()
+        testSlayerCommand()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
@@ -157,6 +167,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         PackProvider.init()
 
+        Calendar.init()
         SidebarRenderer.init()
     }
 
@@ -168,6 +179,9 @@ class InternalMacrocosmPlugin : KSpigot() {
                 println("Saving data for player $id...")
                 v.storeSelf(Database.statement)
             }
+        }
+        Threading.runAsync {
+            Calendar.save()
         }
     }
 }

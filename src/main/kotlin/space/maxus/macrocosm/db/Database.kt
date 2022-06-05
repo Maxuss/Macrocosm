@@ -78,6 +78,9 @@ object Database {
                 )
                 """.trimIndent()
             )
+
+            st.executeUpdate("CREATE TABLE Slayers(UUID VARCHAR PRIMARY KEY, EXPERIENCE VARCHAR DEFAULT('{}'))")
+
             var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
             for (stat in Statistic.values()) {
                 statQuery += ", ${stat.name} REAL"

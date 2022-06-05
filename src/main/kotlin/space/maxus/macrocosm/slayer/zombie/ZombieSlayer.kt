@@ -4,6 +4,7 @@ import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.reward.Reward
 import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.slayer.SlayerAbility
 import space.maxus.macrocosm.stats.stats
@@ -22,7 +23,19 @@ object ZombieSlayer: Slayer(
         25000.0,
         40000.0
     ),
-    1..6
+    1..6,
+    "Zombies",
+    listOf(
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(2),
+        Reward.repeating(3),
+        )
 ) {
     override fun abilitiesForTier(tier: Int): List<SlayerAbility> {
         return when(tier) {
@@ -32,7 +45,7 @@ object ZombieSlayer: Slayer(
         }
     }
 
-    override fun bossForTier(tier: Int): MacrocosmEntity {
+    override fun bossModelForTier(tier: Int): MacrocosmEntity {
         return DefaultRevenant(stats {
             health = 25000f
             defense = 150f

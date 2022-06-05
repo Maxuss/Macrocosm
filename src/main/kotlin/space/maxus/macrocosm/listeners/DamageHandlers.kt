@@ -22,6 +22,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
+import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
@@ -394,7 +395,12 @@ object DamageHandlers : Listener {
             entity.macrocosm!!.damage(damage.toFloat())
         }
         summonDamageIndicator(entity.location, damage.toFloat(), DamageType.FROST)
+    }
 
+    @EventHandler
+    fun onDeath(e: EntityDeathEvent) {
+        // clearing drops, because they are handled internally
+        e.drops.clear()
     }
 
     private fun processFerocity(

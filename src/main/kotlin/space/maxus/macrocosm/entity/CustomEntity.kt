@@ -99,7 +99,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         currentHealth -= amount
         if (currentHealth <= 0) {
             if (damager != null && damager is Player) {
-                val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!)
+                val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!, experience)
                 event.callEvent()
             }
             kill(damager)
@@ -119,6 +119,17 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             return
 
         val entity = paper!!
+        val loc = paper!!.location
+
+        if (damager != null && damager is Player) {
+            val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!, experience)
+            event.callEvent()
+            val universal = GlobalLootPool.of(damager.macrocosm!!, this)
+            for (item in universal.roll(damager.macrocosm)) {
+                loc.world.dropItemNaturally(loc, item ?: continue)
+            }
+            damager.macrocosm!!.addSkillExperience(rewardingSkill, event.experience)
+        }
 
         if (Registry.SOUND.has(id)) {
             val soundBank = Registry.SOUND.find(id)
@@ -131,23 +142,15 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         val event = EntityDropItemsEvent(damager, entity, pool)
         val cancelled = !event.callEvent()
         pool = event.pool
-        val loc = entity.location
         loadChanges(entity)
         entity.kill()
+
         if (cancelled)
             return
 
         val items = pool.roll(killer)
         for (item in items) {
             loc.world.dropItemNaturally(loc, item ?: continue)
-        }
-
-        if (damager is Player) {
-            val universal = GlobalLootPool.of(damager.macrocosm!!, this)
-            for (item in universal.roll(killer)) {
-                loc.world.dropItemNaturally(loc, item ?: continue)
-            }
-            rewardExperience(damager.macrocosm!!)
         }
     }
 }
