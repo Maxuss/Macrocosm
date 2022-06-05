@@ -15,6 +15,7 @@ import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.capitalized
+import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.runes.DefaultRune
@@ -324,9 +325,19 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             }
         }
 
+        fun placeholderDescripted(type: Material, name: String, vararg description: String) = itemStack(type) {
+            meta {
+                displayName(comp(name).noitalic())
+                persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
+                val reduced = description.map { s -> comp("<gray>$s").noitalic() }.toMutableList()
+                lore(reduced)
+                flags(*ItemFlag.values())
+            }
+        }
+
         fun placeholder(type: Material, name: String, vararg extra: String) = itemStack(type) {
             meta {
-                displayName(comp(name))
+                displayName(comp(name).noitalic())
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
                 for (e in extra) {
                     persistentDataContainer[pluginKey(e), PersistentDataType.BYTE] = 1

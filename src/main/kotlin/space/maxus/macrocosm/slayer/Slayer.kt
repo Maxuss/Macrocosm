@@ -11,6 +11,7 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.entity.MacrocosmEntity
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.reward.Reward
 import space.maxus.macrocosm.text.comp
@@ -56,8 +57,12 @@ fun rngMeterForTier(tier: Int): Double = when(tier) {
 abstract class Slayer(
     val name: String,
     val item: Material,
+    val secondaryItem: Material,
     val id: String,
     val description: String,
+    val difficulties: List<String>,
+    val requirementString: String,
+    val requirementCheck: (MacrocosmPlayer) -> Boolean,
     val validEntities: List<EntityType>,
     val requiredExp: List<Double>,
     val tiers: IntRange,

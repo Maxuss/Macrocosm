@@ -89,6 +89,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
 
         protocolManager.addPacketListener(MiningHandler)
 
@@ -146,6 +147,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         testCraftingTable()
         testBossCommand()
         testSlayerCommand()
+        testMaddoxMenuCommand()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

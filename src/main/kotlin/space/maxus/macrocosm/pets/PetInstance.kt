@@ -149,6 +149,8 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
             var location = dir.toLocation(pos.world)
 
             entity.headPose = EulerAngle(.0, Math.toRadians(paper.eyeLocation.yaw.toDouble()), .0)
+            if(location.world.name != paper.location.world.name)
+                location.world = paper.location.world
             location.add(paper.location)
             location = location.toVector().add(vec(y = .5 + (1 + ticker / 7.5))).toLocation(pos.world)
 

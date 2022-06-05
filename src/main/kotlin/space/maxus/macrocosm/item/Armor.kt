@@ -65,7 +65,6 @@ object Armor {
     },
     runes = listOf(DefaultRune.REDSTONE, DefaultRune.EMERALD)))
 
-    // todo: dragon pet bonus
     val SUPERIOR_DRAGON_ARMOR = register(DragonArmor(
         "Superior",
         "superior_dragon",
@@ -83,7 +82,7 @@ object Armor {
         0xF2DF11,
         0xF25D18,
         abilities = mutableListOf(SuperiorDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.EMERALD, DefaultRune.CRYSTALLITE, DefaultRune.ADAMANTITE),
+        applicableRuns = mutableListOf(DefaultRune.EMERALD, DefaultRune.MOONSTONE, DefaultRune.ADAMANTITE),
     ))
 
     val STRONG_DRAGON_ARMOR = register(DragonArmor(

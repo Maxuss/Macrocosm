@@ -98,10 +98,6 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         currentHealth -= amount
         if (currentHealth <= 0) {
-            if (damager != null && damager is Player) {
-                val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!, experience)
-                event.callEvent()
-            }
             kill(damager)
             return
         }
@@ -121,29 +117,31 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         val entity = paper!!
         val loc = paper!!.location
 
-        if (damager != null && damager is Player) {
-            val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!, experience)
-            event.callEvent()
+        currentHealth = 0f
+        val killer = (damager as? Player)?.macrocosm
+
+        loadChanges(entity)
+        entity.kill()
+
+        if (killer != null) {
+            val killEvent = PlayerKillEntityEvent(damager.macrocosm!!, entity, experience)
+            killEvent.callEvent()
             val universal = GlobalLootPool.of(damager.macrocosm!!, this)
             for (item in universal.roll(damager.macrocosm)) {
                 loc.world.dropItemNaturally(loc, item ?: continue)
             }
-            damager.macrocosm!!.addSkillExperience(rewardingSkill, event.experience)
+            killer.addSkillExperience(rewardingSkill, killEvent.experience)
         }
 
         if (Registry.SOUND.has(id)) {
             val soundBank = Registry.SOUND.find(id)
             soundBank.playRandom(entity.location, SoundType.DEATH)
         }
-
-        currentHealth = 0f
-        val killer = (damager as? Player)?.macrocosm
+        
         var pool = lootPool(killer)
         val event = EntityDropItemsEvent(damager, entity, pool)
         val cancelled = !event.callEvent()
         pool = event.pool
-        loadChanges(entity)
-        entity.kill()
 
         if (cancelled)
             return

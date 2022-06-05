@@ -22,6 +22,7 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.events.YearChangeEvent
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
@@ -73,10 +74,12 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
     }
 }
 
+
 fun setDateCommand() = command("date") {
     requires { it.hasPermission(4) }
     argument("date", IntegerArgumentType.integer(1, 21)) {
         runs {
+            Calendar.ticksSinceDateChange = 0
             Calendar.date = getArgument("date")
         }
 
@@ -86,6 +89,7 @@ fun setDateCommand() = command("date") {
             }
 
             runs {
+                Calendar.ticksSinceDateChange = 0
                 Calendar.date = getArgument("date")
                 Calendar.season = Calendar.Season.valueOf(getArgument("season"))
             }
@@ -96,6 +100,7 @@ fun setDateCommand() = command("date") {
                 }
 
                 runs {
+                    Calendar.ticksSinceDateChange = 0
                     Calendar.date = getArgument("date")
                     Calendar.season = Calendar.Season.valueOf(getArgument("season"))
                     Calendar.state = Calendar.SeasonState.valueOf(getArgument("state"))
@@ -106,7 +111,11 @@ fun setDateCommand() = command("date") {
                         Calendar.date = getArgument("date")
                         Calendar.season = Calendar.Season.valueOf(getArgument("season"))
                         Calendar.state = Calendar.SeasonState.valueOf(getArgument("state"))
-                        Calendar.year = getArgument("yeara")
+                        val old = Calendar.year
+                        Calendar.year = getArgument("year")
+                        val event = YearChangeEvent(Calendar.year, old)
+                        event.callEvent()
+                        Calendar.ticksSinceDateChange = 0
                     }
                 }
             }

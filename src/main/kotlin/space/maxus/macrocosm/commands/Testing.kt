@@ -6,6 +6,7 @@ import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
+import net.axay.kspigot.gui.openGUI
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
@@ -13,6 +14,7 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerQuest
 import space.maxus.macrocosm.slayer.SlayerStatus
 import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
 
 fun testBossCommand() = command("spawnboss") {
     argument("id", StringArgumentType.string()) {
@@ -24,6 +26,11 @@ fun testBossCommand() = command("spawnboss") {
     }
 }
 
+fun testMaddoxMenuCommand() = command("slayermenu") {
+    runs {
+        player.openGUI(slayerChooseMenu(player.macrocosm!!))
+    }
+}
 fun testSlayerCommand() = command("slayer") {
     argument("id", StringArgumentType.string()) {
         argument("tier", IntegerArgumentType.integer(0, 6)) {

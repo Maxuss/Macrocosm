@@ -3,7 +3,7 @@ package space.maxus.macrocosm.skills
 import space.maxus.macrocosm.reward.boostStat
 import space.maxus.macrocosm.stats.Statistic
 
-enum class SkillType(val profession: String, val inst: Skill, val descriptor: (lvl: Int) -> String) {
+enum class SkillType(val profession: String, val inst: Skill, val descriptor: (lvl: Int) -> String, val maxLevel: Int = 50) {
     COMBAT("Warrior", skill(
         "Combat", (
             boostStat(Statistic.DAMAGE_BOOST, 0.04, hide = true)

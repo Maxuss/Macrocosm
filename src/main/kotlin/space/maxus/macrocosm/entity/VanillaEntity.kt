@@ -523,30 +523,33 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     }
 
     override fun kill(damager: Entity?) {
-        if (paper == null || paper!!.isDead)
+        if (paper == null)
             return
 
+        val entity = paper!!
         val loc = paper!!.location
 
-        if (damager != null && damager is Player) {
-            val event = PlayerKillEntityEvent(damager.macrocosm!!, this.paper!!, experience)
-            event.callEvent()
+        currentHealth = 0f
+        val killer = (damager as? Player)?.macrocosm
+
+        loadChanges(entity)
+        entity.kill()
+
+        if (killer != null) {
+            val killEvent = PlayerKillEntityEvent(damager.macrocosm!!, entity, experience)
+            killEvent.callEvent()
             val universal = GlobalLootPool.of(damager.macrocosm!!, this)
             for (item in universal.roll(damager.macrocosm)) {
                 loc.world.dropItemNaturally(loc, item ?: continue)
             }
-            damager.macrocosm!!.addSkillExperience(rewardingSkill, event.experience)
+            killer.addSkillExperience(rewardingSkill, killEvent.experience)
         }
 
-        currentHealth = 0f
-        val killer = (damager as? Player)?.macrocosm
         var pool = lootPool(killer)
-        val event = EntityDropItemsEvent(damager, paper!!, pool)
+        val event = EntityDropItemsEvent(damager, entity, pool)
         val cancelled = !event.callEvent()
-
         pool = event.pool
-        loadChanges(paper!!)
-        paper!!.kill()
+
         if (cancelled)
             return
 

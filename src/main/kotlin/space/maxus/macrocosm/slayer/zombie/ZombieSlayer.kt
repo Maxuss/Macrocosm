@@ -5,6 +5,7 @@ import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.reward.Reward
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.slayer.SlayerAbility
 import space.maxus.macrocosm.stats.stats
@@ -12,8 +13,21 @@ import space.maxus.macrocosm.stats.stats
 object ZombieSlayer: Slayer(
     "<red>Revenant Horror",
     Material.ROTTEN_FLESH,
+    Material.DIAMOND,
     "revenant_horror",
     "Abhorrent zombie, that has been sealed in it's tomb for long time.",
+    listOf(
+        "Easy",
+        "Trivial",
+        "Challenging",
+        "Hard",
+        "Insane",
+        "Excruciating"
+    ),
+    "<dark_aqua>Requires Combat LVL 10<gray>.",
+    { player ->
+        player.skills.level(SkillType.COMBAT) >= 10
+    },
     listOf(EntityType.ZOMBIE),
     listOf(
         100.0,

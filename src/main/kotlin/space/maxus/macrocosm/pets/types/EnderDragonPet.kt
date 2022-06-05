@@ -23,7 +23,7 @@ object EnderDragonPet : Pet(
         PetAbility("Enderian", "Gain <gold>+[0.1]%<gray> on <red>all<gray> stats, when on <dark_purple>The End<gray>."),
         PetAbility(
             "Void Conqueror",
-            "Buffs <gold>Dragon Sets<gray> and <gold>Void Scepter<gray> by <red>+[1] ${Statistic.STRENGTH.display}<gray>."
+            "Increases stats of <gold>Dragon Sets<gray>, <gold>Void Scepter<gray> and <gold>Aspect of the Dragons<gray> by <red>[.1]%<gray>."
         ),
         PetAbility(
             "Extinction",
@@ -39,8 +39,8 @@ object EnderDragonPet : Pet(
 ) {
     override val effects: PetEffects = FixedPetEffects(
         listOf(
-            DustPetParticle(0x6705AD, 1.5f, 2, vec(-.5, .0, -.5)),
-            DustPetParticle(0x140221, 1.5f, 2, vec(.5, .0, .5))
+            DustPetParticle(0x6705AD, 1.5f, 2, vec()),
+            DustPetParticle(0x140221, 1.5f, 2, vec())
         )
     )
 
@@ -57,12 +57,18 @@ object EnderDragonPet : Pet(
 
     @EventHandler
     fun voidConquerorAbility(e: ItemCalculateStatsEvent) {
-        // item checks
+        val (ok, pet) = ensureRequirement(e.player ?: return, "Void Conqueror")
+        if (!ok)
+            return
+        val amount = .001f * pet!!.level
+        if((e.item.type.armor && e.item.id.path.contains("dragon")) || e.item.id.path.contains("void_scepter") || e.item.id.path.contains("aspect_of_the_dragons")) {
+            e.stats.multiply(1 + amount)
+        }
     }
 
     @EventHandler
     fun extinctionAbility(e: PlayerDealDamageEvent) {
-        val (ok, pet) = ensureRequirement(e.player, "Enderian")
+        val (ok, pet) = ensureRequirement(e.player, "Extinction")
         if (!ok)
             return
 

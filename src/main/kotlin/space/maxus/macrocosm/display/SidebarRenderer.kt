@@ -31,8 +31,6 @@ object SidebarRenderer: Listener {
         val cid = UUID.randomUUID()
         if(renderQueue.containsKey(player.uniqueId)) {
             renderQueue[player.uniqueId]!![cid] = OrderedRenderComponent(component, priority)
-            val sorted = ConcurrentHashMap(renderQueue[player.uniqueId]!!.toList().sortedBy { (_, v) -> v.position.priority }.toMap())
-            renderQueue[player.uniqueId] = sorted
         } else {
             renderQueue[player.uniqueId] = ConcurrentHashMap<UUID, OrderedRenderComponent>().apply { put(cid, OrderedRenderComponent(component, priority)) }
         }
@@ -42,7 +40,7 @@ object SidebarRenderer: Listener {
     fun dequeue(player: Player, key: UUID) {
         val q = renderQueue[player.uniqueId]!!
         q.remove(key)
-        renderQueue[player.uniqueId] = ConcurrentHashMap(q.toList().sortedBy {  (_, v) -> v.position.priority }.toMap())
+        renderQueue[player.uniqueId] = q
     }
 
     private val objNameMap = ChatColor.values().map { it.toString() + ChatColor.RESET.toString() }
@@ -54,7 +52,7 @@ object SidebarRenderer: Listener {
             val obj = player.scoreboard.getObjective("defaultBoard")!!
             val board = player.scoreboard
             var pos = -1
-            for ((_, cmp) in components) {
+            for ((_, cmp) in components.toList().sortedBy { (_, v) -> v.position.priority }) {
                 pos++
                 if(pos > objNameMap.size - 1)
                     break
@@ -112,7 +110,7 @@ object SidebarRenderer: Listener {
         val obj = board.registerNewObjective("defaultBoard", "dummy", comp("<light_purple><bold>MACROCOSM"))
         obj.displaySlot = DisplaySlot.SIDEBAR
 
-        val sc = obj.getScore(ChatColor.DARK_GRAY.toString() + "Current Server: ${Macrocosm.integratedServer.id}")
+        val sc = obj.getScore(ChatColor.DARK_GRAY.toString() + "Server: ${Macrocosm.integratedServer.id}")
         sc.score = max
         val spacing = obj.getScore(ChatColor.BLACK.toString())
         spacing.score = max - 1
@@ -124,9 +122,9 @@ object SidebarRenderer: Listener {
     private fun calculateDayTime(): Component {
         val world = worlds[0]
         val time = world.time
-        val minute = (1000L / 60L) * 5
-        // only update time every minute or so ingame
-        if(time % minute > 8)
+        val minute = (1000L / 60L) * 10
+        // only update time every few minutes or so in game
+        if(time % minute > 4)
             return cachedDayTime
         cachedDayTime = comp((if(world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
         return cachedDayTime

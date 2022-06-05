@@ -59,7 +59,13 @@ object WaspPet : Pet(
 
     @EventHandler
     fun bumblebeeFlightAbility(e: ItemCalculateStatsEvent) {
-        // item checks, etc.
+        val (ok, pet) = ensureRequirement(e.player ?: return, "Bumblebee's Flight")
+        if (!ok)
+            return
+        val amount = .001f * pet!!.level
+        if((e.item.type.armor && e.item.id.path.contains("beekeeper")) || e.item.id.path.contains("queens_stinger")) {
+            e.stats.multiply(1 + amount)
+        }
     }
 
     @EventHandler

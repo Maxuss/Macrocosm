@@ -5,7 +5,8 @@ import space.maxus.macrocosm.slayer.zombie.ZombieSlayer
 import space.maxus.macrocosm.util.id
 
 enum class SlayerType(val slayer: Slayer) {
-    REVENANT_HORROR(ZombieSlayer)
+    REVENANT_HORROR(ZombieSlayer),
+
     ;
 
     companion object {

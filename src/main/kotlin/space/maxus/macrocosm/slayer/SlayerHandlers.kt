@@ -47,16 +47,18 @@ object SlayerHandlers: Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onDeath(e: PlayerDeathEvent) {
-        if(e.player.summonedBoss == null)
+        if(e.player.summonedBoss == null || e.player.slayerQuest == null || e.isCancelled)
+            return
+        val quest = e.player.slayerQuest!!
+        if(quest.status != SlayerStatus.SLAY_BOSS)
             return
         Bukkit.getEntity(e.player.summonedBoss!!)?.remove()
 
         e.player.sendMessage("<red><bold>SLAYER QUEST FAILED! YOU DIED!")
         e.player.sendMessage("<gray>Good luck next time!")
 
-        val quest = e.player.slayerQuest!!
         e.player.updateSlayerQuest(SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.FAIL))
     }
 
@@ -95,7 +97,7 @@ object SlayerHandlers: Listener {
                 e.player.paper!!.world.dropItemNaturally(e.player.paper!!.location, item)
             }
             val tiles = min(ceil(rng * 20).roundToInt(), 15)
-            player.sendMessage("<light_purple>RNG Meter: <gradient:dark_purple:light_purple><bold>" + "-".repeat(tiles) + "</gradient>" + "-".repeat(15 - tiles))
+            player.sendMessage("<light_purple>RNGesus Meter: <gradient:dark_purple:light_purple><bold>" + "-".repeat(tiles) + "</gradient><gray>" + "-".repeat(15 - tiles) + " <light_purple>${Formatting.stats((rng * 100).toBigDecimal())}%")
         }
         if(SlayerTable.shouldLevelUp(currentLevel.level, newExp, .0)) {
             player.slayerExperience[quest.type] = SlayerLevel(currentLevel.level + 1, .0, rng)

@@ -2,21 +2,23 @@ package space.maxus.macrocosm.util
 
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
+import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtIo
+import org.bukkit.Bukkit
+import org.bukkit.Sound
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import space.maxus.macrocosm.events.SeasonChangeEvent
 import space.maxus.macrocosm.events.YearChangeEvent
 import space.maxus.macrocosm.text.comp
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 
-object Calendar {
-    // 0/0/0
-    const val EPOCH: Long = 0
-
+object Calendar: Listener {
     private lateinit var tickTask: KSpigotRunnable
 
     var ticksSinceDateChange: Long = 0L
@@ -59,10 +61,29 @@ object Calendar {
         }
     }
 
+    @EventHandler
+    fun onNewYear(e: YearChangeEvent) {
+        Bukkit.broadcast(comp("<light_purple><bold><obfuscated>a<reset><yellow> Happy New ${e.new} Year! <light_purple><bold><obfuscated>a<reset>"))
+        for (player in Bukkit.getOnlinePlayers()) {
+            sound(Sound.ENTITY_PLAYER_LEVELUP) {
+                pitch = 0f
+                playFor(player)
+            }
+        }
+    }
+
+    private fun dateSuffix(date: Int): String {
+        return when(date) {
+            1, 21 -> "st"
+            2 -> "nd"
+            3 -> "rd"
+            else -> "th"
+        }
+    }
+
     fun renderDate(): Component {
         val mm = MiniMessage.miniMessage()
-        val strDate = date.toString()
-        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(comp(" $strDate${if(strDate == "1") "st" else if(strDate.endsWith("2") || strDate.endsWith("3")) "nd" else "th"}"))
+        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(comp(" $date${dateSuffix(date)}"))
     }
 
     fun tick() {

@@ -227,11 +227,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                         exp.toBigDecimal(),
                         true
                     )
-                } ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}/${
+                } ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}${if(currentLevel < skill.maxLevel) "/${
                     Formatting.withCommas(
                         required.toBigDecimal()
                     )
-                })"
+                }" else ""})"
             )
         )
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
@@ -268,6 +268,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun sendSkillLevelUp(skill: SkillType) {
+        // extra check just in case
+        // we shouldnt be here tho
+        if(skills.level(skill) >= 50)
+            return
         val newLevel = skills.level(skill)
         val previous = newLevel - 1
         val roman = roman(newLevel)
