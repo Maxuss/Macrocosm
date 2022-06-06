@@ -4,7 +4,6 @@ import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.loot.DropRarity
-import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.reward.Reward
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.MaterialDisplay
@@ -62,8 +61,53 @@ object ZombieSlayer: Slayer(
         Reward.repeating(3) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTYwMzgzYTI5YWQ4YjdiYWViNGMwYzdlMTVmMzUyMGYwN2VjNzU2NWY1YWY4NDFhNmY4MTJhYTQxOWJiNiJ9fX0="),
     ),
     listOf(
-        SlayerDrop(visual("revenant_flesh", DropRarity.COMMON, 1.0), 1, 0, listOf(
-            1..3, 9..18, 30..50, 50..60, 58..64, 65..66
+        SlayerDrop(visual("revenant_flesh", DropRarity.COMMON, 1.0), 1, 0, hashMapOf(
+            1 to 1..3, 2 to 9..18, 3 to 30..50, 4 to 50..60, 5 to 58..64, 6 to 65..66
+        )),
+        SlayerDrop(visual("foul_flesh", DropRarity.RARE, 0.2), 2, 1, hashMapOf(
+            2 to 1..1, 3 to 2..4, 4 to 4..5, 5 to 4..6, 6 to 0..0
+        )),
+        SlayerDrop(visual("rancid_flesh", DropRarity.VERY_RARE, 0.1), 6, 8, hashMapOf(
+            6 to 4..6
+        )),
+        SlayerDrop(visual("revenant_viscera", DropRarity.VERY_RARE, 0.05), 5, 7, hashMapOf(
+            5 to 1..2, 6 to 3..4
+        )),
+        SlayerDrop(visual("undead_catalyst", DropRarity.SUPER_RARE, 0.01), 2, 2, hashMapOf(
+            2 to 1..1, 3 to 1..1, 4 to 1..1, 5 to 1..1
+        )),
+        SlayerDrop(visual("revenant_catalyst", DropRarity.SUPER_RARE, 0.01), 3, 4, hashMapOf(
+            3 to 1..1, 4 to 1..1, 5 to 1..1
+        )),
+        SlayerDrop(visual("beheaded_horror", DropRarity.CRAZY_RARE, 1 / 521.0), 3, 5, hashMapOf(
+            3 to 1..1, 4 to 1..1, 5 to 1..1
+        )),
+        SlayerDrop(visual("decaying_brain", DropRarity.CRAZY_RARE, 1 / 666.0), 5, 6, hashMapOf(
+            5 to 1..1, 6 to 1..1
+        )),
+        SlayerDrop(visual("enchanted_diamond", DropRarity.VERY_RARE, 0.05), 4, 5, hashMapOf(
+            4 to 1..3, 5 to 1..4
+        )),
+        SlayerDrop(visual("forbidden_scrolls", DropRarity.SUPER_RARE, 1 / 200.0), 5, 7, hashMapOf(
+            5 to 1..1, 6 to 0..0
+        )),
+        SlayerDrop(visual("scythe_blade", DropRarity.CRAZY_RARE, 1 / 969.0), 4, 6, hashMapOf(
+            4 to 1..1, 5 to 1..1, 6 to 1..1,
+        )),
+        SlayerDrop(visual("diamond_rune_legendary", DropRarity.CRAZY_RARE, 1 / 777.0), 4, 5, hashMapOf(
+            4 to 1..1, 5 to 1..1, 6 to 1..2
+        )),
+        SlayerDrop(visual("emerald_rune_legendary", DropRarity.CRAZY_RARE, 1 / 777.0), 6, 7, hashMapOf(
+            6 to 1..1
+        )),
+        SlayerDrop(visual("enchanted_netherite_scrap", DropRarity.VERY_RARE, 0.05), 6, 7, hashMapOf(
+            6 to 1..4
+        )),
+        SlayerDrop(visual("wardens_heart", DropRarity.INSANE, 1 / 5_000.0), 5, 8, hashMapOf(
+            5 to 1..1, 6 to 1..1
+        )),
+        SlayerDrop(visual("raging_essence", DropRarity.UNBELIEVABLE, 1 / 4_000.0), 6, 8, hashMapOf(
+            6 to 1..1
         ))
     )
 ) {
@@ -76,13 +120,63 @@ object ZombieSlayer: Slayer(
     }
 
     override fun bossModelForTier(tier: Int): MacrocosmEntity {
-        return DefaultRevenant(stats {
-            health = 25000f
-            defense = 150f
-            damage = 150f
-            strength = 200f
-            speed = 250f
-        }, LootPool.of(), 1000.0)
+        return when(tier) {
+            1 -> RevenantHorror(
+                stats {
+                    health = 500f
+                    defense = 200f
+                    damage = 10f
+                    strength = 25f
+                    speed = 200f
+                },
+                1,
+                85.0
+            )
+            2 -> RevenantHorror(
+                stats {
+                    health = 25000f
+                    defense = 400f
+                    damage = 50f
+                    strength = 50f
+                    speed = 250f
+                },
+                2,
+                200.0
+            )
+            3 -> RevenantHorror(
+                stats {
+                    health = 150_000f
+                    defense = 600f
+                    trueDefense = 250f
+                    damage = 100f
+                    strength = 120f
+                    speed = 250f
+                },
+                3,
+                560.0
+            )
+            4 -> RevenantHorror(
+                stats {
+                    health = 1_200_000f
+                    defense = 800f
+                    trueDefense = 300f
+                    damage = 150f
+                    strength = 200f
+                    speed = 275f
+                },
+                4,
+                1200.0
+            )
+            5 -> AtonedHorror
+            6 -> EntombedReaper
+            else -> RevenantHorror(
+                stats {
+                    health = 1f
+                },
+                4,
+                -1.0
+            )
+        }
     }
 
     override fun minisForTier(tier: Int): List<MacrocosmEntity> {

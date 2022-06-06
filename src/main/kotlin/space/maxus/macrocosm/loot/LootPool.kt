@@ -17,7 +17,7 @@ import kotlin.random.Random
 
 class LootPool private constructor(val drops: List<Drop>) {
     companion object {
-        fun of(vararg drops: Drop) = LootPool(drops.toList())
+        fun of(vararg drops: Drop) = LootPool(drops.toList().filter { it.amount.last > 0 })
     }
 
     fun roll(mf: Float = 0f) = drops.filter { drop ->

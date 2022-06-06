@@ -75,8 +75,9 @@ abstract class Slayer(
     val tiers: IntRange,
     val entities: String,
     val rewards: List<SlayerReward>,
-    val drops: List<SlayerDrop>
+    drops: List<SlayerDrop>
 ): Listener {
+    val drops = drops.sortedBy { it.requiredLevel }
     abstract fun abilitiesForTier(tier: Int): List<SlayerAbility>
     abstract fun bossModelForTier(tier: Int): MacrocosmEntity
     abstract fun minisForTier(tier: Int): List<MacrocosmEntity>

@@ -55,8 +55,10 @@ interface MacrocosmAbility {
     fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
         tmp.add(type.format(name).noitalic())
-        for (desc in description.reduceToList()) {
-            tmp.add(comp("<gray>$desc</gray>").noitalic())
+        for(part in description.split("<br>")) {
+            for (desc in part.reduceToList()) {
+                tmp.add(comp("<gray>$desc</gray>").noitalic())
+            }
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()

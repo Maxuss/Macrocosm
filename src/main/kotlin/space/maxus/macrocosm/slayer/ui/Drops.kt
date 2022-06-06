@@ -26,7 +26,7 @@ private fun formatChance(chance: Float): String {
     else ""
 }
 
-fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FOUR_BY_NINE) {
+fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE_BY_NINE) {
     val slayer = ty.slayer
     val playerLevel = player.slayers[ty]!!
     title = comp("${slayer.name.stripTags()} Drops")
@@ -49,10 +49,20 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FOUR
                 val it = item.build(player)!!
                 it.meta {
                     val bufferedLore = mutableListOf<String>()
-                    drop.amounts.forEachIndexed { tier, amount ->
+                    val f = drop.amounts.toList().first()
+                    if(drop.amounts.all { it.value == f.second }) {
+                        val amount = f.second
                         val str =
                             if (amount.first == amount.last) "${amount.first}" else "${amount.first} to ${amount.last}"
-                        bufferedLore.add("Tier ${roman(tier + 1)} amount: <green>$str")
+                        bufferedLore.add("Tier ${roman(f.first)} amount: <green>$str")
+                    } else {
+                        drop.amounts.forEach { (tier, amount) ->
+                            if (amount.last <= 0)
+                                return@forEach
+                            val str =
+                                if (amount.first == amount.last) "${amount.first}" else "${amount.first} to ${amount.last}"
+                            bufferedLore.add("Tier ${roman(tier)} amount: <green>$str")
+                        }
                     }
                     bufferedLore.add("")
                     bufferedLore.add("Minimum: <${colorFromTier(drop.minTier).asHexString()}>Tier ${roman(drop.minTier)}")
@@ -69,8 +79,8 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FOUR
             ev.bukkitEvent.isCancelled = true
         })
 
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowThreeSlotEight, cmp)
-        val drops = slayer.drops.pad(16, NullDrop)
+        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotEight, cmp)
+        val drops = slayer.drops.pad(21, NullDrop)
         cmp.addContent(drops)
 
         button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.ARROW, "<red>Back")) { ev ->
@@ -80,8 +90,8 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FOUR
     }
 }
 
-object NullDrop: SlayerDrop(vanilla(Material.AIR, -1.0), -1, -1, listOf())
-open class SlayerDrop(val drop: Drop, val minTier: Int, val requiredLevel: Int, val amounts: List<IntRange>)
+object NullDrop: SlayerDrop(vanilla(Material.AIR, -1.0), -1, -1, hashMapOf())
+open class SlayerDrop(val drop: Drop, val minTier: Int, val requiredLevel: Int, val amounts: HashMap<Int, IntRange>)
 
 class VisualDrop internal constructor(rarity: DropRarity, item: Identifier, chance: Double): Drop(rarity, chance, item, 1..1)
 

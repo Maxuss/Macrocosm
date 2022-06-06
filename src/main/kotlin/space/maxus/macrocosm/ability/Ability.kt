@@ -3,11 +3,13 @@ package space.maxus.macrocosm.ability
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
+import space.maxus.macrocosm.ability.types.other.SlayerQuestAbility
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_SHIELD
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.util.id
 
 /**
@@ -43,7 +45,9 @@ enum class Ability(val ability: MacrocosmAbility) {
     ICE_CONE(IceConeAbility),
     TERRAIN_TOSS(TerrainTossAbility),
     INFINITE_TERROR(InfiniteTerrorAbility),
-    DEATH_DEFY(DeathDefyAbility)
+    DEATH_DEFY(DeathDefyAbility),
+
+    NECROMANTIC_RITUAL(SlayerQuestAbility("Necromantic Ritual", "Make a <gold>Blood Sacrifice<gray> and start a ritual to summon the <red>Profaned Revenant Boss<gray>. <br><red>The magic glyphs on this scroll<br><red>will disappear on use!<gray>.", SlayerType.REVENANT_HORROR, 6))
 
     ;
 

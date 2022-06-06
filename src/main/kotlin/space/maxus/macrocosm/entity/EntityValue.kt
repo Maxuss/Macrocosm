@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.entity
 
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.fishing.FishingPool
@@ -63,7 +64,11 @@ enum class EntityValue(val entity: MacrocosmEntity) {
             rewardingSkill = SkillType.FISHING,
             mainHand = ItemValue.RADIOACTIVE_TRIDENT.item,
             helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVkMzE1NTkyNjFiM2U3OTAyNDc1MWZlMDdiNzExYzhmZWVmNTFkNTZjMDM2MzUyMjY5NTU4MDViYzQyODk0ZSJ9fX0="),
-            disguiseSkin = "Gladiator_Kraken"
+            disguiseSkin = "Gladiator_Kraken",
+            sounds = EntitySoundBank.from(
+                SoundType.DAMAGED to (Sound.ENTITY_GLOW_SQUID_HURT to 0f),
+                SoundType.DAMAGED to (Sound.ENTITY_GLOW_SQUID_DEATH to 0f),
+            )
         )
     ),
 

@@ -1,23 +1,25 @@
 package space.maxus.macrocosm.slayer
 
 import net.axay.kspigot.extensions.pluginKey
-import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
+import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.entity.EntityBase
 import space.maxus.macrocosm.entity.EntitySoundBank
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.MacrocosmDrop
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.text.comp
 
 open class SlayerBase(
-    name: Component,
     type: EntityType,
-    pool: LootPool,
+    slayer: SlayerType,
+    tier: Int,
     experience: Double,
     stats: Statistics,
     override var mainHand: MacrocosmItem? = null,
@@ -29,10 +31,11 @@ open class SlayerBase(
     disguiseSkin: String? = null,
     sounds: EntitySoundBank? = null,
     override val rewardingSkill: SkillType = SkillType.COMBAT,
+    actualName: String? = null
 ) : EntityBase(
-    name,
+    comp(actualName ?: "${slayer.slayer.name} ${roman(tier)}"),
     type,
-    pool,
+    LootPool.of(*slayer.slayer.drops.filter { it.minTier <= tier }.map { MacrocosmDrop(it.drop.item, it.drop.rarity, it.drop.chance, it.amounts[tier] ?: 0..0) }.toTypedArray()),
     experience,
     stats,
     disguiseSkin = disguiseSkin,

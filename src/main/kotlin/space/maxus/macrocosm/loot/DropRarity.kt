@@ -18,7 +18,7 @@ open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolea
         val COMMON = DropRarity(false, 0)
         val RARE = DropRarity(true, 1, name = "<gold>RARE", odds = "<aqua>Occasional")
         val VERY_RARE = DropRarity(true, 2, greet = true, "<blue>VERY RARE", "<blue>Rare")
-        val SUPER_RARE = DropRarity(true, 3, greet = true, "<dark_purple>SUPER RARE", "<blue>Very Rare")
+        val SUPER_RARE = DropRarity(true, 3, greet = true, "<dark_purple>SUPER RARE", "<dark_purple>Extraordinary")
         val CRAZY_RARE = DropRarity(true, 4, greet = true, "<light_purple>CRAZY RARE", "<light_purple>Pray RNGesus")
         val INSANE = DropRarity(true, 5, greet = true, "<red>INSANE", "<red>RNGesus Incarnate")
         val UNBELIEVABLE = DropRarity(true, 6, greet = true, "<rainbow>UNBELIEVABLE", "<rainbow>Unbelievable")

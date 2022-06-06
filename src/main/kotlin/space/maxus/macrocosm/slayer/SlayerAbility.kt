@@ -38,7 +38,9 @@ class SlayerAbility(
                 if (!ok)
                     continue
                 val living = entity as LivingEntity
-                handler(living.macrocosm!!, living, level)
+                val mc = living.macrocosm!!
+                if(!living.isDead && mc.currentHealth > 0f)
+                    handler(living.macrocosm!!, living, level)
             }
         }
     }

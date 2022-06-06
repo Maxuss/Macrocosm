@@ -10,6 +10,7 @@ import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.cosmetic.Cosmetic
 import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.entity.EntityBase
 import space.maxus.macrocosm.entity.EntitySoundBank
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.fishing.FishingTreasure
@@ -122,7 +123,7 @@ abstract class Registry<T>(val name: Identifier) {
             val registeredAbilities = mutableListOf<String>()
             var minisRegistered = 0
             for(tier in slayer.tiers) {
-                ENTITY.register(id("${slayer.id}_$tier"), slayer.bossModelForTier(tier))
+                (slayer.bossModelForTier(tier) as EntityBase).register(id("${slayer.id}_$tier"))
                 for(ability in slayer.abilitiesForTier(tier)) {
                     if(registeredAbilities.contains(ability.abilityId))
                         continue
@@ -130,7 +131,7 @@ abstract class Registry<T>(val name: Identifier) {
                     registeredAbilities.add(ability.abilityId)
                 }
                 for(mini in slayer.minisForTier(tier)) {
-                    ENTITY.register(id("${slayer.id}_miniboss_$minisRegistered"), mini)
+                    (mini as EntityBase).register(id("${slayer.id}_miniboss_$minisRegistered"))
                     minisRegistered++
                 }
             }

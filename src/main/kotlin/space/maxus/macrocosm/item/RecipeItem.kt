@@ -40,7 +40,7 @@ class RecipeItem(
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = Identifier.macro(baseName.stripTags().lowercase().replace(" ", "_"))
+    override val id: Identifier = Identifier.macro(baseName.stripTags().replace("'", "").lowercase().replace(" ", "_"))
     override val type: ItemType = ItemType.OTHER
     override var name: Component = comp(baseName)
     override var rarityUpgraded: Boolean = false
@@ -80,6 +80,6 @@ class RecipeItem(
     }
 
     override fun clone(): MacrocosmItem {
-        return RecipeItem(base, rarity, baseName, headSkin)
+        return RecipeItem(base, rarity, baseName, headSkin, description, glow)
     }
 }
