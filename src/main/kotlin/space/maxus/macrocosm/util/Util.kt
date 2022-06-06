@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.axay.kspigot.extensions.pluginKey
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
@@ -31,6 +33,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
+import kotlin.math.ceil
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 val GSON: Gson = GsonBuilder().create()
 val GSON_PRETTY: Gson = GsonBuilder()
@@ -42,6 +47,11 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .setPrettyPrinting().create()
 
 fun String.stripTags() = MiniMessage.miniMessage().stripTags(this)
+
+fun renderBar(percentage: Float, notches: Int, from: TextColor, to: TextColor = from, background: TextColor = NamedTextColor.GRAY): String {
+    val tiles = min(ceil(percentage * (notches + (notches / 3))).roundToInt(), notches)
+    return "<gradient:${from.asHexString()}:${to.asHexString()}>" + "-".repeat(tiles) + "</gradient><${background.asHexString()}>" + "-".repeat(notches - tiles)
+}
 
 fun ticksToTime(ticks: Long): String {
     var hours = (ticks / 1000) + 6
@@ -147,4 +157,30 @@ fun threadScoped(
     if (start)
         thread.start()
     return thread
+}
+
+inline fun <reified T> Collection<T>.padNulls(demand: Int): MutableCollection<T?> {
+    if(size >= demand) {
+        val new = mutableListOf<T?>()
+        new.addAll(this)
+        return new
+    }
+    val required = demand - size
+    val new = mutableListOf<T?>()
+    new.addAll(this)
+    new.addAll(List(required) { null })
+    return new
+}
+
+inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollection<T> {
+    if(size >= demand) {
+        val new = mutableListOf<T>()
+        new.addAll(this)
+        return new
+    }
+    val required = demand - size
+    val new = mutableListOf<T>()
+    new.addAll(this)
+    new.addAll(List(required) { value })
+    return new
 }

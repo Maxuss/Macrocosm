@@ -84,7 +84,7 @@ object SlayerHandlers: Listener {
         player.summonedBoss = null
 
         player.sendMessage("<gold><bold>NICE! SLAYER BOSS SLAIN!")
-        val currentLevel = player.slayerExperience[quest.type]!!
+        val currentLevel = player.slayers[quest.type]!!
         val newExp = currentLevel.overflow + rewardExperienceForTier(quest.tier)
         val rngForTier = rngMeterForTier(quest.tier)
         var rng = currentLevel.rngMeter + rngForTier
@@ -100,25 +100,24 @@ object SlayerHandlers: Listener {
             player.sendMessage("<light_purple>RNGesus Meter: <gradient:dark_purple:light_purple><bold>" + "-".repeat(tiles) + "</gradient><gray>" + "-".repeat(15 - tiles) + " <light_purple>${Formatting.stats((rng * 100).toBigDecimal())}%")
         }
         if(SlayerTable.shouldLevelUp(currentLevel.level, newExp, .0)) {
-            player.slayerExperience[quest.type] = SlayerLevel(currentLevel.level + 1, .0, rng)
+            player.slayers[quest.type] = SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, rng)
             player.sendMessage("<green><bold>LVL UP! <dark_purple>▶ </bold><yellow>${quest.type.name.replace("_", " ").capitalized()} LVL ${currentLevel.level + 1}!")
             player.sendMessage("<green><bold>REWARDS AVAILABLE")
             val rewards = quest.type.slayer.rewards[currentLevel.level]
-            for(reward in rewards) {
+            for(reward in rewards.rewards) {
                 player.paper!!.sendMessage(Component.text("+").color(NamedTextColor.DARK_GRAY).append(reward.display(currentLevel.level)))
             }
-            // todo: open slayer menu here
             player.paper!!.sendMessage(comp("<gold><bold>CLICK TO COLLECT")
                 .hoverEvent(
                     HoverEvent
                         .showText(comp("<gold>Rewards for ${quest.type.slayer.name}<gold> LVL ${currentLevel.level + 1}")
                         )
                 )
-                .clickEvent(ClickEvent.runCommand("/w @s boop!")
+                .clickEvent(ClickEvent.runCommand("/slayerrewards ${quest.type.name}")
                 )
             )
         } else {
-            player.slayerExperience[quest.type] = SlayerLevel(currentLevel.level, newExp, rng)
+            player.slayers[quest.type] = SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, rng)
             if(currentLevel.level == 9)
                 player.sendMessage("<yellow>${quest.type.name.replace("_", " ").capitalized()} LVL 9<dark_purple> - <green><bold>LVL MAXED OUT!")
             else {

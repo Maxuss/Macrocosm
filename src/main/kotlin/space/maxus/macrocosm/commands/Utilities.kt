@@ -34,6 +34,8 @@ import space.maxus.macrocosm.recipes.recipeViewer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
+import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.slayer.ui.rewardsMenu
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.text.str
@@ -74,6 +76,14 @@ fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
     }
 }
 
+fun getSlayerRewardsCommand() = command("slayerrewards") {
+    argument("type", StringArgumentType.word()) {
+        runs {
+            val type = SlayerType.valueOf(getArgument("type"))
+            player.openGUI(rewardsMenu(player.macrocosm!!, type))
+        }
+    }
+}
 
 fun setDateCommand() = command("date") {
     requires { it.hasPermission(4) }

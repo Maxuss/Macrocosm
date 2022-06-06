@@ -13,16 +13,18 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.comp
 import kotlin.math.roundToInt
 
-class DropRarity(val broadcast: Boolean, val rarity: Int,  val greet: Boolean = false, val name: String? = null) {
+open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolean = false, val name: String? = null, val odds: String = "<green>Guaranteed") {
     companion object {
         val COMMON = DropRarity(false, 0)
-        val RARE = DropRarity(true, 1, name = "<gold>RARE")
-        val VERY_RARE = DropRarity(true, 2, greet = true, "<blue>VERY RARE")
-        val SUPER_RARE = DropRarity(true, 3, greet = true, "<dark_purple>SUPER RARE")
-        val CRAZY_RARE = DropRarity(true, 4, greet = true, "<light_purple>CRAZY RARE")
-        val INSANE = DropRarity(true, 5, greet = true, "<red>INSANE")
-        val UNBELIEVABLE = DropRarity(true, 6, greet = true, "<#2ACE7C>UNBELIEVABLE")
+        val RARE = DropRarity(true, 1, name = "<gold>RARE", odds = "<aqua>Occasional")
+        val VERY_RARE = DropRarity(true, 2, greet = true, "<blue>VERY RARE", "<blue>Rare")
+        val SUPER_RARE = DropRarity(true, 3, greet = true, "<dark_purple>SUPER RARE", "<blue>Very Rare")
+        val CRAZY_RARE = DropRarity(true, 4, greet = true, "<light_purple>CRAZY RARE", "<light_purple>Pray RNGesus")
+        val INSANE = DropRarity(true, 5, greet = true, "<red>INSANE", "<red>RNGesus Incarnate")
+        val UNBELIEVABLE = DropRarity(true, 6, greet = true, "<rainbow>UNBELIEVABLE", "<rainbow>Unbelievable")
     }
+
+    data class Pet(val inner: DropRarity): DropRarity(inner.broadcast, inner.rarity, inner.greet, "<gold>PET", inner.odds)
 
     fun announceEntityDrop(player: Player, item: MacrocosmItem, artificial: Boolean = false) {
         if (!broadcast)

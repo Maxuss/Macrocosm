@@ -4,6 +4,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Location
 import org.bukkit.util.Vector
+import space.maxus.macrocosm.chat.Formatting
 import java.text.DecimalFormat
 import kotlin.math.max
 import kotlin.math.min
@@ -11,14 +12,14 @@ import kotlin.math.roundToInt
 
 fun clamp(value: Float, min: Float, max: Float) = max(min, min(max, value))
 
-fun truncateEntityHealth(health: Float): String {
-    return if (health >= 1_000_000) {
+fun truncateBigNumber(number: Float, applyFormatToInt: Boolean = false): String {
+    return if (number >= 1_000_000) {
         // > 1M
-        "${DecimalFormat("#.#").format(health / 1_000_000f)}M"
-    } else if (health >= 100_000) {
+        "${DecimalFormat("#.#").format(number / 1_000_000f)}M"
+    } else if (number >= 100_000) {
         // > 100k
-        "${(health / 1000f).roundToInt()}k"
-    } else health.roundToInt().toString()
+        "${(number / 1000f).roundToInt()}k"
+    } else if(applyFormatToInt) Formatting.stats(number.toBigDecimal(), true) else number.roundToInt().toString()
 }
 
 fun healthColor(amount: Float, max: Float): TextColor {

@@ -14,6 +14,7 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.reward.Reward
+import space.maxus.macrocosm.slayer.ui.SlayerDrop
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
 
@@ -61,13 +62,20 @@ abstract class Slayer(
     val id: String,
     val description: String,
     val difficulties: List<String>,
+    /**
+     * These are profession names for high slayer levels (6+).
+     *
+     * This list is expected to contain only 4 elements
+     */
+    val professionNames: List<String>,
     val requirementString: String,
     val requirementCheck: (MacrocosmPlayer) -> Boolean,
     val validEntities: List<EntityType>,
     val requiredExp: List<Double>,
     val tiers: IntRange,
     val entities: String,
-    val rewards: List<List<Reward>>
+    val rewards: List<SlayerReward>,
+    val drops: List<SlayerDrop>
 ): Listener {
     abstract fun abilitiesForTier(tier: Int): List<SlayerAbility>
     abstract fun bossModelForTier(tier: Int): MacrocosmEntity
@@ -81,5 +89,13 @@ abstract class Slayer(
         val reduced = description.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
+    }
+
+    companion object {
+        fun rewardsOf(vararg rewards: Pair<List<Reward>, RewardDisplay>) = rewards.map { SlayerReward(it.second, it.first) }
+
+        val defaultProfessionNames = listOf(
+            "Noob", "Novice", "Skilled", "Destroyer", "Bulldozer"
+        )
     }
 }

@@ -298,7 +298,10 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             profile.setProperty(ProfileProperty("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM1MjUzYjBjOTZhZTRmYmNkZTY2OWJjYmE4ZWRjNDk5MTRmMmU5NTVmMDUyMjU5NTkxMWE3OTE5Yjk1OTdkMyJ9fX0"))
             skull.playerProfile = profile
         })
-    )
+    ),
+
+    // recipe items
+    REVENANT_FLESH(RecipeItem(Material.ROTTEN_FLESH, Rarity.UNCOMMON, "Revenant Flesh", glow = true))
 
     ;
 
@@ -322,6 +325,20 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
                 this.playerProfile = profile
 
                 lore(description.reduceToList().map { comp(it) })
+            }
+        }
+
+        fun placeholderHeadDesc(skin: String, name: String, vararg description: String) = itemStack(Material.PLAYER_HEAD) {
+            meta<SkullMeta> {
+                displayName(comp(name).noitalic())
+                persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
+                val reduced = description.map { s -> comp("<gray>$s").noitalic() }.toMutableList()
+                lore(reduced)
+                flags(*ItemFlag.values())
+
+                val profile = Bukkit.createProfile(UUID.randomUUID())
+                profile.setProperty(ProfileProperty("textures", skin))
+                this.playerProfile = profile
             }
         }
 

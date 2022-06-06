@@ -20,7 +20,7 @@ import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.damage.healthColor
-import space.maxus.macrocosm.damage.truncateEntityHealth
+import space.maxus.macrocosm.damage.truncateBigNumber
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
@@ -113,8 +113,8 @@ interface MacrocosmEntity : Listener {
 
     fun buildName(): Component {
         val stats = calculateStats()
-        val curHealth = truncateEntityHealth(currentHealth)
-        val fullHealth = truncateEntityHealth(stats.health)
+        val curHealth = truncateBigNumber(currentHealth)
+        val fullHealth = truncateBigNumber(stats.health)
         val level = levelFromStats(stats, extraWeight())
         return comp("<dark_gray>[<gray>Lv $level<dark_gray>] ").append(name.colorIfAbsent(NamedTextColor.RED))
             .append(" ".toComponent())

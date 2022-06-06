@@ -23,10 +23,7 @@ import org.bukkit.metadata.LazyMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.events.BlockDropItemsEvent
-import space.maxus.macrocosm.events.MineTickEvent
-import space.maxus.macrocosm.events.PlayerBreakBlockEvent
-import space.maxus.macrocosm.events.StopBreakingBlockEvent
+import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.loot.vanilla
@@ -219,9 +216,13 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
             pool = event.pool
             val pair = skillExpFromBlock(e.block) ?: return
             val (exp, type) = pair
-            // todo: skill exp modifiers (e.g. pets)
-            e.player.addSkillExperience(type, exp.toDouble())
-            pool.roll(mc, true)
+            val expEvent = PlayerReceiveExpEvent(mc, type, exp)
+            if(!expEvent.callEvent())
+                pool.roll(mc, true)
+            else {
+                e.player.addSkillExperience(expEvent.type, expEvent.amount.toDouble())
+                pool.roll(mc, true)
+            }
         } else pool.roll(mc, false)
 
         for (item in items) {

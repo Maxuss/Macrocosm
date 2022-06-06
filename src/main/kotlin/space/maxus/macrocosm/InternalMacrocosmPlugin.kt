@@ -138,6 +138,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         cosmeticCommand()
         payCommand()
         setDateCommand()
+        getSlayerRewardsCommand()
 
         testStatsCommand()
         testLevelUp()

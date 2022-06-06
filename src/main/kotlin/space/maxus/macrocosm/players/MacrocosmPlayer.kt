@@ -83,7 +83,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var ownedPets: HashMap<String, StoredPet> = hashMapOf()
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
-    var slayerExperience: HashMap<SlayerType, SlayerLevel> = HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, .0) })
+    var slayers: HashMap<SlayerType, SlayerLevel> = HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, listOf() ,.0) })
     var summonedBoss: UUID? = null
 
     private var slayerRenderId: UUID? = null
@@ -520,7 +520,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
 
         // slayers
-        val slayers = GSON.toJson(slayerExperience.mapKeys { (k, _) -> k.name })
+        val slayers = GSON.toJson(slayers.mapKeys { (k, _) -> k.name })
         stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
 
         stmt.close()
@@ -590,7 +590,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if(!slayerRes.next())
                 return null
             val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(petsRes.getString("EXPERIENCE"), object : TypeToken<HashMap<String, SlayerLevel>>() {}.type)
-            player.slayerExperience = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
+            player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
             stmt.close()
             return player
         }
