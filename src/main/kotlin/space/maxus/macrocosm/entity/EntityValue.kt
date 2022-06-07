@@ -13,6 +13,7 @@ import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.defaultStats
+import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
@@ -107,7 +108,114 @@ enum class EntityValue(val entity: MacrocosmEntity) {
         chestplate = ColoredEntityArmor(Material.LEATHER_CHESTPLATE, 0x176ACC),
         leggings = ColoredEntityArmor(Material.LEATHER_LEGGINGS, 0x176ACC),
         boots = ColoredEntityArmor(Material.LEATHER_BOOTS, 0x276ACC)
-    ))
+    )),
+
+    // summons
+    REAPER_MASK_ZOMBIE(EntityBase(
+        comp("<green>Revenant Zombie"),
+        EntityType.ZOMBIE,
+        LootPool.of(),
+        0.0,
+        stats {
+            health = 250_000f
+            damage = 600f
+            strength = 200f
+            defense = 250f
+            speed = 100f
+        },
+        playerFriendly = true,
+        helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmI1NTJjOTBmMjEyZTg1NWQxMjI1NWQ1Y2Q2MmVkMzhiOWNkN2UzMGU3M2YwZWE3NzlkMTc2NDMzMGU2OTI2NCJ9fX0="),
+        chestplate = VanillaItem(Material.LEATHER_CHESTPLATE),
+        boots = VanillaItem(Material.CHAINMAIL_BOOTS),
+        mainHand = VanillaItem(Material.IRON_HOE)
+    )),
+
+    ENTOMBED_MASK_ZOMBIE(EntityBase(
+        comp("<green>Revenant Ghoul"),
+        EntityType.ZOMBIE,
+        LootPool.of(),
+        0.0,
+        stats {
+            health = 333_000f
+            damage = 900f
+            strength = 350f
+            ferocity = 70f
+            defense = 500f
+            speed = 90f
+        },
+        playerFriendly = true,
+        helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVkOTJlODllNDczN2RjZmFlNWU1NzFjNzZmNzYwNGE3YWI3YzllMDNmNzhjMTgyMTcxZDEwOTU3MTQxNTZkMSJ9fX0="),
+        chestplate = ColoredEntityArmor(Material.LEATHER_CHESTPLATE, 0),
+        leggings = ColoredEntityArmor(Material.LEATHER_LEGGINGS, 0x4C4C4C),
+        boots = VanillaItem(Material.NETHERITE_BOOTS),
+        mainHand = VanillaItem(Material.NETHERITE_SWORD),
+        sounds = EntitySoundBank.from(
+            SoundType.DAMAGED to (Sound.ENTITY_WITHER_SKELETON_HURT to 0.7f),
+            SoundType.DEATH to (Sound.ENTITY_WITHER_DEATH to 0.7f)
+        )
+    )),
+
+    ZOMBIE_YOUNGLING(EntityBase(
+        comp("<green>Youngling Zombie"),
+        EntityType.ZOMBIE,
+        LootPool.of(),
+        0.0,
+        stats {
+            health = 50_000f
+            damage = 250f
+            strength = 50f
+            defense = 50f
+            speed = 200f
+        },
+        playerFriendly = true,
+        helmet = VanillaItem(Material.CHAINMAIL_HELMET),
+        chestplate = VanillaItem(Material.IRON_CHESTPLATE),
+        boots = VanillaItem(Material.CHAINMAIL_BOOTS),
+        mainHand = VanillaItem(Material.STONE_SWORD)
+    )),
+
+    ZOMBIE_GOLDEN(EntityBase(
+        comp("<green>Golden Ghoul"),
+        EntityType.ZOMBIE,
+        LootPool.of(),
+        0.0,
+        stats {
+            health = 250_000f
+            damage = 500f
+            ferocity = 50f
+            strength = 200f
+            defense = 300f
+            speed = 100f
+        },
+        playerFriendly = true,
+        helmet = VanillaItem(Material.ZOMBIE_HEAD),
+        chestplate = VanillaItem(Material.GOLDEN_CHESTPLATE),
+        leggings = VanillaItem(Material.GOLDEN_LEGGINGS),
+        boots = VanillaItem(Material.GOLDEN_BOOTS),
+        mainHand = VanillaItem(Material.GOLDEN_AXE)
+    )),
+
+    ZOMBIE_GIANT(EntityBase(
+        comp("<green>Corpse Giant"),
+        EntityType.GIANT,
+        LootPool.of(),
+        0.0,
+        stats {
+            health = 500_000f
+            damage = 2000f
+            ferocity = 50f
+            strength = 400f
+            defense = 100f
+            speed = 200f
+        },
+        playerFriendly = true,
+        helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDRiYjI2MjdiMmRmODg0MjRmM2Q2MDY3NDk3ZGQyMzAzOWM1ODI2OTI5NTllYTE2NDhiYzc2YzFhOGNlYTgwIn19fQ=="),
+        chestplate = VanillaItem(Material.LEATHER_CHESTPLATE),
+        boots = VanillaItem(Material.LEATHER_BOOTS),
+        mainHand = VanillaItem(Material.IRON_SWORD)
+    )),
+
+
     ;
 
     companion object {

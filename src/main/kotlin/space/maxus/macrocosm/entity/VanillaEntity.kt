@@ -37,6 +37,8 @@ internal fun specialsFromEntity(entity: LivingEntity?) = specialStats {
     }
 }
 
+internal fun isEntityFriendly(entity: Entity) = entity is Tameable && entity.isTamed
+
 internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
     if (entity == null)
         return@defaultStats
@@ -475,6 +477,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
     override val rewardingSkill: SkillType
     override val experience: Double
+    override val playerFriendly: Boolean get() = if(paper == null) false else isEntityFriendly(paper!!)
 
     init {
         val (exp, skill) = skillFromType(type, level)
@@ -506,6 +509,9 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
             return
 
         val entity = paper!!
+
+        if(playerFriendly && damager is Player)
+            return
 
         currentHealth -= amount
         if (currentHealth <= 0) {

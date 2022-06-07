@@ -18,4 +18,16 @@ class DragonArmor(
     rarity: Rarity = Rarity.LEGENDARY,
     abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     applicableRuns: MutableList<ApplicableRune> = mutableListOf(),
-): ArmorItem("$name Dragon", id,"LEATHER", rarity, stats, abilities = abilities, headSkin = headSkin, chestMeta = colorMeta(chestColor), legsMeta = colorMeta(legsColor), bootMeta = colorMeta(bootsColor), runes = applicableRuns)
+): ArmorItem(
+    "$name Dragon",
+    id,
+    "LEATHER",
+    rarity,
+    stats,
+    abilities = abilities,
+    headSkin = headSkin,
+    chestMeta = colorMeta(chestColor),
+    legsMeta = colorMeta(legsColor),
+    bootMeta = colorMeta(bootsColor),
+    runes = applicableRuns
+)

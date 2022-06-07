@@ -58,6 +58,7 @@ interface MacrocosmEntity : Listener {
     var baseSpecials: SpecialStatistics
     val rewardingSkill: SkillType
     val experience: Double
+    val playerFriendly: Boolean
 
     val level get() = levelFromStats(calculateStats(), extraWeight())
 
@@ -182,6 +183,7 @@ interface MacrocosmEntity : Listener {
         tag.putString("ID", id)
         tag.putDouble("Experience", experience)
         tag.putString("Skill", rewardingSkill.name)
+        tag.putBoolean("PlayerFriendly", playerFriendly)
 
         addExtraNbt(tag)
 

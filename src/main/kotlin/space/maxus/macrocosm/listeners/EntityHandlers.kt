@@ -1,6 +1,8 @@
 package space.maxus.macrocosm.listeners
 
 import net.axay.kspigot.extensions.pluginKey
+import net.axay.kspigot.runnables.task
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -9,6 +11,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 import space.maxus.macrocosm.entity.Entities
 import space.maxus.macrocosm.entity.readNbt
 import space.maxus.macrocosm.item.MACROCOSM_TAG
+import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
 
 object EntityHandlers : Listener {
     @EventHandler
@@ -19,6 +22,13 @@ object EntityHandlers : Listener {
         if (entity.readNbt().contains(MACROCOSM_TAG) || entity is Player || entity is ArmorStand)
             return
 
-        Entities.toMacrocosm(entity)
+        if((entity as CraftEntity).handle is DelegatedMacrocosmEntity) {
+            // delaying task to let it spawn
+            task(delay = 20L) {
+                Entities.toMacrocosmReloading(entity)
+            }
+        } else {
+            Entities.toMacrocosmReloading(entity)
+        }
     }
 }

@@ -28,7 +28,6 @@ import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.Zone
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
@@ -61,9 +60,7 @@ abstract class Registry<T>(val name: Identifier) {
                 }
             }
 
-            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-            if (!success)
-                throw IllegalStateException("Could not execute all tasks in the thread pool!")
+            pool.shutdown()
             this.info("Successfully registered ${values.size} elements in $name delegate.")
             delegates.decrementAndGet()
         }

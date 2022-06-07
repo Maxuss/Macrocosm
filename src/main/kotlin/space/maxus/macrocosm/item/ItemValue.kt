@@ -12,6 +12,9 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.ability.Ability
+import space.maxus.macrocosm.ability.types.armor.EntombedMaskAbility
+import space.maxus.macrocosm.ability.types.armor.ReaperMaskAbility
+import space.maxus.macrocosm.ability.types.armor.WardenHelmetAbility
 import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.capitalized
@@ -29,7 +32,6 @@ import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, private val animation: Animation? = null) {
     ENCHANTED_BOOK(EnchantedBook()),
@@ -300,11 +302,11 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         })
     ),
 
-    // recipe items
-
     // slayer stiff
 
-    // zombie
+    //#region zombie
+
+    //#region drops
     REVENANT_FLESH(RecipeItem(Material.ROTTEN_FLESH, Rarity.UNCOMMON, "Revenant Flesh", glow = true)),
     FOUL_FLESH(RecipeItem(Material.CHARCOAL, Rarity.RARE, "Foul Flesh", glow = true)),
     RANCID_FLESH(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Rancid Flesh", description = "It has been decomposing for ages", headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFkN2M4MTZmYzhjNjM2ZDdmNTBhOTNhMGJhN2FhZWZmMDZjOTZhNTYxNjQ1ZTllYjFiZWYzOTE2NTVjNTMxIn19fQ==")),
@@ -318,7 +320,62 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     WARDENS_HEART(RecipeItem(Material.PLAYER_HEAD, Rarity.LEGENDARY, "Warden's Heart", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjZkNzljMDI2ODc0Nzk0MWRmOWEyYTQ1MTAzY2JkNzMxZmRlZGNiYTU4OGY2NDNiNjcwZmQ3N2FhMmJkOTE4YyJ9fX0=", "The <gold>Legendary<dark_gray> Warden's Heart gave Revenant godly powers. Now it's yours.")),
     RAGING_ESSENCE(RecipeItem(Material.PLAYER_HEAD, Rarity.MYTHIC, "Raging Essence", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmIwNTVjODEwYmRkZmQxNjI2NGVjOGQ0MzljNDMyODNlMzViY2E3MWE1MDk4M2UxNWUzNjRjZDhhYjdjNjY4ZiJ9fX0=", "The <gold>Legendary<dark_gray> Raging Essence gave Entombed Revenant godly powers. Now it's yours.")),
 
-    FORBIDDEN_SCROLLS(AbilityItem(ItemType.OTHER, "Forbidden Scrolls", Rarity.EPIC, Material.PAPER, stats {  }, mutableListOf(Ability.NECROMANTIC_RITUAL.ability)))
+    FORBIDDEN_SCROLLS(AbilityItem(ItemType.OTHER, "Forbidden Scrolls", Rarity.EPIC, Material.PAPER, stats {  }, mutableListOf(Ability.NECROMANTIC_RITUAL.ability))),
+    //#endregion
+
+    //#region armor
+    WARDENS_HELMET(SkullAbilityItem(
+        ItemType.HELMET,
+        "Warden's Helmet",
+        Rarity.LEGENDARY,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVlYjBiZDg1YWFkZGYwZDI5ZWQwODJlYWMwM2ZjYWRlNDNkMGVlODAzYjBlODE2MmFkZDI4YTYzNzlmYjU0ZSJ9fX0=",
+        stats {
+            health = 250f
+            defense = 300f
+            strength = 50f
+        },
+        mutableListOf(WardenHelmetAbility),
+        applicableRunes = listOf(
+            DefaultRune.ADAMANTITE, DefaultRune.AMETHYST, DefaultRune.REDSTONE
+        )
+    )),
+
+    REAPER_MASK(SkullAbilityItem(
+        ItemType.HELMET,
+        "Reaper Mask",
+        Rarity.EPIC,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiZWUyM2I1YzcyNmFlOGUzZDAyMWU4YjRmNzUyNTYxOWFiMTAyYTRlMDRiZTk4M2I2MTQxNDM0OWFhYWM2NyJ9fX0=",
+        stats {
+            health = 150f
+            defense = 100f
+            intelligence = 50f
+            strength = 10f
+        },
+        mutableListOf(ReaperMaskAbility),
+        applicableRunes = listOf(
+            DefaultRune.DIAMOND, DefaultRune.AMETHYST, DefaultRune.EMERALD
+        )
+    )),
+
+    ENTOMBED_MASK(SkullAbilityItem(
+        ItemType.HELMET,
+        "Entombed Mask",
+        Rarity.LEGENDARY,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmUyNGZkOWM2NDAwNTc3N2M3ODZmZTMxYWY2NWM1NzJlMzBkYTc5Njk4YTllZDIxMWFmMTQ3YzY0ZjcyYmE1ZCJ9fX0=",
+        stats {
+            health = 300f
+            defense = 400f
+            intelligence = 150f
+            strength = 50f
+        },
+        mutableListOf(EntombedMaskAbility),
+        applicableRunes = listOf(
+            DefaultRune.DIAMOND, DefaultRune.AMETHYST, DefaultRune.EMERALD, DefaultRune.ADAMANTITE
+        )
+    ))
+    //#endregion armor
+
+    //#endregion
     ;
 
     companion object {
@@ -479,10 +536,6 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             }
 
             pool.shutdown()
-            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-            if (!success)
-                throw IllegalStateException("Could not execute all tasks in the thread pool!")
-
         }
 
         private fun initEnchanted() {
@@ -499,9 +552,6 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             }
 
             pool.shutdown()
-            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-            if (!success)
-                throw IllegalStateException("Could not execute all tasks in the thread pool!")
         }
 
         fun init() {
@@ -535,9 +585,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
                     }
                 }
 
-                val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-                if (!success)
-                    throw IllegalStateException("Could not execute all tasks in the thread pool!")
+                pool.shutdown()
                 this.info("Successfully registered ${ItemValue.values().size} items in delegate.")
             }
         }

@@ -48,9 +48,7 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
                 }
             }
 
-            val success = pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-            if (!success)
-                throw IllegalStateException("Could not execute all tasks in the thread pool!")
+            pool.shutdown()
         }
 
         private fun initBasic() {

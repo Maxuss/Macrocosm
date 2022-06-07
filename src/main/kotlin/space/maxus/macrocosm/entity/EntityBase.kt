@@ -19,7 +19,7 @@ import space.maxus.macrocosm.stats.Statistics
 open class EntityBase(
     override val name: Component,
     override val type: EntityType,
-    private val pool: LootPool,
+    val pool: LootPool,
     override val experience: Double,
     final override var baseStats: Statistics = Statistics.zero(),
     override var baseSpecials: SpecialStatistics = SpecialStatistics(),
@@ -32,6 +32,7 @@ open class EntityBase(
     private val disguiseSkin: String? = null,
     private val sounds: EntitySoundBank? = null,
     override val rewardingSkill: SkillType = SkillType.COMBAT,
+    override val playerFriendly: Boolean = false,
 ) : MacrocosmEntity {
     override var currentHealth: Float = baseStats.health
 

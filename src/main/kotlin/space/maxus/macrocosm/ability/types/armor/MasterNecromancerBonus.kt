@@ -1,0 +1,184 @@
+package space.maxus.macrocosm.ability.types.armor
+
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
+import net.axay.kspigot.event.listen
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.OwnableEntity
+import net.minecraft.world.entity.ai.goal.*
+import net.minecraft.world.entity.monster.Zombie
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
+import org.bukkit.Bukkit
+import org.bukkit.craftbukkit.v1_18_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
+import org.bukkit.event.player.PlayerQuitEvent
+import space.maxus.macrocosm.ability.TieredSetBonus
+import space.maxus.macrocosm.entity.EntityValue
+import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
+import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
+import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
+import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
+import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.util.id
+import java.util.*
+import kotlin.collections.HashMap
+
+object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <red>Zombie Youngling<gray>, <red>Golden Ghoul<gray> or a <red>Corpse Giant<gray>, depending on amount of pieces worn.") {
+    private val baby = hashMapOf<UUID, UUID>()
+    private val golden = hashMapOf<UUID, UUID>()
+    private val giant = hashMapOf<UUID, UUID>()
+
+    override fun registerListeners() {
+        listen<PlayerArmorChangeEvent> { e ->
+            if(e.newItem == e.oldItem)
+                return@listen
+            val player = e.player.uniqueId
+            val (ok, tier) = getArmorTier(e.player.macrocosm!!)
+            if(tier == 1) {
+                sanitizeRemove(player, baby)
+                sanitizeRemove(player, golden)
+                sanitizeRemove(player, giant)
+            }
+            if(!ok)
+                return@listen
+
+            val world = e.player.world as CraftWorld
+            val pos = e.player.location
+            val level = world.handle
+            when(tier) {
+                2 -> {
+                    // baby zombie
+                    sanitizeRemove(player, golden)
+                    sanitizeRemove(player, giant)
+
+                    if(baby.containsKey(player))
+                        return@listen
+                    val entity = Youngling(level, player)
+                    entity.setPos(Vec3(pos.x, pos.y, pos.z))
+                    EntityValue.ZOMBIE_YOUNGLING.entity.loadChanges(entity.bukkitLivingEntity)
+                    world.handle.addFreshEntity(entity)
+                    baby[e.player.uniqueId] = entity.uuid
+                }
+                3 -> {
+                    // golden ghoul
+                    sanitizeRemove(player, baby)
+                    sanitizeRemove(player, giant)
+
+                    if(golden.containsKey(player))
+                        return@listen
+
+                    val entity = Golden(level, player)
+                    entity.setPos(Vec3(pos.x, pos.y, pos.z))
+                    EntityValue.ZOMBIE_GOLDEN.entity.loadChanges(entity.bukkitLivingEntity)
+                    world.handle.addFreshEntity(entity)
+                    golden[e.player.uniqueId] = entity.uuid
+                }
+                4 -> {
+                    // giant
+                    sanitizeRemove(player, baby)
+                    sanitizeRemove(player, golden)
+
+                    if(giant.containsKey(player))
+                        return@listen
+
+                    val entity = Giant(level, player)
+                    entity.setPos(Vec3(pos.x, pos.y, pos.z))
+                    EntityValue.ZOMBIE_GIANT.entity.loadChanges(entity.bukkitLivingEntity)
+                    world.handle.addFreshEntity(entity)
+                    giant[e.player.uniqueId] = entity.uuid
+                }
+            }
+        }
+
+        listen<PlayerQuitEvent> { e ->
+            val player = e.player.uniqueId
+            sanitizeRemove(player, baby)
+            sanitizeRemove(player, golden)
+            sanitizeRemove(player, giant)
+        }
+    }
+
+    private fun sanitizeRemove(player: UUID, map: HashMap<UUID, UUID>) {
+        if(map.containsKey(player)) {
+            val entity = Bukkit.getEntity(map[player]!!) ?: run { map.remove(player); return }
+            entity.remove()
+            map.remove(player)
+        }
+    }
+
+    class Youngling(level: Level, private val owner: UUID): Zombie(level), OwnableEntity, DelegatedMacrocosmEntity {
+        override val delegateId: Identifier = id("zombie_youngling")
+
+        init {
+            isBaby = true
+        }
+
+        override fun registerGoals() {
+            goalSelector.addGoal(1, FloatGoal(this))
+            goalSelector.addGoal(1, AttackOwnerHurtGoal(this))
+            goalSelector.addGoal(1, MimicOwnerAttackGoal(this))
+            goalSelector.addGoal(3, ZombieAttackGoal(this, 2.0, true))
+            goalSelector.addGoal(4, LeapAtTargetGoal(this, 0.6f))
+            goalSelector.addGoal(4, AbsFollowOwnerGoal(this, 1.4, 10f, 3f, false))
+            goalSelector.addGoal(10, LookAtPlayerGoal(this, Player::class.java, 3f))
+            goalSelector.addGoal(10, RandomLookAroundGoal(this))
+        }
+
+        override fun getOwnerUUID(): UUID {
+            return owner
+        }
+
+        override fun getOwner(): Entity? {
+            return (Bukkit.getPlayer(owner) as? CraftPlayer)?.handle
+        }
+    }
+
+    class Golden(level: Level, private val owner: UUID): Zombie(level), OwnableEntity, DelegatedMacrocosmEntity {
+        override val delegateId: Identifier = id("zombie_golden")
+
+        override fun registerGoals() {
+            goalSelector.addGoal(1, FloatGoal(this))
+            goalSelector.addGoal(1, AttackOwnerHurtGoal(this))
+            goalSelector.addGoal(1, MimicOwnerAttackGoal(this))
+            goalSelector.addGoal(3, ZombieAttackGoal(this, 2.0, true))
+            goalSelector.addGoal(4, LeapAtTargetGoal(this, 0.6f))
+            goalSelector.addGoal(4, AbsFollowOwnerGoal(this, 0.7, 12f, 3f, false))
+            goalSelector.addGoal(10, LookAtPlayerGoal(this, Player::class.java, 3f))
+            goalSelector.addGoal(10, RandomLookAroundGoal(this))
+        }
+
+        override fun getOwnerUUID(): UUID {
+            return owner
+        }
+
+        override fun getOwner(): Entity? {
+            return (Bukkit.getPlayer(owner) as? CraftPlayer)?.handle
+        }
+    }
+
+    class Giant(level: Level, private val owner: UUID): net.minecraft.world.entity.monster.Giant(EntityType.GIANT, level), OwnableEntity, DelegatedMacrocosmEntity {
+        override val delegateId: Identifier = id("zombie_giant")
+
+        override fun registerGoals() {
+            goalSelector.addGoal(1, FloatGoal(this))
+            goalSelector.addGoal(1, AttackOwnerHurtGoal(this))
+            goalSelector.addGoal(1, MimicOwnerAttackGoal(this))
+            goalSelector.addGoal(3, MeleeAttackGoal(this, 1.0, true))
+            goalSelector.addGoal(4, LeapAtTargetGoal(this, 0.6f))
+            goalSelector.addGoal(4, AbsFollowOwnerGoal(this, 0.9, 25f, 6f, false))
+            goalSelector.addGoal(10, LookAtPlayerGoal(this, Player::class.java, 3f))
+            goalSelector.addGoal(10, RandomLookAroundGoal(this))
+        }
+
+        override fun getOwnerUUID(): UUID {
+            return owner
+        }
+
+        override fun getOwner(): Entity? {
+            return (Bukkit.getPlayer(owner) as? CraftPlayer)?.handle
+        }
+    }
+}

@@ -172,7 +172,7 @@ object Armor {
         stats {
             health = 120f
             defense = 160f
-            intelligence = 80f
+            intelligence = 150f
             abilityDamage = 8f
         },
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWEyOTg0Y2YwN2M0OGRhOTcyNDgxNmE4ZmYwODY0YmM2OGJjZTY5NGNlOGJkNmRiMjExMmI2YmEwMzEwNzBkZSJ9fX0=",
@@ -181,6 +181,25 @@ object Armor {
         0x29F0E9,
         abilities = mutableListOf(WiseDragonBonus),
         applicableRuns = mutableListOf(DefaultRune.MOONSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST)
+    ))
+
+    val MASTER_NECROMANCER_ARMOR = register(ArmorItem(
+        "Master Necromancer",
+        "master_necromancer",
+        "LEATHER",
+        Rarity.EPIC,
+        stats {
+            health = 200f
+            defense = 250f
+            intelligence = 50f
+            strength = 10f
+        },
+        abilities = listOf(MasterNecromancerBonus),
+        runes = listOf(DefaultRune.DIAMOND, DefaultRune.AMETHYST),
+        chestMeta = colorMeta(0x550F73),
+        legsMeta = colorMeta(0x3E0158),
+        bootMeta = colorMeta(0x1E002B),
+        headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTcxNThlNTc2NzFiZWNlNTAxYmRlZjU2MzExYzBlYTYzZTE5NDYxYTg0YzViZDJiZjk0N2RhYjg0YTI0ZWVjZSJ9fX0="
     ))
 
     private fun register(item: ArmorItem, model: Model? = null): ArmorItem {

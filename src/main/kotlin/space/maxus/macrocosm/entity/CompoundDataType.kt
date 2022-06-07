@@ -5,7 +5,6 @@ import net.minecraft.nbt.NbtIo
 import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataType
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
@@ -24,7 +23,7 @@ object CompoundDataType : PersistentDataType<ByteArray, CompoundTag> {
 
     override fun toPrimitive(complex: CompoundTag, context: PersistentDataAdapterContext): ByteArray {
         val outputStream = ByteArrayOutputStream()
-        NbtIo.writeCompressed(complex, BufferedOutputStream(outputStream))
+        NbtIo.writeCompressed(complex, outputStream)
         return outputStream.toByteArray()
     }
 }

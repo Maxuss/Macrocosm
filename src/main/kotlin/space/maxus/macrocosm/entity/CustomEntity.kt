@@ -4,6 +4,7 @@ import net.axay.kspigot.extensions.bukkit.kill
 import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity
 import org.bukkit.entity.*
 import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
@@ -12,6 +13,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.loot.GlobalLootPool
 import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
@@ -38,6 +40,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
     override var baseSpecials: SpecialStatistics = SpecialStatistics()
     override val rewardingSkill: SkillType
     override val experience: Double
+    override val playerFriendly: Boolean
     override var currentHealth: Float = baseStats.health
 
     private val lootPool: Identifier
@@ -46,35 +49,57 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
     private val paper: LivingEntity? get() = server.getEntity(paperId) as? LivingEntity
 
     init {
-        val paper = paper!!
-        val tag = paper.readNbt().getCompound(MACROCOSM_TAG)
-        name = GsonComponentSerializer.gson().deserialize(tag.getString("BaseName"))
-        type = paper.type
+        val handle = (paper as? CraftEntity)?.handle
+        if(handle is DelegatedMacrocosmEntity) {
+            id = handle.delegateId
+            val delegate = Registry.ENTITY.find(id)
+            name = delegate.name
+            type = delegate.type
+            baseStats = delegate.baseStats
+            baseSpecials = delegate.baseSpecials
+            lootPool = Registry.LOOT_POOL.byValue((delegate as? EntityBase)?.pool ?: throw AssertionError())!!
+            rewardingSkill = delegate.rewardingSkill
+            playerFriendly = delegate.playerFriendly
+            experience = delegate.experience
+            val p = paper
+            currentHealth = if(p == null)
+                delegate.currentHealth
+            else {
+                val tag = p.readNbt().getCompound(MACROCOSM_TAG)
+                tag.getFloat("CurrentHealth")
+            }
+        } else {
+            val paper = paper!!
+            val tag = paper.readNbt().getCompound(MACROCOSM_TAG)
+            name = GsonComponentSerializer.gson().deserialize(tag.getString("BaseName"))
+            type = paper.type
 
-        val stats = Statistics.zero()
-        val statCmp = tag.getCompound("Stats")
-        for (stat in statCmp.allKeys) {
-            val value = statCmp.getFloat(stat)
-            if (value == 0f)
-                continue
-            stats[Statistic.valueOf(stat)] = value
-        }
-        baseStats = stats
+            val stats = Statistics.zero()
+            val statCmp = tag.getCompound("Stats")
+            for (stat in statCmp.allKeys) {
+                val value = statCmp.getFloat(stat)
+                if (value == 0f)
+                    continue
+                stats[Statistic.valueOf(stat)] = value
+            }
+            baseStats = stats
 
-        val specials = SpecialStatistics()
-        val specs = tag.getCompound("Specials")
-        for (stat in specs.allKeys) {
-            val value = specs.getFloat(stat)
-            if (value == 0f)
-                continue
-            specials[SpecialStatistic.valueOf(stat)] = value
+            val specials = SpecialStatistics()
+            val specs = tag.getCompound("Specials")
+            for (stat in specs.allKeys) {
+                val value = specs.getFloat(stat)
+                if (value == 0f)
+                    continue
+                specials[SpecialStatistic.valueOf(stat)] = value
+            }
+            baseSpecials = specials
+            currentHealth = tag.getFloat("CurrentHealth")
+            lootPool = tag.getId("LootID")
+            id = tag.getId("ID")
+            rewardingSkill = SkillType.valueOf(tag.getString("Skill"))
+            experience = tag.getDouble("Experience")
+            playerFriendly = tag.getBoolean("PlayerFriendly")
         }
-        baseSpecials = specials
-        currentHealth = tag.getFloat("CurrentHealth")
-        lootPool = tag.getId("LootID")
-        id = tag.getId("ID")
-        rewardingSkill = SkillType.valueOf(tag.getString("Skill"))
-        experience = tag.getDouble("Experience")
     }
 
     override fun getId(entity: LivingEntity): Identifier {
@@ -90,6 +115,8 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             return
 
         val entity = paper!!
+        if(playerFriendly && damager is Player)
+            return
 
         if (Registry.SOUND.has(id)) {
             val soundBank = Registry.SOUND.find(id)

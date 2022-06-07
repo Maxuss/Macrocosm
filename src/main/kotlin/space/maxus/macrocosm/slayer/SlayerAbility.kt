@@ -12,7 +12,10 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.entity.macrocosm
+import space.maxus.macrocosm.entity.readNbt
+import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.util.getId
 
 class SlayerAbility(
     val abilityId: String,
@@ -48,14 +51,13 @@ class SlayerAbility(
     fun ensureBoss(entity: Entity): Pair<Boolean, Int> {
         if(entity !is LivingEntity || entity is ArmorStand || entity is Player)
             return Pair(false, -1)
-        val mc = entity.macrocosm!!
-        return ensureBoss(mc, entity)
-    }
-
-    fun ensureBoss(mc: MacrocosmEntity, living: LivingEntity): Pair<Boolean, Int> {
-        val id = mc.getId(living)
-        if(!id.path.contains(this.slayerId))
-            return Pair(false, -1)
-        return Pair(true, Integer.parseInt(id.path.replace("${this.slayerId}_", "")))
+        val mc = entity.readNbt()
+        if(mc.contains(MACROCOSM_TAG)) {
+            val id = mc.getCompound(MACROCOSM_TAG).getId("ID")
+            if(!id.path.contains(this.slayerId))
+                return Pair(false, -1)
+            return Pair(true, Integer.parseInt(id.path.replace("${this.slayerId}_", "")))
+        }
+        return Pair(false, -1)
     }
 }

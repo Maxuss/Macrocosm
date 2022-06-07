@@ -47,7 +47,14 @@ enum class Ability(val ability: MacrocosmAbility) {
     INFINITE_TERROR(InfiniteTerrorAbility),
     DEATH_DEFY(DeathDefyAbility),
 
-    NECROMANTIC_RITUAL(SlayerQuestAbility("Necromantic Ritual", "Make a <gold>Blood Sacrifice<gray> and start a ritual to summon the <red>Profaned Revenant Boss<gray>. <br><red>The magic glyphs on this scroll<br><red>will disappear on use!<gray>.", SlayerType.REVENANT_HORROR, 6))
+    // slayers
+
+    // zombie
+    NECROMANTIC_RITUAL(SlayerQuestAbility("Necromantic Ritual", "Make a <gold>Blood Sacrifice<gray> and start a ritual to summon the <red>Profaned Revenant Boss<gray>. <br><red>The magic glyphs on this scroll<br><red>will disappear on use!<gray>.", SlayerType.REVENANT_HORROR, 6)),
+    BRUTE_FORCE(WardenHelmetAbility),
+    REAPER_BLOOD(ReaperMaskAbility),
+    FOREVER_IN_TOMB(EntombedMaskAbility),
+    MASTER_NECROMANCER(MasterNecromancerBonus)
 
     ;
 
