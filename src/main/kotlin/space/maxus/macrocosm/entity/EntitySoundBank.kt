@@ -23,7 +23,7 @@ class EntitySoundBank private constructor(private val sounds: HashMultimap<Sound
     }
 
     fun playRandom(at: Location, type: SoundType, deltaPitch: Float = .1f) {
-        val (sound, pitch) = sounds[type].random()
+        val (sound, pitch) = sounds[type].randomOrNull() ?: return
         sound(sound) {
             this.pitch = pitch + if (Random.nextBoolean()) deltaPitch else -deltaPitch
             playAt(at)

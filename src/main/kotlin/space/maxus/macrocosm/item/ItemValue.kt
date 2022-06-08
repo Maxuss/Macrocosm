@@ -141,6 +141,18 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         intelligence = 300f
     }, mutableListOf(TerrainTossAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE, DefaultRune.SILVER))),
 
+    VOID_PRISM(AbilityItem(ItemType.SWORD, "Void Prism", Rarity.LEGENDARY, Material.PRISMARINE_SHARD, stats {
+        damage = 150f
+        strength = 80f
+        intelligence = 500f
+    }, mutableListOf(VoidPrismAbility), applicableRunes = listOf(DefaultRune.MOONSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST))),
+
+    RANCOROUS_STAFF(AbilityItem(ItemType.SWORD, "Rancorous Staff", Rarity.EPIC, Material.STICK, stats {
+        damage = 80f
+        strength = 70f
+        intelligence = 150f
+    }, mutableListOf(RancorousStaffAbility), applicableRunes = listOf(DefaultRune.EMERALD, DefaultRune.DIAMOND))),
+
     // entity-limited items
     RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {
         damage = 250f
@@ -311,9 +323,10 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     FOUL_FLESH(RecipeItem(Material.CHARCOAL, Rarity.RARE, "Foul Flesh", glow = true)),
     RANCID_FLESH(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Rancid Flesh", description = "It has been decomposing for ages", headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFkN2M4MTZmYzhjNjM2ZDdmNTBhOTNhMGJhN2FhZWZmMDZjOTZhNTYxNjQ1ZTllYjFiZWYzOTE2NTVjNTMxIn19fQ==")),
     REVENANT_VISCERA(RecipeItem(Material.COOKED_PORKCHOP, Rarity.RARE, "Revenant Viscera", glow = true)),
+    REVENANT_INNARDS(RecipeItem(Material.COOKED_SALMON, Rarity.EPIC, "Revenant Innards", glow = true, description = "Totally not tasty.")),
 
-    UNDEAD_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Undead Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzI0ZDIzZjBiYjNlNzUwYWU0ZmUxMGEyYTg0OTBlOGEwMjg4MDZiOGE5NTRjNDU3YmUzNzlkMDJiN2Q0NjUwMiJ9fX0=", "It has really weird scent.")),
-    REVENANT_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Revenant Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmU2Y2EzY2U1ZDg5YWNiMDZhNjQzZjQ5ZjUyNzQ4NTVlZGVlNmVlYjFhNTQ1MTViMzA0MGExYjNmOGNiYjdhMSJ9fX0=", "Some necromantic symbols are scrawled on it.")),
+    UNDEAD_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Undead Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzI0ZDIzZjBiYjNlNzUwYWU0ZmUxMGEyYTg0OTBlOGEwMjg4MDZiOGE5NTRjNDU3YmUzNzlkMDJiN2Q0NjUwMiJ9fX0=", "Smells really weird...")),
+    REVENANT_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Revenant Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmU2Y2EzY2U1ZDg5YWNiMDZhNjQzZjQ5ZjUyNzQ4NTVlZGVlNmVlYjFhNTQ1MTViMzA0MGExYjNmOGNiYjdhMSJ9fX0=", "Some necromantic symbols are scrawled on it...")),
     BEHEADED_HORROR(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Beheaded Horror", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGJhZDk5ZWQzYzgyMGI3OTc4MTkwYWQwOGE5MzRhNjhkZmE5MGQ5OTg2ODI1ZGExYzk3ZjZmMjFmNDlhZDYyNiJ9fX0=", "Makes for a nice trophy, or... you can wear it.")),
     DECAYING_BRAIN(RecipeItem(Material.PLAYER_HEAD, Rarity.LEGENDARY, "Decaying Brain", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjNmYTIxMTk5OWJkMzcxYjcwZTlmZjhkZTUyMDFlMTEzNDMwNGUzNDBiODEzZjVhZjE2MTE1ZWRkNjVhMmFjZCJ9fX0=", "Gathered straight from the Revenant's cranium, and preserved as it is.")),
     SCYTHE_BLADE(RecipeItem(Material.DIAMOND, Rarity.LEGENDARY, "Scythe Blade", description = "Did not became dull at all despite being in Revenant's tomb for centuries.")),
@@ -321,6 +334,14 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     RAGING_ESSENCE(RecipeItem(Material.PLAYER_HEAD, Rarity.MYTHIC, "Raging Essence", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmIwNTVjODEwYmRkZmQxNjI2NGVjOGQ0MzljNDMyODNlMzViY2E3MWE1MDk4M2UxNWUzNjRjZDhhYjdjNjY4ZiJ9fX0=", "The <gold>Legendary<dark_gray> Raging Essence gave Entombed Revenant godly powers. Now it's yours.")),
 
     FORBIDDEN_SCROLLS(AbilityItem(ItemType.OTHER, "Forbidden Scrolls", Rarity.EPIC, Material.PAPER, stats {  }, mutableListOf(Ability.NECROMANTIC_RITUAL.ability))),
+    //#endregion
+
+    //#region weapons
+    REAPER_SCYTHE(AbilityItem(ItemType.SWORD, "Reaper Scythe", Rarity.LEGENDARY, Material.DIAMOND_HOE, stats {
+        damage = 333f
+        strength = 33f
+        intelligence = 333f
+    }, mutableListOf(Ability.REAPER_WEAPON.ability, ReaperScytheAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.EMERALD, DefaultRune.ADAMANTITE))),
     //#endregion
 
     //#region armor

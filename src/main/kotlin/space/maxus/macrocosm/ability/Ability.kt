@@ -1,7 +1,9 @@
 package space.maxus.macrocosm.ability
 
+import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.ability.types.item.*
+import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
 import space.maxus.macrocosm.ability.types.other.SlayerQuestAbility
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
@@ -46,6 +48,8 @@ enum class Ability(val ability: MacrocosmAbility) {
     TERRAIN_TOSS(TerrainTossAbility),
     INFINITE_TERROR(InfiniteTerrorAbility),
     DEATH_DEFY(DeathDefyAbility),
+    ANTIMATTER_RAY(VoidPrismAbility),
+    PURE_HATRED(RancorousStaffAbility),
 
     // slayers
 
@@ -54,7 +58,13 @@ enum class Ability(val ability: MacrocosmAbility) {
     BRUTE_FORCE(WardenHelmetAbility),
     REAPER_BLOOD(ReaperMaskAbility),
     FOREVER_IN_TOMB(EntombedMaskAbility),
-    MASTER_NECROMANCER(MasterNecromancerBonus)
+    MASTER_NECROMANCER(MasterNecromancerBonus),
+
+    UNDEAD_SWORD(EntityDamageMulAbility("Undead Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 0.5f)),
+    REVENANT_FALCHION(EntityDamageMulAbility("Revenant Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 1f)),
+    REAPER_FALCHION(EntityDamageMulAbility("Reaper Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 2f)),
+    REAPER_WEAPON(EntityDamageMulAbility("Sycophant", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 2.5f)),
+    REAPER_SCYTHE(ReaperScytheAbility),
 
     ;
 

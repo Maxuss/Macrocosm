@@ -12,10 +12,75 @@ import java.util.concurrent.TimeUnit
 enum class RecipeValue(private val recipe: MacrocosmRecipe) {
     ASPECT_OF_THE_END(
         shapedRecipe(
-            "aspect_of_the_end", ItemValue.ASPECT_OF_THE_END.item, listOf(" P ", " P ", " D "),
+            "aspect_of_the_end", ItemValue.ASPECT_OF_THE_END.item, 1,
+            listOf(" P ", " P ", " D "),
             'P' to (id("enchanted_ender_pearl") to 16), 'D' to (id("enchanted_diamond") to 1)
         )
-    )
+    ),
+
+    // slayers
+    // zombie
+    REVENANT_VISCERA(
+        shapelessRecipe(
+            "revenant_viscera", ItemValue.REVENANT_VISCERA.item, 4,
+            *List(4) { id("revenant_viscera") to 32 }.toTypedArray(),
+            id("enchanted_string") to 32
+        )
+    ),
+
+    REVENANT_INNARDS(
+        shapelessRecipe(
+            "revenant_innards", ItemValue.REVENANT_INNARDS.item, 16,
+            id("rancid_flesh") to 16,
+            *List(4) { id("foul_flesh") to 32 }.toTypedArray(),
+        )
+    ),
+
+    REAPER_MASK(
+        shapedRecipe(
+            "reaper_mask", ItemValue.REAPER_MASK.item, 1,
+            listOf(
+                "FHF",
+                "VDV",
+                "FVF"
+            ),
+            'F' to (id("foul_flesh") to 16),
+            'H' to (id("beheaded_horror") to 1),
+            'V' to (id("revenant_viscera") to 32),
+            'D' to (id("enchanted_diamond_block") to 8)
+        )
+    ),
+
+    ENTOMBED_MASK(
+        shapedRecipe(
+            "entombed_mask", ItemValue.ENTOMBED_MASK.item, 1,
+            listOf(
+                "NBN",
+                "IRI",
+                "NIN"
+            ),
+            'N' to (id("enchanted_netherite_ingot") to 16),
+            'B' to (id("decaying_brain") to 1),
+            'I' to (id("revenant_innards") to 32),
+            'R' to (id("reaper_mask") to 1)
+        )
+    ),
+
+    WARDENS_HELMET(
+        shapedRecipe(
+            "wardens_helmet", ItemValue.WARDENS_HELMET.item, 1,
+            listOf(
+                "NHN",
+                "IBI"
+            ),
+            'H' to (id("wardens_heart") to 1),
+            'N' to (id("enchanted_netherite_block") to 1),
+            'I' to (id("revenant_innards") to 32),
+            'B' to (id("beheaded_horror") to 1)
+        )
+    ),
+
+
     ;
 
     companion object {
@@ -37,6 +102,7 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
                         id("enchanted_${mat.lowercase()}"), shapelessRecipe(
                             "enchanted_${mat.lowercase()}",
                             result,
+                            1,
 
                             pair,
                             pair,

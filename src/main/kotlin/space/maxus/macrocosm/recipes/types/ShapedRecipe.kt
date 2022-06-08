@@ -14,15 +14,17 @@ import space.maxus.macrocosm.util.id
 fun shapedRecipe(
     id: String,
     result: MacrocosmItem,
+    amount: Int,
     matrix: List<String>,
     vararg ingredients: Pair<Char, Pair<Identifier, Int>>
-): MacrocosmRecipe = ShapedRecipe(id(id), matrix, ingredients.toMap(), result)
+): MacrocosmRecipe = ShapedRecipe(id(id), matrix, ingredients.toMap(), result, amount)
 
 class ShapedRecipe(
     override val id: Identifier,
     pattern: List<String>,
     private val ingredientMap: Map<Char, Pair<Identifier, Int>>,
-    private val result: MacrocosmItem
+    private val result: MacrocosmItem,
+    private val amount: Int = 1
 ) : MacrocosmRecipe {
     private val ingredients: List<List<Pair<Identifier, Int>>>
 
@@ -115,11 +117,15 @@ class ShapedRecipe(
         val important = ctx.mostImportantItem() ?: return result.clone().build() ?: ItemStack(Material.AIR)
         val cloned = result.clone()
         important.transfer(cloned)
-        return cloned.build() ?: ItemStack(Material.AIR)
+        val built = cloned.build() ?: ItemStack(Material.AIR)
+        built.amount = amount
+        return built
     }
 
     override fun resultItem(): ItemStack {
-        return result.build()!!
+        val built = result.build() ?: ItemStack(Material.AIR)
+        built.amount = amount
+        return built
     }
 
     override fun ingredients(): List<List<Pair<Identifier, Int>>> {
