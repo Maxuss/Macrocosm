@@ -1,0 +1,265 @@
+{
+    "revenant_viscera": {
+        "amount": 4,
+        "ingredients": [
+            {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            {
+                "item": "enchanted_string",
+                "amount": 32
+            }
+        ]
+    },
+    "revenant_innards": {
+        "amount": 8,
+        "ingredients": [
+            {
+                "item": "rancid_flesh",
+                "amount": 16
+            },
+            {
+                "item": "rancid_flesh",
+                "amount": 16
+            },
+            {
+                "item": "rancid_flesh",
+                "amount": 16
+            },
+            {
+                "item": "rancid_flesh",
+                "amount": 16
+            },
+            {
+                "item": "foul_flesh",
+                "amount": 32
+            }
+        ]
+    },
+    "reaper_mask": {
+        "pattern": [
+            "FHF",
+            "VDV",
+            "FVF"
+        ],
+        "matrix": {
+            "F": {
+                "item": "foul_flesh",
+                "amount": 16
+            },
+            "H": "beheaded_horror",
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            "D": {
+                "item": "enchanted_diamond_block",
+                "amount": 8
+            }
+        }
+    },
+    "wardens_helmet": {
+        "pattern": [
+            "NHN",
+            "IBI"
+        ],
+        "matrix": {
+            "H": "wardens_heart",
+            "N": "enchanted_netherite_block",
+            "I": {
+                "item": "revenant_innards",
+                "amount": 32
+            },
+            "B": "beheaded_horror"
+        }
+    },
+    "entombed_mask": {
+        "pattern": [
+            "NBN",
+            "IRI",
+            "NIN"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 16
+            },
+            "B": "decaying_brain",
+            "R": "reaper_mask",
+            "I": {
+                "item": "revenant_innards",
+                "amount": 32
+            }
+        }
+    },
+    "undead_sword": {
+        "pattern": [
+            " F ",
+            " F ",
+            " S "
+        ],
+        "matrix": {
+            "F": "enchanted_rotten_flesh",
+            "S": "minecraft:stick"
+        }
+    },
+    "revenant_falchion": {
+        "pattern": [
+            "FIF",
+            "FIF",
+            " U "
+        ],
+        "matrix": {
+            "F": {
+                "item": "foul_flesh",
+                "amount": 4
+            },
+            "I": "revenant_catalyst",
+            "U": "undead_sword"
+        }
+    },
+    "reaper_falchion": {
+        "pattern": [
+            "DRD",
+            "VRV",
+            " F "
+        ],
+        "matrix": {
+            "D": "enchanted_diamond_block",
+            "R": "reaper_catalyst",
+            "F": "revenant_falchion",
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 16
+            }
+        }
+    },
+    "reaper_scythe": {
+        "pattern": [
+            "BR ",
+            " C ",
+            " D "
+        ],
+        "matrix": {
+            "B": "scythe_blade",
+            "R": "reaper_falchion",
+            "C": {
+                "item": "reaper_catalyst",
+                "amount": 4
+            },
+            "D": {
+                "item": "enchanted_diamond_block",
+                "amount": 8
+            }
+        }
+    },
+    "axe_of_the_shredded": {
+        "pattern": [
+            "BR ",
+            "BC ",
+            " D "
+        ],
+        "matrix": {
+            "B": "scythe_blade",
+            "R": "reaper_falchion",
+            "C": {
+                "item": "reaper_catalyst",
+                "amount": 4
+            },
+            "D": {
+                "item": "enchanted_diamond_block",
+                "amount": 16
+            }
+        }
+    },
+    "rancorous_staff": {
+        "pattern": [
+            " D ",
+            " I ",
+            " R "
+        ],
+        "matrix": {
+            "D": {
+                "item": "enchanted_diamond",
+                "amount": 16
+            },
+            "I": "enchanted_iron_block",
+            "R": {
+                "item": "revenant_catalyst",
+                "amount": 4
+            }
+        }
+    },
+
+    "revenant_boots": {
+        "pattern": [
+            "V V",
+            "D D"
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 8
+            },
+            "D": "enchanted_diamond"
+        }
+    },
+    "revenant_leggings": {
+        "pattern": [
+            "DRD",
+            "D D",
+            "V V"
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 8
+            },
+            "D": "enchanted_diamond",
+            "R": "revenant_catalyst"
+        }
+    },
+    "revenant_chestplate": {
+        "pattern": [
+            "D D",
+            "DRD",
+            "VVV"
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 8
+            },
+            "D": "enchanted_diamond",
+            "R": "revenant_catalyst"
+        }
+    },
+
+    "reaper_boots": {
+        "pattern": [
+            "N N",
+            "RBR"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 8
+            },
+            "R": "reaper_catalyst",
+            "B": "revenant_boots"
+        }
+    }
+}

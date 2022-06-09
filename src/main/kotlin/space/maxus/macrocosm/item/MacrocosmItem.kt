@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.ability.types.armor.EntityKillCounterBonus
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
@@ -319,7 +320,12 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         }
         to.stars = stars
         to.buffs.putAll(this.buffs)
-        to.runes.putAll(this.runes)
+        to.dye = this.dye
+        to.skin = this.skin
+        for((rune, _) in to.runes) {
+            if(this.runes.containsKey(rune))
+                to.runes[rune] = this.runes[rune]!!
+        }
     }
 
     /**
@@ -436,6 +442,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             for (ability in abilities) {
                 val tmp = mutableListOf<Component>()
                 ability.buildLore(tmp, player)
+                if(ability is EntityKillCounterBonus && this@MacrocosmItem is KillStorageItem) {
+                    tmp.addAll(ability.addLore(this@MacrocosmItem))
+                }
                 val event = CostCompileEvent(player, this@MacrocosmItem, ability.cost?.copy())
                 event.callEvent()
                 lore.addAll(tmp)

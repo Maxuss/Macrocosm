@@ -31,6 +31,7 @@ private fun familyToDescription(family: MutableList<EntityType>): String {
                 str.append("<gray>, ")
         }
         str.append("<gray> and <blue>${last.pretty()}<gray>")
+        family.add(last)
     } else
         str.append("<blue>${family.last().pretty()}<gray>")
     return "Increases ${Statistic.DAMAGE.display}<gray> you deal towards $str by <red>{{MUL}}%<gray>."

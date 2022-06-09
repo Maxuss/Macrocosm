@@ -325,8 +325,8 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     REVENANT_VISCERA(RecipeItem(Material.COOKED_PORKCHOP, Rarity.RARE, "Revenant Viscera", glow = true)),
     REVENANT_INNARDS(RecipeItem(Material.COOKED_SALMON, Rarity.EPIC, "Revenant Innards", glow = true, description = "Totally not tasty.")),
 
-    UNDEAD_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Undead Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzI0ZDIzZjBiYjNlNzUwYWU0ZmUxMGEyYTg0OTBlOGEwMjg4MDZiOGE5NTRjNDU3YmUzNzlkMDJiN2Q0NjUwMiJ9fX0=", "Smells really weird...")),
-    REVENANT_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Revenant Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmU2Y2EzY2U1ZDg5YWNiMDZhNjQzZjQ5ZjUyNzQ4NTVlZGVlNmVlYjFhNTQ1MTViMzA0MGExYjNmOGNiYjdhMSJ9fX0=", "Some necromantic symbols are scrawled on it...")),
+    REVENANT_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Revenant Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc2NDA2MGI4MThlNGE2NzA2NzEzYzg1MWRmNTJhZmZiNzAwODM3MDE5Y2JkNzcxMjZlYTE1NGU3MGNkNjcxYyJ9fX0=", "Smells really weird...")),
+    REAPER_CATALYST(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Reaper Catalyst", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmU2Y2EzY2U1ZDg5YWNiMDZhNjQzZjQ5ZjUyNzQ4NTVlZGVlNmVlYjFhNTQ1MTViMzA0MGExYjNmOGNiYjdhMSJ9fX0=", "Some necromantic symbols are scrawled on it...")),
     BEHEADED_HORROR(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Beheaded Horror", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGJhZDk5ZWQzYzgyMGI3OTc4MTkwYWQwOGE5MzRhNjhkZmE5MGQ5OTg2ODI1ZGExYzk3ZjZmMjFmNDlhZDYyNiJ9fX0=", "Makes for a nice trophy, or... you can wear it.")),
     DECAYING_BRAIN(RecipeItem(Material.PLAYER_HEAD, Rarity.LEGENDARY, "Decaying Brain", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjNmYTIxMTk5OWJkMzcxYjcwZTlmZjhkZTUyMDFlMTEzNDMwNGUzNDBiODEzZjVhZjE2MTE1ZWRkNjVhMmFjZCJ9fX0=", "Gathered straight from the Revenant's cranium, and preserved as it is.")),
     SCYTHE_BLADE(RecipeItem(Material.DIAMOND, Rarity.LEGENDARY, "Scythe Blade", description = "Did not became dull at all despite being in Revenant's tomb for centuries.")),
@@ -337,11 +337,34 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     //#endregion
 
     //#region weapons
+
+    UNDEAD_SWORD(AbilityItem(ItemType.SWORD, "Undead Sword", Rarity.UNCOMMON, Material.STONE_SWORD, stats {
+        damage = 50f
+        strength = 50f
+    }, mutableListOf(Ability.UNDEAD_SWORD.ability), applicableRunes = listOf(DefaultRune.DIAMOND))),
+
+    REVENANT_FALCHION(AbilityItem(ItemType.SWORD, "Revenant Falchion", Rarity.RARE, Material.IRON_SWORD, stats {
+        damage = 100f
+        strength = 80f
+    }, mutableListOf(Ability.REVENANT_FALCHION.ability, Ability.REVENANT_LIFE_STEAL.ability), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE))),
+
+    REAPER_FALCHION(AbilityItem(ItemType.SWORD, "Reaper Falchion", Rarity.EPIC, Material.DIAMOND_SWORD, stats {
+        damage = 200f
+        strength = 120f
+        ferocity = 10f
+    }, mutableListOf(Ability.REAPER_FALCHION.ability, Ability.REAPER_LIFE_STEAL.ability), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.EMERALD))),
+
     REAPER_SCYTHE(AbilityItem(ItemType.SWORD, "Reaper Scythe", Rarity.LEGENDARY, Material.DIAMOND_HOE, stats {
         damage = 333f
         strength = 33f
         intelligence = 333f
     }, mutableListOf(Ability.REAPER_WEAPON.ability, ReaperScytheAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.EMERALD, DefaultRune.ADAMANTITE))),
+
+    AXE_OF_THE_SHREDDED(AbilityItem(ItemType.SWORD, "Axe of the Shredded", Rarity.LEGENDARY, Material.DIAMOND_AXE, stats {
+        damage = 250f
+        strength = 180f
+        ferocity = 20f
+    }, mutableListOf(Ability.REAPER_WEAPON.ability, AOTSAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.EMERALD, DefaultRune.ADAMANTITE))),
     //#endregion
 
     //#region armor
@@ -457,7 +480,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             }
         }
 
-        val allowedEnchantedMats = listOf(
+        val enchantedItem = listOf(
             // mining
             "DIAMOND",
             "EMERALD",
@@ -471,6 +494,16 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "END_STONE",
             "NETHERITE_SCRAP",
             "QUARTZ",
+            "QUARTZ_BLOCK",
+            "NETHERITE_INGOT",
+            "NETHERITE_BLOCK",
+            "DIAMOND_BLOCK",
+            "EMERALD_BLOCK",
+            "LAPIS_LAZULI_BLOCK",
+            "COAL_BLOCK",
+            "REDSTONE_BLOCK",
+            "IRON_BLOCK",
+            "GOLD_BLOCK",
             // foraging
             "OAK_LOG",
             "BIRCH_LOG",
@@ -484,10 +517,14 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "POTATO",
             "CARROT",
             "WHEAT",
+            "HAY",
             "RED_MUSHROOM",
             "BROWN_MUSHROOM",
+            "RED_MUSHROOM_BLOCK",
+            "BROWN_MUSHROOM_BLOCK",
             "CHORUS_FLOWER",
             "NETHER_WART",
+            "HONEY_BLOCK",
             "BEETROOT",
             "SUGAR_CANE",
             "CACTUS",
@@ -506,7 +543,6 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "SAND",
             "CLAY_BALL",
             "SOUL_SAND",
-            "SOUL_SOIL",
             // combat
             "ROTTEN_FLESH",
             "ENDER_PEARL",
@@ -517,7 +553,10 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "GHAST_TEAR",
             "BONE",
             "SLIME_BALL",
+            "SLIME_BLOCK",
+            "BONE_BLOCK",
             "MAGMA_CREAM",
+            "MAGMA_BLOCK",
             "BLAZE_POWDER",
             // fishing
             "COD",
@@ -530,9 +569,6 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "PUFFERFISH",
             "KELP",
             "LILY_PAD",
-            // more
-            "NETHERITE_INGOT",
-            "NETHERITE_BLOCK"
         )
 
         private val runeQualities = listOf(
@@ -563,7 +599,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             // preventing a huge memory leak
             val pool = Threading.newFixedPool(12)
 
-            for (allowed in allowedEnchantedMats.parallelStream()) {
+            for (allowed in enchantedItem.parallelStream()) {
                 pool.execute {
                     val mat = Material.valueOf(allowed)
                     val item = EnchantedItem(mat, rarityFromMaterial(mat).next())

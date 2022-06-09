@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.item
 
 import org.bukkit.inventory.meta.LeatherArmorMeta
+import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.generators.Model
@@ -202,13 +203,47 @@ object Armor {
         headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTcxNThlNTc2NzFiZWNlNTAxYmRlZjU2MzExYzBlYTYzZTE5NDYxYTg0YzViZDJiZjk0N2RhYjg0YTI0ZWVjZSJ9fX0="
     ))
 
+    val REVENANT_ARMOR = register(object: KillCountingArmor(
+        "Revenant",
+        "revenant",
+        "DIAMOND",
+        Rarity.EPIC,
+        stats {
+            health = 120f
+            defense = 80f
+            strength = 10f
+            intelligence = 20f
+        },
+        abilities = listOf(Ability.REVENANT_ARMOR_BONUS.ability),
+        runes = listOf(DefaultRune.EMERALD, DefaultRune.AMETHYST)
+    ), ThreePieceArmor { })
+
+    val REAPER_ARMOR = register(object: KillCountingArmor(
+        "Reaper",
+        "reaper",
+        "LEATHER",
+        Rarity.LEGENDARY,
+        stats {
+            health = 250f
+            defense = 150f
+            strength = 40f
+            intelligence = 50f
+        },
+        abilities = listOf(Ability.REAPER_ARMOR_BONUS.ability),
+        runes = listOf(DefaultRune.EMERALD, DefaultRune.AMETHYST, DefaultRune.DIAMOND),
+        chestMeta = colorMeta(0x1B1B1B),
+        legsMeta = colorMeta(0x1B1B1B),
+        bootMeta = colorMeta(0x272727)
+    ), ThreePieceArmor { })
+
     private fun register(item: ArmorItem, model: Model? = null): ArmorItem {
         cache.add(Pair(item, model))
         return item
     }
 
     private fun internalRegisterSingle(item: ArmorItem) {
-        Registry.ITEM.register(id("${item.baseId}_helmet"), item.helmet())
+        if(item !is ThreePieceArmor)
+            Registry.ITEM.register(id("${item.baseId}_helmet"), item.helmet())
         Registry.ITEM.register(id("${item.baseId}_chestplate"), item.chestplate())
         Registry.ITEM.register(id("${item.baseId}_leggings"), item.leggings())
         Registry.ITEM.register(id("${item.baseId}_boots"), item.boots())

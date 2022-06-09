@@ -46,7 +46,7 @@ import kotlin.random.nextInt
 fun Entity.isPlayerDisguise() = DisguiseAPI.isDisguised(this) && DisguiseAPI.getDisguise(this) is PlayerDisguise
 
 object DamageHandlers : Listener {
-    private fun internalHandleDamage(damager: LivingEntity, damaged: LivingEntity, checkAts: Boolean = true /* e: EntityDamageEvent */) {
+    fun internalHandleDamage(damager: LivingEntity, damaged: LivingEntity, checkAts: Boolean = true /* e: EntityDamageEvent */) {
         if (damager is Player) {
             val mc = damager.macrocosm!!
             if (checkAts && mc.onAtsCooldown)

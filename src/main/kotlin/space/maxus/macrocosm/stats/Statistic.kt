@@ -11,7 +11,7 @@ import java.util.*
 
 enum class Statistic(
     val type: StatisticType,
-    private val color: TextColor,
+    val color: TextColor,
     val specialChar: String,
     val default: Float = 0f,
     val percents: Boolean = false,

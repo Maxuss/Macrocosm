@@ -4,6 +4,7 @@ import net.axay.kspigot.gui.*
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.item.VanillaItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -136,9 +137,13 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiv
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    val its = Registry.ITEM.find(v.first).build() ?: ItemStack(Material.AIR)
-                    its.amount = v.second
-                    its
+                    if(v.first.namespace == "minecraft") {
+                        VanillaItem(Material.valueOf(v.first.path.uppercase()), v.second).build(player)!!
+                    } else {
+                        val its = Registry.ITEM.findOrNull(v.first)?.build() ?: ItemStack(Material.AIR)
+                        its.amount = v.second
+                        its
+                    }
                 }
             }.forEach {
                 items.addAll(it)

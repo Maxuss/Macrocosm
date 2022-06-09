@@ -73,7 +73,7 @@ object PackProvider: Listener {
         }
     }
 
-    private fun enumerateEntries(dir: Path): List<Path> {
+    fun enumerateEntries(dir: Path): List<Path> {
         if(!dir.isDirectory())
             return listOf(dir)
         val out = mutableListOf<Path>()
@@ -88,7 +88,7 @@ object PackProvider: Listener {
 
         // getting resources as a file system, for iteration
         val input = this.javaClass.classLoader.getResource("pack")!!.toURI()
-        val fs = FileSystems.newFileSystem(input, hashMapOf<String, String>())
+        val fs = FileSystems.getFileSystem(input)
 
         // creating the zip output pack
         val out = Path.of(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME)

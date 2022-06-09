@@ -29,6 +29,7 @@ private fun descriptAbility(family: MutableList<EntityType>, mul: Float): String
                 str.append("<gray>, ")
         }
         str.append("<gray> and <blue>${last.pretty()}<gray>")
+        family.add(last)
     } else
         str.append("<blue>${family.last().pretty()}<gray>")
     return "Deal <red>+${Formatting.stats((mul * 100f).toBigDecimal())}% ${Statistic.DAMAGE.display}<gray> towards $str<gray>."

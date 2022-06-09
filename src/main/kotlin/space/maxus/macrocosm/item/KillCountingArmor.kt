@@ -13,30 +13,23 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.id
 import java.util.*
 
-open class ArmorItem(
-    val baseName: String,
-    val baseId: String,
-    protected val baseMaterial: String,
-    protected val baseRarity: Rarity,
-    protected val baseStats: Statistics = Statistics.zero(),
-    protected val baseSpecials: SpecialStatistics = SpecialStatistics(),
-    protected val abilities: List<MacrocosmAbility> = listOf(),
-    protected val headMeta: (ItemMeta) -> Unit = { },
-    protected val chestMeta: (ItemMeta) -> Unit = { },
-    protected val legsMeta: (ItemMeta) -> Unit = { },
-    protected val bootMeta: (ItemMeta) -> Unit = { },
-    protected val commonMeta: (ItemMeta) -> Unit = { },
-    protected val runes: List<ApplicableRune> = listOf(),
-    protected val headSkin: String? = null
-) {
-    companion object {
-        const val HELMET_MODIFIER = .6f
-        const val CHESTPLATE_MODIFIER = 1f
-        const val LEGGINGS_MODIFIER = .8f
-        const val BOOT_MODIFIER = .5f
-    }
-
-    open fun helmet(): MacrocosmItem {
+open class KillCountingArmor(
+    baseName: String,
+    baseId: String,
+    baseMaterial: String,
+    baseRarity: Rarity,
+    baseStats: Statistics = Statistics.zero(),
+    baseSpecials: SpecialStatistics = SpecialStatistics(),
+    abilities: List<MacrocosmAbility> = listOf(),
+    headMeta: (ItemMeta) -> Unit = { },
+    chestMeta: (ItemMeta) -> Unit = { },
+    legsMeta: (ItemMeta) -> Unit = { },
+    bootMeta: (ItemMeta) -> Unit = { },
+    commonMeta: (ItemMeta) -> Unit = { },
+    runes: List<ApplicableRune> = listOf(),
+    headSkin: String? = null
+): ArmorItem(baseName, baseId, baseMaterial, baseRarity, baseStats, baseSpecials, abilities, headMeta, chestMeta, legsMeta, bootMeta, commonMeta, runes, headSkin) {
+    override fun helmet(): MacrocosmItem {
         val cached = Registry.ITEM.findOrNull(id("${baseId}_helmet"))
         if (cached != null)
             return cached
@@ -48,7 +41,7 @@ open class ArmorItem(
         specClone.multiply(HELMET_MODIFIER)
         specClone.round()
 
-        val item = AbilityItem(
+        val item = KillCountingItem(
             ItemType.HELMET,
             "$baseName Helmet",
             baseRarity,
@@ -69,7 +62,7 @@ open class ArmorItem(
         return item
     }
 
-    open fun chestplate(): MacrocosmItem {
+    override fun chestplate(): MacrocosmItem {
         val cached = Registry.ITEM.findOrNull(id("${baseId}_chestplate"))
         if (cached != null)
             return cached
@@ -80,7 +73,7 @@ open class ArmorItem(
         val specClone = baseSpecials.clone()
         specClone.multiply(CHESTPLATE_MODIFIER)
         specClone.round()
-        return AbilityItem(
+        return KillCountingItem(
             ItemType.CHESTPLATE,
             "$baseName Chestplate",
             baseRarity,
@@ -95,7 +88,7 @@ open class ArmorItem(
         }
     }
 
-    open fun leggings(): MacrocosmItem {
+    override fun leggings(): MacrocosmItem {
         val cached = Registry.ITEM.findOrNull(id("${baseId}_leggings"))
         if (cached != null)
             return cached
@@ -106,7 +99,7 @@ open class ArmorItem(
         val specClone = baseSpecials.clone()
         specClone.multiply(LEGGINGS_MODIFIER)
         specClone.round()
-        return AbilityItem(
+        return KillCountingItem(
             ItemType.LEGGINGS,
             "$baseName Leggings",
             baseRarity,
@@ -121,7 +114,7 @@ open class ArmorItem(
         }
     }
 
-    open fun boots(): MacrocosmItem {
+    override fun boots(): MacrocosmItem {
         val cached = Registry.ITEM.findOrNull(id("${baseId}_boots"))
         if (cached != null)
             return cached
@@ -132,7 +125,7 @@ open class ArmorItem(
         val specClone = baseSpecials.clone()
         specClone.multiply(BOOT_MODIFIER)
         specClone.round()
-        return AbilityItem(
+        return KillCountingItem(
             ItemType.BOOTS,
             "$baseName Boots",
             baseRarity,
@@ -146,5 +139,4 @@ open class ArmorItem(
             commonMeta(it)
         }
     }
-
 }

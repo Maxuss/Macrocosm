@@ -12,6 +12,7 @@ import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_SHIELD
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.id
 
 /**
@@ -65,6 +66,25 @@ enum class Ability(val ability: MacrocosmAbility) {
     REAPER_FALCHION(EntityDamageMulAbility("Reaper Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 2f)),
     REAPER_WEAPON(EntityDamageMulAbility("Sycophant", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 2.5f)),
     REAPER_SCYTHE(ReaperScytheAbility),
+
+    REVENANT_LIFE_STEAL(LifeStealAbility(10)),
+    REAPER_LIFE_STEAL(LifeStealAbility(25)),
+
+    AOTS_THROW(AOTSAbility),
+
+    REVENANT_ARMOR_BONUS(EntityKillCounterBonus("Undead Bulwark", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), Statistic.DEFENSE)),
+    REAPER_ARMOR_BONUS(EntityKillCounterBonus("Reaper Bulwark", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), Statistic.DEFENSE, listOf(
+        0,
+        30,
+        80,
+        120,
+        150,
+        200,
+        250,
+        300,
+        350,
+        400
+    )))
 
     ;
 
