@@ -202,7 +202,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun isRecipeLocked(recipe: Identifier): Boolean {
-        return unlockedRecipes.contains(recipe)
+        return !unlockedRecipes.contains(recipe)
     }
 
     fun addPet(type: Identifier, rarity: Rarity, level: Int, overflow: Double = .0): String {

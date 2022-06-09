@@ -91,7 +91,8 @@ enum class ReforgeType(val ref: Reforge) {
 
     UNDULANT(UndulantReforge),
     RELENTLESS(RelentlessReforge),
-    RENOWNED(RenownedReforge)
+    RENOWNED(RenownedReforge),
+    BLOOD_SOAKED(BloodSoakedReforge),
 
     ;
 

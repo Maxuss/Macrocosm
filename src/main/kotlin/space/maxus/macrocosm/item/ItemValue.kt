@@ -28,6 +28,7 @@ import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.id
@@ -314,6 +315,9 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         })
     ),
 
+    // other stuff
+    COLOSSAL_PILE_OF_WOOD(RecipeItem(Material.PLAYER_HEAD, Rarity.RARE, "Colossal Pile of Wood", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2QyY2UzYjI2M2E1ZjJjNzcxMzJlYmVmOWUxZDdjZTgyODg2ZmMzNWM4OTNmYjJhZjk3ZGY3OGU5NjFmYzQifX19", "How can you even carry that much?", true)),
+
     // slayer stiff
 
     //#region zombie
@@ -367,7 +371,65 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     }, mutableListOf(Ability.REAPER_WEAPON.ability, AOTSAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.EMERALD, DefaultRune.ADAMANTITE))),
     //#endregion
 
+    //#region wands
+
+    WAND_OF_HEALING(AbilityItem(ItemType.WAND, "Wand of Healing", Rarity.UNCOMMON, Material.STICK, Statistics.zero(), mutableListOf(Ability.SMALL_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE))),
+    WAND_OF_MENDING(AbilityItem(ItemType.WAND, "Wand of Mending", Rarity.RARE, Material.STICK, Statistics.zero(), mutableListOf(Ability.MEDIUM_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE))),
+    WAND_OF_RESTORATION(AbilityItem(ItemType.WAND, "Wand of Restoration", Rarity.EPIC, Material.STICK, Statistics.zero(), mutableListOf(Ability.BIG_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE))),
+    WAND_OF_ATONEMENT(AbilityItem(ItemType.WAND, "Wand of Atonement", Rarity.LEGENDARY, Material.STICK, Statistics.zero(), mutableListOf(Ability.HUGE_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST))),
+
+    //#endregion wands
+
+    //#region stuff
+    REAPER_GEM(ReforgeStone(ReforgeType.BLOOD_SOAKED.ref, "Reaper Gem", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjMxNzUyODZjZDNiYTFhM2E5YzkwODI5NzdkMDlkZDM3YjE3N2FiZjM3YTQ2NjU4MGMyN2QxZGVlNzJiM2MxOCJ9fX0=")),
+
+    // todo: voodoo doll ability
+    VOODOO_DOLL(AbilityItem(ItemType.OTHER, "Voodoo Doll", Rarity.LEGENDARY, Material.PUFFERFISH, Statistics.zero(), mutableListOf(), description = "Who do you voodoo?")),
+
+    //#endregion
+
     //#region armor
+    UNDEAD_HEART(SkullAbilityItem(
+        ItemType.HELMET,
+        "Undead Heart",
+        Rarity.RARE,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTVlYjI1ZDZjNWE5OGM5YWRhMjE5NDE0Zjg1YzAzYzU4MDY1YmMzMzJkNGY0YzE1MWFjYWJmZDJmMjhhNTlmMCJ9fX0=",
+        stats {
+            health = 200f
+            defense = 50f
+        },
+        mutableListOf(Ability.NEGATE.ability),
+        applicableRunes = listOf(DefaultRune.REDSTONE)
+    )),
+
+    CRYSTALLIZED_HEART(SkullAbilityItem(
+        ItemType.HELMET,
+        "Crystallized Heart",
+        Rarity.RARE,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY0ZjI1Y2ZmZjc1NGYyODdhOTgzOGQ4ZWZlMDM5OTgwNzNjMjJkZjdhOWQzMDI1YzQyNWUzZWQ3ZmY1MmMyMCJ9fX0=",
+        stats {
+            health = 250f
+            defense = 120f
+        },
+        mutableListOf(Ability.VITIATE.ability),
+        applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.AMETHYST)
+    )),
+
+    REVIVED_HEART(SkullAbilityItem(
+        ItemType.HELMET,
+        "Revived Heart",
+        Rarity.EPIC,
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg1MTRkODIzMGI3NTUxMWE1YTVhNjljYTkzZGNiMmQzZTdjZDFhMjhjNDhkYzM4MDg3ZjE1OGQyODNiN2ZhNyJ9fX0=",
+        stats {
+            health = 350f
+            defense = 150f
+            intelligence = 50f
+        },
+        mutableListOf(Ability.BELIE.ability),
+        applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.AMETHYST, DefaultRune.DIAMOND),
+        description = "Gross! Why would anyone ever wear this!"
+    )),
+
     WARDENS_HELMET(SkullAbilityItem(
         ItemType.HELMET,
         "Warden's Helmet",
@@ -416,10 +478,13 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         applicableRunes = listOf(
             DefaultRune.DIAMOND, DefaultRune.AMETHYST, DefaultRune.EMERALD, DefaultRune.ADAMANTITE
         )
-    ))
+    )),
     //#endregion armor
 
     //#endregion
+
+    // indev
+    ENCHANTED_ADAMANTITE(RecipeItem(Material.REDSTONE, Rarity.EPIC, "Enchanted Adamantite", description = "Dwarves thought this metal was a myth...", glow = true)),
     ;
 
     companion object {
@@ -499,7 +564,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "NETHERITE_BLOCK",
             "DIAMOND_BLOCK",
             "EMERALD_BLOCK",
-            "LAPIS_LAZULI_BLOCK",
+            "LAPIS_BLOCK",
             "COAL_BLOCK",
             "REDSTONE_BLOCK",
             "IRON_BLOCK",
@@ -517,7 +582,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             "POTATO",
             "CARROT",
             "WHEAT",
-            "HAY",
+            "HAY_BLOCK",
             "RED_MUSHROOM",
             "BROWN_MUSHROOM",
             "RED_MUSHROOM_BLOCK",

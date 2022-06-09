@@ -18,11 +18,9 @@ object RelentlessReforge : ReforgeBase(
     "Whenever you activate ${Statistic.FEROCITY.display}<gray>, gain <red>+20 ${Statistic.STRENGTH.display}<gray> for <green>2s<gray>.",
     ItemType.melee(),
     stats {
-        ferocity = 4f
+        ferocity = 3f
         strength = 4f
-        critChance = 3f
-        critDamage = 2f
-        attackSpeed = 3f
+        critDamage = 4f
     }
 ) {
     @EventHandler

@@ -148,7 +148,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         skillExp()
         collAmount()
         testCraftingTable()
-        testBossCommand()
+        setSlayerLevelCommand()
         testSlayerCommand()
         testMaddoxMenuCommand()
 

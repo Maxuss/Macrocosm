@@ -4,6 +4,7 @@ import net.axay.kspigot.extensions.bukkit.kill
 import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.minecraft.world.entity.OwnableEntity
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity
 import org.bukkit.entity.*
 import space.maxus.macrocosm.events.EntityDropItemsEvent
@@ -115,7 +116,8 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             return
 
         val entity = paper!!
-        if(playerFriendly && damager is Player)
+        val handle = (damager as? CraftEntity)?.handle
+        if(playerFriendly && (damager is Player || handle is OwnableEntity))
             return
 
         if (Registry.SOUND.has(id)) {
@@ -145,16 +147,22 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         val loc = paper!!.location
 
         currentHealth = 0f
-        val killer = (damager as? Player)?.macrocosm
+        val handle = (damager as? CraftEntity)?.handle
+        var killer = (damager as? Player)?.macrocosm
 
         loadChanges(entity)
         entity.kill()
 
-        if (killer != null) {
-            val killEvent = PlayerKillEntityEvent(damager.macrocosm!!, entity, experience)
+        if (killer != null || handle is OwnableEntity) {
+            killer = if(handle is OwnableEntity) {
+                (handle.owner as? Player)?.macrocosm ?: return
+            } else {
+                killer!!
+            }
+            val killEvent = PlayerKillEntityEvent(killer, entity, experience)
             killEvent.callEvent()
-            val universal = GlobalLootPool.of(damager.macrocosm!!, this)
-            for (item in universal.roll(damager.macrocosm)) {
+            val universal = GlobalLootPool.of(killer, this)
+            for (item in universal.roll(killer)) {
                 loc.world.dropItemNaturally(loc, item ?: continue)
             }
             killer.addSkillExperience(rewardingSkill, killEvent.experience)

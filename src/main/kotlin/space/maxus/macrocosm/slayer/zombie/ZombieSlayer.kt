@@ -4,7 +4,7 @@ import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.loot.DropRarity
-import space.maxus.macrocosm.reward.Reward
+import space.maxus.macrocosm.reward.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.MaterialDisplay
 import space.maxus.macrocosm.slayer.SkullDisplay
@@ -12,7 +12,9 @@ import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.slayer.SlayerAbility
 import space.maxus.macrocosm.slayer.ui.SlayerDrop
 import space.maxus.macrocosm.slayer.ui.visual
+import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
+import space.maxus.macrocosm.util.id
 
 object ZombieSlayer: Slayer(
     "<red>Revenant Horror",
@@ -50,15 +52,20 @@ object ZombieSlayer: Slayer(
     1..6,
     "Zombies",
     rewardsOf(
-        Reward.repeating(2) to MaterialDisplay(Material.ROTTEN_FLESH),
-        Reward.repeating(2) to MaterialDisplay(Material.PORKCHOP),
-        Reward.repeating(2) to MaterialDisplay(Material.STICK),
-        Reward.repeating(2) to MaterialDisplay(Material.DIAMOND_CHESTPLATE),
-        Reward.repeating(2) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY0ZjI1Y2ZmZjc1NGYyODdhOTgzOGQ4ZWZlMDM5OTgwNzNjMjJkZjdhOWQzMDI1YzQyNWUzZWQ3ZmY1MmMyMCJ9fX0="),
-        Reward.repeating(2) to MaterialDisplay(Material.DIAMOND_SWORD),
-        Reward.repeating(2) to MaterialDisplay(Material.LEATHER_CHESTPLATE),
-        Reward.repeating(2) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVlYjBiZDg1YWFkZGYwZDI5ZWQwODJlYWMwM2ZjYWRlNDNkMGVlODAzYjBlODE2MmFkZDI4YTYzNzlmYjU0ZSJ9fX0="),
-        Reward.repeating(3) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTYwMzgzYTI5YWQ4YjdiYWViNGMwYzdlMTVmMzUyMGYwN2VjNzU2NWY1YWY4NDFhNmY4MTJhYTQxOWJiNiJ9fX0="),
+        listOf(FixedStatReward(Statistic.HEALTH, 2f), RecipeReward(id("wand_of_healing"))) to MaterialDisplay(Material.ROTTEN_FLESH),
+        listOf(FixedStatReward(Statistic.DEFENSE, 3f), RecipeReward(id("revenant_viscera")), RecipeReward(id("undead_sword"))) to MaterialDisplay(Material.COOKED_PORKCHOP),
+        listOf(FixedStatReward(Statistic.HEALTH, 3f), RecipeReward(id("revenant_falchion")), RecipeReward(
+            id("wand_of_mending")), RecipeReward(id("undead_heart")), ItemReward(id("revenant_catalyst"))) to MaterialDisplay(Material.STICK),
+        listOf(FixedStatReward(Statistic.DEFENSE, 4f), RecipeReward(id("revenant_leggings")), RecipeReward(id("revenant_boots")), RecipeReward(
+            id("rancorous_staff"))) to MaterialDisplay(Material.DIAMOND_BOOTS),
+        listOf(FixedStatReward(Statistic.HEALTH, 5f), RecipeReward(id("crystallized_heart")), RecipeReward(id("revenant_chestplate")), RecipeReward(id("master_necromancer_boots")), RecipeReward(id("voodoo_doll"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY0ZjI1Y2ZmZjc1NGYyODdhOTgzOGQ4ZWZlMDM5OTgwNzNjMjJkZjdhOWQzMDI1YzQyNWUzZWQ3ZmY1MmMyMCJ9fX0="),
+        listOf(FixedStatReward(Statistic.FEROCITY, 1f), RecipeReward(id("wand_of_restoration")), RecipeReward(id("reaper_falchion")), RecipeReward(id("revived_heart")), RecipeReward(id("master_necromancer_helmet")), ItemReward(
+            id("reaper_catalyst")), RecipeReward(id("master_necromancer_leggings"))) to MaterialDisplay(Material.DIAMOND_SWORD),
+        listOf(FixedStatReward(Statistic.HEALTH, 5f), RecipeReward(id("reaper_mask")), RecipeReward(id("reaper_boots")), RecipeReward(
+            id("reaper_leggings")), RecipeReward(id("reaper_chestplate")), RecipeReward(id("revenant_innards"))) to MaterialDisplay(Material.LEATHER_CHESTPLATE),
+        listOf(FixedStatReward(Statistic.HEALTH, 6f), RecipeReward(id("axe_of_the_shredded")), RecipeReward(id("reaper_scythe")), RecipeReward(id("wardens_helmet")), RecipeReward(
+            id("entombed_mask")), RecipeReward(id("master_necromancer_chestplate"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVlYjBiZDg1YWFkZGYwZDI5ZWQwODJlYWMwM2ZjYWRlNDNkMGVlODAzYjBlODE2MmFkZDI4YTYzNzlmYjU0ZSJ9fX0="),
+        listOf(FixedStatReward(Statistic.HEALTH, 7f), RecipeReward(id("reaper_gem"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjMxNzUyODZjZDNiYTFhM2E5YzkwODI5NzdkMDlkZDM3YjE3N2FiZjM3YTQ2NjU4MGMyN2QxZGVlNzJiM2MxOCJ9fX0="),
     ),
     listOf(
         SlayerDrop(visual("revenant_flesh", DropRarity.COMMON, 1.0), 1, 0, hashMapOf(

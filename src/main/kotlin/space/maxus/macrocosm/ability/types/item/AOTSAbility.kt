@@ -82,7 +82,7 @@ object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your a
 
                     val mc = entity.macrocosm!!
                     val received = DamageCalculator.calculateStandardReceived(dmg, mc.calculateStats())
-                    mc.damage(received)
+                    mc.damage(received, p)
                     DamageHandlers.summonDamageIndicator(entity.location, received)
                 }
             }

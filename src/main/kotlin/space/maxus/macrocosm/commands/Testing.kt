@@ -11,16 +11,17 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.slayer.SlayerQuest
-import space.maxus.macrocosm.slayer.SlayerStatus
+import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
 
-fun testBossCommand() = command("spawnboss") {
+fun setSlayerLevelCommand() = command("slayerlvl") {
     argument("id", StringArgumentType.string()) {
-        argument("tier", IntegerArgumentType.integer(0, 6)) {
+        argument("exp", IntegerArgumentType.integer(0, 9)) {
             runs {
-                SlayerQuest(SlayerType.valueOf(getArgument("id")), getArgument("tier"), 0f, SlayerStatus.FAIL).summonBoss(player)
+                val ty = SlayerType.valueOf(getArgument("id"))
+                val slayer = player.macrocosm!!.slayers[ty]!!
+                player.macrocosm!!.slayers[ty] = SlayerLevel(getArgument("exp"), 0.0, listOf(), slayer.rngMeter)
             }
         }
     }

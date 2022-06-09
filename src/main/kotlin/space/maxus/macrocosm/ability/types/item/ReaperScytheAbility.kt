@@ -2,7 +2,6 @@ package space.maxus.macrocosm.ability.types.item
 
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.particles.particle
-import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
 import net.minecraft.util.Mth
 import org.bukkit.Color
@@ -22,7 +21,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 
-object ReaperScytheAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Harvest", "Swipe your scythe, dealing <red>15,000 ${Statistic.DAMAGE.display}<gray> and lots of knockback to nearby entities.<br>Heal <red>50 ${Statistic.HEALTH.display}<gray> pet hit enemy.") {
+object ReaperScytheAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Harvest", "Swipe your scythe, dealing <red>15,000 ${Statistic.DAMAGE.display}<gray> and lots of knockback to nearby entities.<br>Heal for <green>2%<gray> of your maximum ${Statistic.HEALTH.display}<gray> for every killed enemy.") {
     override val cost: AbilityCost = AbilityCost(300, cooldown = 4)
 
     override fun registerListeners() {
@@ -40,7 +39,7 @@ object ReaperScytheAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Harvest",
             val radius = 3.0
             var angle = 0f
             val inc = Mth.PI / 20
-            task {  }
+            val healing = e.player.stats()!!.health * .02f
             while (angle < Mth.PI) {
                 angle += inc
 
@@ -60,10 +59,13 @@ object ReaperScytheAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Harvest",
                 for (entity in loc.clone().add(v).getNearbyLivingEntities(1.0)) {
                     if (entity is Player || entity is ArmorStand)
                         continue
-                    entity.macrocosm!!.damage(dmg, e.player.paper!!)
+                    val mc = entity.macrocosm!!
+                    mc.damage(dmg, e.player.paper!!)
+                    if(mc.isDamageFatal(dmg)) {
+                        e.player.heal(healing)
+                    }
                     entity.velocity = v.clone().multiply(12.0).normalize()
                     DamageHandlers.summonDamageIndicator(entity.location, dmg)
-                    e.player.heal(50f, e.player.stats()!!)
                 }
             }
         }

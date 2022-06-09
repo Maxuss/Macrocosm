@@ -128,6 +128,10 @@ class ShapedRecipe(
         return built
     }
 
+    override fun resultMacrocosm(): MacrocosmItem {
+        return result.clone()
+    }
+
     override fun ingredients(): List<List<Pair<Identifier, Int>>> {
         return ingredients
     }

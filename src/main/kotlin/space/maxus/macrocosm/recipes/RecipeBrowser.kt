@@ -1,7 +1,9 @@
 package space.maxus.macrocosm.recipes
 
 import net.axay.kspigot.gui.*
+import net.axay.kspigot.sound.sound
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.VanillaItem
@@ -30,7 +32,15 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             },
             onClick = { e, it ->
                 e.bukkitEvent.isCancelled = true
-                player.paper?.openGUI(recipeViewer(it, player))
+                if(player.isRecipeLocked(it)) {
+                    player.sendMessage("<red>This recipe is locked!")
+                    sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
+                        pitch = 0f
+                        playFor(e.player)
+                    }
+                } else {
+                    player.paper?.openGUI(recipeViewer(it, player))
+                }
             }
         )
         compound.addContent(Registry.RECIPE.iter().keys().toList())

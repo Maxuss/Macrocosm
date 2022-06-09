@@ -3,23 +3,23 @@
         "amount": 4,
         "ingredients": [
             {
-                "item": "revenant_viscera",
+                "item": "revenant_flesh",
                 "amount": 32
             },
             {
-                "item": "revenant_viscera",
+                "item": "revenant_flesh",
                 "amount": 32
             },
             {
-                "item": "revenant_viscera",
+                "item": "revenant_flesh",
                 "amount": 32
             },
             {
-                "item": "revenant_viscera",
+                "item": "revenant_flesh",
                 "amount": 32
             },
             {
-                "item": "enchanted_string",
+                "item": "revenant_flesh",
                 "amount": 32
             }
         ]
@@ -52,7 +52,7 @@
     "reaper_mask": {
         "pattern": [
             "FHF",
-            "VDV",
+            "RDR",
             "FVF"
         ],
         "matrix": {
@@ -68,7 +68,8 @@
             "D": {
                 "item": "enchanted_diamond_block",
                 "amount": 8
-            }
+            },
+            "R": "revived_heart"
         }
     },
     "wardens_helmet": {
@@ -250,16 +251,302 @@
 
     "reaper_boots": {
         "pattern": [
-            "N N",
+            "V V",
             "RBR"
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            "R": "reaper_catalyst",
+            "B": "reaper_catalyst"
+        }
+    },
+
+    "reaper_leggings": {
+        "pattern": [
+            "NLN",
+            "V V",
+            "R R"
         ],
         "matrix": {
             "N": {
                 "item": "enchanted_netherite_ingot",
                 "amount": 8
             },
-            "R": "reaper_catalyst",
-            "B": "revenant_boots"
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            "L": "revenant_boots",
+            "R": "reaper_catalyst"
+        }
+    },
+
+    "reaper_chestplate": {
+        "pattern": [
+            "N N",
+            "VCV",
+            "RRR"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 8
+            },
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            "C": "revenant_chestplate",
+            "R": "reaper_catalyst"
+        }
+    },
+
+    "wand_of_healing": {
+        "pattern": [
+            "  R",
+            " F ",
+            "O  "
+        ],
+        "matrix": {
+            "R": {
+                "item": "revenant_flesh",
+                "amount": 32
+            },
+            "F": {
+                "item": "foul_flesh",
+                "amount": 4
+            },
+            "O": "enchanted_dark_oak_log"
+        }
+    },
+
+    "wand_of_mending": {
+        "pattern": [
+            " FV",
+            " SF",
+            "D  "
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 16
+            },
+            "S": "wand_of_healing",
+            "F": {
+                "item": "foul_flesh",
+                "amount": 8
+            },
+            "D": {
+                "item": "enchanted_dark_oak_log",
+                "amount": 32
+            }
+        }
+    },
+
+    "wand_of_restoration": {
+        "pattern": [
+            " DV",
+            "OWD",
+            "CO "
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 64
+            },
+            "D": "enchanted_diamond_block",
+            "W": "wand_of_mending",
+            "O": {
+                "item": "enchanted_dark_oak_log",
+                "amount": 64
+            },
+            "C": "revenant_catalyst"
+        }
+    },
+
+    "wand_of_atonement": {
+        "pattern": [
+            " NI",
+            "WGN",
+            "RW "
+        ],
+        "matrix": {
+            "I": {
+                "item": "revenant_innards",
+                "amount": 16
+            },
+            "N": "enchanted_netherite_block",
+            "G": "wand_of_restoration",
+            "W": "colossal_pile_of_wood",
+            "R": {
+                "item": "reaper_catalyst",
+                "amount": 4
+            }
+        }
+    },
+
+    "master_necromancer_boots": {
+        "pattern": [
+            "NBN",
+            "I I"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 16
+            },
+            "B": "revenant_boots",
+            "I": {
+                "item": "revenant_viscera",
+                "amount": 32
+            }
+        }
+    },
+    "master_necromancer_leggings": {
+        "pattern": [
+            "NLN",
+            "N N",
+            "I I"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 16
+            },
+            "L": "revenant_leggings",
+            "I": {
+                "item": "revenant_viscera",
+                "amount": 32
+            }
+        }
+    },
+    "master_necromancer_chestplate": {
+        "pattern": [
+            "N N",
+            "NCN",
+            "VVV"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 32
+            },
+            "C": "revenant_chestplate",
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 64
+            }
+        }
+    },
+    "master_necromancer_helmet": {
+        "pattern": [
+            "VBV",
+            "NHN"
+        ],
+        "matrix": {
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 16
+            },
+            "H": "revived_heart",
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            "B": "beheaded_horror"
+        }
+    },
+
+    "voodoo_doll": {
+        "pattern": [
+            "DVD",
+            "VSV",
+            "DVD"
+        ],
+        "matrix": {
+            "D": {
+                "item": "enchanted_diamond",
+                "amount": 64
+            },
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 32
+            },
+            "S": {
+                "item": "enchanted_string",
+                "amount": 64
+            }
+        }
+    },
+
+    "undead_heart": {
+        "pattern": [
+            "VFV",
+            "F F",
+            "VFV"
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 16
+            },
+            "F": {
+                "item": "enchanted_rotten_flesh",
+                "amount": 32
+            }
+        }
+    },
+    "crystallized_heart": {
+        "pattern": [
+            "DDD",
+            "DUD",
+            "DDD"
+        ],
+        "matrix": {
+            "D": {
+                "item": "enchanted_diamond",
+                "amount": 16
+            },
+            "U": "undead_heart"
+        }
+    },
+    "revived_heart": {
+        "pattern": [
+            "VVV",
+            "NCN",
+            "VVV"
+        ],
+        "matrix": {
+            "V": {
+                "item": "revenant_viscera",
+                "amount": 16
+            },
+            "N": {
+                "item": "enchanted_netherite_ingot",
+                "amount": 16
+            },
+            "C": "crystallized_heart"
+        }
+    },
+    "reaper_gem": {
+        "pattern": [
+            "AAA",
+            "RNR",
+            "AAA"
+        ],
+        "matrix": {
+            "A": {
+                "item": "enchanted_adamantite",
+                "amount": 32
+            },
+            "R": "revived_heart",
+            "N": {
+                "item": "enchanted_netherite_block",
+                "amount": 8
+            }
         }
     }
 }

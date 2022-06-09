@@ -2,6 +2,7 @@ package space.maxus.macrocosm.recipes
 
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 
@@ -15,5 +16,6 @@ interface MacrocosmRecipe {
 
     fun assemble(ctx: RecipeContext, player: MacrocosmPlayer): ItemStack
     fun resultItem(): ItemStack
+    fun resultMacrocosm(): MacrocosmItem
     fun ingredients(): List<List<Pair<Identifier, Int>>>
 }

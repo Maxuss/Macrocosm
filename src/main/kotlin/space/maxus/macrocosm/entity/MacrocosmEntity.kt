@@ -126,6 +126,9 @@ interface MacrocosmEntity : Listener {
 
     fun damage(amount: Float, damager: Entity? = null)
     fun kill(damager: Entity? = null)
+    fun isDamageFatal(damage: Float): Boolean {
+        return currentHealth <= damage
+    }
 
     fun spawn(at: Location): LivingEntity {
         val craftWorld = at.world as CraftWorld

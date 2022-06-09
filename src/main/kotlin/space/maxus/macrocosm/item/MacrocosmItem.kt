@@ -111,7 +111,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     }
 
     fun addExtraNbt(cmp: CompoundTag) {
-
+        cmp.putBoolean("BlockClicks", true)
     }
 
     fun addExtraMeta(meta: ItemMeta) {

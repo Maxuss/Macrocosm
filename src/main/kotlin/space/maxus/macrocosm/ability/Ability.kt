@@ -84,7 +84,16 @@ enum class Ability(val ability: MacrocosmAbility) {
         300,
         350,
         400
-    )))
+    ))),
+
+    SMALL_HEAL(ZombieWandAbility("Small Heal", 50f, 4, 100)),
+    MEDIUM_HEAL(ZombieWandAbility("Medium Heal", 90f, 5, 150)),
+    BIG_HEAL(ZombieWandAbility("Big Heal", 120f, 6, 150)),
+    HUGE_HEAL(ZombieWandAbility("Huge Heal", 150f, 7, 250)),
+
+    NEGATE(ZombieHeartHealing("Negate", 10f)),
+    VITIATE(ZombieHeartHealing("Vitiate", 25f)),
+    BELIE(ZombieHeartHealing("Belie", 50f))
 
     ;
 
