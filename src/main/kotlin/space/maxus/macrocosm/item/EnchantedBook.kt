@@ -17,7 +17,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 
 private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
@@ -38,7 +38,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     override var stars: Int = 0
     override val id: Identifier = id("enchanted_book")
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
+    override var name: Component = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
     override val base: Material = Material.ENCHANTED_BOOK
     override var rarity: Rarity = rarityFromEnchants(enchantments)
     override var rarityUpgraded: Boolean = false
@@ -82,13 +82,13 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     override fun clone(): MacrocosmItem {
         val clone = EnchantedBook(enchantments)
         clone.rarity = rarityFromEnchants(clone.enchantments)
-        clone.name = comp(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
+        clone.name = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
         return clone
     }
 
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt)
-        base.name = comp(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
+        base.name = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
         return base
     }
 }

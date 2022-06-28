@@ -21,7 +21,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 
-object ReaperScytheAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Harvest", "Swipe your scythe, dealing <red>15,000 ${Statistic.DAMAGE.display}<gray> and lots of knockback to nearby entities.<br>Heal for <green>2%<gray> of your maximum ${Statistic.HEALTH.display}<gray> for every killed enemy.") {
+object ReaperScytheAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Harvest", "Swipe your scythe, dealing <red>[15000:0.15] ${Statistic.DAMAGE.display}<gray> and lots of knockback to nearby entities.<br>Heal for <green>2%<gray> of your maximum ${Statistic.HEALTH.display}<gray> for every killed enemy.") {
     override val cost: AbilityCost = AbilityCost(300, cooldown = 4)
 
     override fun registerListeners() {

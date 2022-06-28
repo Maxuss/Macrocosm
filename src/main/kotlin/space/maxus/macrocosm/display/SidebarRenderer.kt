@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scoreboard.DisplaySlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.Ticker
 import space.maxus.macrocosm.util.ticksToTime
 import java.util.*
@@ -101,13 +101,13 @@ object SidebarRenderer: Listener {
         val name = StringBuilder("MACROCOSM")
         name.insert(max(tick - 1, 0), "<gradient:#F5A556:#957CF9>")
         val mmName = "<gradient:${startColor.asHexString()}:${endColor.asHexString()}><bold>"+" ".repeat(5) + name + " ".repeat(5)
-        obj.displayName(comp(mmName))
+        obj.displayName(text(mmName))
     }
 
     private fun preparePlayer(player: Player) {
         val manager = Bukkit.getScoreboardManager()
         val board = manager.newScoreboard
-        val obj = board.registerNewObjective("defaultBoard", "dummy", comp("<light_purple><bold>MACROCOSM"))
+        val obj = board.registerNewObjective("defaultBoard", "dummy", text("<light_purple><bold>MACROCOSM"))
         obj.displaySlot = DisplaySlot.SIDEBAR
 
         val sc = obj.getScore(ChatColor.DARK_GRAY.toString() + "Server: ${Macrocosm.integratedServer.id}")
@@ -118,7 +118,7 @@ object SidebarRenderer: Listener {
         player.scoreboard = board
     }
 
-    private var cachedDayTime = comp("<dark_aqua>☽ <gray>00:00")
+    private var cachedDayTime = text("<dark_aqua>☽ <gray>00:00")
     private fun calculateDayTime(): Component {
         val world = worlds[0]
         val time = world.time
@@ -126,7 +126,7 @@ object SidebarRenderer: Listener {
         // only update time every few minutes or so in game
         if(time % minute > 4)
             return cachedDayTime
-        cachedDayTime = comp((if(world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
+        cachedDayTime = text((if(world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
         return cachedDayTime
     }
 

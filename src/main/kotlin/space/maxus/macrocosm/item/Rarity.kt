@@ -4,7 +4,7 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 @Suppress("UNUSED")
 enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
@@ -19,11 +19,11 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
     VERY_SPECIAL(TextColor.color(0xE45878))
     ;
 
-    fun format(upgraded: Boolean, ty: ItemType) = comp("<bold>")
+    fun format(upgraded: Boolean, ty: ItemType) = text("<bold>")
         .color(color)
         .append(
             if (upgraded)
-                comp(
+                text(
                     "<obfuscated>a</obfuscated> ${
                         name.replace(
                             "_",

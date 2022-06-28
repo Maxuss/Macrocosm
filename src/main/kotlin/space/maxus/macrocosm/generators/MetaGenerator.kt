@@ -10,9 +10,11 @@ interface MetaFile {
 }
 
 data class AnimationData(val animation: Animation): MetaFile
-class Animation(frames: Int, val frametime: Int = 2, val interpolate: Boolean = false) {
-    val frames: List<Int> = (0 until frames).toList()
+open class Animation(frames: Int, val frametime: Int = 2, val interpolate: Boolean = false) {
+    open val frames: List<Int> = (0 until frames).toList()
 }
+
+class RawAnimation(override val frames: List<Int>, frametime: Int = 2, interpolate: Boolean = false): Animation(-1, frametime, interpolate)
 
 object MetaGenerator: ResGenerator {
     private val enqueued: ConcurrentHashMap<String, String> = ConcurrentHashMap()

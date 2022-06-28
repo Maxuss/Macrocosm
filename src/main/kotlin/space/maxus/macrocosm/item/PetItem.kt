@@ -23,7 +23,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.getId
 import java.util.*
@@ -54,7 +54,7 @@ class PetItem(
     override val maxStars: Int = 0
 
     override fun buildName(): Component {
-        return comp("<gray>[Lvl ${stored!!.level}] <${stored!!.rarity.color.asHexString()}>$nameStr").noitalic()
+        return text("<gray>[Lvl ${stored!!.level}] <${stored!!.rarity.color.asHexString()}>$nameStr").noitalic()
     }
 
     override fun addExtraMeta(meta: ItemMeta) {
@@ -94,13 +94,13 @@ class PetItem(
         val base = Registry.PET.find(pet.id)
 
         val newLore = mutableListOf<Component>()
-        newLore.add(comp("<dark_gray>${base.preferredSkill.inst.name} Pet").noitalic())
+        newLore.add(text("<dark_gray>${base.preferredSkill.inst.name} Pet").noitalic())
         newLore.add("".toComponent())
 
         for ((stat, amount) in base.stats(pet.level, pet.rarity).iter()) {
             if (amount == 0f)
                 continue
-            newLore.add(comp("<gray>$stat: <red>${stat.type.formatSigned(amount, false)?.str()}").noitalic())
+            newLore.add(text("<gray>$stat: <red>${stat.type.formatSigned(amount, false)?.str()}").noitalic())
         }
 
         newLore.add("".toComponent())

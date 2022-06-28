@@ -18,7 +18,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.putId
 
 class EnchantedItem(
@@ -34,7 +34,7 @@ class EnchantedItem(
     override var stars: Int = 0
     override val id: Identifier = Identifier.macro(thisId ?: "enchanted_${base.name.lowercase()}")
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp(baseName)
+    override var name: Component = text(baseName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
@@ -48,7 +48,7 @@ class EnchantedItem(
     private var actualBase: String = actualId ?: base.name
 
     override fun buildLore(lore: MutableList<Component>) {
-        lore.add(comp("<yellow>Right click to view recipes").noitalic())
+        lore.add(text("<yellow>Right click to view recipes").noitalic())
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {

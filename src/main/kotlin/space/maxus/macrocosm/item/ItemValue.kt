@@ -30,7 +30,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 import java.util.*
 
@@ -117,7 +117,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE),
             description = "It's morbin' time"
         ),
-        Model(120, "item/blaze_rod", "macrocosm:item/eternal_terror_wand", "item/handheld"),
+        Model(0, "item/blaze_rod", "macrocosm:item/eternal_terror_wand", "item/handheld"),
         Animation(10, 4, true)
     ),
 
@@ -133,7 +133,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         mutableListOf(DeathDefyAbility),
         description = "Only works in off hand"
     ),
-        RawModel(121, "item/gold_ingot", "macrocosm:item/hyperions_ring")
+        RawModel(1, "item/gold_ingot", "macrocosm:item/hyperions_ring")
     ),
 
     YETI_SWORD(AbilityItem(ItemType.SWORD, "Yeti Sword", Rarity.LEGENDARY, Material.IRON_SWORD, stats {
@@ -383,8 +383,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     //#region stuff
     REAPER_GEM(ReforgeStone(ReforgeType.BLOOD_SOAKED.ref, "Reaper Gem", Rarity.LEGENDARY, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjMxNzUyODZjZDNiYTFhM2E5YzkwODI5NzdkMDlkZDM3YjE3N2FiZjM3YTQ2NjU4MGMyN2QxZGVlNzJiM2MxOCJ9fX0=")),
 
-    // todo: voodoo doll ability
-    VOODOO_DOLL(AbilityItem(ItemType.OTHER, "Voodoo Doll", Rarity.LEGENDARY, Material.PUFFERFISH, Statistics.zero(), mutableListOf(), description = "Who do you voodoo?")),
+    VOODOO_DOLL(AbilityItem(ItemType.OTHER, "Voodoo Doll", Rarity.RARE, Material.PUFFERFISH, Statistics.zero(), mutableListOf(VoodooDollAbility), description = "Who do you voodoo?")),
 
     //#endregion
 
@@ -483,8 +482,26 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
 
     //#endregion
 
+    //#region transmutation
+    SAPPHIRE_SHARD(
+        RecipeItem(Material.AMETHYST_SHARD, Rarity.EPIC, "Sapphire Shard", description = "It shines with sorrow", glow = true),
+        Model(2, "item/amethyst_shard", "macrocosm:item/sapphire_shard")
+    ),
+
+    PRISMATIC_SHARD(
+        RecipeItem(Material.AMETHYST_SHARD, Rarity.LEGENDARY, "Prismatic Shard", description = "It is said that this gemstone can produce solar energy out of nothing."),
+        Model(3, "item/amethyst_shard", "macrocosm:item/prismatic_shard"),
+        Animation(11)
+    ),
+
     // indev
     ENCHANTED_ADAMANTITE(RecipeItem(Material.REDSTONE, Rarity.EPIC, "Enchanted Adamantite", description = "Dwarves thought this metal was a myth...", glow = true)),
+
+    INFERNAL_GREATSWORD(AbilityItem(ItemType.LONGSWORD, "Infernal Greatsword", Rarity.LEGENDARY, Material.GOLDEN_SWORD, stats {
+        damage = 400f
+        strength = 125f
+        ferocity = 40f
+    }, mutableListOf(FierySlashAbility, InfernalGreatswordThrowAbility))),
     ;
 
     companion object {
@@ -499,22 +516,22 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
 
         fun placeholderHead(skin: String, name: String, description: String) = itemStack(Material.PLAYER_HEAD) {
             meta<SkullMeta> {
-                displayName(comp(name))
+                displayName(text(name))
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
                 flags(*ItemFlag.values())
                 val profile = Bukkit.createProfile(UUID.randomUUID())
                 profile.setProperty(ProfileProperty("textures", skin))
                 this.playerProfile = profile
 
-                lore(description.reduceToList().map { comp(it) })
+                lore(description.reduceToList().map { text(it) })
             }
         }
 
         fun placeholderHeadDesc(skin: String, name: String, vararg description: String) = itemStack(Material.PLAYER_HEAD) {
             meta<SkullMeta> {
-                displayName(comp(name).noitalic())
+                displayName(text(name).noitalic())
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
-                val reduced = description.map { s -> comp("<gray>$s").noitalic() }.toMutableList()
+                val reduced = description.map { s -> text("<gray>$s").noitalic() }.toMutableList()
                 lore(reduced)
                 flags(*ItemFlag.values())
 
@@ -526,9 +543,9 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
 
         fun placeholderDescripted(type: Material, name: String, vararg description: String) = itemStack(type) {
             meta {
-                displayName(comp(name).noitalic())
+                displayName(text(name).noitalic())
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
-                val reduced = description.map { s -> comp("<gray>$s").noitalic() }.toMutableList()
+                val reduced = description.map { s -> text("<gray>$s").noitalic() }.toMutableList()
                 lore(reduced)
                 flags(*ItemFlag.values())
             }
@@ -536,7 +553,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
 
         fun placeholder(type: Material, name: String, vararg extra: String) = itemStack(type) {
             meta {
-                displayName(comp(name).noitalic())
+                displayName(text(name).noitalic())
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
                 for (e in extra) {
                     persistentDataContainer[pluginKey(e), PersistentDataType.BYTE] = 1

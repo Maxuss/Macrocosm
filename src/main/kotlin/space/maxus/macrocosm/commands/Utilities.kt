@@ -37,14 +37,14 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.rewardsMenu
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.Calendar
 import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 
 fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    title = comp("Item Browser")
+    title = text("Item Browser")
     defaultPage = 0
 
     page(0) {
@@ -147,7 +147,7 @@ fun payCommand() = command("pay") {
                 from.purse -= amount.toFloat()
                 to.purse += amount.toFloat()
                 from.sendMessage("<green>You've paid ${to.paper!!.displayName().str()} ${Formatting.withCommas(amount.toBigDecimal())}<green> coins!")
-                to.paper!!.sendMessage(from.paper!!.displayName().append(comp("<green> has just paid you ${Formatting.withCommas(amount.toBigDecimal())} coins!")))
+                to.paper!!.sendMessage(from.paper!!.displayName().append(text("<green> has just paid you ${Formatting.withCommas(amount.toBigDecimal())} coins!")))
                 sound(Sound.ENTITY_VILLAGER_YES) {
                     playFor(to.paper!!)
                     playFor(from.paper!!)
@@ -268,7 +268,7 @@ fun playtimeCommand() = command("playtime") {
         val hours = millis / (60 * 60 * 1000)
         millis -= hours * (60 * 60 * 1000)
         val minutes = millis / (60 * 1000)
-        player.sendMessage(comp("<green>Your playtime is ${if (hours <= 0) "" else "${hours}h "}${minutes}m!"))
+        player.sendMessage(text("<green>Your playtime is ${if (hours <= 0) "" else "${hours}h "}${minutes}m!"))
     }
 }
 
@@ -296,14 +296,14 @@ fun statCommand() = command("stat") {
                     val player =
                         getArgument<EntitySelector>("player").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm
                     if (player == null) {
-                        this.player.sendMessage(comp("<red>Provided player is not online!"))
+                        this.player.sendMessage(text("<red>Provided player is not online!"))
                         return@runs
                     }
                     val statName = getArgument<String>("statistic")
                     val stat = Statistic.valueOf(statName)
                     val value = getArgument<Float>("value")
                     player.baseStats[stat] = value
-                    this.player.sendMessage(comp("<green>Set $stat of player <gold>${player.paper?.name}<green> to $value!"))
+                    this.player.sendMessage(text("<green>Set $stat of player <gold>${player.paper?.name}<green> to $value!"))
                 }
             }
         }
@@ -314,7 +314,7 @@ fun myDamageCommand() = command("mydamage") {
     runs {
         val stats = player.macrocosm!!.stats()!!
         val (damage, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
-        val message = comp(
+        val message = text(
             """
             <yellow>You would deal <red>${damage.roundToInt()} ${if (crit) "<gold>critical " else ""}<yellow>damage!
             Offensive stats:
@@ -336,12 +336,12 @@ fun giveCoinsCommand() = command("givecoins") {
                 val player =
                     getArgument<EntitySelector>("player").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm
                 if (player == null) {
-                    this.player.sendMessage(comp("<red>Provided player is not online!"))
+                    this.player.sendMessage(text("<red>Provided player is not online!"))
                     return@runs
                 }
                 val amount = getArgument<Int>("amount")
                 player.purse += amount
-                this.player.sendMessage(comp("<green>Successfully gave ${player.paper?.name} <gold>$amount coins<green>!"))
+                this.player.sendMessage(text("<green>Successfully gave ${player.paper?.name} <gold>$amount coins<green>!"))
             }
         }
     }

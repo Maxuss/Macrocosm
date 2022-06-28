@@ -93,7 +93,11 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     NEGATE(ZombieHeartHealing("Negate", 10f)),
     VITIATE(ZombieHeartHealing("Vitiate", 25f)),
-    BELIE(ZombieHeartHealing("Belie", 50f))
+    BELIE(ZombieHeartHealing("Belie", 50f)),
+    ACUPUNCTURE(VoodooDollAbility),
+
+    FIERY_SLASH(FierySlashAbility),
+    INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility)
 
     ;
 

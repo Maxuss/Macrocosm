@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 @Suppress("unused")
 enum class StatisticType(val color: TextColor) {
@@ -16,13 +16,13 @@ enum class StatisticType(val color: TextColor) {
 
     fun format(num: Float): Component {
         val formatted = Formatting.stats(num.toBigDecimal(), false)
-        return comp(formatted)
+        return text(formatted)
     }
 
     fun formatSigned(num: Float, colored: Boolean = true): Component? {
         val formatted = Formatting.stats(num.toBigDecimal(), false)
         val stringified = if (num < 0) formatted else if (num > 0) "+$formatted" else return null
 
-        return if (colored) comp(stringified).color(color) else comp(stringified)
+        return if (colored) text(stringified).color(color) else text(stringified)
     }
 }

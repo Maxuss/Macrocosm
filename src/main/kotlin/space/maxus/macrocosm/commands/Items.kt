@@ -20,7 +20,7 @@ import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.item.types.WitherScrollAbility
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.util.macrocosm
 
@@ -29,7 +29,7 @@ fun recombobulateCommand() = command("recombobulate") {
     runs {
         val item = player.inventory.itemInMainHand
         if (item.type == Material.AIR) {
-            player.sendMessage(comp("<red>Hold the item you want to recombobulate!"))
+            player.sendMessage(text("<red>Hold the item you want to recombobulate!"))
             return@runs
         }
         val m = item.macrocosm!!
@@ -59,8 +59,8 @@ fun giveAdminItemCommand() = command("giveadminstuff") {
                 item.givenTo = toDisplay
                 item.givenBy = fromDisplay
                 item.edition = edition
-                player.sendMessage(comp("<green>You have given ").append(toDisplay).append(comp("<green> #$edition ${item.nameStr}!")))
-                to.sendMessage(fromDisplay.append(comp("<gold> has given you <red>#$edition ${item.nameStr}<gold>! <aqua><bold>WOW!")))
+                player.sendMessage(text("<green>You have given ").append(toDisplay).append(text("<green> #$edition ${item.nameStr}!")))
+                to.sendMessage(fromDisplay.append(text("<gold> has given you <red>#$edition ${item.nameStr}<gold>! <aqua><bold>WOW!")))
                 to.inventory.addItem(item.build(to.macrocosm!!)!!)
             }
         }
@@ -73,7 +73,7 @@ fun setStarsCommand() = command("setstars") {
         runs {
             val item = player.inventory.itemInMainHand
             if (item.type == Material.AIR) {
-                player.sendMessage(comp("<red>Hold the item you want to add scroll to!"))
+                player.sendMessage(text("<red>Hold the item you want to add scroll to!"))
                 return@runs
             }
             val macrocosm = item.macrocosm ?: return@runs
@@ -98,7 +98,7 @@ fun addScrollCommand() = command("addscroll") {
         runs {
             val item = player.inventory.itemInMainHand
             if (item.type == Material.AIR) {
-                player.sendMessage(comp("<red>Hold the item you want to add scroll to!"))
+                player.sendMessage(text("<red>Hold the item you want to add scroll to!"))
                 return@runs
             }
             val macrocosm = item.macrocosm as? WitherBlade ?: return@runs
@@ -162,7 +162,7 @@ fun reforgeCommand() = command("reforge") {
         runs {
             val item = player.inventory.itemInMainHand
             if (item.type == Material.AIR) {
-                player.sendMessage(comp("<red>Hold the item you want to reforge!"))
+                player.sendMessage(text("<red>Hold the item you want to reforge!"))
                 return@runs
             }
             val macrocosm = item.macrocosm
@@ -195,7 +195,7 @@ fun enchantCommand() = command("enchantme") {
             runs {
                 val item = player.inventory.itemInMainHand
                 if (item.type == Material.AIR) {
-                    player.sendMessage(comp("<red>Hold the item you want to enchant!"))
+                    player.sendMessage(text("<red>Hold the item you want to enchant!"))
                     return@runs
                 }
                 val level = getArgument<Int>("level")
@@ -227,7 +227,7 @@ fun itemCommand() = command("getitem") {
                 val stack = Registry.ITEM.find(item).build(player.macrocosm) ?: ItemStack(Material.AIR)
                 player.inventory.addItem(stack)
                 this.player.sendMessage(
-                    comp(
+                    text(
                         "<green>Gave ${player.name} ${
                             MiniMessage.miniMessage().serialize(stack.displayName())
                         }<green>!"

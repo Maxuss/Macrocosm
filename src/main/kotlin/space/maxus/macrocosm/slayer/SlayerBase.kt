@@ -3,6 +3,7 @@ package space.maxus.macrocosm.slayer
 import net.axay.kspigot.extensions.pluginKey
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.enchants.roman
@@ -14,11 +15,11 @@ import space.maxus.macrocosm.loot.MacrocosmDrop
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 open class SlayerBase(
     type: EntityType,
-    slayer: SlayerType,
+    private val slayer: SlayerType,
     tier: Int,
     experience: Double,
     stats: Statistics,
@@ -33,7 +34,7 @@ open class SlayerBase(
     override val rewardingSkill: SkillType = SkillType.COMBAT,
     actualName: String? = null
 ) : EntityBase(
-    comp(actualName ?: "${slayer.slayer.name} ${roman(tier)}"),
+    text(actualName ?: "${slayer.slayer.name} ${roman(tier)}"),
     type,
     LootPool.of(*slayer.slayer.drops.filter { it.minTier <= tier }.map { MacrocosmDrop(it.drop.item, it.drop.rarity, it.drop.chance, it.amounts[tier] ?: 0..0) }.toTypedArray()),
     experience,
@@ -45,5 +46,11 @@ open class SlayerBase(
         val entity = spawn(at)
         entity.persistentDataContainer.set(pluginKey("SUMMONER"), PersistentDataType.STRING, summoner.uniqueId.toString())
         summoner.macrocosm!!.summonedBoss = entity.uniqueId
+    }
+
+    override fun spawn(at: Location): LivingEntity {
+        val e = super.spawn(at)
+        SlayerAbility.bosses.put(slayer, e.uniqueId)
+        return e
     }
 }

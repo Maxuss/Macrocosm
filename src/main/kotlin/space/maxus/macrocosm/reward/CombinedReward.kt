@@ -2,7 +2,7 @@ package space.maxus.macrocosm.reward
 
 import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 class CombinedReward(vararg rwd: Reward) : Reward {
     private val rewards: MutableList<Reward> = mutableListOf(*rwd)
@@ -15,10 +15,10 @@ class CombinedReward(vararg rwd: Reward) : Reward {
     }
 
     override fun display(lvl: Int): Component {
-        var total = comp("")
+        var total = text("")
         for (reward in rewards) {
             if (!reward.isHidden) {
-                total = total.append(reward.display(lvl)).append(comp("\n"))
+                total = total.append(reward.display(lvl)).append(text("\n"))
             }
         }
         return total

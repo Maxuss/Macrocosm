@@ -29,7 +29,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 
 class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
@@ -41,7 +41,7 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
         "${MiniMessage.miniMessage().stripTags(sskin.name).lowercase().replace(" ", "_")}_skin"
     )
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp("${sskin.name} Skin")
+    override var name: Component = text("${sskin.name} Skin")
     override val base: Material = Material.PLAYER_HEAD
     override var rarity: Rarity = sskin.rarity
     override var rarityUpgraded: Boolean = false
@@ -57,25 +57,25 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
 
     override fun buildLore(lore: MutableList<Component>) {
         lore.add(0, "".toComponent())
-        lore.add(0, comp("<dark_gray>${if(sskin.isHelmet) "Helmet" else "Pet"} Skin").noitalic())
+        lore.add(0, text("<dark_gray>${if(sskin.isHelmet) "Helmet" else "Pet"} Skin").noitalic())
 
         val str = if(sskin.isHelmet) {
             "Apply helmet skins to helmets on an <yellow>Anvil<gray> to give your helmet a <light_purple>New & Refreshing<gray> look!"
         } else {
             "Apply pet skins to pets on an <yellow>Anvil<gray> to give your pet a <light_purple>New & Refreshing<gray> look!"
         }
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         reduced.add("".toComponent())
         lore.addAll(reduced)
         val cmp = if(sskin.isHelmet) {
             val i = Registry.ITEM.find(sskin.target)
-            comp(
+            text(
                 "<gray>Applicable to <${i.rarity.color.asHexString()}>${MiniMessage.miniMessage().serialize(i.name)}."
             )
         } else {
             val p = Registry.PET.find(sskin.target)
-            comp(
+            text(
                 "<gray>Applicable to <gold>${p.name} Pet<gray>."
             )
         }

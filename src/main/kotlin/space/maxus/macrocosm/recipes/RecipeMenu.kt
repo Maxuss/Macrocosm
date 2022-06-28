@@ -18,12 +18,12 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.ctx.CraftingTableContext
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 @Suppress("SENSELESS_COMPARISON")
 object RecipeMenu : Listener {
     fun craftingTable(player: Player): Inventory {
-        val inv = server.createInventory(player, 45, comp("Crafting Table"))
+        val inv = server.createInventory(player, 45, text("Crafting Table"))
         val arrow = ItemValue.placeholder(Material.ARROW, "<yellow><!italic>Craft!", "build")
         val air = ItemStack(Material.AIR)
         val glass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)

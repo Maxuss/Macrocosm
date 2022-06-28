@@ -8,7 +8,7 @@ import space.maxus.macrocosm.util.GSON
 
 @JsonAdapter(PackDescription.Serializer::class)
 object PackDescription {
-    const val PACK_FORMAT = 8
+    const val PACK_FORMAT = 9
     const val DESCRIPTION = "Macrocosm Resources"
 
     fun descript(): String {

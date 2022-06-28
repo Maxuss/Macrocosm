@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.pack
 
-import com.google.common.io.BaseEncoding
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -8,10 +7,10 @@ import org.bukkit.event.player.PlayerJoinEvent
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.recreateFile
-import java.io.BufferedInputStream
-import java.io.ByteArrayInputStream
+import java.io.*
+import java.math.BigInteger
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.security.MessageDigest
@@ -22,14 +21,14 @@ import kotlin.io.path.*
 
 object PackProvider: Listener {
     private const val RESOURCE_PACK_LINK: String = "http://127.0.0.1:6060/pack"
-    private var RESOURCE_PACK_HASH: ByteArray = ByteArray(1)
+    private var RESOURCE_PACK_HASH: String = "null"
 
     const val PACK_NAME = "§5§lMacrocosm §d§lPack.zip"
     private const val BUFFER_SIZE = 4096
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onJoin(e: PlayerJoinEvent) {
-        e.player.setResourcePack(RESOURCE_PACK_LINK, RESOURCE_PACK_HASH, comp("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"), true)
+        e.player.setResourcePack(RESOURCE_PACK_LINK, RESOURCE_PACK_HASH, true, text("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"))
     }
 
     fun init() {
@@ -40,15 +39,37 @@ object PackProvider: Listener {
 
             // calculating sha1 hash
             val packFile = Path(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME).toFile()
-            val bytes = packFile.inputStream().readAllBytes()
-            val hasher = MessageDigest.getInstance("SHA-1")
-            val digest = hasher.digest(bytes)
-            Macrocosm.logger.info("Resource pack SHA-1 hash: ${BaseEncoding.base16().encode(digest)}")
 
-            RESOURCE_PACK_HASH = digest
+            val hash = digest(packFile)
+            Macrocosm.logger.info("Resource pack SHA-1 hash: $hash")
+
+            RESOURCE_PACK_HASH = hash
 
             // hooking server
             PackServer.hook(packFile)
+        }
+    }
+
+    private fun digest(file: File): String {
+        val digest = MessageDigest.getInstance("MD5")
+        val `is`: InputStream = BufferedInputStream(FileInputStream(file))
+        val buffer = ByteArray(8192)
+        var read: Int
+        return try {
+            while (`is`.read(buffer).also { read = it } > 0) {
+                digest.update(buffer, 0, read)
+            }
+            val md5sum = digest.digest()
+            val bigInt = BigInteger(1, md5sum)
+            bigInt.toString(16)
+        } catch (e: IOException) {
+            throw RuntimeException("Unable to process file for MD5", e)
+        } finally {
+            try {
+                `is`.close()
+            } catch (e: IOException) {
+                throw RuntimeException("Unable to close input stream for MD5 calculation", e)
+            }
         }
     }
 
@@ -113,16 +134,5 @@ object PackProvider: Listener {
         zip.close()
         zip.flush()
         Macrocosm.logger.info("Finished zipping resource pack, calculating hash...")
-    }
-
-    private fun bytesToHex(arrayBytes: ByteArray): String {
-        val stringBuffer = StringBuffer()
-        for (i in arrayBytes.indices) {
-            stringBuffer.append(
-                ((arrayBytes[i].toInt() and 0xff) + 0x100).toString(16)
-                    .substring(1)
-            )
-        }
-        return stringBuffer.toString()
     }
 }

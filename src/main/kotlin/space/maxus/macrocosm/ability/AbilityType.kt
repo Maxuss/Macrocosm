@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.ability
 
 import net.kyori.adventure.text.Component
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 /**
  * Represents type of the ability, used for lore manipulations *only*
@@ -41,7 +41,7 @@ enum class AbilityType {
      * @return Formatted and colored component **with** italic formatting. Make sure to call [space.maxus.macrocosm.chat.noitalic] on it, if you plan to add it to lore.
      */
     fun format(abilityName: String): Component {
-        val type = comp(if (this == PASSIVE) "" else " <bold><yellow>${name.replace("_", " ")}</yellow></bold>")
-        return comp("<gold>Ability: $abilityName").append(type)
+        val type = text(if (this == PASSIVE) "" else " <bold><yellow>${name.replace("_", " ")}</yellow></bold>")
+        return text("<gold>Ability: $abilityName").append(type)
     }
 }

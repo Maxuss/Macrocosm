@@ -23,7 +23,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 
 fun rarityToRuneTier(rarity: Rarity): String {
@@ -51,7 +51,7 @@ class RuneItem(
         "${runeType.id.path}_rune_${rarity.name.lowercase()}"
     )
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp(runeName)
+    override var name: Component = text(runeName)
     override val base: Material = Material.PLAYER_HEAD
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
@@ -65,12 +65,12 @@ class RuneItem(
     override val maxStars: Int = 0
 
     override fun buildLore(lore: MutableList<Component>) {
-        lore.add(comp("<dark_gray>Rune").noitalic())
+        lore.add(text("<dark_gray>Rune").noitalic())
         lore.add("".toComponent())
 
         val str = "Some say, that when <yellow>harnessed<gray> and applied properly, this rune will boost the wearer's ${runeType.modifiedStats}<gray>."
         for(d in str.reduceToList(35)) {
-            lore.add(comp("<gray>$d</gray>").noitalic())
+            lore.add(text("<gray>$d</gray>").noitalic())
         }
         lore.add("".toComponent())
     }

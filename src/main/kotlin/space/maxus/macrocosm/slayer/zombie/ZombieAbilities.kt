@@ -10,13 +10,14 @@ import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.slayer.SlayerAbility
+import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.Statistic
 import kotlin.math.min
 
 object ZombieAbilities {
     val REGENERATION = SlayerAbility(
         "regeneration",
-        "revenant_horror",
+        SlayerType.REVENANT_HORROR,
         "<red>Regeneration",
         "Boss rapidly regenerates <red>[50/150/1000/2500] ${Statistic.HEALTH.display}<gray> every second."
     ) {
@@ -44,7 +45,7 @@ object ZombieAbilities {
 
     val CRUMBLING_TOUCH = SlayerAbility(
         "crumbling_touch",
-        "revenant_horror",
+        SlayerType.REVENANT_HORROR,
         "<yellow>Crumbling Touch",
         "Every <green>5 seconds<gray> boss will shatter your armor, <yellow>decreasing<gray> your ${Statistic.DEFENSE.display}<gray> by <red>[10/20/30/50]%<gray>."
     ) {

@@ -13,7 +13,7 @@ import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerTable
 import space.maxus.macrocosm.slayer.SlayerType
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.renderBar
 import space.maxus.macrocosm.util.stripTags
@@ -22,7 +22,7 @@ import space.maxus.macrocosm.util.stripTags
 fun rewardsMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
     val slayer = ty.slayer
     val playerLevel = player.slayers[ty]!!
-    title = comp("${slayer.name.stripTags()} Rewards")
+    title = text("${slayer.name.stripTags()} Rewards")
     defaultPage = 0
 
     page(0) {

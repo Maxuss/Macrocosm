@@ -91,6 +91,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
 
         protocolManager.addPacketListener(MiningHandler)
 
@@ -170,10 +171,10 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         config.load(cfgFile)
 
-        PackProvider.init()
-
         Calendar.init()
         SidebarRenderer.init()
+
+        PackProvider.init()
     }
 
     private val dumpTestData: Boolean = false

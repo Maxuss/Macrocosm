@@ -5,7 +5,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 fun boostStat(stat: Statistic, base: Double, multiply: Boolean = false, hide: Boolean = false) =
     StatBoostReward(stat, base, multiply, hide)
@@ -24,6 +24,6 @@ class StatBoostReward(
     }
 
     override fun display(lvl: Int): Component {
-        return comp("<dark_gray>+<green>${Formatting.stats(base.toBigDecimal())} ${stat.display}").noitalic()
+        return text("<dark_gray>+<green>${Formatting.stats(base.toBigDecimal())} ${stat.display}").noitalic()
     }
 }

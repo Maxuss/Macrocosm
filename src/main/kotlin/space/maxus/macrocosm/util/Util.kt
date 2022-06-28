@@ -36,6 +36,7 @@ import kotlin.io.path.deleteIfExists
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 val GSON: Gson = GsonBuilder().create()
 val GSON_PRETTY: Gson = GsonBuilder()
@@ -183,4 +184,8 @@ inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollecti
     new.addAll(this)
     new.addAll(List(required) { value })
     return new
+}
+
+fun Random.nextSignedDouble(): Double {
+    return if(nextBoolean()) nextDouble() else -nextDouble()
 }

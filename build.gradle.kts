@@ -33,5 +33,6 @@ tasks {
     }
     compileKotlin {
         kotlinOptions.jvmTarget = "17"
+        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
 }

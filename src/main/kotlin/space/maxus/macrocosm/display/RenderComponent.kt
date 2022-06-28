@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 interface RenderComponent {
     fun title(): Component
@@ -41,13 +41,13 @@ interface RenderComponent {
         private val desc: List<Component>
 
         init {
-            val reduced = description.reduceToList(15).map { comp("<gray>$it").noitalic() }.toMutableList()
+            val reduced = description.reduceToList(15).map { text("<gray>$it").noitalic() }.toMutableList()
             reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
             desc = reduced
         }
 
         override fun title(): Component {
-            return comp(title)
+            return text(title)
         }
 
         override fun lines(): List<Component> {

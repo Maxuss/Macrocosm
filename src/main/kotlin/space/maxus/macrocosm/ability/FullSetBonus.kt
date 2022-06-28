@@ -7,7 +7,7 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 /**
  * A wrapper for abstract [AbilityBase], which provides some minor features. Can also be inherited for more abstraction.
@@ -44,9 +44,9 @@ open class FullSetBonus(name: String, description: String) : AbilityBase(Ability
      */
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
-        tmp.add(comp("<gold>Full Set Bonus: $name").noitalic())
+        tmp.add(text("<gold>Full Set Bonus: $name").noitalic())
         for (desc in description.reduceToList()) {
-            tmp.add(comp("<gray>$desc</gray>").noitalic())
+            tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()

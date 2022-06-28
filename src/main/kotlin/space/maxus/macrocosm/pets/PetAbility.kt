@@ -7,7 +7,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 open class PetAbility(val name: String, val description: String) {
     companion object {
@@ -16,11 +16,11 @@ open class PetAbility(val name: String, val description: String) {
 
     fun description(pet: StoredPet): List<Component> {
         val tmp = mutableListOf<Component>()
-        tmp.add(comp("<gold>$name").noitalic())
+        tmp.add(text("<gold>$name").noitalic())
         for (desc in description.split("<br>")) {
             val moreSplit = desc.reduceToList()
             for (it in moreSplit) {
-                tmp.add(comp("<gray>${parseLine(it, pet.level)}</gray>").noitalic())
+                tmp.add(text("<gray>${parseLine(it, pet.level)}</gray>").noitalic())
             }
         }
         tmp.removeIf {

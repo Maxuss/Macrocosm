@@ -13,7 +13,7 @@ import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 class StealingEnchantment(
     name: String,
@@ -28,7 +28,7 @@ class StealingEnchantment(
     override fun description(level: Int): List<Component> {
         val str = actualDescription?.replace("{{amount}}", Formatting.stats((amount * level).toBigDecimal()))
             ?: "<gray>Regain <green>${Formatting.stats((amount * level).toBigDecimal())}%<gray> of your max ${stat.display}<gray> on hit."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }

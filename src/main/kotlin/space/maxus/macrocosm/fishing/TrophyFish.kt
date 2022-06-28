@@ -27,7 +27,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.Chance
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.zone.Zone
@@ -55,7 +55,7 @@ class TrophyFish(
     override val id: Identifier get() = id(baseName.lowercase())
     override val type: ItemType = ItemType.OTHER
     override var name: Component
-        get() = comp("$baseName <bold>${tier?.name}")
+        get() = text("$baseName <bold>${tier?.name}")
         set(@Suppress("UNUSED_PARAMETER") value) {}
     override val base: Material = Material.PLAYER_HEAD
     override var rarityUpgraded: Boolean = false
@@ -69,7 +69,7 @@ class TrophyFish(
     override var skin: SkullSkin? = null
 
     override fun buildLore(lore: MutableList<Component>) {
-        val reduced = conditions.description.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = conditions.description.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         lore.addAll(reduced)
     }

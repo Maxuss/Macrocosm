@@ -20,14 +20,14 @@ import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 object FireAspectEnchantment :
     EnchantmentBase("Fire Aspect", "", 1..5, ItemType.melee(), conflicts = listOf("FROST_ASPECT")) {
     override fun description(level: Int): List<Component> {
         val str =
             "<gray>Sets your enemies <gold>on fire<gray>, dealing <green>${10 + (level * 10)}%</green> of your ${Statistic.DAMAGE.display}<gray> per second for <green>${level + 3}s</green>"
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }
@@ -83,7 +83,7 @@ object FrostAspectEnchantment :
     override fun description(level: Int): List<Component> {
         val str =
             "<aqua>Freezes<gray> your enemies, dealing <green>${10 + (level * 5)}%</green> of your ${Statistic.DAMAGE.display}<gray> per second for <green>${level}s</green>"
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }

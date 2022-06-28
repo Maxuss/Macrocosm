@@ -23,7 +23,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.putId
 import space.maxus.macrocosm.util.stripTags
 import java.util.*
@@ -42,7 +42,7 @@ class RecipeItem(
     override var stars: Int = 0
     override val id: Identifier = Identifier.macro(baseName.stripTags().replace("'", "").lowercase().replace(" ", "_"))
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp(baseName)
+    override var name: Component = text(baseName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
@@ -55,12 +55,12 @@ class RecipeItem(
 
     override fun buildLore(lore: MutableList<Component>) {
         if(description != null) {
-            val reduced = description.reduceToList(30).map { comp("<dark_gray>$it").noitalic() }.toMutableList()
+            val reduced = description.reduceToList(30).map { text("<dark_gray>$it").noitalic() }.toMutableList()
             reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
             lore.addAll(reduced)
             lore.add("".toComponent())
         }
-        lore.add(comp("<yellow>Right click to view recipes").noitalic())
+        lore.add(text("<yellow>Right click to view recipes").noitalic())
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {

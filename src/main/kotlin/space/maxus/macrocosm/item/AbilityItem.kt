@@ -16,7 +16,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 open class AbilityItem(
     override val type: ItemType, protected val itemName: String, override var rarity: Rarity, override val base: Material,
@@ -36,7 +36,7 @@ open class AbilityItem(
             else field = value
         }
     override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", ""))
-    override var name: Component = comp(itemName)
+    override var name: Component = text(itemName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
@@ -48,7 +48,7 @@ open class AbilityItem(
     override fun buildLore(lore: MutableList<Component>) {
         super.buildLore(lore)
         if(description != null) {
-            lore.addAll(description.reduceToList().map { comp("<dark_gray>$it").noitalic() })
+            lore.addAll(description.reduceToList().map { text("<dark_gray>$it").noitalic() })
         }
     }
 

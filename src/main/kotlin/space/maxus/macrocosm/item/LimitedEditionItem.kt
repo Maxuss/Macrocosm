@@ -13,7 +13,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.ApplicableRune
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 class LimitedEditionItem(
     ty: ItemType,
@@ -58,8 +58,8 @@ class LimitedEditionItem(
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt) as LimitedEditionItem
         base.edition = nbt.getInt("Edition")
-        base.givenBy = comp(nbt.getString("GivenBy"))
-        base.givenTo = comp(nbt.getString("GivenTo"))
+        base.givenBy = text(nbt.getString("GivenBy"))
+        base.givenTo = text(nbt.getString("GivenTo"))
         return base
     }
 
@@ -72,9 +72,9 @@ class LimitedEditionItem(
 
     override fun buildLore(lore: MutableList<Component>) {
         super.buildLore(lore)
-        lore.add(comp("<gray>To: ").append(givenTo).noitalic())
-        lore.add(comp("<gray>From: ").append(givenBy).noitalic())
+        lore.add(text("<gray>To: ").append(givenTo).noitalic())
+        lore.add(text("<gray>From: ").append(givenBy).noitalic())
         lore.add("".toComponent())
-        lore.add(comp("<dark_gray>Edition #$edition").noitalic())
+        lore.add(text("<dark_gray>Edition #$edition").noitalic())
     }
 }

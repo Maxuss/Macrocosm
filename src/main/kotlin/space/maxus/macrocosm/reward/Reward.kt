@@ -3,7 +3,7 @@ package space.maxus.macrocosm.reward
 import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 interface Reward {
     val isHidden: Boolean
@@ -24,7 +24,7 @@ interface Reward {
         }
 
         override fun display(lvl: Int): Component {
-            return comp("<gray>Placeholder reward $lvl!").noitalic()
+            return text("<gray>Placeholder reward $lvl!").noitalic()
         }
 
     }

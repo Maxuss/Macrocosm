@@ -10,7 +10,7 @@ import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.ranks.Rank
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 fun rankCommand() = command("rank") {
     requires { it.hasPermission(4) }
@@ -31,7 +31,7 @@ fun rankCommand() = command("rank") {
                 player.paper?.playerListName(player.paper?.name?.toComponent()?.color(player.rank.color))
                 player.paper?.displayName(displayName)
 
-                this.player.sendMessage(comp("<green>Set rank of player <gold>${player.paper?.name}<green> to $rank"))
+                this.player.sendMessage(text("<green>Set rank of player <gold>${player.paper?.name}<green> to $rank"))
             }
         }
     }

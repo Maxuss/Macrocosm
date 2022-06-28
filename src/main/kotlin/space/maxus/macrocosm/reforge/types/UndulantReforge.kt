@@ -28,7 +28,7 @@ object UndulantReforge : ReforgeBase(
         if (!ensureRequirements(e.player, EquipmentSlot.HAND))
             return
         e.mana = (e.mana * .75f).roundToInt()
-        e.cooldown = (e.cooldown * .75f).roundToInt()
+        e.cooldown = (e.cooldown * .75f)
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -36,7 +36,7 @@ object UndulantReforge : ReforgeBase(
         if (e.item.reforge == null || e.item.reforge != this)
             return
         val cost = e.cost ?: return
-        e.cost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, (cost.cooldown * .75).roundToInt())
+        e.cost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, (cost.cooldown.toFloat() * .75f).roundToInt())
     }
 
     override fun clone(): Reforge {

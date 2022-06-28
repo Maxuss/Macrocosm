@@ -3,11 +3,14 @@ package space.maxus.macrocosm.ability
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.ChatColor
+import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
+import kotlin.math.roundToInt
 
 /**
  * Represents an item ability, that can execute various actions.
@@ -18,6 +21,10 @@ import space.maxus.macrocosm.text.comp
  * - [FullSetBonus]
  */
 interface MacrocosmAbility {
+    companion object {
+        private val DAMAGE_REGEX = "\\[[\\d.]+:[\\d.]+]".toRegex()
+    }
+
     /**
      * Name of this ability, supports MiniMessage tags
      */
@@ -55,14 +62,26 @@ interface MacrocosmAbility {
     fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
         tmp.add(type.format(name).noitalic())
-        for(part in description.split("<br>")) {
+        for(part in formatDamageNumbers(description, player).split("<br>")) {
             for (desc in part.reduceToList()) {
-                tmp.add(comp("<gray>$desc</gray>").noitalic())
+                tmp.add(text("<gray>$desc</gray>").noitalic())
             }
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }
         lore.addAll(tmp)
+    }
+
+    fun formatDamageNumbers(str: String, player: MacrocosmPlayer?): String {
+        val stats = player?.stats()
+        return DAMAGE_REGEX.replace(str) { res ->
+            val data = res.value.replace("[", "").replace("]", "").split(":")
+            val dmg = java.lang.Double.valueOf(data[0])
+            val scaling = java.lang.Double.valueOf(data[1])
+            if(stats == null)
+                return@replace Formatting.withCommas(dmg.toBigDecimal(), true)
+            return@replace Formatting.withCommas(DamageCalculator.calculateMagicDamage(dmg.roundToInt(), scaling.toFloat(), stats).toBigDecimal(), true)
+        }
     }
 }

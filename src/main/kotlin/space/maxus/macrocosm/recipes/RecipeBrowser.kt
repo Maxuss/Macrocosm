@@ -11,11 +11,11 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 
 fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    title = comp("<dark_gray>Recipe Browser")
+    title = text("<dark_gray>Recipe Browser")
     page(1) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
         val compound = createRectCompound<Identifier>(
@@ -60,10 +60,10 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
 }
 
 fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType.FIVE_BY_NINE) {
-    title = comp("<dark_gray>Recipe Browser")
+    title = text("<dark_gray>Recipe Browser")
     defaultPage = 0
     val recipes = Recipes.using(item)
-    for (i in recipes.indices) {
+    for (i in recipes.filter { !player.isRecipeLocked(it.id) }.indices) {
         val recipe = recipes[i]
         page(i) {
             placeholder(
@@ -90,7 +90,7 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    val its = Registry.ITEM.find(v.first).build() ?: ItemStack(Material.AIR)
+                    val its = Registry.ITEM.findOrNull(v.first)?.build() ?: ItemStack(Material.AIR)
                     its.amount = v.second
                     its
                 }
@@ -115,7 +115,7 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
 
 fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> =
     kSpigotGUI(GUIType.FIVE_BY_NINE) {
-        title = comp("<dark_gray>${Registry.ITEM.find(item).name.str()}<dark_gray> Recipe")
+        title = text("<dark_gray>${Registry.ITEM.find(item).name.str()}<dark_gray> Recipe")
         page(1) {
             // # # # # # # # # #
             // #      # # # # #

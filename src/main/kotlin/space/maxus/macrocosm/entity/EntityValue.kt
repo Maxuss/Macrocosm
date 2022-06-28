@@ -14,7 +14,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.defaultStats
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 import java.util.concurrent.TimeUnit
 
@@ -24,7 +24,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     // sea creatures
     SQUID(
         EntityBase(
-            comp("Squid"),
+            text("Squid"),
             EntityType.SQUID,
             FishingPool.withStrength(.8f).build(),
             54.0,
@@ -38,7 +38,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
 
     LAVA_SQUID(
         EntityBase(
-            comp("<red>Lava Squid"),
+            text("<red>Lava Squid"),
             EntityType.SQUID,
             FishingPool.withStrength(2.8f).build(),
             245.0,
@@ -52,7 +52,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
 
     RADIOACTIVE_SQUID(
         EntityBase(
-            comp("<green>Radioactive Squid"),
+            text("<green>Radioactive Squid"),
             EntityType.DROWNED,
             FishingPool.withStrength(13.0f).build(),
             1200.0,
@@ -74,7 +74,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     ),
 
     SEA_WALKER(EntityBase(
-        comp("Sea Walker"),
+        text("Sea Walker"),
         EntityType.ZOMBIE,
         FishingPool.withStrength(1f).build(),
         102.0,
@@ -92,7 +92,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     ),
 
     SEA_ARCHER(EntityBase(
-        comp("Sea Archer"),
+        text("Sea Archer"),
         EntityType.SKELETON,
         FishingPool.withStrength(1.8f).build(),
         201.0,
@@ -112,7 +112,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
 
     // summons
     REAPER_MASK_ZOMBIE(EntityBase(
-        comp("<green>Revenant Zombie"),
+        text("<green>Revenant Zombie"),
         EntityType.ZOMBIE,
         LootPool.of(),
         0.0,
@@ -131,7 +131,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     )),
 
     ENTOMBED_MASK_ZOMBIE(EntityBase(
-        comp("<green>Revenant Ghoul"),
+        text("<green>Revenant Ghoul"),
         EntityType.ZOMBIE,
         LootPool.of(),
         0.0,
@@ -156,7 +156,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     )),
 
     ZOMBIE_YOUNGLING(EntityBase(
-        comp("<green>Youngling Zombie"),
+        text("<green>Youngling Zombie"),
         EntityType.ZOMBIE,
         LootPool.of(),
         0.0,
@@ -175,7 +175,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     )),
 
     ZOMBIE_GOLDEN(EntityBase(
-        comp("<green>Golden Ghoul"),
+        text("<green>Golden Ghoul"),
         EntityType.ZOMBIE,
         LootPool.of(),
         0.0,
@@ -196,7 +196,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     )),
 
     ZOMBIE_GIANT(EntityBase(
-        comp("<green>Corpse Giant"),
+        text("<green>Corpse Giant"),
         EntityType.GIANT,
         LootPool.of(),
         0.0,

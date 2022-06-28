@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 class ItemReward(val item: Identifier, val amount: Int = 1, override val isHidden: Boolean = false): Reward {
     override fun reward(player: MacrocosmPlayer, lvl: Int) {
@@ -14,6 +14,6 @@ class ItemReward(val item: Identifier, val amount: Int = 1, override val isHidde
 
     override fun display(lvl: Int): Component {
         val item = Registry.ITEM.find(item)
-        return item.name.color(item.rarity.color).append(if(amount > 1) comp("<gray>${amount}x") else "".toComponent())
+        return item.name.color(item.rarity.color).append(if(amount > 1) text("<gray>${amount}x") else "".toComponent())
     }
 }

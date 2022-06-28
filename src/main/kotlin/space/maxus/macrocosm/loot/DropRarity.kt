@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import kotlin.math.roundToInt
 
 open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolean = false, val name: String? = null, val odds: String = "<green>Guaranteed") {
@@ -30,7 +30,7 @@ open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolea
         if (!broadcast)
             return
         val mf = player.macrocosm!!.stats()!!.magicFind
-        val message = comp(
+        val message = text(
             "<bold>$name DROP!</bold> ${
                 MiniMessage.miniMessage().serialize(item.buildName())
             } ${if(artificial) "<light_purple>(<dark_purple>RNGesus Meter Reward<light_purple>)" else "<aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"}"
@@ -48,13 +48,13 @@ open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolea
         }
         if (this == UNBELIEVABLE || this == INSANE) {
             broadcast(
-                comp(
+                text(
                     "<red><bold>WOW</bold><gold> ${
                         MiniMessage.miniMessage().serialize(player.displayName())
                     }<gold> has found ${MiniMessage.miniMessage().serialize(item.buildName())}<gold>!"
                 )
             )
-            player.sendTitlePart(TitlePart.TITLE, comp("<bold>${this.name} DROP!"))
+            player.sendTitlePart(TitlePart.TITLE, text("<bold>${this.name} DROP!"))
             player.sendTitlePart(TitlePart.SUBTITLE, item.buildName())
             taskRunLater(18L) {
                 sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {

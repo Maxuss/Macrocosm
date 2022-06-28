@@ -15,7 +15,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.reward.Reward
 import space.maxus.macrocosm.slayer.ui.SlayerDrop
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 
 internal fun colorFromTier(tier: Int): TextColor = when(tier) {
@@ -87,7 +87,7 @@ abstract class Slayer(
     }
 
     fun descript(): List<Component> {
-        val reduced = description.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = description.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }

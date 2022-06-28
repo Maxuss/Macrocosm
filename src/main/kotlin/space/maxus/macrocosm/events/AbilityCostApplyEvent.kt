@@ -8,7 +8,7 @@ class AbilityCostApplyEvent(
     val player: MacrocosmPlayer,
     var mana: Int,
     var health: Int,
-    var cooldown: Int
+    var cooldown: Float
 ) : Event() {
 
     companion object {

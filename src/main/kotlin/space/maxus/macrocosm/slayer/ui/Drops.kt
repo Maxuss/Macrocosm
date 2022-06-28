@@ -15,7 +15,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.colorFromTier
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 import space.maxus.macrocosm.util.pad
 import space.maxus.macrocosm.util.stripTags
@@ -29,7 +29,7 @@ private fun formatChance(chance: Float): String {
 fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE_BY_NINE) {
     val slayer = ty.slayer
     val playerLevel = player.slayers[ty]!!
-    title = comp("${slayer.name.stripTags()} Drops")
+    title = text("${slayer.name.stripTags()} Drops")
     defaultPage = 0
 
     page(0) {
@@ -40,7 +40,7 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
                 ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
             } else {
                 if (drop.requiredLevel > playerLevel.level)
-                    ItemValue.placeholderDescripted(
+                    return@createCompound ItemValue.placeholderDescripted(
                         Material.COAL_BLOCK,
                         "<red>???",
                         "Required LVL: <yellow>${drop.requiredLevel}"
@@ -71,7 +71,7 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
                         bufferedLore.add("")
                         bufferedLore.add("Required LVL: <yellow>${drop.requiredLevel}")
                     }
-                    lore(bufferedLore.map { l -> comp("<gray>$l").noitalic() })
+                    lore(bufferedLore.map { l -> text("<gray>$l").noitalic() })
                 }
                 it
             }
@@ -82,6 +82,8 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
         compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotEight, cmp)
         val drops = slayer.drops.pad(21, NullDrop)
         cmp.addContent(drops)
+        cmp.sortContentBy { it.requiredLevel }
+        cmp.sortContentBy { it.minTier }
 
         button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.ARROW, "<red>Back")) { ev ->
             ev.bukkitEvent.isCancelled = true

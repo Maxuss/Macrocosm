@@ -30,7 +30,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
 import kotlin.math.ceil
@@ -117,10 +117,10 @@ interface MacrocosmEntity : Listener {
         val curHealth = truncateBigNumber(currentHealth)
         val fullHealth = truncateBigNumber(stats.health)
         val level = levelFromStats(stats, extraWeight())
-        return comp("<dark_gray>[<gray>Lv $level<dark_gray>] ").append(name.colorIfAbsent(NamedTextColor.RED))
+        return text("<dark_gray>[<gray>Lv $level<dark_gray>] ").append(name.colorIfAbsent(NamedTextColor.RED))
             .append(" ".toComponent())
             .append(curHealth.toComponent().color(healthColor(currentHealth, stats.health)))
-            .append(comp("<white>/<green>$fullHealth <red> ❤"))
+            .append(text("<white>/<green>$fullHealth <red> ❤"))
             .noitalic()
     }
 

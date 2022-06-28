@@ -10,7 +10,8 @@ class PlayerDealDamageEvent(
     val player: MacrocosmPlayer,
     val damaged: LivingEntity,
     var damage: Float,
-    var crit: Boolean
+    var crit: Boolean,
+    val isContact: Boolean = true
 ) : Event(), Cancellable {
     private var eventCancelled = false
 

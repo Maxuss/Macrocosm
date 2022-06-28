@@ -5,7 +5,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 class SkillExperienceReward(val skill: SkillType, val exp: Double, override val isHidden: Boolean = false) : Reward {
     override fun reward(player: MacrocosmPlayer, lvl: Int) {
@@ -13,7 +13,7 @@ class SkillExperienceReward(val skill: SkillType, val exp: Double, override val 
     }
 
     override fun display(lvl: Int): Component {
-        return comp(
+        return text(
             "<dark_gray>+<dark_aqua>${
                 Formatting.withCommas(
                     exp.toBigDecimal(),

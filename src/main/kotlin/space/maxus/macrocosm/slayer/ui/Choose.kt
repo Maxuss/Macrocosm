@@ -9,7 +9,7 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.slayer.SlayerType
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.pad
 
 data class LinearInventorySlots<T: ForInventory>(val slots: List<InventorySlot>): InventorySlotCompound<T> {
@@ -22,7 +22,7 @@ fun IntRange.slots(row: Int): Array<InventorySlot> {
 }
 
 fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSpigotGUI(GUIType.FIVE_BY_NINE) {
-    title = comp("Slayer Menu")
+    title = text("Slayer Menu")
     defaultPage = 0
 
     page(0) {
@@ -66,7 +66,7 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
 
 
 inline fun confirmationRedirect(crossinline then: (MacrocosmPlayer) -> Unit) = kSpigotGUI(GUIType.THREE_BY_NINE) {
-    title = comp("Confirmation")
+    title = text("Confirmation")
     defaultPage = 0
     page(0) {
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))

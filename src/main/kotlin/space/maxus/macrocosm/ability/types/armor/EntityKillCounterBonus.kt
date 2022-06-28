@@ -16,7 +16,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 
 private fun EntityType.pretty(): String {
@@ -74,15 +74,15 @@ open class EntityKillCounterBonus(name: String, private val entities: List<Entit
         val (index, kills) = counterBuff(item)
         if(index == 8)
             return listOf(
-                comp("<gray>Current Bonus: <${stat.color.asHexString()}>${rewardTable[index]} ${stat.display}").noitalic(),
-                comp("<gray>Next Upgrade: <green><bold>MAXED OUT! NICE!").noitalic()
+                text("<gray>Current Bonus: <${stat.color.asHexString()}>${rewardTable[index]} ${stat.display}").noitalic(),
+                text("<gray>Next Upgrade: <green><bold>MAXED OUT! NICE!").noitalic()
             )
         val requiredKills = table.keys.toList()[index + 1]
         val nextBonus = rewardTable[index + 1]
         val color = stat.color.asHexString()
         return listOf(
-            comp("<gray>Current Bonus: <$color>${rewardTable[index]} ${stat.display}").noitalic(),
-            comp("<gray>Next Upgrade: <$color>${Formatting.stats(nextBonus.toBigDecimal())} ${stat.display} <dark_gray>(<$color><gray>${Formatting.stats(kills.toBigDecimal())}/<red>${Formatting.stats(requiredKills.toBigDecimal())}<dark_gray>)").noitalic()
+            text("<gray>Current Bonus: <$color>${rewardTable[index]} ${stat.display}").noitalic(),
+            text("<gray>Next Upgrade: <$color>${Formatting.stats(nextBonus.toBigDecimal())} ${stat.display} <dark_gray>(<$color><gray>${Formatting.stats(kills.toBigDecimal())}/<red>${Formatting.stats(requiredKills.toBigDecimal())}<dark_gray>)").noitalic()
         )
     }
 
@@ -90,9 +90,9 @@ open class EntityKillCounterBonus(name: String, private val entities: List<Entit
         val str = "Kill ${descriptAbility(entities.toMutableList())} to accumulate ${stat.display}"
 
         val tmp = mutableListOf<Component>()
-        tmp.add(comp("<gold>Item Ability: $name").noitalic())
+        tmp.add(text("<gold>Item Ability: $name").noitalic())
         for (desc in str.reduceToList()) {
-            tmp.add(comp("<gray>$desc</gray>").noitalic())
+            tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()

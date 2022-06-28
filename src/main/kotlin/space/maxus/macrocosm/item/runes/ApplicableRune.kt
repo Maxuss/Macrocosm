@@ -9,7 +9,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 
 interface ApplicableRune {
@@ -130,16 +130,16 @@ enum class DefaultRune(private val char: String, override val color: TextColor, 
 
     override fun full(level: Int): Component {
         val tierColor = colorFromTier(level)
-        return "[".toComponent().color(tierColor).append(comp(char).color(color))
+        return "[".toComponent().color(tierColor).append(text(char).color(color))
             .append("]".toComponent().color(tierColor))
     }
 
     override fun locked(): Component {
-        return comp("[$char]").color(NamedTextColor.DARK_GRAY)
+        return text("[$char]").color(NamedTextColor.DARK_GRAY)
     }
 
     override fun unlocked(): Component {
-        return comp("[$char]").color(NamedTextColor.GRAY)
+        return text("[$char]").color(NamedTextColor.GRAY)
     }
 
     override fun stats(level: Int): Statistics {

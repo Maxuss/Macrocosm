@@ -25,7 +25,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 class DyeItem(private val ddye: Dye) : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()
@@ -36,7 +36,7 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
         "${MiniMessage.miniMessage().stripTags(ddye.name).lowercase().replace(" ", "_")}_dye"
     )
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp("<${TextColor.color(ddye.color).asHexString()}>${ddye.name} Dye")
+    override var name: Component = text("<${TextColor.color(ddye.color).asHexString()}>${ddye.name} Dye")
     override val base: Material = ddye.repr
     override var rarity: Rarity = ddye.rarity
     override var rarityUpgraded: Boolean = false
@@ -52,15 +52,15 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
 
     override fun buildLore(lore: MutableList<Component>) {
         lore.add(0, "".toComponent())
-        lore.add(0, comp("<dark_gray>Armor Dye").noitalic())
+        lore.add(0, text("<dark_gray>Armor Dye").noitalic())
 
         val str = "Use on an <yellow>Anvil<gray> to apply this dye color to armor."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         reduced.add("".toComponent())
         lore.addAll(reduced)
         val hex = TextColor.color(ddye.color).asHexString().uppercase()
-        lore.add(comp("<$hex>$hex").noitalic())
+        lore.add(text("<$hex>$hex").noitalic())
         lore.add("".toComponent())
     }
 

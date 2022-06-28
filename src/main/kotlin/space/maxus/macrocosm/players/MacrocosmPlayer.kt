@@ -49,7 +49,7 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.GSON
 import java.sql.Statement
@@ -221,7 +221,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         // overflow + added experience
         val current = skills[skill] + exp
         paper?.sendActionBar(
-            comp(
+            text(
                 "<aqua>+${
                     Formatting.withCommas(
                         exp.toBigDecimal(),
@@ -275,7 +275,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val newLevel = skills.level(skill)
         val previous = newLevel - 1
         val roman = roman(newLevel)
-        val message = comp(
+        val message = text(
             """<dark_aqua><bold>
 --------------------------------------
  <aqua><bold>SKILL LEVEL UP!<!bold> <dark_aqua>${skill.inst.name} ${if (previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<dark_aqua>$roman
@@ -294,7 +294,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val newLevel = collections.level(coll)
         val previous = newLevel - 1
         val roman = roman(newLevel)
-        val message = comp(
+        val message = text(
             """<gold><bold>
 --------------------------------------</bold>
  <yellow><bold>COLLECTION LEVEL UP!<!bold> <gold>${coll.inst.name} ${if (previous > 0) "<dark_gray>${roman(previous)}➜" else ""}<gold>$roman
@@ -331,7 +331,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     fun sendMessage(message: String) {
-        paper?.sendMessage(comp(message))
+        paper?.sendMessage(text(message))
     }
 
     private fun sendStatBar(myStats: Statistics? = null) {
@@ -344,8 +344,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             ) NamedTextColor.GOLD else if (activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
 
         paper?.sendActionBar(
-            comp("${currentHealth.roundToInt()}/${stats.health.roundToInt()}${Statistic.HEALTH.display}   ").color(healthColor)
-                .append(comp("<green>${stats.defense.roundToInt()}${Statistic.DEFENSE.display}    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
+            text("${currentHealth.roundToInt()}/${stats.health.roundToInt()}${Statistic.HEALTH.display}   ").color(healthColor)
+                .append(text("<green>${stats.defense.roundToInt()}${Statistic.DEFENSE.display}    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
         )
     }
 
@@ -366,25 +366,25 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         purse -= event.reduceCoins
 
         if (reason == null) {
-            broadcast(comp("<red>☠ <gray>").append(paper!!.displayName().append(comp("<gray> died."))))
+            broadcast(text("<red>☠ <gray>").append(paper!!.displayName().append(text("<gray> died."))))
             if (purse > 0f) {
-                paper!!.sendMessage(comp("<red>You died and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
+                paper!!.sendMessage(text("<red>You died and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
             } else {
-                paper!!.sendMessage(comp("<red>You died!"))
+                paper!!.sendMessage(text("<red>You died!"))
             }
         } else {
             broadcast(
-                comp("<red>☠ <gray>").append(
-                    paper!!.displayName().append(comp("<gray> died because of ").append(reason))
+                text("<red>☠ <gray>").append(
+                    paper!!.displayName().append(text("<gray> died because of ").append(reason))
                 )
             )
             if (event.reduceCoins > 0f) {
                 paper!!.sendMessage(
-                    comp("<red>You died because of ").append(reason)
-                        .append(comp("<red> and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
+                    text("<red>You died because of ").append(reason)
+                        .append(text("<red> and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
                 )
             } else {
-                paper!!.sendMessage(comp("<red>You died because of ").append(reason).append(comp("<red>!")))
+                paper!!.sendMessage(text("<red>You died because of ").append(reason).append(text("<red>!")))
             }
         }
         paper!!.teleport(paper!!.world.spawnLocation)

@@ -19,7 +19,7 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.players.macrocosm
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 import kotlin.math.ceil
 import kotlin.math.min
@@ -107,10 +107,10 @@ object SlayerHandlers: Listener {
             for(reward in rewards.rewards) {
                 player.paper!!.sendMessage(Component.text("+").color(NamedTextColor.DARK_GRAY).append(reward.display(currentLevel.level)))
             }
-            player.paper!!.sendMessage(comp("<gold><bold>CLICK TO COLLECT")
+            player.paper!!.sendMessage(text("<gold><bold>CLICK TO COLLECT")
                 .hoverEvent(
                     HoverEvent
-                        .showText(comp("<gold>Rewards for ${quest.type.slayer.name}<gold> LVL ${currentLevel.level + 1}")
+                        .showText(text("<gold>Rewards for ${quest.type.slayer.name}<gold> LVL ${currentLevel.level + 1}")
                         )
                 )
                 .clickEvent(ClickEvent.runCommand("/slayerrewards ${quest.type.name}")

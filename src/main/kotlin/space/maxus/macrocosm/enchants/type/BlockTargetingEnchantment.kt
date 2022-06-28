@@ -16,7 +16,7 @@ import space.maxus.macrocosm.loot.Drop
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.loot.MacrocosmDrop
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -33,7 +33,7 @@ class BlockTargetingEnchantment(
         val str = "Grants <gold>+${level * base} ${stat.display}<gray> when ${
             stat.name.split("_").first().lowercase()
         } $blockName."
-        val reduced = str.reduceToList(30).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(30).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }

@@ -6,7 +6,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 
 enum class Statistic(
@@ -50,7 +50,7 @@ enum class Statistic(
     ;
 
     val display =
-        MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color).append(comp("<reset>")))
+        MiniMessage.miniMessage().serialize(Component.text("$specialChar $this").color(color).append(text("<reset>")))
 
     override fun toString() =
         name.lowercase().split("_")
@@ -68,12 +68,12 @@ enum class Statistic(
 
     fun explicitFormatSimple(num: Float): Component? {
         val number = type.formatSigned(num) ?: return null
-        val comp = comp("<gray>$this: </gray>").append(number)
+        val comp = text("<gray>$this: </gray>").append(number)
         return (if (percents) comp.append("%".toComponent().color(type.color)) else comp).noitalic()
     }
 
     fun explicitFormatFancy(num: Float): Component {
-        val comp = comp("$specialChar $this ").color(color).append(type.format(num))
+        val comp = text("$specialChar $this ").color(color).append(type.format(num))
         return (if (percents) comp.append("%".toComponent()) else comp).noitalic()
     }
 }

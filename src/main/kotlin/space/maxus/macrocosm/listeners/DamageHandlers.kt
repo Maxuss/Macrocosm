@@ -17,6 +17,7 @@ import org.bukkit.*
 import org.bukkit.Particle.DustOptions
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity
 import org.bukkit.entity.*
+import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -36,7 +37,7 @@ import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -46,7 +47,7 @@ import kotlin.random.nextInt
 fun Entity.isPlayerDisguise() = DisguiseAPI.isDisguised(this) && DisguiseAPI.getDisguise(this) is PlayerDisguise
 
 object DamageHandlers : Listener {
-    fun internalHandleDamage(damager: LivingEntity, damaged: LivingEntity, checkAts: Boolean = true /* e: EntityDamageEvent */) {
+    fun internalHandleDamage(bukkitEvent: Cancellable, damager: LivingEntity, damaged: LivingEntity, checkAts: Boolean = true /* e: EntityDamageEvent */) {
         if (damager is Player) {
             val mc = damager.macrocosm!!
             if (checkAts && mc.onAtsCooldown)
@@ -81,8 +82,10 @@ object DamageHandlers : Listener {
         if (damager is Player) {
             val event = PlayerDealDamageEvent(damager.macrocosm!!, damaged, damage, crit)
             val cancelled = !event.callEvent()
-            if (cancelled)
+            if (cancelled) {
+                bukkitEvent.isCancelled = true
                 return
+            }
             damage = event.damage
             crit = event.crit
         }
@@ -90,8 +93,10 @@ object DamageHandlers : Listener {
         if (damaged is Player) {
             val event = PlayerReceiveDamageEvent(damaged.macrocosm!!, damager, damage, crit)
             val cancelled = !event.callEvent()
-            if (cancelled)
+            if (cancelled) {
+                bukkitEvent.isCancelled = true
                 return
+            }
             damage = event.damage
             crit = event.crit
         }
@@ -138,7 +143,7 @@ object DamageHandlers : Listener {
         if (damager !is LivingEntity || damaged !is LivingEntity)
             return
 
-        internalHandleDamage(damager, damaged)
+        internalHandleDamage(e, damager, damaged)
     }
 
     @EventHandler
@@ -162,7 +167,7 @@ object DamageHandlers : Listener {
         }
 
 
-        internalHandleDamage(shooter, damaged, false)
+        internalHandleDamage(e, shooter, damaged, false)
     }
 
     @EventHandler
@@ -175,7 +180,7 @@ object DamageHandlers : Listener {
         if (entity is Player) {
             val stats = entity.macrocosm!!.specialStats()!!
             damage *= (1 - stats.fallResistance)
-            entity.macrocosm!!.damage(damage.toFloat(), comp("fall"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("fall"))
         } else {
             val stats = entity.macrocosm!!.specialStats()
             damage *= (1 - stats.fallResistance)
@@ -206,7 +211,7 @@ object DamageHandlers : Listener {
         if (entity is Player) {
             val stats = entity.macrocosm!!.specialStats()!!
             damage *= (1 - stats.fireResistance)
-            entity.macrocosm!!.damage(damage.toFloat(), comp("fire"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("fire"))
         } else {
             val stats = entity.macrocosm!!.specialStats()
             damage *= (1 - stats.fireResistance)
@@ -223,7 +228,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("withering"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("withering"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -238,7 +243,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("poison"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("poison"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -253,7 +258,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("drowning"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("drowning"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -268,7 +273,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("explosion"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("explosion"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -283,7 +288,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("electricity"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("electricity"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -298,7 +303,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("<dark_purple>magic<gray>"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("<dark_purple>magic<gray>"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -313,7 +318,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("<dark_gray>void<gray>"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("<dark_gray>void<gray>"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -329,7 +334,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("hunger"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("hunger"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -345,7 +350,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("physics"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("physics"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -361,7 +366,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("being inaccurate"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("being inaccurate"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -375,7 +380,7 @@ object DamageHandlers : Listener {
         e.isCancelled = true
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.kill(comp("self-hatred"))
+            entity.macrocosm!!.kill(text("self-hatred"))
         } else {
             entity.macrocosm!!.kill()
         }
@@ -390,7 +395,7 @@ object DamageHandlers : Listener {
         e.damage = .0
         val entity = e.entity as LivingEntity
         if (entity is Player) {
-            entity.macrocosm!!.damage(damage.toFloat(), comp("freezing"))
+            entity.macrocosm!!.damage(damage.toFloat(), text("freezing"))
         } else {
             entity.macrocosm!!.damage(damage.toFloat())
         }
@@ -508,19 +513,19 @@ object DamageHandlers : Listener {
                     }
                     display = display.append(char.toString().toComponent().color(color))
                 }
-                comp("<white>✧</white>").append(display).append(comp("<white>✧</white>"))
+                text("<white>✧</white>").append(display).append(text("<white>✧</white>"))
             }
             DamageType.FIRE -> {
-                comp("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
+                text("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
             }
             DamageType.FROST -> {
-                comp("<white>❄ <aqua>$damageDisplay<white> ❄")
+                text("<white>❄ <aqua>$damageDisplay<white> ❄")
             }
             DamageType.ELECTRIC -> {
-                comp("<white>⚡ <yellow>$damageDisplay<white> ⚡")
+                text("<white>⚡ <yellow>$damageDisplay<white> ⚡")
             }
             DamageType.MAGIC -> {
-                comp("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
+                text("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
             }
             else -> {
                 damageDisplay.toComponent().color(NamedTextColor.GRAY)

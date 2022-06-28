@@ -25,7 +25,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 
 class ReforgeStone(
@@ -40,7 +40,7 @@ class ReforgeStone(
     override var stars: Int = 0
     override val id: Identifier = space.maxus.macrocosm.util.id(stoneName.lowercase().replace(" ", "_"))
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp(stoneName)
+    override var name: Component = text(stoneName)
     override val base: Material = Material.PLAYER_HEAD
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
@@ -55,22 +55,22 @@ class ReforgeStone(
 
     override fun buildLore(lore: MutableList<Component>) {
         lore.add(0, "".toComponent())
-        lore.add(0, comp("<dark_gray>Reforge Stone").noitalic())
+        lore.add(0, text("<dark_gray>Reforge Stone").noitalic())
 
         val it = reforgeType.applicable.first()
         val itStr =
             if (it.armor) "Armor" else if (it == ItemType.BOW) "Bows" else if (it.weapon) "Weapons" else if (it.tool) "Tools" else it.name.capitalized() + "s"
         val str =
             "Can be used on an <yellow>Anvil<gray> to apply the <gold>${reforgeType.name}<gray> reforge to <blue>${itStr}<gray>."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         reduced.add("".toComponent())
-        reduced.add(comp("<blue>${reforgeType.name} <gray>(<gold>Legendary<gray>):").noitalic())
+        reduced.add(text("<blue>${reforgeType.name} <gray>(<gold>Legendary<gray>):").noitalic())
         val stats = reforgeType.stats(Rarity.LEGENDARY)
         reduced.addAll(stats.formatSimple())
         reduced.add("".toComponent())
         if (reforgeType.abilityName != null) {
-            reduced.add(comp("<blue>Special Ability: <gold><bold><obfuscated>${reforgeType.abilityName}").noitalic())
+            reduced.add(text("<blue>Special Ability: <gold><bold><obfuscated>${reforgeType.abilityName}").noitalic())
             reduced.add("".toComponent())
         }
         lore.addAll(reduced)

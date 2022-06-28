@@ -58,13 +58,13 @@ object ZombieSlayer: Slayer(
             id("wand_of_mending")), RecipeReward(id("undead_heart")), ItemReward(id("revenant_catalyst"))) to MaterialDisplay(Material.STICK),
         listOf(FixedStatReward(Statistic.DEFENSE, 4f), RecipeReward(id("revenant_leggings")), RecipeReward(id("revenant_boots")), RecipeReward(
             id("rancorous_staff"))) to MaterialDisplay(Material.DIAMOND_BOOTS),
-        listOf(FixedStatReward(Statistic.HEALTH, 5f), RecipeReward(id("crystallized_heart")), RecipeReward(id("revenant_chestplate")), RecipeReward(id("master_necromancer_boots")), RecipeReward(id("voodoo_doll"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY0ZjI1Y2ZmZjc1NGYyODdhOTgzOGQ4ZWZlMDM5OTgwNzNjMjJkZjdhOWQzMDI1YzQyNWUzZWQ3ZmY1MmMyMCJ9fX0="),
-        listOf(FixedStatReward(Statistic.FEROCITY, 1f), RecipeReward(id("wand_of_restoration")), RecipeReward(id("reaper_falchion")), RecipeReward(id("revived_heart")), RecipeReward(id("master_necromancer_helmet")), ItemReward(
+        listOf(FixedStatReward(Statistic.HEALTH, 5f), RecipeReward(id("master_necromancer_boots")), RecipeReward(id("crystallized_heart")), RecipeReward(id("revenant_chestplate")), RecipeReward(id("master_necromancer_boots")), RecipeReward(id("voodoo_doll"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY0ZjI1Y2ZmZjc1NGYyODdhOTgzOGQ4ZWZlMDM5OTgwNzNjMjJkZjdhOWQzMDI1YzQyNWUzZWQ3ZmY1MmMyMCJ9fX0="),
+        listOf(FixedStatReward(Statistic.FEROCITY, 1f), RecipeReward(id("wand_of_restoration")), RecipeReward(id("reaper_falchion")), RecipeReward(id("revived_heart")), ItemReward(
             id("reaper_catalyst")), RecipeReward(id("master_necromancer_leggings"))) to MaterialDisplay(Material.DIAMOND_SWORD),
-        listOf(FixedStatReward(Statistic.HEALTH, 5f), RecipeReward(id("reaper_mask")), RecipeReward(id("reaper_boots")), RecipeReward(
+        listOf(FixedStatReward(Statistic.HEALTH, 5f), RecipeReward(id("master_necromancer_chestplate")), RecipeReward(id("reaper_mask")), RecipeReward(id("reaper_boots")), RecipeReward(
             id("reaper_leggings")), RecipeReward(id("reaper_chestplate")), RecipeReward(id("revenant_innards"))) to MaterialDisplay(Material.LEATHER_CHESTPLATE),
         listOf(FixedStatReward(Statistic.HEALTH, 6f), RecipeReward(id("axe_of_the_shredded")), RecipeReward(id("reaper_scythe")), RecipeReward(id("wardens_helmet")), RecipeReward(
-            id("entombed_mask")), RecipeReward(id("master_necromancer_chestplate"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVlYjBiZDg1YWFkZGYwZDI5ZWQwODJlYWMwM2ZjYWRlNDNkMGVlODAzYjBlODE2MmFkZDI4YTYzNzlmYjU0ZSJ9fX0="),
+            id("entombed_mask")), RecipeReward(id("master_necromancer_helmet"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVlYjBiZDg1YWFkZGYwZDI5ZWQwODJlYWMwM2ZjYWRlNDNkMGVlODAzYjBlODE2MmFkZDI4YTYzNzlmYjU0ZSJ9fX0="),
         listOf(FixedStatReward(Statistic.HEALTH, 7f), RecipeReward(id("reaper_gem"))) to SkullDisplay("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjMxNzUyODZjZDNiYTFhM2E5YzkwODI5NzdkMDlkZDM3YjE3N2FiZjM3YTQ2NjU4MGMyN2QxZGVlNzJiM2MxOCJ9fX0="),
     ),
     listOf(
@@ -80,10 +80,10 @@ object ZombieSlayer: Slayer(
         SlayerDrop(visual("revenant_viscera", DropRarity.VERY_RARE, 0.05), 5, 7, hashMapOf(
             5 to 1..2, 6 to 3..4
         )),
-        SlayerDrop(visual("undead_catalyst", DropRarity.SUPER_RARE, 0.01), 2, 2, hashMapOf(
+        SlayerDrop(visual("revenant_catalyst", DropRarity.SUPER_RARE, 0.01), 2, 2, hashMapOf(
             2 to 1..1, 3 to 1..1, 4 to 1..1, 5 to 1..1
         )),
-        SlayerDrop(visual("revenant_catalyst", DropRarity.SUPER_RARE, 0.01), 3, 4, hashMapOf(
+        SlayerDrop(visual("reaper_catalyst", DropRarity.SUPER_RARE, 0.01), 3, 4, hashMapOf(
             3 to 1..1, 4 to 1..1, 5 to 1..1
         )),
         SlayerDrop(visual("beheaded_horror", DropRarity.CRAZY_RARE, 1 / 521.0), 3, 5, hashMapOf(

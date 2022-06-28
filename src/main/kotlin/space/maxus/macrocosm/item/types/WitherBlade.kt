@@ -44,7 +44,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 
 val WITHER_SCROLL_IMPLOSION = WitherScrollAbility(
@@ -236,9 +236,9 @@ class WitherScrollAbility(
 
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
-        tmp.add(comp("<gold>Scroll Ability: $name <yellow><bold>RIGHT CLICK<!bold>").noitalic())
-        for (desc in description.reduceToList()) {
-            tmp.add(comp("<gray>$desc</gray>").noitalic())
+        tmp.add(text("<gold>Scroll Ability: $name <yellow><bold>RIGHT CLICK<!bold>").noitalic())
+        for (desc in formatDamageNumbers(description, player).reduceToList()) {
+            tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()

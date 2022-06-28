@@ -33,4 +33,8 @@ object DamageCalculator {
         val reduction = clamp(stats.damageReduction + (stats.trueDefense / (100 + stats.trueDefense)), 0.01f, 0.95f)
         return amount * (1 - reduction)
     }
+
+    fun calculateLightEffectiveHealth(health: Float, stats: Statistics): Float {
+        return health * (1 + (stats.defense / (100f + stats.defense)))
+    }
 }

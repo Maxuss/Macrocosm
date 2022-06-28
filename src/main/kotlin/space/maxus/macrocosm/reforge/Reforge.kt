@@ -9,7 +9,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.registry.Clone
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 @Suppress("unused")
 interface Reforge : Listener, Clone {
@@ -24,9 +24,9 @@ interface Reforge : Listener, Clone {
         if (abilityName == null || abilityDescription == null)
             return
 
-        lore.add(comp("<blue>$abilityName <blue>($name Bonus)").noitalic())
+        lore.add(text("<blue>$abilityName <blue>($name Bonus)").noitalic())
         val truncated = abilityDescription!!.reduceToList()
-        lore.addAll(truncated.map { comp("<gray>$it").noitalic() })
+        lore.addAll(truncated.map { text("<gray>$it").noitalic() })
         lore.add("".toComponent())
     }
 

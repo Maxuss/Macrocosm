@@ -14,13 +14,13 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.colorFromTier
 import space.maxus.macrocosm.slayer.costFromTier
 import space.maxus.macrocosm.slayer.rewardExperienceForTier
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.renderBar
 import space.maxus.macrocosm.util.stripTags
 
 fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    title = comp(ty.slayer.name.stripTags())
+    title = text(ty.slayer.name.stripTags())
     defaultPage = 0
     val slayer = ty.slayer
 
@@ -58,7 +58,7 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                     val cost = costFromTier(tier)
                     if (player.purse < cost) {
                         e.player.closeInventory()
-                        e.player.sendMessage(comp("<red>You don't have enough coins to start this quest!"))
+                        e.player.sendMessage(text("<red>You don't have enough coins to start this quest!"))
                         sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                             pitch = 0f
                             playFor(e.player)

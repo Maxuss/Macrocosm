@@ -11,7 +11,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 internal fun colorFromLevel(lvl: Int, max: Int): TextColor {
     return if (lvl == max)
@@ -41,7 +41,7 @@ interface Enchantment : Listener {
     fun displaySimple(level: Int): Component {
         val mm = MiniMessage.miniMessage()
         val color = colorFromLevel(level, levels.last)
-        val name = name.split(" ").joinToString(" ") { mm.serialize(comp(it).color(color)) }
-        return comp("$name ").append(comp(roman(level)).color(color)).noitalic()
+        val name = name.split(" ").joinToString(" ") { mm.serialize(text(it).color(color)) }
+        return text("$name ").append(text(roman(level)).color(color)).noitalic()
     }
 }

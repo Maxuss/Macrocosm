@@ -5,7 +5,7 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 open class UltimateEnchantment(
     name: String,
@@ -27,6 +27,6 @@ open class UltimateEnchantment(
     conflicts
 ) {
     override fun displaySimple(level: Int): Component {
-        return comp("<light_purple><bold>$name ${roman(level)}</bold></light_purple>").noitalic()
+        return text("<light_purple><bold>$name ${roman(level)}</bold></light_purple>").noitalic()
     }
 }

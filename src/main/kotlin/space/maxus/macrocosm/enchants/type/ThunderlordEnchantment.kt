@@ -20,14 +20,14 @@ import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 object ThunderlordEnchantment :
     EnchantmentBase("Thunderlord", "", 1..8, ItemType.melee(), conflicts = listOf("THUNDERBOLT")) {
     override fun description(level: Int): List<Component> {
         val str =
             "<gray>Strikes a monster with lightning every <green>3<gray> consecutive hits. Lightning deals <green>${100 + ((level - 1) * 25)}%<gray> of your ${Statistic.STRENGTH.display}<gray>."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }
@@ -62,7 +62,7 @@ object ThunderboltEnchantment :
     override fun description(level: Int): List<Component> {
         val str =
             "<gray>Strikes nearby monsters with lightning every <green>3<gray> consecutive hits on the <blue>same<gray> enemy. Lightning deals <green>${100 + ((level - 1) * 10)}%<gray> of your ${Statistic.CRIT_DAMAGE.display}<gray>."
-        val reduced = str.reduceToList(25).map { comp("<gray>$it").noitalic() }.toMutableList()
+        val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         return reduced
     }

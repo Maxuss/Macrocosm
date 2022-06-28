@@ -22,7 +22,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.util.*
 
 class ColoredEntityArmor(override val base: Material, private var color: Int) : MacrocosmItem {
@@ -32,7 +32,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
     override var stars: Int = 0
     override val id: Identifier = space.maxus.macrocosm.util.id("colored_${base.name.lowercase()}")
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp("")
+    override var name: Component = text("")
     override var rarity: Rarity = Rarity.SPECIAL
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
@@ -91,7 +91,7 @@ class SkullEntityHead(private var eskin: String) : MacrocosmItem {
     override var stars: Int = 0
     override val id: Identifier = space.maxus.macrocosm.util.id("skull_entity_head")
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = comp("null")
+    override var name: Component = text("null")
     override val base: Material = Material.PLAYER_HEAD
     override var rarity: Rarity = Rarity.SPECIAL
     override var rarityUpgraded: Boolean = false

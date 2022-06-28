@@ -18,7 +18,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -74,7 +74,7 @@ abstract class Pet(
     }
 
     internal fun buildName(pet: StoredPet, player: MacrocosmPlayer): Component =
-        comp("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if(pet.skin != null) "☆" else ""}")
+        text("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if(pet.skin != null) "☆" else ""}")
 
     fun stats(level: Int, rarity: Rarity): Statistics {
         val clone = baseStats.clone()

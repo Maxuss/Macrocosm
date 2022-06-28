@@ -43,7 +43,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
 import java.util.*
@@ -188,18 +188,18 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     fun buildName(): Component {
         var display = name
         if (reforge != null)
-            display = comp("${reforge!!.name} ").append(display)
+            display = text("${reforge!!.name} ").append(display)
         if (stars <= 0)
             return display.color(rarity.color).noitalic()
-        display = display.append(comp(" "))
+        display = display.append(text(" "))
 
-        val starIndices = MutableList(5) { comp("") }
+        val starIndices = MutableList(5) { text("") }
         for (star in 0 until stars) {
             var reducedIndex = star
             while (reducedIndex > 4) {
                 reducedIndex -= 5
             }
-            starIndices[reducedIndex] = comp("✪").color(starColor(star))
+            starIndices[reducedIndex] = text("✪").color(starColor(star))
         }
 
         for (star in starIndices) {
@@ -343,7 +343,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
             // breaking power
             if (breakingPower > 0) {
-                lore.add(comp("<dark_gray>Breaking Power $breakingPower").noitalic())
+                lore.add(text("<dark_gray>Breaking Power $breakingPower").noitalic())
             }
 
             // stats
@@ -352,7 +352,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
             // runes
             if (runes.size > 0) {
-                var gemComp = comp("")
+                var gemComp = text("")
                 for ((gem, state) in runes) {
                     val (open, lvl) = state
                     gemComp = if (!open)
@@ -421,7 +421,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                             cmp.append("${MiniMessage.miniMessage().serialize(it)}\n")
                         }
                     }
-                    val reduced = cmp.toString().trim().trimEnd('\n').split('\n').map { comp(it.trim()) }
+                    val reduced = cmp.toString().trim().trimEnd('\n').split('\n').map { text(it.trim()) }
                     lore.addAll(reduced)
                     lore.add("".toComponent())
                 } else {
@@ -487,7 +487,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             if(this is LeatherArmorMeta && dye != null) {
                 val d = dye!!
                 lore.add(0, "".toComponent())
-                lore.add(0, comp("<#${d.color.toString(16)}>${d.specialChar} ${d.name} Dye").noitalic())
+                lore.add(0, text("<#${d.color.toString(16)}>${d.specialChar} ${d.name} Dye").noitalic())
                 setColor(Color.fromRGB(d.color))
                 lore(lore)
             }
@@ -495,7 +495,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             if(this is SkullMeta && skin != null) {
                 val s = skin!!
                 lore.add(0, "".toComponent())
-                lore.add(0, comp("<dark_gray>${skin!!.name} Skin").noitalic())
+                lore.add(0, text("<dark_gray>${skin!!.name} Skin").noitalic())
                 val profile = Bukkit.createProfile(UUID.randomUUID())
                 profile.setProperty(ProfileProperty("textures", s.skin))
                 playerProfile = profile

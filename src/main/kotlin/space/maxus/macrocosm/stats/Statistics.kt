@@ -8,7 +8,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.reforge.Reforge
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import java.sql.ResultSet
 import java.util.*
 import kotlin.math.ceil
@@ -249,7 +249,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
                 reforgeComp += if (amount < 0) fmt else "+$fmt"
                 if (stat.percents)
                     reforgeComp += "%"
-                formatted = formatted.append(comp("$reforgeComp)</blue>"))
+                formatted = formatted.append(text("$reforgeComp)</blue>"))
             }
 
             // gemstones
@@ -260,7 +260,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
                 gemComp += if (amount < 0) fmt else "+$fmt"
                 if (stat.percents)
                     gemComp += "%"
-                formatted = formatted.append(comp("$gemComp]</light_purple>"))
+                formatted = formatted.append(text("$gemComp]</light_purple>"))
             }
 
             // buffs

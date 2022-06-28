@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import space.maxus.macrocosm.events.SeasonChangeEvent
 import space.maxus.macrocosm.events.YearChangeEvent
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 
@@ -63,7 +63,7 @@ object Calendar: Listener {
 
     @EventHandler
     fun onNewYear(e: YearChangeEvent) {
-        Bukkit.broadcast(comp("<light_purple><bold><obfuscated>a<reset><yellow> Happy New ${e.new} Year! <light_purple><bold><obfuscated>a<reset>"))
+        Bukkit.broadcast(text("<light_purple><bold><obfuscated>a<reset><yellow> Happy New ${e.new} Year! <light_purple><bold><obfuscated>a<reset>"))
         for (player in Bukkit.getOnlinePlayers()) {
             sound(Sound.ENTITY_PLAYER_LEVELUP) {
                 pitch = 0f
@@ -83,7 +83,7 @@ object Calendar: Listener {
 
     fun renderDate(): Component {
         val mm = MiniMessage.miniMessage()
-        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(comp(" $date${dateSuffix(date)}"))
+        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(text(" $date${dateSuffix(date)}"))
     }
 
     fun tick() {

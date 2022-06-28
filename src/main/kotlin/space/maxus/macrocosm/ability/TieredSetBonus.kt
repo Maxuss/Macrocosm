@@ -7,7 +7,7 @@ import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.comp
+import space.maxus.macrocosm.text.text
 
 /**
  * Represents a tiered set bonus, that increases buffs based on amount of armor pieces worn
@@ -37,9 +37,9 @@ open class TieredSetBonus(name: String, description: String) : AbilityBase(Abili
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
         val name = "<gold>Tiered Bonus: $name"
-        tmp.add(comp(name).noitalic())
-        for (desc in description.reduceToList()) {
-            tmp.add(comp("<gray>$desc</gray>").noitalic())
+        tmp.add(text(name).noitalic())
+        for (desc in formatDamageNumbers(description, player).reduceToList()) {
+            tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
