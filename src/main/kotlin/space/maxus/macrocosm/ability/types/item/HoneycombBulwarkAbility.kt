@@ -9,7 +9,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player

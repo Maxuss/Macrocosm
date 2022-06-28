@@ -15,7 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.minecraft.util.Mth
 import org.bukkit.*
 import org.bukkit.Particle.DustOptions
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

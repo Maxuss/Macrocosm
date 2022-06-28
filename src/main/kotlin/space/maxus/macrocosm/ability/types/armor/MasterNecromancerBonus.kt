@@ -11,8 +11,8 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.event.player.PlayerQuitEvent
 import space.maxus.macrocosm.ability.TieredSetBonus
 import space.maxus.macrocosm.entity.EntityValue

@@ -1,9 +1,5 @@
 package space.maxus.macrocosm.pack
 
-import com.dropbox.core.DbxRequestConfig
-import com.dropbox.core.oauth.DbxCredential
-import com.dropbox.core.v2.DbxClientV2
-import com.dropbox.core.v2.files.WriteMode
 import com.google.common.io.BaseEncoding
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -16,7 +12,6 @@ import space.maxus.macrocosm.text.comp
 import space.maxus.macrocosm.util.recreateFile
 import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
-import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.security.MessageDigest
@@ -26,7 +21,7 @@ import kotlin.io.path.*
 
 
 object PackProvider: Listener {
-    private var RESOURCE_PACK_LINK: String? = null
+    private const val RESOURCE_PACK_LINK: String = "http://127.0.0.1:6060/pack"
     private var RESOURCE_PACK_HASH: ByteArray = ByteArray(1)
 
     const val PACK_NAME = "§5§lMacrocosm §d§lPack.zip"
@@ -34,12 +29,7 @@ object PackProvider: Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onJoin(e: PlayerJoinEvent) {
-        println("Applying pack: $RESOURCE_PACK_LINK | $RESOURCE_PACK_HASH")
-        if(RESOURCE_PACK_LINK == null) {
-            e.player.kick(comp("<red>Macrocosm is loading, please wait!"))
-            return
-        }
-        e.player.setResourcePack(RESOURCE_PACK_LINK!!, RESOURCE_PACK_HASH, comp("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"), true)
+        e.player.setResourcePack(RESOURCE_PACK_LINK, RESOURCE_PACK_HASH, comp("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"), true)
     }
 
     fun init() {
@@ -48,28 +38,17 @@ object PackProvider: Listener {
             // compiling
             compile()
 
-            // uploading stuff
-            val path = Path.of(System.getProperty("user.dir"), "macrocosm")
-            val accessToken = Macrocosm.config.getString("pack.access-token")!!
-            val refreshToken = Macrocosm.config.getString("pack.refresh-token")!!
-            val appKey = Macrocosm.config.getString("pack.app-key")
-            val appSecret = Macrocosm.config.getString("pack.app-secret")
-            val link = upload(path.resolve(PACK_NAME).toFile(), if(path.resolve("link.old").exists()) path.resolve("link.old").readText() else null, DbxCredential(accessToken, 14400, refreshToken, appKey, appSecret)).replace(
-                "dropbox.com",
-                "dl.dropboxusercontent.com"
-            )
-            path.resolve("link.old").writeText(link)
-            Macrocosm.logger.info("Finished uploading resource pack to server! Link: $link")
-            RESOURCE_PACK_LINK = link
-
             // calculating sha1 hash
-            val packFile = path.resolve(PACK_NAME)
-            val bytes = packFile.toFile().inputStream().readAllBytes()
+            val packFile = Path(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME).toFile()
+            val bytes = packFile.inputStream().readAllBytes()
             val hasher = MessageDigest.getInstance("SHA-1")
             val digest = hasher.digest(bytes)
             Macrocosm.logger.info("Resource pack SHA-1 hash: ${BaseEncoding.base16().encode(digest)}")
 
             RESOURCE_PACK_HASH = digest
+
+            // hooking server
+            PackServer.hook(packFile)
         }
     }
 
@@ -145,34 +124,5 @@ object PackProvider: Listener {
             )
         }
         return stringBuffer.toString()
-    }
-    private fun upload(file: File, oldLink: String?, credential: DbxCredential): String {
-        val config = DbxRequestConfig.newBuilder("Macrocosm/Pack-Uploader").build()
-        val client = DbxClientV2(config, credential)
-        if(credential.aboutToExpire())
-            client.refreshAccessToken()
-
-        val stream = file.inputStream()
-        client.files()
-            .uploadBuilder("/${file.name}")
-            .withMode(WriteMode.OVERWRITE)
-            .uploadAndFinish(stream, Long.MAX_VALUE)
-        try {
-            if (oldLink != null)
-                client.sharing().revokeSharedLink(oldLink.replace("dl.dropboxusercontent.com", "dropbox.com"))
-            return try {
-                client.sharing().createSharedLinkWithSettings("/${file.name}").url
-            } catch (e: Exception) {
-                return "https://www.dl.dropboxusercontent.com/s/a53olrtucx8b2u5/%C2%A75%C2%A7lMacrocosm%20%C2%A7d%C2%A7lPack.zip?dl=0"
-            }
-        } catch(e: Exception) {
-            // deleting and uploading again
-            client.files().deleteV2("/${file.name}")
-            client.files()
-                .uploadBuilder("/${file.name}")
-                .withMode(WriteMode.OVERWRITE)
-                .uploadAndFinish(stream, Long.MAX_VALUE)
-            return client.sharing().createSharedLinkWithSettings("/${file.name}").url
-        }
     }
 }

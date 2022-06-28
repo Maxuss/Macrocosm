@@ -94,7 +94,7 @@ fun setDateCommand() = command("date") {
         }
 
         argument("season", StringArgumentType.word()) {
-            suggestListSuspending {
+            suggestList {
                 Calendar.Season.values().map { it.name }.filter { s -> s.contains(it.getArgumentOrNull("season") ?: "") }
             }
 
@@ -105,7 +105,7 @@ fun setDateCommand() = command("date") {
             }
 
             argument("state", StringArgumentType.word()) {
-                suggestListSuspending {
+                suggestList {
                     Calendar.SeasonState.values().map { it.name }.filter { s -> s.contains(it.getArgumentOrNull("state") ?: "") }
                 }
 
@@ -251,7 +251,7 @@ fun itemsCommand() = command("items") {
 fun summonCommand() = command("spawnmob") {
     requires { it.hasPermission(4) }
     argument("entity", ResourceLocationArgument.id()) {
-        suggestListSuspending {
+        suggestList {
             Registry.ENTITY.iter().keys.filter { k -> k.path.contains(it.getArgumentOrNull<ResourceLocation>("entity")?.path ?: "") }
         }
 
@@ -351,7 +351,7 @@ fun giveCoinsCommand() = command("givecoins") {
 fun spawnPetCommand() = command("spawnpet") {
     requires { it.hasPermission(4) }
     argument("pet", StringArgumentType.string()) {
-        suggestListSuspending {
+        suggestList {
             it.source.playerOrException.bukkitEntity.macrocosm!!.ownedPets.keys.filter { pet ->
                 pet.contains(it.getArgumentOrNull("pet") ?: "")
             }
@@ -372,14 +372,14 @@ fun addPetCommand() = command("addpet") {
     }
 
     argument("type", ResourceLocationArgument.id()) {
-        suggestListSuspending {
+        suggestList {
             Registry.ITEM.iter().filter { item -> item.value is PetItem }.keys.filter { k ->
                 k.path.contains(it.getArgumentOrNull("type") ?: "")
             }
         }
 
         argument("rarity", StringArgumentType.word()) {
-            suggestListSuspending {
+            suggestList {
                 Rarity.values().map { rarity -> rarity.name.lowercase() }.filter { rarity ->
                     rarity.contains(it.getArgumentOrNull("rarity") ?: "")
                 }
@@ -403,14 +403,14 @@ fun givePetItemCommand() = command("givepet") {
     }
 
     argument("type", ResourceLocationArgument.id()) {
-        suggestListSuspending {
+        suggestList {
             Registry.ITEM.iter().filter { item -> item.value is PetItem }.keys.filter { k ->
                 k.path.contains(it.getArgumentOrNull("type") ?: "")
             }
         }
 
         argument("rarity", StringArgumentType.word()) {
-            suggestListSuspending {
+            suggestList {
                 Rarity.values().map { rarity -> rarity.name.lowercase() }.filter { rarity ->
                     rarity.contains(it.getArgumentOrNull("rarity") ?: "")
                 }

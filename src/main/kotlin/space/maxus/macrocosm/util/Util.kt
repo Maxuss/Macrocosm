@@ -10,8 +10,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType

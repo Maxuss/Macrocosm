@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.6.20"
     id("xyz.jpenilla.run-paper") version "1.0.6"
-    id("io.papermc.paperweight.userdev") version "1.3.5"
+    id("io.papermc.paperweight.userdev") version "1.3.7"
 }
 
 group = "space.maxus"
@@ -14,14 +14,13 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.18.2-R0.1-SNAPSHOT")
-    implementation("net.axay:kspigot:1.18.2")
+    paperDevBundle("1.19-R0.1-SNAPSHOT")
+    implementation("net.axay:kspigot:1.19.0")
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation("com.comphenix.protocol:ProtocolLib:4.8.0")
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
-    implementation("com.dropbox.core:dropbox-core-sdk:5.2.0")
 }
 
 tasks {
