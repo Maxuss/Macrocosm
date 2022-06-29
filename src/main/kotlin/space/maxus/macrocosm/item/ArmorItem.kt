@@ -6,7 +6,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -26,7 +26,7 @@ open class ArmorItem(
     protected val legsMeta: (ItemMeta) -> Unit = { },
     protected val bootMeta: (ItemMeta) -> Unit = { },
     protected val commonMeta: (ItemMeta) -> Unit = { },
-    protected val runes: List<ApplicableRune> = listOf(),
+    protected val runes: List<RuneSlot> = listOf(),
     protected val headSkin: String? = null
 ) {
     companion object {
@@ -56,7 +56,7 @@ open class ArmorItem(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes,
+            runeTypes = runes,
         ) {
             if (it is SkullMeta) {
                 val profile = Bukkit.createProfile(UUID.randomUUID())
@@ -88,7 +88,7 @@ open class ArmorItem(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            runeTypes = runes
         ) {
             chestMeta(it)
             commonMeta(it)
@@ -114,7 +114,7 @@ open class ArmorItem(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            runeTypes = runes
         ) {
             legsMeta(it)
             commonMeta(it)
@@ -140,7 +140,7 @@ open class ArmorItem(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            runeTypes = runes
         ) {
             bootMeta(it)
             commonMeta(it)

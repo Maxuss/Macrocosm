@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -24,9 +24,9 @@ class LimitedEditionItem(
     abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
-    applicableRunes: List<ApplicableRune> = listOf(),
+    runeTypes: List<RuneSlot> = listOf(),
     metaModifier: (ItemMeta) -> Unit = { }
-): AbilityItem(ty, nameStr, rarity, base, stats, abilities, specialStats, breakingPower, applicableRunes, metaModifier = metaModifier) {
+): AbilityItem(ty, nameStr, rarity, base, stats, abilities, specialStats, breakingPower, runeTypes, metaModifier = metaModifier) {
     var edition: Int = -1
     var givenBy: Component = Component.text("null")
     var givenTo: Component = Component.text("null")

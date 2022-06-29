@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.pets
 
-import com.google.common.collect.HashMultimap
 import net.axay.kspigot.particles.particle
 import org.bukkit.Color
 import org.bukkit.Location
@@ -9,6 +8,7 @@ import org.bukkit.Particle
 import org.bukkit.Particle.DustOptions
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.util.multimap
 
 interface PetEffects {
     fun spawnParticles(at: Location, tier: Rarity)
@@ -77,7 +77,7 @@ value class FixedPetEffects(val particles: List<PetParticles>) : PetEffects {
 }
 
 class TieredPetEffects(vararg particles: Pair<Rarity, List<PetParticles>>) : PetEffects {
-    private val particleMap = HashMultimap.create<Rarity, PetParticles>()
+    private val particleMap = multimap<Rarity, PetParticles>()
 
     init {
         for ((rarity, effects) in particles) {

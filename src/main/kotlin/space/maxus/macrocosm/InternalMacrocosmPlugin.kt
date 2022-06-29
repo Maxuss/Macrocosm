@@ -21,7 +21,7 @@ import space.maxus.macrocosm.generators.generate
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
-import space.maxus.macrocosm.item.runes.DefaultRune
+import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.net.MacrocosmServer
@@ -96,11 +96,11 @@ class InternalMacrocosmPlugin : KSpigot() {
         protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
+        StatRune.init()
         ItemValue.init()
         Enchant.init()
         RecipeValue.init()
         Armor.init()
-        DefaultRune.init()
         Buffs.init()
         EntityValue.init()
         PetValue.init()
@@ -128,9 +128,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         recipesCommand()
         addScrollCommand()
         setStarsCommand()
-        setGemsCommand()
         addPotatoBooks()
-        unlockGemsCommand()
         givePetItemCommand()
         addPetCommand()
         spawnPetCommand()

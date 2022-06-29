@@ -6,7 +6,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -26,7 +26,7 @@ open class KillCountingArmor(
     legsMeta: (ItemMeta) -> Unit = { },
     bootMeta: (ItemMeta) -> Unit = { },
     commonMeta: (ItemMeta) -> Unit = { },
-    runes: List<ApplicableRune> = listOf(),
+    runes: List<RuneSlot> = listOf(),
     headSkin: String? = null
 ): ArmorItem(baseName, baseId, baseMaterial, baseRarity, baseStats, baseSpecials, abilities, headMeta, chestMeta, legsMeta, bootMeta, commonMeta, runes, headSkin) {
     override fun helmet(): MacrocosmItem {
@@ -49,7 +49,7 @@ open class KillCountingArmor(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes,
+            runeTypes = runes,
         ) {
             if (it is SkullMeta) {
                 val profile = Bukkit.createProfile(UUID.randomUUID())
@@ -81,7 +81,7 @@ open class KillCountingArmor(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            runeTypes = runes
         ) {
             chestMeta(it)
             commonMeta(it)
@@ -107,7 +107,7 @@ open class KillCountingArmor(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            runeTypes = runes
         ) {
             legsMeta(it)
             commonMeta(it)
@@ -133,7 +133,7 @@ open class KillCountingArmor(
             statClone,
             abilities.toMutableList(),
             specClone,
-            applicableRunes = runes
+            runeTypes = runes
         ) {
             bootMeta(it)
             commonMeta(it)

@@ -21,9 +21,9 @@ import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.generators.*
-import space.maxus.macrocosm.item.runes.DefaultRune
-import space.maxus.macrocosm.item.runes.RuneItem
-import space.maxus.macrocosm.item.runes.rarityToRuneTier
+import space.maxus.macrocosm.item.buffs.BuffRegistry
+import space.maxus.macrocosm.item.runes.*
+import space.maxus.macrocosm.item.types.InfernalGreatsword
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Identifier
@@ -35,6 +35,8 @@ import space.maxus.macrocosm.util.id
 import java.util.*
 
 enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, private val animation: Animation? = null) {
+    NULL(AbilityItem(ItemType.OTHER, "null", Rarity.COMMON, Material.PLAYER_HEAD, Statistics.zero())),
+
     ENCHANTED_BOOK(EnchantedBook()),
 
     ASPECT_OF_THE_END(AbilityItem(ItemType.SWORD, "Aspect of the End", Rarity.RARE, Material.DIAMOND_SWORD, stats {
@@ -93,13 +95,13 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         damage = 225f
         strength = 100f
         critChance = 15f
-    }, mutableListOf(AOTDAbility), applicableRunes = listOf(DefaultRune.CRYING_PEARL, DefaultRune.ADAMANTITE, DefaultRune.DIAMOND))),
+    }, mutableListOf(AOTDAbility), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE)))),
 
     ICE_SPRAY_WAND(AbilityItem(ItemType.WAND, "Ice Spray Wand", Rarity.RARE, Material.STICK, stats {
         damage = 120f
         intelligence = 300f
         abilityDamage = 5f
-    }, mutableListOf(IceConeAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE))),
+    }, mutableListOf(IceConeAbility), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.UTILITY))),
 
     ETERNAL_TERROR_WAND(
         AbilityItem(
@@ -114,7 +116,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
                 abilityDamage = 15f
             },
             mutableListOf(InfiniteTerrorAbility),
-            applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.REDSTONE),
+            runeTypes = listOf(RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)),
             description = "It's morbin' time"
         ),
         Model(0, "item/blaze_rod", "macrocosm:item/eternal_terror_wand", "item/handheld"),
@@ -140,19 +142,19 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         damage = 180f
         strength = 250f
         intelligence = 300f
-    }, mutableListOf(TerrainTossAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.MOONSTONE, DefaultRune.SILVER))),
+    }, mutableListOf(TerrainTossAbility), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)))),
 
     VOID_PRISM(AbilityItem(ItemType.SWORD, "Void Prism", Rarity.LEGENDARY, Material.PRISMARINE_SHARD, stats {
         damage = 150f
         strength = 80f
         intelligence = 500f
-    }, mutableListOf(VoidPrismAbility), applicableRunes = listOf(DefaultRune.MOONSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST))),
+    }, mutableListOf(VoidPrismAbility), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.typeBound(StatRune.DIAMOND), RuneSlot.typeBound(StatRune.DIAMOND)))),
 
     RANCOROUS_STAFF(AbilityItem(ItemType.SWORD, "Rancorous Staff", Rarity.EPIC, Material.STICK, stats {
         damage = 80f
         strength = 70f
         intelligence = 150f
-    }, mutableListOf(RancorousStaffAbility), applicableRunes = listOf(DefaultRune.EMERALD, DefaultRune.DIAMOND))),
+    }, mutableListOf(RancorousStaffAbility), runeTypes = listOf(RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.UTILITY))),
 
     // entity-limited items
     RADIOACTIVE_TRIDENT(AbilityItem(ItemType.SWORD, "Radioactive Trident", Rarity.LEGENDARY, Material.TRIDENT, stats {
@@ -168,7 +170,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         strength = 200f
         critDamage = 150f
         critChance = 25f
-    }, extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability), runes = listOf(DefaultRune.REDSTONE, DefaultRune.EMERALD))),
+    }, extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability), runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE)))),
 
     // reforge stones
     WITHER_BLOOD(
@@ -345,38 +347,38 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     UNDEAD_SWORD(AbilityItem(ItemType.SWORD, "Undead Sword", Rarity.UNCOMMON, Material.STONE_SWORD, stats {
         damage = 50f
         strength = 50f
-    }, mutableListOf(Ability.UNDEAD_SWORD.ability), applicableRunes = listOf(DefaultRune.DIAMOND))),
+    }, mutableListOf(Ability.UNDEAD_SWORD.ability), runeTypes = listOf(RuneSlot.specific(RuneSpec.OFFENSIVE)))),
 
     REVENANT_FALCHION(AbilityItem(ItemType.SWORD, "Revenant Falchion", Rarity.RARE, Material.IRON_SWORD, stats {
         damage = 100f
         strength = 80f
-    }, mutableListOf(Ability.REVENANT_FALCHION.ability, Ability.REVENANT_LIFE_STEAL.ability), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE))),
+    }, mutableListOf(Ability.REVENANT_FALCHION.ability, Ability.REVENANT_LIFE_STEAL.ability), runeTypes = listOf(RuneSlot.COMBAT))),
 
     REAPER_FALCHION(AbilityItem(ItemType.SWORD, "Reaper Falchion", Rarity.EPIC, Material.DIAMOND_SWORD, stats {
         damage = 200f
         strength = 120f
         ferocity = 10f
-    }, mutableListOf(Ability.REAPER_FALCHION.ability, Ability.REAPER_LIFE_STEAL.ability), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.ADAMANTITE, DefaultRune.EMERALD))),
+    }, mutableListOf(Ability.REAPER_FALCHION.ability, Ability.REAPER_LIFE_STEAL.ability), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE)))),
 
     REAPER_SCYTHE(AbilityItem(ItemType.SWORD, "Reaper Scythe", Rarity.LEGENDARY, Material.DIAMOND_HOE, stats {
         damage = 333f
         strength = 33f
         intelligence = 333f
-    }, mutableListOf(Ability.REAPER_WEAPON.ability, ReaperScytheAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.EMERALD, DefaultRune.ADAMANTITE))),
+    }, mutableListOf(Ability.REAPER_WEAPON.ability, ReaperScytheAbility), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.typeBound(StatRune.DIAMOND)))),
 
     AXE_OF_THE_SHREDDED(AbilityItem(ItemType.SWORD, "Axe of the Shredded", Rarity.LEGENDARY, Material.DIAMOND_AXE, stats {
         damage = 250f
         strength = 180f
         ferocity = 20f
-    }, mutableListOf(Ability.REAPER_WEAPON.ability, AOTSAbility), applicableRunes = listOf(DefaultRune.DIAMOND, DefaultRune.EMERALD, DefaultRune.ADAMANTITE))),
+    }, mutableListOf(Ability.REAPER_WEAPON.ability, AOTSAbility), runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.COMBAT, RuneSlot.UTILITY))),
     //#endregion
 
     //#region wands
 
-    WAND_OF_HEALING(AbilityItem(ItemType.WAND, "Wand of Healing", Rarity.UNCOMMON, Material.STICK, Statistics.zero(), mutableListOf(Ability.SMALL_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE))),
-    WAND_OF_MENDING(AbilityItem(ItemType.WAND, "Wand of Mending", Rarity.RARE, Material.STICK, Statistics.zero(), mutableListOf(Ability.MEDIUM_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE))),
-    WAND_OF_RESTORATION(AbilityItem(ItemType.WAND, "Wand of Restoration", Rarity.EPIC, Material.STICK, Statistics.zero(), mutableListOf(Ability.BIG_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE))),
-    WAND_OF_ATONEMENT(AbilityItem(ItemType.WAND, "Wand of Atonement", Rarity.LEGENDARY, Material.STICK, Statistics.zero(), mutableListOf(Ability.HUGE_HEAL.ability), applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST))),
+    WAND_OF_HEALING(AbilityItem(ItemType.WAND, "Wand of Healing", Rarity.UNCOMMON, Material.STICK, Statistics.zero(), mutableListOf(Ability.SMALL_HEAL.ability), runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE)))),
+    WAND_OF_MENDING(AbilityItem(ItemType.WAND, "Wand of Mending", Rarity.RARE, Material.STICK, Statistics.zero(), mutableListOf(Ability.MEDIUM_HEAL.ability), runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE)))),
+    WAND_OF_RESTORATION(AbilityItem(ItemType.WAND, "Wand of Restoration", Rarity.EPIC, Material.STICK, Statistics.zero(), mutableListOf(Ability.BIG_HEAL.ability), runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.typeBound(StatRune.DIAMOND)))),
+    WAND_OF_ATONEMENT(AbilityItem(ItemType.WAND, "Wand of Atonement", Rarity.LEGENDARY, Material.STICK, Statistics.zero(), mutableListOf(Ability.HUGE_HEAL.ability), runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.typeBound(StatRune.DIAMOND), RuneSlot.UTILITY))),
 
     //#endregion wands
 
@@ -398,7 +400,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             defense = 50f
         },
         mutableListOf(Ability.NEGATE.ability),
-        applicableRunes = listOf(DefaultRune.REDSTONE)
+        runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE))
     )),
 
     CRYSTALLIZED_HEART(SkullAbilityItem(
@@ -411,7 +413,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             defense = 120f
         },
         mutableListOf(Ability.VITIATE.ability),
-        applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.AMETHYST)
+        runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE))
     )),
 
     REVIVED_HEART(SkullAbilityItem(
@@ -425,7 +427,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             intelligence = 50f
         },
         mutableListOf(Ability.BELIE.ability),
-        applicableRunes = listOf(DefaultRune.REDSTONE, DefaultRune.AMETHYST, DefaultRune.DIAMOND),
+        runeTypes = listOf(RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.UTILITY), RuneSlot.specific(RuneSpec.OFFENSIVE)),
         description = "Gross! Why would anyone ever wear this!"
     )),
 
@@ -440,8 +442,8 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             strength = 50f
         },
         mutableListOf(WardenHelmetAbility),
-        applicableRunes = listOf(
-            DefaultRune.ADAMANTITE, DefaultRune.AMETHYST, DefaultRune.REDSTONE
+        runeTypes = listOf(
+            RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.UTILITY
         )
     )),
 
@@ -457,8 +459,8 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             strength = 10f
         },
         mutableListOf(ReaperMaskAbility),
-        applicableRunes = listOf(
-            DefaultRune.DIAMOND, DefaultRune.AMETHYST, DefaultRune.EMERALD
+        runeTypes = listOf(
+            RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE)
         )
     )),
 
@@ -474,8 +476,8 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             strength = 50f
         },
         mutableListOf(EntombedMaskAbility),
-        applicableRunes = listOf(
-            DefaultRune.DIAMOND, DefaultRune.AMETHYST, DefaultRune.EMERALD, DefaultRune.ADAMANTITE
+        runeTypes = listOf(
+            RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)
         )
     )),
     //#endregion armor
@@ -497,11 +499,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     // indev
     ENCHANTED_ADAMANTITE(RecipeItem(Material.REDSTONE, Rarity.EPIC, "Enchanted Adamantite", description = "Dwarves thought this metal was a myth...", glow = true)),
 
-    INFERNAL_GREATSWORD(AbilityItem(ItemType.LONGSWORD, "Infernal Greatsword", Rarity.LEGENDARY, Material.GOLDEN_SWORD, stats {
-        damage = 400f
-        strength = 125f
-        ferocity = 40f
-    }, mutableListOf(FierySlashAbility, InfernalGreatswordThrowAbility))),
+    INFERNAL_GREATSWORD(InfernalGreatsword()),
     ;
 
     companion object {
@@ -663,11 +661,11 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         private fun initRunes() {
             val pool = Threading.newFixedPool(5)
 
-            for (allowed in DefaultRune.values()) {
+            for ((id, allowed) in BuffRegistry.runes) {
                 pool.execute {
-                    val baseName = allowed.name.replace("_", " ").capitalized()
+                    val baseName = id.path.replace("_", " ").capitalized()
                     for(rarity in runeQualities) {
-                        val item = RuneItem(allowed, "${allowed.char()} <${allowed.color.asHexString()}>${rarityToRuneTier(rarity)} $baseName Rune", rarity, allowed.skin)
+                        val item = RuneItem(allowed, "${allowed.display} <${allowed.color.asHexString()}>${rarityToRuneTier(rarity)} $baseName Rune", rarity, allowed.headSkin)
 
                         Registry.ITEM.register(item.id, item)
                     }

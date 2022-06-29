@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.item
 
+import com.google.common.collect.Multimap
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
@@ -10,13 +11,15 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.PreviewFeature
+import space.maxus.macrocosm.util.multimap
 
 open class AbilityItem(
     override val type: ItemType, protected val itemName: String, override var rarity: Rarity, override val base: Material,
@@ -24,7 +27,7 @@ open class AbilityItem(
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
     override var breakingPower: Int = 0,
-    applicableRunes: List<ApplicableRune> = listOf(),
+    runeTypes: List<RuneSlot> = listOf(),
     protected val description: String? = null,
     protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
@@ -40,11 +43,16 @@ open class AbilityItem(
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = HashMap(applicableRunes.associateWith { RuneState.ZERO })
+    override val runes: Multimap<RuneSlot, RuneState> = multimap<RuneSlot, RuneState>().apply {
+        for(ty in runeTypes) {
+            put(ty, RuneState.EMPTY)
+        }
+    }
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var dye: Dye? = null
     override var skin: SkullSkin? = null
-
+    @PreviewFeature
+    override var isDungeonised: Boolean = false
     override fun buildLore(lore: MutableList<Component>) {
         super.buildLore(lore)
         if(description != null) {

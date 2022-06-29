@@ -4,7 +4,7 @@ import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.ArmorItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.colorMeta
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.stats.Statistics
 
 class DragonArmor(
@@ -17,7 +17,7 @@ class DragonArmor(
     bootsColor: Int,
     rarity: Rarity = Rarity.LEGENDARY,
     abilities: MutableList<MacrocosmAbility> = mutableListOf(),
-    applicableRuns: MutableList<ApplicableRune> = mutableListOf(),
+    applicableRuns: MutableList<RuneSlot> = mutableListOf(),
 ): ArmorItem(
     "$name Dragon",
     id,

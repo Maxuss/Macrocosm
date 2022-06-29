@@ -109,18 +109,6 @@ fun addScrollCommand() = command("addscroll") {
     }
 }
 
-fun unlockGemsCommand() = command("unlockgems") {
-    requires { it.hasPermission(4) }
-    runs {
-        val mc = player.macrocosm
-        val item = player.inventory.itemInMainHand.macrocosm ?: return@runs
-        for ((gem, _) in item.runes) {
-            item.unlockRune(gem)
-        }
-        player.inventory.setItemInMainHand(item.build(mc)!!)
-    }
-}
-
 fun addPotatoBooks() = command("addbooks") {
     requires { it.hasPermission(4) }
     argument("amount", IntegerArgumentType.integer(0)) {
@@ -128,21 +116,6 @@ fun addPotatoBooks() = command("addbooks") {
             val mc = player.macrocosm
             val item = player.inventory.itemInMainHand.macrocosm ?: return@runs
             item.addPotatoBooks(getArgument("amount"))
-            player.inventory.setItemInMainHand(item.build(mc)!!)
-        }
-    }
-}
-
-fun setGemsCommand() = command("setgems") {
-    requires { it.hasPermission(4) }
-    argument("level", IntegerArgumentType.integer(0)) {
-        runs {
-            val mc = player.macrocosm
-            val lvl = getArgument<Int>("level")
-            val item = player.inventory.itemInMainHand.macrocosm ?: return@runs
-            for ((gem, _) in item.runes) {
-                item.addRune(gem, lvl)
-            }
             player.inventory.setItemInMainHand(item.build(mc)!!)
         }
     }

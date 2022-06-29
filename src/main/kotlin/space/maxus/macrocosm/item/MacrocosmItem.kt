@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.item
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.collect.Multimap
 import net.axay.kspigot.data.nbtData
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.items.customModel
@@ -11,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.ListTag
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
@@ -32,8 +34,10 @@ import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.buffs.PotatoBook
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
@@ -44,6 +48,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.PreviewFeature
 import space.maxus.macrocosm.util.getId
 import space.maxus.macrocosm.util.putId
 import java.util.*
@@ -84,7 +89,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     val abilities: MutableList<MacrocosmAbility>
     val enchantments: HashMap<Enchantment, Int>
     val maxStars: Int get() = 20
-    val runes: HashMap<ApplicableRune, RuneState>
+    val runes: Multimap<RuneSlot, RuneState>
     val buffs: HashMap<MinorItemBuff, Int>
     var breakingPower: Int
     var dye: Dye?
@@ -93,6 +98,12 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         get() {
             return 1.0 + enchantments.toList().sumOf { (ench, lvl) -> ench.levels.indexOf(lvl) * 25.0 } + (stars / min(maxStars, 1).toDouble()) * 1000 + (if(reforge != null) 1000 else 0) + if(rarityUpgraded) 15000 else 0
         }
+
+    @PreviewFeature
+    var isDungeonised: Boolean get() = false; set(_) { /* no-op */ }
+
+    @PreviewFeature
+    val isDungeonisable: Boolean get() = false
 
     override fun id(): Identifier {
         return id
@@ -149,11 +160,13 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             base.increase(ench.stats(level, player))
         }
         base.increase(reforge?.stats(rarity))
-        for ((rune, state) in runes) {
-            val (open, lvl) = state
-            if (!open)
+        for ((_, state) in runes.entries()) {
+            val (contained, tier) = state
+            if (tier == 0 || contained == null)
                 continue
-            base.increase(rune.stats(lvl))
+            val r = BuffRegistry.findRune(contained)
+            if(r is StatRune)
+                base.increase(r.baseStats.clone().apply { multiply(tier.toFloat()) })
         }
         base.multiply(1 + special.statBoost)
         // 2% boost from stars
@@ -199,7 +212,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             while (reducedIndex > 4) {
                 reducedIndex -= 5
             }
-            starIndices[reducedIndex] = text("✪").color(starColor(star))
+            starIndices[reducedIndex] = text("⭐").color(starColor(star))
         }
 
         for (star in starIndices) {
@@ -209,17 +222,17 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         return display.color(rarity.color).noitalic()
     }
 
-    fun unlockRune(rune: ApplicableRune): Boolean {
-        if (!this.runes.containsKey(rune))
-            return false
-        this.runes[rune] = RuneState(true, 0)
+    fun unlockRune(index: Int): Boolean {
+        val (rune, state) = this.runes.entries().toList()[if(index < 0) return false else index]
+        this.runes.remove(rune, state)
+        this.runes.put(rune, RuneState(null, -1))
         return true
     }
 
-    fun addRune(gem: ApplicableRune, tier: Int): Boolean {
-        if (!this.runes.containsKey(gem) || !this.runes[gem]!!.open)
-            return false
-        this.runes[gem] = RuneState(true, tier)
+    fun addRune(index: Int, rune: RuneType, tier: Int): Boolean {
+        val (slot, state) = this.runes.entries().toList()[if(index < 0) return false else index]
+        this.runes.remove(slot, state)
+        this.runes.put(slot, RuneState(rune.id, tier))
         return true
     }
 
@@ -247,14 +260,18 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
         this.stars = nbt.getInt("Stars")
         this.breakingPower = nbt.getInt("BreakingPower")
-        val runes = nbt.getCompound("Runes")
-        val associated = runes.allKeys.map { BuffRegistry.findRune(Identifier.parse(it)) }.associateWith {
-            val cmp = runes.getCompound(it.id.toString()); RuneState(
-            cmp.getBoolean("Open"),
-            cmp.getInt("Tier")
-        )
+        // clearing and reassigning runes
+        this.runes.clear()
+        val runes = nbt.getList("Runes", CompoundTag.TAG_COMPOUND.toInt())
+        for(i in runes.indices) {
+            val cmp = runes.getCompound(i)
+            val state = RuneState(
+                if(cmp.contains("Contained")) cmp.getId("Contained") else null,
+                cmp.getInt("Tier")
+            )
+            val slot = RuneSlot.fromId(cmp.getId("SlotType"))
+            this.runes.put(slot, state)
         }
-        this.runes.putAll(associated)
         val buffsCmp = nbt.getCompound("Buffs")
         val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }
             .associateWith { buffsCmp.getInt(it.id.toString()) }
@@ -322,15 +339,17 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         to.buffs.putAll(this.buffs)
         to.dye = this.dye
         to.skin = this.skin
-        for((rune, _) in to.runes) {
-            if(this.runes.containsKey(rune))
-                to.runes[rune] = this.runes[rune]!!
+        for((slot, state) in to.runes.entries()) {
+            if(this.runes.containsKey(slot)) {
+                to.runes.put(slot, state)
+            }
         }
     }
 
     /**
      * Builds this item
      */
+    @OptIn(PreviewFeature::class)
     @Suppress("UNCHECKED_CAST")
     fun build(player: MacrocosmPlayer? = null): ItemStack? {
         if (base == Material.AIR)
@@ -351,18 +370,16 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             lore.addAll(formattedStats)
 
             // runes
-            if (runes.size > 0) {
-                var gemComp = text("")
-                for ((gem, state) in runes) {
-                    val (open, lvl) = state
-                    gemComp = if (!open)
-                        gemComp.append(gem.locked()).append(" ".toComponent())
-                    else if (lvl <= 0)
-                        gemComp.append(gem.unlocked()).append(" ".toComponent())
+            if (runes.size() > 0) {
+                var runeComp = text("")
+                for ((slot, state) in runes.entries()) {
+                    val (contained, tier) = state
+                    runeComp = if (tier <= 0 || contained == null)
+                        runeComp.append(slot.render()).append(" ".toComponent())
                     else
-                        gemComp.append(gem.full(lvl)).append(" ".toComponent())
+                        runeComp.append(BuffRegistry.findRune(contained).render(tier)).append(" ".toComponent())
                 }
-                lore.add(gemComp.noitalic())
+                lore.add(runeComp.noitalic())
             }
 
             if (formattedStats.isNotEmpty())
@@ -459,7 +476,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             buildLore(lore)
 
             // rarity
-            lore.add(rarity.format(rarityUpgraded, type))
+            lore.add(rarity.format(rarityUpgraded, type, isDungeonised))
 
             lore(lore)
 
@@ -546,15 +563,16 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         nbt.putId("ID", id)
 
         // runes
-        val gemsComp = CompoundTag()
-        runes.forEach {
-            val k = it.key.id.toString()
-            val cmp = CompoundTag()
-            cmp.putInt("Tier", it.value.tier)
-            cmp.putBoolean("Open", it.value.open)
-            gemsComp.put(k, cmp)
+        val runeList = ListTag()
+        for((slot, state) in runes.entries().parallelStream()) {
+            val runeCmp = CompoundTag()
+            runeCmp.putId("SlotType", slot.id)
+            runeCmp.putInt("Tier", state.tier)
+            if(state.applied != null)
+                runeCmp.putId("Contained", state.applied)
+            runeList.add(runeCmp)
         }
-        nbt.put("Runes", gemsComp)
+        nbt.put("Runes", runeList)
 
         // buffs
         val buffsComp = CompoundTag()

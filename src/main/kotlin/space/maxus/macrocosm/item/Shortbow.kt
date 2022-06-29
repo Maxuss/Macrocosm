@@ -3,7 +3,7 @@ package space.maxus.macrocosm.item
 import org.bukkit.Material
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -14,7 +14,7 @@ open class Shortbow(
     stats: Statistics = Statistics.zero(),
     specials: SpecialStatistics = SpecialStatistics(),
     origin: Material = Material.BOW,
-    runes: List<ApplicableRune> = listOf()
+    runes: List<RuneSlot> = listOf()
 ): AbilityItem(
     ItemType.BOW,
     name,

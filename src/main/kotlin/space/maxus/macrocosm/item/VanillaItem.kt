@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.item
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
@@ -17,15 +18,14 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
-import space.maxus.macrocosm.item.runes.DefaultRune
-import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.*
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
+import space.maxus.macrocosm.util.multimap
 import java.util.*
 
 private val SPLIT_THIS =
@@ -231,7 +231,7 @@ private fun bpFromMat(mat: Material): Int {
     return 0
 }
 
-private fun getGemsForItem(item: Material): List<ApplicableRune> {
+private fun getRunesForItem(item: Material): List<RuneSlot> {
     if (item.isBlock)
         return listOf()
     if (!SPLIT_THIS.any { item.name.contains(it) })
@@ -239,12 +239,11 @@ private fun getGemsForItem(item: Material): List<ApplicableRune> {
 
     // weapons
     when (item) {
-        Material.STONE_SWORD, Material.STONE_AXE -> return listOf(DefaultRune.AMETHYST)
-        Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_HOE -> return listOf(DefaultRune.DIAMOND)
+        Material.STONE_SWORD, Material.STONE_AXE -> return listOf(RuneSlot.specific(RuneSpec.DEFENSIVE))
+        Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_HOE -> return listOf(RuneSlot.specific(RuneSpec.OFFENSIVE))
         Material.NETHERITE_SWORD, Material.NETHERITE_AXE -> return listOf(
-            DefaultRune.AMETHYST,
-            DefaultRune.REDSTONE,
-            DefaultRune.EMERALD
+            RuneSlot.COMBAT,
+            RuneSlot.UTILITY
         )
         else -> {}
     }
@@ -252,16 +251,16 @@ private fun getGemsForItem(item: Material): List<ApplicableRune> {
     // other equipment
     val name = item.name
     if (name.contains("GOLD"))
-        return listOf(DefaultRune.EMERALD)
+        return listOf(RuneSlot.typeBound(StatRune.EMERALD))
     if (name.contains("LEATHER"))
-        return listOf(DefaultRune.AMETHYST)
+        return listOf(RuneSlot.typeBound(StatRune.AMETHYST))
     if (name.contains("IRON"))
-        return listOf(DefaultRune.REDSTONE)
+        return listOf(RuneSlot.typeBound(StatRune.REDSTONE))
     if (name.contains("DIAMOND")) {
-        return listOf(DefaultRune.DIAMOND, DefaultRune.AMETHYST)
+        return listOf(RuneSlot.COMBAT, RuneSlot.typeBound(StatRune.DIAMOND))
     }
     if (name.contains("NETHERITE")) {
-        return listOf(DefaultRune.EMERALD, DefaultRune.REDSTONE, DefaultRune.DIAMOND)
+        return listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.UTILITY)
     }
     return listOf()
 }
@@ -291,8 +290,12 @@ class VanillaItem(override val base: Material, override var amount: Int = 1, pri
     override var reforge: Reforge? = null
     override var abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> =
-        HashMap(getGemsForItem(base).associateWith { RuneState.ZERO })
+    override val runes: Multimap<RuneSlot, RuneState> =
+        multimap<RuneSlot, RuneState>().apply {
+            for(slot in getRunesForItem(base)) {
+                put(slot, RuneState.EMPTY)
+            }
+        }
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = bpFromMat(base)
     override var dye: Dye? = null

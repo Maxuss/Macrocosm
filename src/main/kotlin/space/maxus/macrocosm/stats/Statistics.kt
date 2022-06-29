@@ -6,9 +6,13 @@ import net.minecraft.nbt.CompoundTag
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
+import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.PreviewFeature
 import java.sql.ResultSet
 import java.util.*
 import kotlin.math.ceil
@@ -204,22 +208,25 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
         return cmp
     }
 
+    @OptIn(PreviewFeature::class)
     fun formatSimple(item: MacrocosmItem? = null, baseReforge: Reforge? = item?.reforge): List<Component> {
-        val gems = item?.runes
+        val runes = item?.runes
         val buffs = item?.buffs
         val reforge = baseReforge?.stats(item?.rarity ?: Rarity.COMMON)
 
         val base = mutableListOf<Component>()
         var prev: Statistic? = null
-        val dissolvedGemstones: Statistics = zero()
+        val dissolvedRunes: Statistics = zero()
         val dissolvedBuffs: HashMap<MinorItemBuff, Statistics> = hashMapOf()
 
-        if (gems != null && gems.isNotEmpty()) {
-            for ((gem, state) in gems) {
-                val (open, lvl) = state
-                if (!open || lvl <= 0)
+        if (runes != null && runes.size() > 0) {
+            for ((_, state) in runes.entries()) {
+                val (contained, tier) = state
+                if (tier <= 0 || contained == null)
                     continue
-                dissolvedGemstones.increase(gem.stats(lvl))
+                val runeType = BuffRegistry.findRune(contained)
+                if(runeType is StatRune)
+                    dissolvedRunes.increase(runeType.baseStats.clone().apply { multiply(tier.toFloat()) })
             }
         }
 
@@ -253,8 +260,8 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
             }
 
             // gemstones
-            if (dissolvedGemstones[stat] != 0f) {
-                val amount = dissolvedGemstones[stat]
+            if (dissolvedRunes[stat] != 0f) {
+                val amount = dissolvedRunes[stat]
                 var gemComp = " <light_purple>["
                 val fmt = Formatting.stats(amount.toBigDecimal(), false)
                 gemComp += if (amount < 0) fmt else "+$fmt"
@@ -269,6 +276,10 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
                     val amount = stats[stat]
                     formatted = formatted.append(" ".toComponent().append(buff.buildFancy(amount.toInt())))
                 }
+            }
+
+            if(item?.isDungeonised == true) {
+                formatted = formatted.append(text(" <dark_gray>(${stat.type.formatSigned(value, false)!!.str()}${if(stat.percents) "%" else ""}<dark_gray>)"))
             }
 
             base.add(formatted)

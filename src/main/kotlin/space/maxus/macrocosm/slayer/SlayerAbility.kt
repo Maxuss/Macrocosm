@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.slayer
 
-import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
@@ -12,7 +11,8 @@ import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.text.text
-import java.util.UUID
+import space.maxus.macrocosm.util.multimap
+import java.util.*
 
 class SlayerAbility(
     val abilityId: String,
@@ -22,7 +22,7 @@ class SlayerAbility(
     val listenerRegister: SlayerAbility.() -> Unit
 ) {
     companion object {
-        val bosses: Multimap<SlayerType, UUID> = HashMultimap.create()
+        val bosses: Multimap<SlayerType, UUID> = multimap()
     }
 
     fun descript(tier: Int): List<Component> {

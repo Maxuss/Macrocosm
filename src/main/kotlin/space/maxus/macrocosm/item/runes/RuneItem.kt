@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.item.runes
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
@@ -9,6 +10,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -24,21 +26,22 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.multimap
 import java.util.*
 
 fun rarityToRuneTier(rarity: Rarity): String {
     return when(rarity) {
-        Rarity.COMMON -> "Old"
-        Rarity.UNCOMMON -> "Dusty"
-        Rarity.RARE -> "Fine"
-        Rarity.EPIC -> "Unreal"
-        Rarity.LEGENDARY -> "Fabulous"
-        else -> "Heavenly"
+        Rarity.COMMON -> "Dusty"
+        Rarity.UNCOMMON -> "Fine"
+        Rarity.RARE -> "Grand"
+        Rarity.EPIC -> "Fabulous"
+        Rarity.LEGENDARY -> "Heavenly"
+        else -> "Celestial"
     }
 }
 
 class RuneItem(
-    private val runeType: ApplicableRune,
+    private val runeType: RuneType,
     private val runeName: String,
     override var rarity: Rarity,
     private val headSkin: String
@@ -57,7 +60,7 @@ class RuneItem(
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
+    override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? = null
@@ -65,10 +68,10 @@ class RuneItem(
     override val maxStars: Int = 0
 
     override fun buildLore(lore: MutableList<Component>) {
-        lore.add(text("<dark_gray>Rune").noitalic())
+        lore.add(text("<dark_gray>${runeType.spec.name.capitalized()} Rune").noitalic())
         lore.add("".toComponent())
 
-        val str = "Some say, that when <yellow>harnessed<gray> and applied properly, this rune will boost the wearer's ${runeType.modifiedStats}<gray>."
+        val str = runeType.descript()
         for(d in str.reduceToList(35)) {
             lore.add(text("<gray>$d</gray>").noitalic())
         }

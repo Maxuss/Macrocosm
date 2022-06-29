@@ -139,7 +139,6 @@ abstract class Registry<T>(val name: Identifier) {
             if(model.to.startsWith("macrocosm:") && model !is RawModel)
                 TexturedModelGenerator.enqueue(model)
         }
-
         val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))
 
         override fun register(id: Identifier, value: Registry<*>): Registry<*> {

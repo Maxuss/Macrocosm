@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.item
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
@@ -17,13 +18,14 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.multimap
 import space.maxus.macrocosm.util.putId
 import space.maxus.macrocosm.util.stripTags
 import java.util.*
@@ -47,7 +49,7 @@ class RecipeItem(
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
+    override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? = null

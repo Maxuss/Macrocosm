@@ -6,7 +6,9 @@ import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.generators.Model
 import space.maxus.macrocosm.generators.CMDGenerator
-import space.maxus.macrocosm.item.runes.DefaultRune
+import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.item.runes.RuneSpec
+import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.item.types.DragonArmor
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
@@ -24,7 +26,7 @@ object Armor {
     }, abilities = listOf(EmeraldArmorBonus), commonMeta = {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0x0FBB65))
-    }, runes = listOf(DefaultRune.EMERALD, DefaultRune.DIAMOND)))
+    }, runes = listOf(RuneSlot.typeBound(StatRune.EMERALD), RuneSlot.UTILITY)))
 
     val AMETHYST_ARMOR = register(ArmorItem("Amethyst", "amethyst", "LEATHER", Rarity.RARE, stats {
         health = 80f
@@ -42,7 +44,7 @@ object Armor {
     }, bootMeta = {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0x50177F))
-    }, runes = listOf(DefaultRune.AMETHYST, DefaultRune.DIAMOND)))
+    }, runes = listOf(RuneSlot.typeBound(StatRune.AMETHYST), RuneSlot.GATHERING)))
 
     val BEEKEEPER_ARMOR = register(ArmorItem("Beekeeper", "beekeeper", "LEATHER", Rarity.EPIC, stats {
         health = 100f
@@ -64,7 +66,7 @@ object Armor {
         val leather = it as LeatherArmorMeta
         leather.setColor(org.bukkit.Color.fromRGB(0xECAA38))
     },
-    runes = listOf(DefaultRune.REDSTONE, DefaultRune.EMERALD)))
+    runes = listOf(RuneSlot.COMBAT, RuneSlot.UTILITY)))
 
     val SUPERIOR_DRAGON_ARMOR = register(DragonArmor(
         "Superior",
@@ -83,7 +85,7 @@ object Armor {
         0xF2DF11,
         0xF25D18,
         abilities = mutableListOf(SuperiorDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.EMERALD, DefaultRune.MOONSTONE, DefaultRune.ADAMANTITE),
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.GATHERING, RuneSlot.UTILITY),
     ))
 
     val STRONG_DRAGON_ARMOR = register(DragonArmor(
@@ -99,7 +101,7 @@ object Armor {
         0xE09419,
         0xF0D124,
         abilities = mutableListOf(StrongDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.REDSTONE, DefaultRune.AMETHYST, DefaultRune.ADAMANTITE),
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.UTILITY),
     ))
 
     val OLD_DRAGON_ARMOR = register(DragonArmor(
@@ -114,7 +116,7 @@ object Armor {
         0xF0E6AA,
         0xF0E6AA,
         abilities = mutableListOf(OldDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.AMETHYST, DefaultRune.REDSTONE, DefaultRune.ADAMANTITE),
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.UTILITY),
     ))
 
     val YOUNG_DRAGON_ARMOR = register(DragonArmor(
@@ -131,7 +133,7 @@ object Armor {
         0xDDE4F0,
         0xCCFD6B,
         abilities = mutableListOf(YoungDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.CRYING_PEARL, DefaultRune.SILVER, DefaultRune.ADAMANTITE)
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.UTILITY, RuneSlot.UTILITY)
     ))
 
     val UNSTABLE_DRAGON_ARMOR = register(DragonArmor(
@@ -148,7 +150,7 @@ object Armor {
         0xB212E3,
         0x2C013A,
         abilities = mutableListOf(UnstableDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.EMERALD, DefaultRune.SILVER, DefaultRune.AMETHYST)
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.UTILITY)
     ))
 
     val PROTECTOR_DRAGON_ARMOR = register(DragonArmor(
@@ -164,7 +166,7 @@ object Armor {
         0x99978B,
         0x99978B,
         abilities = mutableListOf(ProtectorDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.AMETHYST, DefaultRune.REDSTONE, DefaultRune.MITHRIL)
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.UTILITY)
     ))
 
     val WISE_DRAGON_ARMOR = register(DragonArmor(
@@ -181,7 +183,7 @@ object Armor {
         0xACF7F4,
         0x29F0E9,
         abilities = mutableListOf(WiseDragonBonus),
-        applicableRuns = mutableListOf(DefaultRune.MOONSTONE, DefaultRune.DIAMOND, DefaultRune.AMETHYST)
+        applicableRuns = mutableListOf(RuneSlot.COMBAT, RuneSlot.typeBound(StatRune.DIAMOND), RuneSlot.UTILITY)
     ))
 
     val MASTER_NECROMANCER_ARMOR = register(ArmorItem(
@@ -196,7 +198,7 @@ object Armor {
             strength = 10f
         },
         abilities = listOf(MasterNecromancerBonus),
-        runes = listOf(DefaultRune.DIAMOND, DefaultRune.AMETHYST),
+        runes = listOf(RuneSlot.COMBAT, RuneSlot.UTILITY),
         chestMeta = colorMeta(0x550F73),
         legsMeta = colorMeta(0x3E0158),
         bootMeta = colorMeta(0x1E002B),
@@ -215,7 +217,7 @@ object Armor {
             intelligence = 20f
         },
         abilities = listOf(Ability.REVENANT_ARMOR_BONUS.ability),
-        runes = listOf(DefaultRune.EMERALD, DefaultRune.AMETHYST)
+        runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE))
     ), ThreePieceArmor { })
 
     val REAPER_ARMOR = register(object: KillCountingArmor(
@@ -230,7 +232,7 @@ object Armor {
             intelligence = 50f
         },
         abilities = listOf(Ability.REAPER_ARMOR_BONUS.ability),
-        runes = listOf(DefaultRune.EMERALD, DefaultRune.AMETHYST, DefaultRune.DIAMOND),
+        runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)),
         chestMeta = colorMeta(0x1B1B1B),
         legsMeta = colorMeta(0x1B1B1B),
         bootMeta = colorMeta(0x272727)

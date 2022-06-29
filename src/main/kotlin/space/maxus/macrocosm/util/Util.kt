@@ -1,5 +1,7 @@
 package space.maxus.macrocosm.util
 
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Multimap
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.axay.kspigot.extensions.pluginKey
@@ -189,3 +191,5 @@ inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollecti
 fun Random.nextSignedDouble(): Double {
     return if(nextBoolean()) nextDouble() else -nextDouble()
 }
+
+inline fun <reified K, reified V> multimap(): Multimap<K, V> = ArrayListMultimap.create()

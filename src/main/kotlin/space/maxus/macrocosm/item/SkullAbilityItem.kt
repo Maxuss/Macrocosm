@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import java.util.*
@@ -22,7 +22,7 @@ open class SkullAbilityItem(
     abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
-    applicableRunes: List<ApplicableRune> = listOf(),
+    runeTypes: List<RuneSlot> = listOf(),
     description: String? = null,
     ) : AbilityItem(
     type,
@@ -33,7 +33,7 @@ open class SkullAbilityItem(
     abilities,
     specialStats,
     breakingPower,
-    applicableRunes,
+    runeTypes,
     description
 ) {
     override fun addExtraNbt(cmp: CompoundTag) {

@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.item
 
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
@@ -10,7 +11,7 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
@@ -19,6 +20,7 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.multimap
 
 private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
     val (_, lvl) = ench.maxByOrNull { it.value } ?: return Rarity.SPECIAL
@@ -44,7 +46,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = HashMap()
+    override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? = null

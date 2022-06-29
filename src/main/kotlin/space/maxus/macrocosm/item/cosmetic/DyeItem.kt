@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.item.cosmetic
 
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
@@ -18,7 +19,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
@@ -26,6 +27,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.multimap
 
 class DyeItem(private val ddye: Dye) : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()
@@ -43,7 +45,7 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
+    override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? = null

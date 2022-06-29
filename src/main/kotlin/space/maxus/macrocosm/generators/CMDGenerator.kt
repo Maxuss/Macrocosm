@@ -1,8 +1,8 @@
 package space.maxus.macrocosm.generators
 
-import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import space.maxus.macrocosm.util.GSON
+import space.maxus.macrocosm.util.multimap
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -40,7 +40,7 @@ object CMDGenerator: ResGenerator {
     }
 
     override fun yieldGenerate(): Map<String, String> {
-        val map: Multimap<String, Model> = HashMultimap.create()
+        val map: Multimap<String, Model> = multimap()
         for(it in enqueued) {
             val texture = "assets/minecraft/models/${it.from}.json"
             map.put(texture, it)

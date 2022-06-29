@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -16,10 +16,10 @@ class KillCountingItem(
     abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
-    applicableRunes: List<ApplicableRune> = listOf(),
+    runeTypes: List<RuneSlot> = listOf(),
     description: String? = null,
     metaModifier: (ItemMeta) -> Unit = { },
-): AbilityItem(type, itemName, rarity, base, stats, abilities, specialStats, breakingPower, applicableRunes, description, metaModifier), KillStorageItem {
+): AbilityItem(type, itemName, rarity, base, stats, abilities, specialStats, breakingPower, runeTypes, description, metaModifier), KillStorageItem {
     override var kills: Int = 0
 
     override fun addExtraNbt(cmp: CompoundTag) {

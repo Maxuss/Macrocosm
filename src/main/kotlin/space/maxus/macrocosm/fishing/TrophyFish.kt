@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.fishing
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
@@ -20,8 +21,9 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
@@ -30,6 +32,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.Chance
 import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.multimap
 import space.maxus.macrocosm.zone.Zone
 import java.util.*
 import java.util.function.Predicate
@@ -62,7 +65,7 @@ class TrophyFish(
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
+    override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? = null
@@ -78,7 +81,7 @@ class TrophyFish(
 
     }
 
-    override fun addRune(gem: ApplicableRune, tier: Int): Boolean {
+    override fun addRune(index: Int, rune: RuneType, tier: Int): Boolean {
         return false
     }
 
@@ -90,7 +93,7 @@ class TrophyFish(
         return Statistics.zero()
     }
 
-    override fun unlockRune(rune: ApplicableRune): Boolean {
+    override fun unlockRune(index: Int): Boolean {
         return false
     }
 

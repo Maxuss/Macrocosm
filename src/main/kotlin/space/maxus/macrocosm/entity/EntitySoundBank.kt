@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.entity
 
-import com.google.common.collect.HashMultimap
+import com.google.common.collect.ArrayListMultimap
 import net.axay.kspigot.sound.sound
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -11,10 +11,10 @@ enum class SoundType {
     DEATH
 }
 
-class EntitySoundBank private constructor(private val sounds: HashMultimap<SoundType, Pair<Sound, Float>>) {
+class EntitySoundBank private constructor(private val sounds: ArrayListMultimap<SoundType, Pair<Sound, Float>>) {
     companion object {
         fun from(vararg sounds: Pair<SoundType, Pair<Sound, Float>>): EntitySoundBank {
-            val mm = HashMultimap.create<SoundType, Pair<Sound, Float>>()
+            val mm = ArrayListMultimap.create<SoundType, Pair<Sound, Float>>()
             for ((type, pair) in sounds) {
                 mm.put(type, pair)
             }

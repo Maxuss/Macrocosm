@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.item
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
@@ -15,7 +16,8 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.ApplicableRune
+import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.reforge.Reforge
@@ -26,6 +28,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.getId
+import space.maxus.macrocosm.util.multimap
 import java.util.*
 
 class PetItem(
@@ -46,7 +49,7 @@ class PetItem(
     override var reforge: Reforge? = null
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
-    override val runes: HashMap<ApplicableRune, RuneState> = hashMapOf()
+    override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? = null
@@ -119,7 +122,7 @@ class PetItem(
         return false
     }
 
-    override fun addRune(gem: ApplicableRune, tier: Int): Boolean {
+    override fun addRune(index: Int, rune: RuneType, tier: Int): Boolean {
         return false
     }
 

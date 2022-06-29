@@ -17,6 +17,7 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.cosmetic.Dye
@@ -37,22 +38,28 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.rewardsMenu
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.Calendar
 import space.maxus.macrocosm.util.macrocosm
 import kotlin.math.roundToInt
 
-fun allItems() = kSpigotGUI(GUIType.SIX_BY_NINE) {
+fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
     title = text("Item Browser")
     defaultPage = 0
+    val mc = player.macrocosm!!
 
     page(0) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
         val compound = createRectCompound<Identifier>(
             Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = {
-                Registry.ITEM.find(it).build()!!
+                println("BUILDING $it")
+                try {
+                    Registry.ITEM.find(it).build(mc)!!
+                } catch (e: Exception) {
+                    ItemValue.NULL.item.build()!!
+                }
             },
             onClick = { e, it ->
                 if (e.bukkitEvent.click.isLeftClick)
@@ -244,7 +251,7 @@ fun collAmount() = command("coll") {
 fun itemsCommand() = command("items") {
     requires { it.hasPermission(4) }
     runs {
-        player.openGUI(allItems())
+        player.openGUI(allItems(player))
     }
 }
 

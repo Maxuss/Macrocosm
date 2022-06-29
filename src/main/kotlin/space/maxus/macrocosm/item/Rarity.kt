@@ -19,7 +19,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
     VERY_SPECIAL(TextColor.color(0xE45878))
     ;
 
-    fun format(upgraded: Boolean, ty: ItemType) = text("<bold>")
+    fun format(upgraded: Boolean, ty: ItemType, dungeonised: Boolean = false) = text("<bold>")
         .color(color)
         .append(
             if (upgraded)
@@ -29,10 +29,10 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
                             "_",
                             " "
                         )
-                    } ${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>"
+                    }${if(dungeonised) " DUNGEON " else ""}${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>"
                 )
             else
-                "${name.replace("_", " ")}${if (ty == ItemType.OTHER) "" else " $ty"}".toComponent()
+                "${name.replace("_", " ")}${if(dungeonised) " DUNGEON " else " "}${if (ty == ItemType.OTHER) "" else ty.toString()}".toComponent()
         ).noitalic()
 
     fun next() = when (this) {
