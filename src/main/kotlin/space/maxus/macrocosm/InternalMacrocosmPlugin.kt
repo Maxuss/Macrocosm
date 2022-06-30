@@ -39,8 +39,8 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
 import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
-import space.maxus.macrocosm.util.Calendar
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.game.Calendar
+import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.zone.ZoneType
 import kotlin.random.Random
 import java.util.UUID
@@ -53,13 +53,13 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     val id: String = "macrocosm"
     val onlinePlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
-    var devEnv: Boolean = false; private set
+    var isInDevEnvironment: Boolean = false; private set
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
-        devEnv = System.getenv().containsKey("macrocosmDev")
-        integratedServer = MacrocosmServer((if(devEnv) "devMini" else "mini")+Random.nextBytes(1)[0].toString(16))
+        isInDevEnvironment = System.getenv().containsKey("macrocosmDev")
+        integratedServer = MacrocosmServer((if(isInDevEnvironment) "devMini" else "mini")+Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         Threading.runAsyncRaw {
             Database.connect()

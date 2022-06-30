@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.item.buffs
 
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 object Buffs {
     fun init() {

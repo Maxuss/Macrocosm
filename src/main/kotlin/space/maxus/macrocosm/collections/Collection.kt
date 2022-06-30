@@ -1,8 +1,8 @@
 package space.maxus.macrocosm.collections
 
 import space.maxus.macrocosm.reward.Reward
-import space.maxus.macrocosm.util.LevelingTable
-import space.maxus.macrocosm.util.SkillTable
+import space.maxus.macrocosm.util.math.LevelingTable
+import space.maxus.macrocosm.util.math.SkillTable
 
 fun collection(
     name: String,

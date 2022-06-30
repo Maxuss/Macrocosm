@@ -40,7 +40,7 @@ class ReforgeStone(
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = space.maxus.macrocosm.util.id(stoneName.lowercase().replace(" ", "_"))
+    override val id: Identifier = space.maxus.macrocosm.util.generic.id(stoneName.lowercase().replace(" ", "_"))
     override val type: ItemType = ItemType.OTHER
     override var name: Component = text(stoneName)
     override val base: Material = Material.PLAYER_HEAD

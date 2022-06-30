@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util
+package space.maxus.macrocosm.util.generic
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation

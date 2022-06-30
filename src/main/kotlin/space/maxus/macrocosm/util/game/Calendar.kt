@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util
+package space.maxus.macrocosm.util.game
 
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
@@ -83,7 +83,11 @@ object Calendar: Listener {
 
     fun renderDate(): Component {
         val mm = MiniMessage.miniMessage()
-        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(text(" $date${dateSuffix(date)}"))
+        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(text(" $date${
+            dateSuffix(
+                date
+            )
+        }"))
     }
 
     fun tick() {

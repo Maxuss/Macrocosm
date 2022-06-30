@@ -22,7 +22,7 @@ import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 object WaspPet : Pet(
     id("pet_wasp"),

@@ -16,7 +16,8 @@ import org.bukkit.scoreboard.DisplaySlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.Ticker
+import space.maxus.macrocosm.util.generic.Ticker
+import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.ticksToTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -134,7 +135,7 @@ object SidebarRenderer: Listener {
     fun onJoin(e: PlayerJoinEvent) {
         preparePlayer(e.player)
 
-        enqueue(e.player, RenderComponent.dynamic(space.maxus.macrocosm.util.Calendar::renderDate) { listOf(calculateDayTime()) }, RenderPriority.HIGHEST)
+        enqueue(e.player, RenderComponent.dynamic(Calendar::renderDate) { listOf(calculateDayTime()) }, RenderPriority.HIGHEST)
     }
 
     @EventHandler

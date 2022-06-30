@@ -15,7 +15,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.util.LevelingTable
+import space.maxus.macrocosm.util.math.LevelingTable
 import java.util.*
 
 

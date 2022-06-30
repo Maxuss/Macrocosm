@@ -9,7 +9,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 fun shapelessRecipe(id: String, result: MacrocosmItem, amount: Int, vararg ingredients: Pair<Identifier, Int>): MacrocosmRecipe =
     ShapelessRecipe(id(id), ingredients.toList(), result, amount)

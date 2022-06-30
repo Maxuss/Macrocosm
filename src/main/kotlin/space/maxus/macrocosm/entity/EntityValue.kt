@@ -15,7 +15,7 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.defaultStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 import java.util.concurrent.TimeUnit
 
 private fun registerPool(id: String, pool: LootPool): LootPool = Registry.LOOT_POOL.register(id(id), pool)

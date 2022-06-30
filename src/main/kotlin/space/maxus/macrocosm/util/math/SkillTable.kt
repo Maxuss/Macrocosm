@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util
+package space.maxus.macrocosm.util.math
 
 object SkillTable : FixedLevelingTable(
     listOf(

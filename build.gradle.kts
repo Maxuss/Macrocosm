@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.7.0"
     id("xyz.jpenilla.run-paper") version "1.0.6"
     id("io.papermc.paperweight.userdev") version "1.3.7"
 }
@@ -21,6 +21,7 @@ dependencies {
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
+    implementation(kotlin("reflect"))
 }
 
 tasks {

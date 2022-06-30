@@ -27,7 +27,7 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.util.getId
+import space.maxus.macrocosm.util.generic.getId
 import space.maxus.macrocosm.util.multimap
 import java.util.*
 

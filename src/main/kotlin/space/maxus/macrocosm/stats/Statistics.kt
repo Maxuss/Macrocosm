@@ -12,7 +12,7 @@ import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.PreviewFeature
+import space.maxus.macrocosm.util.annotations.PreviewFeature
 import java.sql.ResultSet
 import java.util.*
 import kotlin.math.ceil

@@ -23,7 +23,7 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.util.MathHelper
+import space.maxus.macrocosm.util.math.MathHelper
 import space.maxus.macrocosm.util.createFloatingBlock
 
 

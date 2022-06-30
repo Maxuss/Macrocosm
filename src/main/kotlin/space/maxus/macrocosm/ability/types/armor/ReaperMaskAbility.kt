@@ -22,7 +22,7 @@ import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
 import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
 object ReaperMaskAbility: AbilityBase(AbilityType.PASSIVE, "Reaper Blood", "Summons a <red>Revenant Zombie<gray> to assist you.") {

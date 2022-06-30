@@ -2,7 +2,7 @@ package space.maxus.macrocosm.fishing
 
 import space.maxus.macrocosm.fishing.predicates.FishPredicates
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 enum class SeaCreatures(val creature: SeaCreature) {
     SQUID(

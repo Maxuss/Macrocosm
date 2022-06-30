@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util
+package space.maxus.macrocosm.util.math
 
 import net.minecraft.util.Mth
 import org.bukkit.Location

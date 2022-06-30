@@ -22,7 +22,7 @@ import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
 import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
 object EntombedMaskAbility: AbilityBase(AbilityType.PASSIVE, "Forever in Tomb", "Summons <gold>3 Revenant Spirits<gray> to assist you.") {

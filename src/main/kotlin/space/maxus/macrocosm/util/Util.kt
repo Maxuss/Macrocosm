@@ -193,3 +193,12 @@ fun Random.nextSignedDouble(): Double {
 }
 
 inline fun <reified K, reified V> multimap(): Multimap<K, V> = ArrayListMultimap.create()
+
+inline fun <reified T> anyNull(vararg nullables: T?): Boolean = nullables.any { it == null }
+inline fun <reified T> allNull(vararg nullables: T?): Boolean = nullables.all { it == null }
+
+fun String.containsAny(vararg possibles: String): Boolean = possibles.any { contains(it) }
+
+fun Player.giveOrDrop(item: ItemStack) {
+    if(inventory.firstEmpty() == -1) world.dropItem(location, item) else inventory.addItem(item)
+}

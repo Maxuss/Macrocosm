@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
-import space.maxus.macrocosm.util.getId
+import space.maxus.macrocosm.util.generic.getId
 
 val LivingEntity.macrocosm: MacrocosmEntity? get() = Entities.toMacrocosm(this)
 

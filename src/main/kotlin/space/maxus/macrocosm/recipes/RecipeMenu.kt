@@ -1,24 +1,26 @@
 package space.maxus.macrocosm.recipes
 
 import net.axay.kspigot.extensions.bukkit.toLegacyString
-import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.extensions.server
-import net.axay.kspigot.sound.sound
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.item.VanillaItem
-import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
-import space.maxus.macrocosm.recipes.ctx.CraftingTableContext
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.annotations.DevOnly
+import space.maxus.macrocosm.util.anyNull
+import space.maxus.macrocosm.util.containsAny
+import space.maxus.macrocosm.util.generic.Debug
+import space.maxus.macrocosm.util.generic.collect
+import space.maxus.macrocosm.util.giveOrDrop
 
 @Suppress("SENSELESS_COMPARISON")
 object RecipeMenu : Listener {
@@ -40,17 +42,96 @@ object RecipeMenu : Listener {
     }
 
     @EventHandler
-    fun clickHandler(e: InventoryClickEvent) {
+    fun onInventoryDrag(e: InventoryDragEvent) {
+        if (!e.view.title().toLegacyString().contains("Crafting Table") || e.inventory == null)
+            return
+        var cancel = false
+        for(slot in e.newItems.keys) {
+            if(outputIndex == slot)
+                cancel = true
+        }
+        e.isCancelled = cancel
+
+        rebuildInventory(e.inventory, e.whoClicked as? Player ?: return)
+    }
+
+    @EventHandler
+    fun onInventoryClick(e: InventoryClickEvent) {
+        if (!e.view.title().toLegacyString().contains("Crafting Table") || anyNull(e.inventory, e.clickedInventory) || e.view.topInventory != e.clickedInventory)
+            return
+
+        @OptIn(DevOnly::class)
+        Debug.dumpObjectData(e)
+
+        val inv = e.clickedInventory!!
+        val player = e.whoClicked as? Player ?: return
+
+        if(e.view.topInventory != inv)
+            return
+
+        val clickedIndex = e.slot
+        if(clickedIndex == -1)
+            return
+
+        val modifiedOutput = clickedIndex == outputIndex
+
+        val pickedOutput = modifiedOutput && e.action.name.containsAny("PICKUP", "MOVE")
+
+        if(pickedOutput) {
+            // collecting items used in recipe
+            buildItem(e)
+
+            // player picked up result item, rebuild inventory
+            rebuildInventory(inv, player, false)
+            return
+        } else if(modifiedOutput) {
+            // player tried to put item in result slot, we do not allow it
+            e.isCancelled = true
+            rebuildInventory(inv, player)
+            return
+        }
+
+        if(!gridIndices.contains(clickedIndex))
+            e.isCancelled = true
+
+        rebuildInventory(inv, player)
+    }
+
+    @EventHandler
+    fun onInventoryClose(e: InventoryCloseEvent) {
         if (!e.view.title().toLegacyString().contains("Crafting Table"))
             return
-        if (e.currentItem != null && e.currentItem!!.itemMeta.persistentDataContainer.has(pluginKey("placeholder"))) {
-            e.isCancelled = true
+
+        val p = e.player as? Player ?: return
+
+        val listed = e.inventory.toList()
+        val grid = collect(listed.subList(10, 12), listed.subList(19, 21), listed.subList(28, 30), listOf(listed[outputIndex] ?: ItemStack(Material.AIR)))
+
+        for(item in grid) {
+            if(item != null && !item.type.isAir)
+                p.giveOrDrop(item)
         }
-        val new = e.currentItem
-        val newIndex = e.view.topInventory.indexOf(new)
-        if (newIndex == buildBtnIndex) {
-            buildItem(e)
+    }
+
+    private fun rebuildInventory(inv: Inventory, viewer: Player, removeResult: Boolean = true) {
+        val mc = viewer.macrocosm ?: return
+        val grid = MutableList(9) { ItemStack(Material.AIR) }
+        val invList = inv.toList()
+        grid.addAll(invList.subList(10, 12))
+        grid.addAll(invList.subList(19, 21))
+        grid.addAll(invList.subList(28, 30))
+        val matching = RecipeHandler.matchingRecipes(inv, mc)
+        val recipe = matching.firstOrNull()
+        if (recipe == null || grid.all { it == null || it.type.isAir }) {
+            // remove item we tried to craft previously from output slot
+            if(removeResult)
+                inv.setItem(outputIndex, null)
+            return
         }
+
+        val (actualRecipe, _) = recipe
+        val result = actualRecipe.resultItem()
+        inv.setItem(outputIndex, result)
     }
 
     private fun buildItem(e: InventoryClickEvent) {
@@ -61,54 +142,12 @@ object RecipeMenu : Listener {
         grid.addAll(invList.subList(19, 21))
         grid.addAll(invList.subList(28, 30))
 
-        @Suppress("SENSELESS_COMPARISON")
-        val ctx =
-            CraftingTableContext(grid.map { if (it == null || it.type.isAir) VanillaItem(Material.AIR) else it.macrocosm!! })
-
         val matching = RecipeHandler.matchingRecipes(e.view.topInventory, macrocosm)
         val recipe = matching.firstOrNull()
         if (recipe == null || grid.all { it == null || it.type.isAir }) {
-            macrocosm.sendMessage("<red>Could not find suitable recipe!")
-            sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
-                pitch = 0f
-                playFor(macrocosm.paper!!)
-            }
             return
         }
-        val resultItem = recipe.first.resultItem()
         val indices = recipe.second
-        val resultSlot = e.view.topInventory.getItem(outputIndex)
-
-        if (resultSlot != null && !resultSlot.type.isAir) {
-            val id = resultSlot.macrocosm!!.id
-            if (id != resultItem.macrocosm!!.id) {
-                sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
-                    pitch = 0f
-                    playFor(macrocosm.paper!!)
-                }
-                return
-            } else {
-                if (resultSlot.amount + resultItem.amount <= resultItem.maxStackSize) {
-                    sound(Sound.BLOCK_ANVIL_USE) {
-                        playFor(macrocosm.paper!!)
-                    }
-                    resultSlot.amount += resultItem.amount
-                    e.view.topInventory.setItem(outputIndex, resultSlot)
-                } else {
-                    sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
-                        pitch = 0f
-                        playFor(macrocosm.paper!!)
-                    }
-                    return
-                }
-            }
-        } else {
-            val result = recipe.first.assemble(ctx, macrocosm)
-            sound(Sound.BLOCK_ANVIL_USE) {
-                playFor(macrocosm.paper!!)
-            }
-            e.view.topInventory.setItem(outputIndex, result)
-        }
 
         var expAmount = .0
 

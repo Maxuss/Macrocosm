@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util
+package space.maxus.macrocosm.util.generic
 
 class Ticker(val range: IntRange) {
     private var cursor = range.first

@@ -1,5 +1,6 @@
-package space.maxus.macrocosm.util
+package space.maxus.macrocosm.util.game
 
+import space.maxus.macrocosm.util.math.Chance
 import kotlin.random.Random
 
 object Pools {

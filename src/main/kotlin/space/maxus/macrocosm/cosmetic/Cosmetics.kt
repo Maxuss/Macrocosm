@@ -5,7 +5,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.cosmetic.DyeItem
 import space.maxus.macrocosm.item.cosmetic.SkullSkinItem
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 enum class Cosmetics(val inner: Cosmetic) {
     PURE_BLACK_DYE(Dye("<dark_gray>Pure Black", 0, Rarity.EPIC, Material.BLACK_DYE)),

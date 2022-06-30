@@ -11,7 +11,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 import kotlin.math.roundToInt
 import kotlin.random.Random
 

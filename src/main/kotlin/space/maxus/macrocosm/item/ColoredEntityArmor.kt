@@ -32,7 +32,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
     override var specialStats: SpecialStatistics get() = SpecialStatistics(); set(_) {}
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = space.maxus.macrocosm.util.id("colored_${base.name.lowercase()}")
+    override val id: Identifier = space.maxus.macrocosm.util.generic.id("colored_${base.name.lowercase()}")
     override val type: ItemType = ItemType.OTHER
     override var name: Component = text("")
     override var rarity: Rarity = Rarity.SPECIAL
@@ -91,7 +91,7 @@ class SkullEntityHead(private var eskin: String) : MacrocosmItem {
     override var specialStats: SpecialStatistics get() = SpecialStatistics(); set(_) {}
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = space.maxus.macrocosm.util.id("skull_entity_head")
+    override val id: Identifier = space.maxus.macrocosm.util.generic.id("skull_entity_head")
     override val type: ItemType = ItemType.OTHER
     override var name: Component = text("null")
     override val base: Material = Material.PLAYER_HEAD

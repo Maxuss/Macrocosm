@@ -39,7 +39,7 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = space.maxus.macrocosm.util.id(
+    override val id: Identifier = space.maxus.macrocosm.util.generic.id(
         "${MiniMessage.miniMessage().stripTags(sskin.name).lowercase().replace(" ", "_")}_skin"
     )
     override val type: ItemType = ItemType.OTHER

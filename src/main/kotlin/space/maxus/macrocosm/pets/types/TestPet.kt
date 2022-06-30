@@ -8,9 +8,10 @@ import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
-object TestPet : Pet(id("pickle_pet"),
+object TestPet : Pet(
+    id("pickle_pet"),
     "Pickle Jar",
     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIyMjkyZDkxODNlMzhmM2JlOWYwNmY5NjYzOTRlMmRhZmYzNjJmNzBhZTQ1Y2RlNDEyYjg3YmNkYjg5YzE1OCJ9fX0=",
     SkillType.RUNECRAFTING,

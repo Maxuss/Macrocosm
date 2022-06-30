@@ -24,7 +24,7 @@ import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.util.GSON_PRETTY
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.zone.Zone
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap

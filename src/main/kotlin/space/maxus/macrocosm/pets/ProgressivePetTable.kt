@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.pets
 
 import net.minecraft.Util
-import space.maxus.macrocosm.util.LevelingTable
+import space.maxus.macrocosm.util.math.LevelingTable
 import kotlin.math.ln
 import kotlin.math.max
 import kotlin.math.min

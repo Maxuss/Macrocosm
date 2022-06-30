@@ -28,7 +28,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 object InfernalGreatswordThrowAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Throw", "Throw your sword, piercing <gold>infinitely<gray> until it hits a wall or does <red>3x your melee ${Statistic.DAMAGE.display}<gray>.") {
     override val cost: AbilityCost = AbilityCost(150, cooldown = 1)

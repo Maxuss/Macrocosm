@@ -31,8 +31,8 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.getId
-import space.maxus.macrocosm.util.putId
+import space.maxus.macrocosm.util.generic.getId
+import space.maxus.macrocosm.util.generic.putId
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.roundToInt

@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.slayer
 
-import space.maxus.macrocosm.util.FixedLevelingTable
+import space.maxus.macrocosm.util.math.FixedLevelingTable
 
 object SlayerTable: FixedLevelingTable(listOf(
     10.0,

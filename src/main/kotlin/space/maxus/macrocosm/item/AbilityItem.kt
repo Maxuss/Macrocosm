@@ -18,7 +18,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.PreviewFeature
+import space.maxus.macrocosm.util.annotations.PreviewFeature
 import space.maxus.macrocosm.util.multimap
 
 open class AbilityItem(

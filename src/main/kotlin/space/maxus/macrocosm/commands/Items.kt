@@ -21,8 +21,8 @@ import space.maxus.macrocosm.item.types.WitherScrollAbility
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.id
-import space.maxus.macrocosm.util.macrocosm
+import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.generic.macrocosm
 
 fun recombobulateCommand() = command("recombobulate") {
     requires { it.hasPermission(4) }

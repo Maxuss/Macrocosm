@@ -50,7 +50,7 @@ class RuneItem(
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = space.maxus.macrocosm.util.id(
+    override val id: Identifier = space.maxus.macrocosm.util.generic.id(
         "${runeType.id.path}_rune_${rarity.name.lowercase()}"
     )
     override val type: ItemType = ItemType.OTHER

@@ -11,8 +11,8 @@ import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.Chance
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.math.Chance
+import space.maxus.macrocosm.util.generic.id
 
 abstract class Drop(val rarity: DropRarity, override val chance: Double, val item: Identifier, var amount: IntRange) :
     Chance {

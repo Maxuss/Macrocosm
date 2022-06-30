@@ -14,8 +14,8 @@ import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.util.Chance
-import space.maxus.macrocosm.util.Pools
+import space.maxus.macrocosm.util.math.Chance
+import space.maxus.macrocosm.util.game.Pools
 import space.maxus.macrocosm.util.summon
 import kotlin.random.Random
 

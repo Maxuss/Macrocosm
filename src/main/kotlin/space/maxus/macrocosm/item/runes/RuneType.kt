@@ -14,7 +14,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 
 interface RuneSlot {
     val id: Identifier

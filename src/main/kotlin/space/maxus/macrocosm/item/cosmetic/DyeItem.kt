@@ -34,7 +34,7 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
     override var stars: Int = 0
-    override val id: Identifier = space.maxus.macrocosm.util.id(
+    override val id: Identifier = space.maxus.macrocosm.util.generic.id(
         "${MiniMessage.miniMessage().stripTags(ddye.name).lowercase().replace(" ", "_")}_dye"
     )
     override val type: ItemType = ItemType.OTHER

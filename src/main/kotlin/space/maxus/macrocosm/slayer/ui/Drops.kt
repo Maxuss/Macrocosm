@@ -16,7 +16,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.colorFromTier
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.id
+import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.pad
 import space.maxus.macrocosm.util.stripTags
 
