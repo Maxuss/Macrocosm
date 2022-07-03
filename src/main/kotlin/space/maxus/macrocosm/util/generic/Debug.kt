@@ -1,14 +1,15 @@
 package space.maxus.macrocosm.util.generic
 
+import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.util.annotations.DevOnly
-import space.maxus.macrocosm.util.annotations.ProdCatcher
+import space.maxus.macrocosm.util.annotations.DevelopmentOnly
+import java.util.logging.Level
 
-@DevOnly
+@DevelopmentOnly
 object Debug {
-    @DevOnly
     fun dumpObjectData(obj: Any) {
-        ProdCatcher.catchProd(this::class)
+        if(!Macrocosm.isInDevEnvironment)
+            return
 
         val clazz = obj::class
         val dump = StringBuffer()
@@ -18,7 +19,7 @@ object Debug {
         for(member in clazz.java.declaredMethods) {
             try {
                 member.isAccessible = true
-                dump.append("${member.name}(${member.parameters}): ${member.returnType.canonicalName} = ${if(member.parameters.isNotEmpty()) "<unknown>" else member.invoke(obj)}\n")
+                dump.append("${member.name}(${member.parameters.map { "${it.name}: ${it.type.canonicalName}" }.joinToString()}): ${member.returnType.canonicalName} = ${if(member.parameters.isNotEmpty()) "<unknown>" else member.invoke(obj)}\n")
             } catch (e: Exception) {
                 dump.append("!!! $member - UNRESOLVED\n")
             }
@@ -35,5 +36,26 @@ object Debug {
         }
 
         Macrocosm.logger.info(dump.toString())
+    }
+
+    fun log(message: String) {
+        if(!Macrocosm.isInDevEnvironment)
+            return
+
+        Macrocosm.logger.log(Level.INFO, message)
+    }
+
+    fun log(comp: Component) {
+        if(!Macrocosm.isInDevEnvironment)
+            return
+
+        Macrocosm.componentLogger.debug(comp)
+    }
+
+    fun log(any: Any?) {
+        if(!Macrocosm.isInDevEnvironment)
+            return
+
+        Macrocosm.logger.log(Level.INFO, any.toString())
     }
 }

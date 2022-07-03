@@ -1,7 +1,9 @@
 package space.maxus.macrocosm.recipes
 
 import net.axay.kspigot.extensions.bukkit.toLegacyString
+import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.extensions.server
+import net.axay.kspigot.runnables.task
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -15,27 +17,32 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.annotations.DevOnly
+import space.maxus.macrocosm.util.annotations.DevelopmentOnly
 import space.maxus.macrocosm.util.anyNull
 import space.maxus.macrocosm.util.containsAny
-import space.maxus.macrocosm.util.generic.Debug
 import space.maxus.macrocosm.util.generic.collect
 import space.maxus.macrocosm.util.giveOrDrop
 
+@OptIn(DevelopmentOnly::class)
 @Suppress("SENSELESS_COMPARISON")
 object RecipeMenu : Listener {
+    private val result = ItemValue.placeholderDescripted(Material.BARRIER, "<red><!italic>Recipe Required")
+    private val red = ItemValue.placeholder(Material.RED_STAINED_GLASS_PANE, "")
+    private val green = ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")
+
     fun craftingTable(player: Player): Inventory {
-        val inv = server.createInventory(player, 45, text("Crafting Table"))
-        val arrow = ItemValue.placeholder(Material.ARROW, "<yellow><!italic>Craft!", "build")
+        val inv = server.createInventory(player, 54, text("Crafting Table"))
         val air = ItemStack(Material.AIR)
         val glass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
+        val back = ItemValue.placeholderDescripted(Material.ARROW, "<yellow><!italic>Back", "Return to Macrocosm menu")
 
         val contents = arrayOf(
             glass, glass, glass, glass, glass, glass, glass, glass, glass,
             glass, air, air, air, glass, glass, glass, glass, glass,
-            glass, air, air, air, glass, arrow, glass, air, glass,
+            glass, air, air, air, glass, result, glass, glass, glass,
             glass, air, air, air, glass, glass, glass, glass, glass,
-            glass, glass, glass, glass, glass, glass, glass, glass, glass
+            glass, glass, glass, glass, glass, glass, glass, glass, glass,
+            red, red, red, red, back, red, red, red, red
         )
         inv.contents = contents
         return inv
@@ -52,49 +59,67 @@ object RecipeMenu : Listener {
         }
         e.isCancelled = cancel
 
-        rebuildInventory(e.inventory, e.whoClicked as? Player ?: return)
+        val inv = e.inventory
+        rebuildInventory(e.inventory, e.whoClicked as? Player ?: return, collect(
+            inv.getItems(10..12),
+            inv.getItems(19..21),
+            inv.getItems(28..30)))
     }
 
     @EventHandler
     fun onInventoryClick(e: InventoryClickEvent) {
-        if (!e.view.title().toLegacyString().contains("Crafting Table") || anyNull(e.inventory, e.clickedInventory) || e.view.topInventory != e.clickedInventory)
+        if (!e.view.title().toLegacyString().contains("Crafting Table") || anyNull(e.inventory, e.clickedInventory))
             return
-
-        @OptIn(DevOnly::class)
-        Debug.dumpObjectData(e)
 
         val inv = e.clickedInventory!!
+
         val player = e.whoClicked as? Player ?: return
 
-        if(e.view.topInventory != inv)
+        val grid: MutableList<ItemStack?> = collect(
+            inv.getItems(10..12),
+            inv.getItems(19..21),
+            inv.getItems(28..30))
+
+        if(e.view.topInventory != inv) {
+            task {
+                rebuildInventory(inv, player, grid)
+            }
             return
+        }
 
         val clickedIndex = e.slot
-        if(clickedIndex == -1)
-            return
+
+//        Debug.log(inv.getItem(clickedIndex).toString())
+//        Debug.log(e.view.topInventory.getItem(clickedIndex).toString())
 
         val modifiedOutput = clickedIndex == outputIndex
 
         val pickedOutput = modifiedOutput && e.action.name.containsAny("PICKUP", "MOVE")
 
-        if(pickedOutput) {
+        if(!gridIndices.contains(clickedIndex) && !modifiedOutput) {
+            e.isCancelled = true
+            return
+        }
+
+
+        if(gridIndices.contains(clickedIndex))
+            grid[clickedToGrid(clickedIndex)] = e.cursor
+
+        if(pickedOutput && inv.getItem(outputIndex)?.itemMeta?.persistentDataContainer?.has(pluginKey("placeholder")) != true) {
             // collecting items used in recipe
-            buildItem(e)
+            collectIngredients(e)
 
             // player picked up result item, rebuild inventory
-            rebuildInventory(inv, player, false)
+            rebuildInventory(inv, player, grid, false)
             return
         } else if(modifiedOutput) {
             // player tried to put item in result slot, we do not allow it
             e.isCancelled = true
-            rebuildInventory(inv, player)
+            rebuildInventory(inv, player, grid)
             return
         }
 
-        if(!gridIndices.contains(clickedIndex))
-            e.isCancelled = true
-
-        rebuildInventory(inv, player)
+        rebuildInventory(inv, player, grid, true)
     }
 
     @EventHandler
@@ -104,8 +129,11 @@ object RecipeMenu : Listener {
 
         val p = e.player as? Player ?: return
 
-        val listed = e.inventory.toList()
-        val grid = collect(listed.subList(10, 12), listed.subList(19, 21), listed.subList(28, 30), listOf(listed[outputIndex] ?: ItemStack(Material.AIR)))
+        val inv = e.inventory
+        val grid: MutableList<ItemStack?> = collect(
+            inv.getItems(10..12),
+            inv.getItems(19..21),
+            inv.getItems(28..30))
 
         for(item in grid) {
             if(item != null && !item.type.isAir)
@@ -113,36 +141,37 @@ object RecipeMenu : Listener {
         }
     }
 
-    private fun rebuildInventory(inv: Inventory, viewer: Player, removeResult: Boolean = true) {
+    private fun rebuildInventory(inv: Inventory, viewer: Player, grid: List<ItemStack?>, removeResult: Boolean = true) {
         val mc = viewer.macrocosm ?: return
-        val grid = MutableList(9) { ItemStack(Material.AIR) }
-        val invList = inv.toList()
-        grid.addAll(invList.subList(10, 12))
-        grid.addAll(invList.subList(19, 21))
-        grid.addAll(invList.subList(28, 30))
-        val matching = RecipeHandler.matchingRecipes(inv, mc)
+        val matching = RecipeHandler.matchingRecipes(inv, grid, mc)
         val recipe = matching.firstOrNull()
         if (recipe == null || grid.all { it == null || it.type.isAir }) {
             // remove item we tried to craft previously from output slot
             if(removeResult)
-                inv.setItem(outputIndex, null)
+                inv.setItem(outputIndex, result)
+
+            // make an overlay that we can not craft anything
+            inv.setItems(45..48, red)
+            inv.setItems(50..53, red)
             return
         }
 
         val (actualRecipe, _) = recipe
         val result = actualRecipe.resultItem()
+        inv.setItems(45..48, green)
+        inv.setItems(50..53, green)
         inv.setItem(outputIndex, result)
     }
 
-    private fun buildItem(e: InventoryClickEvent) {
+    private fun collectIngredients(e: InventoryClickEvent) {
         val macrocosm = (e.whoClicked as Player).macrocosm ?: return
-        val grid = MutableList(9) { ItemStack(Material.AIR) }
-        val invList = e.view.topInventory.toList()
-        grid.addAll(invList.subList(10, 12))
-        grid.addAll(invList.subList(19, 21))
-        grid.addAll(invList.subList(28, 30))
+        val inv = e.inventory
+        val grid: MutableList<ItemStack?> = collect(
+            inv.getItems(10..12),
+            inv.getItems(19..21),
+            inv.getItems(28..30))
 
-        val matching = RecipeHandler.matchingRecipes(e.view.topInventory, macrocosm)
+        val matching = RecipeHandler.matchingRecipes(e.view.topInventory, grid, macrocosm)
         val recipe = matching.firstOrNull()
         if (recipe == null || grid.all { it == null || it.type.isAir }) {
             return
@@ -166,11 +195,21 @@ object RecipeMenu : Listener {
         player.macrocosm?.addSkillExperience(SkillType.CARPENTRY, expAmount)
     }
 
+    private fun Inventory.getItems(at: IntRange) = at.map { getItem(it) }
+    private fun Inventory.setItems(at: IntRange, item: ItemStack) = at.forEach {
+        setItem(it, item)
+    }
+    private fun clickedToGrid(index: Int): Int = when(index) {
+        10, 11, 12 -> index - 10
+        19, 20, 21 -> index - 16
+        28, 29, 30 -> index - 22
+        else -> -1
+    }
+
     private val gridIndices = listOf(
         10, 11, 12,
         19, 20, 21,
         28, 29, 30
     )
-    private const val outputIndex = 25
-    private const val buildBtnIndex = 23
+    private const val outputIndex = 23
 }

@@ -22,10 +22,7 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = {
                 if (player.isRecipeLocked(it))
-                    ItemValue.placeholderHead(
-                        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTAzNWM1MjgwMzZiMzg0YzUzYzljOGExYTEyNTY4NWUxNmJmYjM2OWMxOTdjYzlmMDNkZmEzYjgzNWIxYWE1NSJ9fX0=",
-                        "<red><!italic>Locked Recipe",
-                        "<gray><!italic>This recipe is locked!"
+                    ItemValue.placeholderDescripted(Material.GRAY_DYE, "<red>???", "" // TODO: 03.07.2022 Recipe obtaining types
                     )
                 else
                     Registry.RECIPE.findOrNull(it)?.resultItem() ?: ItemStack(Material.AIR)
@@ -33,7 +30,7 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             onClick = { e, it ->
                 e.bukkitEvent.isCancelled = true
                 if(player.isRecipeLocked(it)) {
-                    player.sendMessage("<red>This recipe is locked!")
+                    player.sendMessage("<red>You haven't unlocked that recipe!")
                     sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                         pitch = 0f
                         playFor(e.player)
@@ -113,8 +110,8 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
     }
 }
 
-fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> =
-    kSpigotGUI(GUIType.FIVE_BY_NINE) {
+fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
+    kSpigotGUI(GUIType.SIX_BY_NINE) {
         title = text("<dark_gray>${Registry.ITEM.find(item).name.str()}<dark_gray> Recipe")
         page(1) {
             // # # # # # # # # #
@@ -122,15 +119,16 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiv
             // #      # # #   #
             // #      # # # # #
             // # # # # # # # # #
+            // # # # # # # # # #
 
             placeholder(
-                Slots.RowOneSlotOne rectTo Slots.RowFiveSlotNine,
+                Slots.RowOneSlotOne rectTo Slots.RowSixSlotNine,
                 ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
             )
-            placeholder(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotFour, ItemStack(Material.AIR))
+            placeholder(Slots.RowThreeSlotTwo rectTo Slots.RowFiveSlotFour, ItemStack(Material.AIR))
             // crafting grid
             val compound = createRectCompound(
-                Slots.RowTwoSlotTwo, Slots.RowFourSlotFour,
+                Slots.RowThreeSlotTwo, Slots.RowFiveSlotFour,
                 iconGenerator = {
                     it
                 },
@@ -143,7 +141,10 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiv
                         player.paper?.openGUI(recipeViewer(id, player))
                 }
             }
-            val recipe = Registry.RECIPE.findOrNull(item) ?: return@page
+            val recipe = Registry.RECIPE.findOrNull(item) ?: kotlin.run {
+                player.paper!!.closeInventory()
+                return@page
+            }
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
@@ -161,8 +162,10 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventoryFiv
             compound.addContent(items)
 
             // result
-            placeholder(Slots.RowThreeSlotEight, recipe.resultItem())
+            placeholder(Slots.RowFourSlotEight, recipe.resultItem())
+            placeholder(Slots.RowFourSlotSix, ItemValue.placeholderDescripted(Material.CRAFTING_TABLE, "<green>Crafting Table", "Craft this recipe by using crafting table"))
 
+            // TODO: 03.07.2022 Proper recipe book
             button(
                 Slots.RowFiveSlotOne, ItemValue.placeholderHead(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzFkMDlhYTA3MTNjYzlhM2YzYzY4MDkyM2IxZjdiMjE2N2Y2NzMyMmZiN2U1ZjczMDE4ODEyZmVmNWZlMWEzYSJ9fX0=",

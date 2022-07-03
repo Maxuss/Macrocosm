@@ -11,6 +11,7 @@ interface MacrocosmRecipe {
     fun matches(
         player: MacrocosmPlayer,
         inv: Inventory,
+        grid: List<ItemStack?>,
         modify: Boolean
     ): Pair<Boolean, HashMap<Int, Pair<ItemStack, Int>>>
 

@@ -21,7 +21,6 @@ dependencies {
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
-    implementation(kotlin("reflect"))
 }
 
 tasks {

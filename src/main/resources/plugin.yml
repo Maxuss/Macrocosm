@@ -4,5 +4,4 @@ version: 0.1-SNAPSHOT
 api-version: 1.19
 libraries:
     - "net.axay:kspigot:1.19.0"
-    - "org.jetbrains.kotlin:kotlin-reflect:1.7.0"
 depend: [ ProtocolLib, LibsDisguises ]

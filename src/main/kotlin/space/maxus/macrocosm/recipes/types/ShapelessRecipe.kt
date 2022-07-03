@@ -24,27 +24,30 @@ class ShapelessRecipe(
     override fun matches(
         player: MacrocosmPlayer,
         inv: Inventory,
+        grid: List<ItemStack?>,
         modify: Boolean
     ): Pair<Boolean, HashMap<Int, Pair<ItemStack, Int>>> {
         val cache = hashMapOf<Int, Pair<ItemStack, Int>>()
-        for (x in 0..2) {
-            for (y in 0..2) {
-                val index = gridIndices[x][y]
-                val item = inv.getItem(index) ?: continue
-                if (item.type.isAir)
-                    continue
-                val id = item.macrocosm!!.id
-                val amount = item.amount
-                for ((expectedId, expectedAmount) in ingredients) {
-                    if (expectedId == id && amount >= expectedAmount) {
-                        cache[index] = Pair(item, expectedAmount)
-                    } else {
-                        return Pair(false, hashMapOf())
-                    }
+
+        val ingredientsCopy = ingredients.toMutableList()
+        grid.forEachIndexed { i, item ->
+            if(item == null || item.type.isAir)
+                return@forEachIndexed
+
+            val mc = item.macrocosm ?: return@forEachIndexed
+            val id = mc.id
+            val amount = item.amount
+            ingredientsCopy.toTypedArray().forEach { pair ->
+                val (expectedId, expectedAmount) = pair
+                if (expectedId == id && amount >= expectedAmount) {
+                    ingredientsCopy.remove(pair)
+                    cache[cachedIndexToInventory(i)] = Pair(item, expectedAmount)
+                    return@forEachIndexed
                 }
             }
         }
-        if (cache.size != ingredients.size)
+
+        if(ingredientsCopy.isNotEmpty())
             return Pair(false, hashMapOf())
 
         if (modify) {
@@ -81,9 +84,16 @@ class ShapelessRecipe(
 
     companion object {
         private val gridIndices = listOf(
-            listOf(10, 11, 12),
-            listOf(19, 20, 21),
-            listOf(28, 29, 30)
+            listOf(0, 1, 2),
+            listOf(3, 4, 5),
+            listOf(5, 6, 7)
         )
+    }
+
+    private fun cachedIndexToInventory(index: Int): Int = when(index) {
+        0, 1, 2 -> index + 10
+        3, 4, 5 -> index + 16
+        6, 7, 8 -> index + 22
+        else -> -1
     }
 }

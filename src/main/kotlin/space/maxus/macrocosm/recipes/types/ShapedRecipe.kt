@@ -48,6 +48,7 @@ class ShapedRecipe(
     override fun matches(
         player: MacrocosmPlayer,
         inv: Inventory,
+        grid: List<ItemStack?>,
         modify: Boolean
     ): Pair<Boolean, HashMap<Int, Pair<ItemStack, Int>>> {
         // { item index, (item to be modified, amount to remove) }
@@ -64,18 +65,18 @@ class ShapedRecipe(
                 // [ 0 0 0 ]
                 val (expectedId, expectedAmount) = ingredients[x][y]
                 val itemIndex = gridIndices[x][y]
-                val item = inv.getItem(itemIndex) ?: if (expectedId == Identifier.NULL) continue else return Pair(
+                val item = grid[itemIndex] ?: if (expectedId == Identifier.NULL) continue else return Pair(
                     false,
                     hashMapOf()
                 )
                 if (item.type.isAir && expectedId == Identifier.NULL) continue
                 val mcItem =
-                    item.macrocosm!! // asserting that the item is not null, because we checked that it is not air before
+                    item.macrocosm ?: if(expectedId == Identifier.NULL) continue else return Pair(false, hashMapOf()) // asserting that the item is not null, because we checked that it is not air before
                 val (itemId, itemAmount) = Pair(mcItem.id, item.amount)
 
                 if (expectedId == Identifier.NULL) {
                     // if we defined an empty space, ensure that the item on this position is null
-                    // (actually we have checked it already, but doing that just in case)
+                    // (actually we have checked it already, but doing it again just in case)
                     if (itemId != Identifier("minecraft", "air"))
                         return Pair(false, hashMapOf())
                     continue
@@ -84,7 +85,7 @@ class ShapedRecipe(
                 // ensure that item's id is the one we specified, and it has the amount we need
                 if (itemId == expectedId && itemAmount >= expectedAmount) {
                     // checks passed, we can cache the amount of items now
-                    cachedIndices[itemIndex] = Pair(item, expectedAmount)
+                    cachedIndices[cachedIndexToInventory(itemIndex)] = Pair(item, expectedAmount)
                     continue
                 }
                 return Pair(false, hashMapOf())
@@ -107,9 +108,9 @@ class ShapedRecipe(
 
     companion object {
         private val gridIndices = listOf(
-            listOf(10, 11, 12),
-            listOf(19, 20, 21),
-            listOf(28, 29, 30)
+            listOf(0, 1, 2),
+            listOf(3, 4, 5),
+            listOf(6, 7, 8)
         )
     }
 
@@ -134,5 +135,12 @@ class ShapedRecipe(
 
     override fun ingredients(): List<List<Pair<Identifier, Int>>> {
         return ingredients
+    }
+
+    private fun cachedIndexToInventory(index: Int): Int = when(index) {
+        0, 1, 2 -> index + 10
+        3, 4, 5 -> index + 16
+        6, 7, 8 -> index + 22
+        else -> -1
     }
 }

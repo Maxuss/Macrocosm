@@ -9,11 +9,12 @@ import java.util.concurrent.ConcurrentLinkedQueue
 object RecipeHandler {
     fun matchingRecipes(
         ctx: Inventory,
+        grid: List<ItemStack?>,
         player: MacrocosmPlayer
     ): List<Pair<MacrocosmRecipe, HashMap<Int, Pair<ItemStack, Int>>>> {
         val matching = ConcurrentLinkedQueue<Pair<MacrocosmRecipe, HashMap<Int, Pair<ItemStack, Int>>>>()
         for ((_, recipe) in Registry.RECIPE.iter().toList().parallelStream()) {
-            val (matches, indices) = recipe.matches(player, ctx, false)
+            val (matches, indices) = recipe.matches(player, ctx, grid, false)
             if (matches) {
                 matching.add(Pair(recipe, indices))
             }
