@@ -51,6 +51,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var PACKET_MANAGER: ProtocolManager; private set
     }
 
+    val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
     val id: String = "macrocosm"
     val onlinePlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
     var isInDevEnvironment: Boolean = false; private set
@@ -141,6 +142,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         setDateCommand()
         getSlayerRewardsCommand()
 
+        giveRecipeCommand()
         testStatsCommand()
         testLevelUp()
         testCollUp()

@@ -11,6 +11,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.armor.EntombedMaskAbility
 import space.maxus.macrocosm.ability.types.armor.ReaperMaskAbility
@@ -32,7 +33,6 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.generic.id
-import java.util.*
 
 enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, private val animation: Animation? = null) {
     NULL(AbilityItem(ItemType.OTHER, "null", Rarity.COMMON, Material.PLAYER_HEAD, Statistics.zero())),
@@ -311,7 +311,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     MAXUS_CAT_PLUSHIE(
         LimitedEditionItem(ItemType.OTHER, "Maxus' Cat Plushie", Rarity.SPECIAL, Material.PLAYER_HEAD, stats { intelligence = -1f }, metaModifier = {
             val skull = it as SkullMeta
-            val profile = Bukkit.createProfile(UUID.randomUUID())
+            val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
             profile.setProperty(ProfileProperty("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM1MjUzYjBjOTZhZTRmYmNkZTY2OWJjYmE4ZWRjNDk5MTRmMmU5NTVmMDUyMjU5NTkxMWE3OTE5Yjk1OTdkMyJ9fX0"))
             skull.playerProfile = profile
         })
@@ -500,6 +500,9 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     ENCHANTED_ADAMANTITE(RecipeItem(Material.REDSTONE, Rarity.EPIC, "Enchanted Adamantite", description = "Dwarves thought this metal was a myth...", glow = true)),
 
     INFERNAL_GREATSWORD(InfernalGreatsword()),
+    INFERNO_VERTEX(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Inferno Vertex", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWUyMjFiYjczMzE3MjIwNzMxNWFjZWRjYzVjOTk4MzZhNjM5ODYyYTM3MjdkYTZkNWRmMzZiODUxZmMxOTFjNCJ9fX0=")),
+    MOLTEN_POWDER(RecipeItem(Material.BLAZE_POWDER, Rarity.RARE, "Molten Powder", glow = true)),
+    FIERY_CORE(RecipeItem(Material.PLAYER_HEAD, Rarity.LEGENDARY, "Fiery Core", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjAwYzE2NzM4YzM3MjQ4NDYyOGNhMTVjZjdiMDczMWI4MTBiZDMxNDJlMDdjMTA1M2I1ZTNkYTZiNmU1MjNjYSJ9fX0="))
     ;
 
     companion object {
@@ -517,7 +520,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
                 displayName(text(name))
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
                 flags(*ItemFlag.values())
-                val profile = Bukkit.createProfile(UUID.randomUUID())
+                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
                 profile.setProperty(ProfileProperty("textures", skin))
                 this.playerProfile = profile
 
@@ -533,7 +536,7 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
                 lore(reduced)
                 flags(*ItemFlag.values())
 
-                val profile = Bukkit.createProfile(UUID.randomUUID())
+                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
                 profile.setProperty(ProfileProperty("textures", skin))
                 this.playerProfile = profile
             }

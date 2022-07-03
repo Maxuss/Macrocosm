@@ -215,6 +215,17 @@ enum class EntityValue(val entity: MacrocosmEntity) {
         mainHand = VanillaItem(Material.IRON_SWORD)
     )),
 
+    DUMMY(EntityBase(
+        text("Training Dummy"),
+        EntityType.IRON_GOLEM,
+        LootPool.of(),
+        .0,
+        stats {
+            health = 500_000f
+            defense = 100f
+            speed = 0f
+        }
+    ))
 
     ;
 

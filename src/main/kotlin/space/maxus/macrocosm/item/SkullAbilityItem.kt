@@ -6,6 +6,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.RuneSlot
@@ -42,7 +43,7 @@ open class SkullAbilityItem(
 
     override fun addExtraMeta(meta: ItemMeta) {
         val skull = meta as SkullMeta
-        val profile = Bukkit.createProfile(UUID.randomUUID())
+        val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
         profile.setProperty(ProfileProperty("textures", skullOwner))
         skull.playerProfile = profile
     }

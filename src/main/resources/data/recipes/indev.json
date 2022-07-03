@@ -1,0 +1,21 @@
+{
+    "infernal_greatsword": {
+        "pattern": [
+            " V ",
+            " C ",
+            "PGP"
+        ],
+        "matrix": {
+            "V": {
+                "item": "inferno_vertex",
+                "amount": 10
+            },
+            "C": "fiery_core",
+            "P": {
+                "item": "molten_powder",
+                "amount": 64
+            },
+            "G": "minecraft:iron_sword"
+        }
+    }
+}

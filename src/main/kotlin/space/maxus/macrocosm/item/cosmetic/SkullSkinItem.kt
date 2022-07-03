@@ -11,6 +11,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
@@ -87,7 +88,7 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
 
     override fun addExtraMeta(meta: ItemMeta) {
         val skull = meta as SkullMeta
-        val profile = Bukkit.createProfile(UUID.randomUUID())
+        val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
         profile.setProperty(ProfileProperty("textures", sskin.skin))
         skull.playerProfile = profile
     }

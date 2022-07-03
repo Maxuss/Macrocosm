@@ -5,13 +5,13 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.generic.id
-import java.util.*
 
 open class ArmorItem(
     val baseName: String,
@@ -59,7 +59,7 @@ open class ArmorItem(
             runeTypes = runes,
         ) {
             if (it is SkullMeta) {
-                val profile = Bukkit.createProfile(UUID.randomUUID())
+                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
                 profile.setProperty(ProfileProperty("textures", headSkin!!))
                 it.playerProfile = profile
             }

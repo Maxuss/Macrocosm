@@ -23,6 +23,7 @@ import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
@@ -39,7 +40,8 @@ object InfernalGreatswordThrowAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Thr
                 return@listen
 
             val p = e.player.paper ?: return@listen
-            val pos = p.eyeLocation.add(vec(y = -.8)).add(p.eyeLocation.direction.rotateAroundY(Mth.DEG_TO_RAD * 90.0).multiply(1.1f).normalize())
+            val pos = p.eyeLocation.add(vec(y = -1.4)).add(p.eyeLocation.direction.rotateAroundY(Mth.DEG_TO_RAD * 90.0).multiply(1.1f).normalize()).add(
+                vec(y = 0.4))
             val inc = pos.direction.multiply(2f)
 
             val stand = p.world.spawnEntity(pos, EntityType.ARMOR_STAND) as ArmorStand
@@ -54,7 +56,7 @@ object InfernalGreatswordThrowAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Thr
             var tick = 0
 
             val stats = e.player.stats()!!
-            var (damage, _) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
+            var (damage, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
             damage *= 3f
 
             sound(Sound.ENTITY_EGG_THROW) {
@@ -73,7 +75,7 @@ object InfernalGreatswordThrowAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Thr
                 pos.add(inc)
                 stand.teleport(pos)
 
-                if(stand.eyeLocation.add(vec(y = -0.2)).block.isSolid) {
+                if(stand.eyeLocation.add(vec(y = -.3)).block.isSolid) {
                     removeStand(pos, stand)
                     it.cancel()
                     return@task
@@ -82,10 +84,12 @@ object InfernalGreatswordThrowAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Thr
                 val nearby = pos.getNearbyLivingEntities(1.5).filter { entity -> entity !is ArmorStand && entity !is Player && !entity.isDead }
                 val entity = nearby.firstOrNull() ?: return@task
                 val mc = entity.macrocosm!!
-                val ehp = DamageCalculator.calculateLightEffectiveHealth(mc.currentHealth, stats)
+                val entityStats = mc.calculateStats()
+                val ehp = DamageCalculator.calculateLightEffectiveHealth(mc.currentHealth, entityStats)
+
                 if(damage > ehp) {
                     val hp = mc.currentHealth
-                    DamageHandlers.summonDamageIndicator(pos, hp)
+                    DamageHandlers.summonDamageIndicator(pos, hp, if(crit) DamageType.CRITICAL else DamageType.DEFAULT)
                     particle(Particle.FLAME) {
                         amount = 4
                         extra = 0.3
@@ -95,11 +99,11 @@ object InfernalGreatswordThrowAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Thr
                     mc.damage(hp, p)
                     damage -= ehp
                 } else {
-                    val dmg = DamageCalculator.calculateStandardReceived(damage, stats)
+                    val dmg = damage * (entityStats.defense / (100 + entityStats.defense))
                     mc.damage(dmg, p)
 
                     removeStand(pos, stand)
-                    DamageHandlers.summonDamageIndicator(pos, dmg)
+                    DamageHandlers.summonDamageIndicator(pos, dmg, if(crit) DamageType.CRITICAL else DamageType.DEFAULT)
                     particle(Particle.FLAME) {
                         amount = 4
                         extra = 0.3

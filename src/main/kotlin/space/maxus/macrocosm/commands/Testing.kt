@@ -7,13 +7,17 @@ import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
 import net.axay.kspigot.gui.openGUI
+import net.minecraft.commands.arguments.ResourceLocationArgument
+import net.minecraft.resources.ResourceLocation
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
+import space.maxus.macrocosm.util.generic.macrocosm
 
 fun setSlayerLevelCommand() = command("slayerlvl") {
     argument("id", StringArgumentType.string()) {
@@ -24,6 +28,26 @@ fun setSlayerLevelCommand() = command("slayerlvl") {
                 player.macrocosm!!.slayers[ty] = SlayerLevel(getArgument("exp"), 0.0, listOf(), slayer.rngMeter)
             }
         }
+    }
+}
+
+fun giveRecipeCommand() = command("giverecipe") {
+    argument("recipe", ResourceLocationArgument.id()) {
+        suggestList { ctx ->
+            Registry.RECIPE.iter().keys
+                .filter { it.path.contains(ctx.getArgumentOrNull<ResourceLocation>("recipe")?.path?.lowercase() ?: "") }
+        }
+
+        runs {
+            val recipe = getArgument<ResourceLocation>("recipe").macrocosm
+            if(!Registry.RECIPE.has(recipe))
+                return@runs
+            val mc = player.macrocosm!!
+            if(mc.unlockedRecipes.contains(recipe))
+                return@runs
+            mc.unlockedRecipes.add(recipe)
+        }
+
     }
 }
 

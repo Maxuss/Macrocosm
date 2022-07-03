@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.ability.types.armor.EntityKillCounterBonus
 import space.maxus.macrocosm.chat.noitalic
@@ -35,8 +36,8 @@ import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.buffs.PotatoBook
 import space.maxus.macrocosm.item.runes.RuneSlot
-import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
@@ -51,8 +52,6 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.PreviewFeature
 import space.maxus.macrocosm.util.generic.getId
 import space.maxus.macrocosm.util.generic.putId
-import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.min
 
 fun colorMeta(color: Int): (ItemMeta) -> Unit = { (it as LeatherArmorMeta).setColor(Color.fromRGB(color)) }
@@ -513,7 +512,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                 val s = skin!!
                 lore.add(0, "".toComponent())
                 lore.add(0, text("<dark_gray>${skin!!.name} Skin").noitalic())
-                val profile = Bukkit.createProfile(UUID.randomUUID())
+                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
                 profile.setProperty(ProfileProperty("textures", s.skin))
                 playerProfile = profile
                 lore(lore)

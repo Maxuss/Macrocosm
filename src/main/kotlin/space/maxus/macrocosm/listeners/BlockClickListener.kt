@@ -15,14 +15,14 @@ object BlockClickListener : Listener {
     @EventHandler
     fun onPlaceBlock(e: BlockPlaceEvent) {
         val mc = e.itemInHand.macrocosmTag()
-        if (mc.contains("BlockClicks") || e.player.inventory.itemInOffHand.macrocosmTag().contains("BlockClicks"))
+        if (mc.contains("BlockClicks"))
             e.isCancelled = true
     }
 
     @EventHandler
     fun onConsume(e: PlayerItemConsumeEvent) {
         val mc = e.item.macrocosmTag()
-        if (mc.contains("BlockClicks") || e.player.inventory.itemInOffHand.macrocosmTag().contains("BlockClicks"))
+        if (mc.contains("BlockClicks"))
             e.isCancelled = true
     }
 

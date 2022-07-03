@@ -10,6 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
@@ -62,7 +63,8 @@ class RecipeItem(
             lore.addAll(reduced)
             lore.add("".toComponent())
         }
-        lore.add(text("<yellow>Right click to view recipes").noitalic())
+        lore.add(text("<yellow>Right click to view recipes!").noitalic())
+        lore.add("".toComponent())
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {
@@ -75,7 +77,7 @@ class RecipeItem(
             meta.addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
         if(base == Material.PLAYER_HEAD && headSkin != null) {
             val skull = meta as SkullMeta
-            val profile = Bukkit.createProfile(UUID.randomUUID())
+            val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
             profile.setProperty(ProfileProperty("textures", headSkin))
             skull.playerProfile = profile
         }

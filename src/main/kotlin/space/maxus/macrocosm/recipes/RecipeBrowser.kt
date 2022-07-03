@@ -87,7 +87,7 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    val its = Registry.ITEM.findOrNull(v.first)?.build() ?: ItemStack(Material.AIR)
+                    val its = Registry.ITEM.findOrNull(v.first)?.build(player) ?: VanillaItem(Material.valueOf(v.first.path.uppercase())).build(player)!!
                     its.amount = v.second
                     its
                 }

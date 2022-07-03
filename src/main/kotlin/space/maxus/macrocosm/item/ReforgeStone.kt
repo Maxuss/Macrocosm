@@ -10,6 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.isBlankOrEmpty
@@ -80,7 +81,7 @@ class ReforgeStone(
 
     override fun addExtraMeta(meta: ItemMeta) {
         val skull = meta as SkullMeta
-        val profile = Bukkit.createProfile(UUID.randomUUID())
+        val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
         profile.setProperty(ProfileProperty("textures", headSkin))
         skull.playerProfile = profile
     }

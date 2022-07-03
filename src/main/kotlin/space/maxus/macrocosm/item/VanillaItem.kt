@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
@@ -38,7 +39,7 @@ fun coloredArmor(type: Material, color: Int): MacrocosmItem = VanillaItem(type, 
 
 fun skull(skin: String): MacrocosmItem = VanillaItem(Material.PLAYER_HEAD, 1) {
     val skull = (it as SkullMeta)
-    val profile = Bukkit.createProfile(UUID.randomUUID())
+    val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
     profile.setProperty(ProfileProperty("textures", skin))
     skull.playerProfile = profile
 }
