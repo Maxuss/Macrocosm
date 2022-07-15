@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.7.0"
     id("xyz.jpenilla.run-paper") version "1.0.6"
     id("io.papermc.paperweight.userdev") version "1.3.7"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "space.maxus"
@@ -11,13 +12,14 @@ repositories {
     mavenCentral()
     maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
     paperDevBundle("1.19-R0.1-SNAPSHOT")
     implementation("net.axay:kspigot:1.19.0")
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
-    implementation("com.comphenix.protocol:ProtocolLib:4.8.0")
+    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }

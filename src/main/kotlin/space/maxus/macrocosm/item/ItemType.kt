@@ -9,6 +9,7 @@ enum class ItemType(
 ) {
     SWORD,
     LONGSWORD,
+    DAGGER,
     BOW,
     AXE(tool = true),
     PICKAXE(false, true),
@@ -24,7 +25,6 @@ enum class ItemType(
     CHESTPLATE(false, false, true),
     LEGGINGS(false, false, true),
     BOOTS(false, false, true),
-    CLOAK(false, false, true),
 
     ACCESSORY(false),
     CHARM(false, leftHand = true),
@@ -35,6 +35,11 @@ enum class ItemType(
     CONSUMABLE(false),
     REFORGE_STONE(false),
     OTHER(false, leftHand = true),
+
+    NECKLACE(false),
+    CLOAK(false),
+    BELT(false),
+    GLOVES(false)
     ;
 
     override fun toString(): String {
@@ -42,10 +47,10 @@ enum class ItemType(
     }
 
     companion object {
-        fun melee() = listOf(AXE, SWORD, LONGSWORD, GAUNTLET)
+        fun melee() = listOf(AXE, SWORD, LONGSWORD, GAUNTLET, DAGGER)
         fun ranged() = listOf(BOW)
-        fun weapons() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW)
-        fun weaponsWand() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, WAND)
+        fun weapons() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, DAGGER)
+        fun weaponsWand() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, WAND, DAGGER)
         fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL, FISHING_ROD)
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)

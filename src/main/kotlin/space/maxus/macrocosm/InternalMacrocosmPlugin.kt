@@ -1,6 +1,5 @@
 package space.maxus.macrocosm
 
-import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
@@ -30,6 +29,7 @@ import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
 import space.maxus.macrocosm.pets.types.PyroclasticToadPet
 import space.maxus.macrocosm.pets.types.WaspPet
+import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeParser
@@ -42,8 +42,8 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.zone.ZoneType
+import java.util.*
 import kotlin.random.Random
-import java.util.UUID
 
 class InternalMacrocosmPlugin : KSpigot() {
     companion object {
@@ -72,8 +72,6 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     override fun startup() {
-        PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
-
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
@@ -93,8 +91,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
 
-        protocolManager.addPacketListener(MiningHandler)
+        // PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
+        // protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
         StatRune.init()
@@ -141,6 +141,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         payCommand()
         setDateCommand()
         getSlayerRewardsCommand()
+        openEquipmentCommand()
 
         giveRecipeCommand()
         testStatsCommand()

@@ -307,6 +307,10 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
         SkullEntityHead("null")
     ),
 
+    EXAMPLE_CLOAK(
+        AbilityItem(ItemType.CLOAK, "Example cloak", Rarity.VERY_SPECIAL, Material.DIAMOND, stats { health = 10000f })
+    ),
+
     // admin items
     MAXUS_CAT_PLUSHIE(
         LimitedEditionItem(ItemType.OTHER, "Maxus' Cat Plushie", Rarity.SPECIAL, Material.PLAYER_HEAD, stats { intelligence = -1f }, metaModifier = {

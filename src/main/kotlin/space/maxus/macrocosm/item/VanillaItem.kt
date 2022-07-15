@@ -48,7 +48,7 @@ private fun typeFromMaterial(mat: Material): ItemType {
     if (SPLIT_THIS.any { mat.name.contains(it) })
         return ItemType.valueOf(mat.name.split("_").last())
     return when (mat) {
-        Material.ELYTRA -> ItemType.CLOAK
+        Material.ELYTRA -> ItemType.CHESTPLATE
         Material.BOW, Material.CROSSBOW -> ItemType.BOW
         Material.FISHING_ROD -> ItemType.FISHING_ROD
         else -> ItemType.OTHER

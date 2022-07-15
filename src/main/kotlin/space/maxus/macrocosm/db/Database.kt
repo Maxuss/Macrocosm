@@ -78,6 +78,17 @@ object Database {
                 )
                 """.trimIndent()
             )
+            st.executeUpdate(
+                """
+                    CREATE TABLE Equipment(
+                    UUID VARCHAR PRIMARY KEY,
+                    NECKLACE VARCHAR,
+                    CLOAK VARCHAR,
+                    BELT VARCHAR,
+                    GLOVES VARCHAR
+                    )
+                """.trimIndent()
+            )
 
             st.executeUpdate("CREATE TABLE Slayers(UUID VARCHAR PRIMARY KEY, EXPERIENCE VARCHAR DEFAULT('{}'))")
 

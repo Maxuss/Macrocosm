@@ -29,6 +29,7 @@ import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.StoredPet
+import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.recipeBrowser
 import space.maxus.macrocosm.recipes.recipeViewer
@@ -160,6 +161,12 @@ fun payCommand() = command("pay") {
                 }
             }
         }
+    }
+}
+
+fun openEquipmentCommand() = command("equipment") {
+    runs {
+        EquipmentHandler.menu(player.macrocosm!!)
     }
 }
 

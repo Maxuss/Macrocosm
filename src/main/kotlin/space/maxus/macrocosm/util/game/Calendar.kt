@@ -127,7 +127,11 @@ object Calendar: Listener {
     }
 
     fun save() {
-        tickTask.cancel()
+        try {
+            tickTask.cancel()
+        } catch(ignored: UninitializedPropertyAccessException) {
+            /* no-op */
+        }
         val file = Path(System.getProperty("user.dir"), "macrocosm", "calendar.dat")
         val stream = file.toFile().outputStream()
         val data = CompoundTag()

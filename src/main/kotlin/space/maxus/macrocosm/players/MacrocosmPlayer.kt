@@ -31,10 +31,7 @@ import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
-import space.maxus.macrocosm.item.Items
-import space.maxus.macrocosm.item.MacrocosmItem
-import space.maxus.macrocosm.item.Rarity
-import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.ranks.Rank
@@ -66,6 +63,7 @@ val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
 class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     val paper: Player? get() = Bukkit.getServer().getPlayer(ref)
 
+    var equipment: PlayerEquipment = PlayerEquipment()
     var rank: Rank = Rank.NONE
     var firstJoin: Long = Instant.now().toEpochMilli()
     var lastJoin: Long = Instant.now().toEpochMilli()
@@ -429,6 +427,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (activePet != null) {
             cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
         }
+        for(item in equipment.enumerate()) {
+            if(item != null) {
+                cloned.increase(item.stats(this))
+            }
+        }
         if (specialCache != null && specialCache!!.statBoost != 0f) {
             cloned.multiply(1 + specialCache!!.statBoost)
         }
@@ -490,6 +493,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         return specialCache ?: recalculateSpecialStats()
     }
 
+    @Suppress("SqlInsertValues")
     override fun storeSelf(stmt: Statement) {
         val player = paper
         if (player == null) {
@@ -522,6 +526,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         // slayers
         val slayers = GSON.toJson(slayers.mapKeys { (k, _) -> k.name })
         stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
+
+        // equipment
+        val equipment =
+            this.equipment.enumerate().joinToString(separator = ", ") { "'${it?.serializeToBytes(this) ?: "NULL"}'" }
+        stmt.executeUpdate("""INSERT OR REPLACE INTO Equipment VALUES ('$ref', $equipment)""")
 
         stmt.close()
     }
@@ -591,6 +600,23 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return null
             val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(petsRes.getString("EXPERIENCE"), object : TypeToken<HashMap<String, SlayerLevel>>() {}.type)
             player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
+
+            // equipment
+            val eqRes = stmt.executeQuery("SELECT * FROM Equipment WHERE UUID = '$id'")
+            if(!eqRes.next())
+                return null
+            val equipment = PlayerEquipment()
+            listOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES).associateWith {
+                val contained = eqRes.getString(it.name)
+                if(contained == "NULL")
+                    null
+                else
+                    MacrocosmItem.deserializeFromBytes(contained)
+            }.forEach { (ty, item) ->
+                equipment[ty] = item
+            }
+            player.equipment = equipment
+
             stmt.close()
             return player
         }
