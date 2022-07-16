@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.damage
 
+import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import kotlin.random.Random
 
@@ -36,5 +37,13 @@ object DamageCalculator {
 
     fun calculateLightEffectiveHealth(health: Float, stats: Statistics): Float {
         return health * (1 + (stats.defense / (100f + stats.defense)))
+    }
+
+    fun calculateEffectiveHealth(stats: Statistics): Float {
+        return stats[Statistic.HEALTH] * (1 + (stats[Statistic.DEFENSE] / 100f))
+    }
+
+    fun calculateDamageReduction(stats: Statistics): Float {
+        return stats[Statistic.DEFENSE] / (stats[Statistic.DEFENSE] + 100f)
     }
 }

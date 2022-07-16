@@ -5,7 +5,8 @@ enum class ItemType(
     val weapon: Boolean = true,
     val tool: Boolean = false,
     val armor: Boolean = false,
-    val leftHand: Boolean = false
+    val leftHand: Boolean = false,
+    val equipment: Boolean = false
 ) {
     SWORD,
     LONGSWORD,
@@ -36,10 +37,10 @@ enum class ItemType(
     REFORGE_STONE(false),
     OTHER(false, leftHand = true),
 
-    NECKLACE(false),
-    CLOAK(false),
-    BELT(false),
-    GLOVES(false)
+    NECKLACE(false, equipment = true),
+    CLOAK(false, equipment = true),
+    BELT(false, equipment = true),
+    GLOVES(false, equipment = true)
     ;
 
     override fun toString(): String {

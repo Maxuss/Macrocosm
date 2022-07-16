@@ -107,7 +107,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 )
             ) {
                 currentMana = min(currentMana, stats.intelligence)
-                currentHealth = min(currentHealth + (stats.health / 20f) + specials.extraRegen, stats.health)
+                currentHealth = min(currentHealth + (stats.health / 100f) + specials.extraRegen, stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
@@ -422,6 +422,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             if (baseItem.type == Material.AIR)
                 return@forEach
             val item = Items.toMacrocosm(baseItem) ?: return@forEach
+
+            if(
+                (it == EquipmentSlot.OFF_HAND && !item.type.leftHand) ||
+                (item.type.armor && it.name.contains("HAND")) ||
+                item.type.equipment
+            )
+                return@forEach
             cloned.increase(item.stats(this))
         }
         if (activePet != null) {
