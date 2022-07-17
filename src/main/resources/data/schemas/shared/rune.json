@@ -1,0 +1,32 @@
+{
+    "title": "Rune Slot",
+    "description": "Type of rune slot",
+    "oneOf": [
+        {
+            "type": "string",
+            "enum": [
+                "combat",
+                "gathering",
+                "utility",
+                "offensive",
+                "defensive",
+                "mining",
+                "fishing",
+                "foraging",
+                "excavating"
+            ]
+        },
+        {
+            "type": "object",
+            "required": ["specific"],
+            "properties": {
+                "specific": {
+                    "title": "Rune ID",
+                    "description": "Specific ID of rune to be used",
+                    "$ref": "identifier.json"
+                }
+            },
+            "additionalProperties": false
+        }
+    ]
+}

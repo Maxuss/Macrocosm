@@ -1,0 +1,39 @@
+{
+    "title": "Model Animation",
+    "description": "Animation for item model",
+    "type": "object",
+    "properties": {
+        "time": {
+            "title": "Frame Time",
+            "description": "Time in ticks for each frame, 2 by default",
+            "type": "integer"
+        },
+        "interpolate": {
+            "title": "Interpolation",
+            "description": "Whether to enable frame interpolation for smoother effect",
+            "type": "boolean"
+        },
+        "frames": {
+            "title": "Frame Amount",
+            "description": "Amount of frames for pre-baked model",
+            "type": "integer"
+        },
+        "raw_frames": {
+            "title": "Frames",
+            "description": "Frame order to be used",
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
+        }
+    },
+    "oneOf": [
+        {
+            "required": ["frames"]
+        },
+        {
+            "required": ["raw_frames"]
+        }
+    ],
+    "additionalProperties": false
+}

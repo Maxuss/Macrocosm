@@ -19,7 +19,7 @@ class KillCountingItem(
     runeTypes: List<RuneSlot> = listOf(),
     description: String? = null,
     metaModifier: (ItemMeta) -> Unit = { },
-): AbilityItem(type, itemName, rarity, base, stats, abilities, specialStats, breakingPower, runeTypes, description, metaModifier), KillStorageItem {
+): AbilityItem(type, itemName, rarity, base, stats, abilities, specialStats, breakingPower, runeTypes, description, metaModifier = metaModifier), KillStorageItem {
     override var kills: Int = 0
 
     override fun addExtraNbt(cmp: CompoundTag) {

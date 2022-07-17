@@ -10,6 +10,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import java.util.*
@@ -25,6 +26,7 @@ open class SkullAbilityItem(
     breakingPower: Int = 0,
     runeTypes: List<RuneSlot> = listOf(),
     description: String? = null,
+    id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", "")),
     ) : AbilityItem(
     type,
     itemName,
@@ -35,7 +37,8 @@ open class SkullAbilityItem(
     specialStats,
     breakingPower,
     runeTypes,
-    description
+    description,
+    id = id
 ) {
     override fun addExtraNbt(cmp: CompoundTag) {
         cmp.putByte("BlockClicks", 1)
@@ -58,7 +61,8 @@ open class SkullAbilityItem(
             stats.clone(),
             abilities,
             specialStats.clone(),
-            description = description
+            description = description,
+            id = id
         )
         item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
         item.reforge = reforge?.clone()

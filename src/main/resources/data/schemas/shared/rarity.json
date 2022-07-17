@@ -1,0 +1,17 @@
+{
+    "title": "Item Rarity",
+    "description": "Marks rarity of item, changing display color and reforge stats",
+    "type": "string",
+    "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic",
+        "divine",
+        "special",
+        "very_special",
+        "unobtainable"
+    ]
+}

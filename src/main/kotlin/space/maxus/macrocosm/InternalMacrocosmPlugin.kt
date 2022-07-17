@@ -20,6 +20,7 @@ import space.maxus.macrocosm.generators.generate
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
+import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
@@ -109,6 +110,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Cosmetics.init()
         SlayerType.init()
         RecipeParser.init()
+        ItemParser.init()
 
         SeaCreatures.init()
         TrophyFishes.init()

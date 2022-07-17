@@ -24,7 +24,7 @@ import space.maxus.macrocosm.util.multimap
 
 private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
     val (_, lvl) = ench.maxByOrNull { it.value } ?: return Rarity.SPECIAL
-    return if (lvl >= 8) Rarity.GODLIKE
+    return if (lvl >= 8) Rarity.DIVINE
     else if (lvl >= 7) Rarity.MYTHIC
     else if (lvl >= 6) Rarity.LEGENDARY
     else if (lvl >= 5) Rarity.EPIC

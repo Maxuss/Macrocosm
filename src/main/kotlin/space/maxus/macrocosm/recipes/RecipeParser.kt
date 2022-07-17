@@ -8,6 +8,7 @@ import space.maxus.macrocosm.recipes.types.ShapelessRecipe
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.GSON
+import java.nio.file.FileSystemAlreadyExistsException
 import java.nio.file.FileSystems
 import kotlin.io.path.readText
 
@@ -18,12 +19,16 @@ object RecipeParser {
             info("Starting recipe parser...")
 
             val input = this.javaClass.classLoader.getResource("data")!!.toURI()
-            val fs = FileSystems.newFileSystem(input, hashMapOf<String, String>())
+            val fs = try {
+                FileSystems.newFileSystem(input, hashMapOf<String, String>())
+            } catch (e: FileSystemAlreadyExistsException) {
+                FileSystems.getFileSystem(input)
+            }
             for(file in PackProvider.enumerateEntries(fs.getPath("data", "recipes"))) {
-                pool.execute {
-                    info("Converting recipes from ${file.fileName}...")
-                    val data = GSON.fromJson(file.readText(), JsonObject::class.java)
-                    for((key, obj) in data.entrySet()) {
+                info("Converting recipes from ${file.fileName}...")
+                val data = GSON.fromJson(file.readText(), JsonObject::class.java)
+                for((key, obj) in data.entrySet()) {
+                    pool.execute {
                         val id = Identifier.parse(key)
                         Registry.RECIPE.register(id, parse(id, obj.asJsonObject))
                     }

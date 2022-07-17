@@ -3,5 +3,11 @@
     "$id": "identifier",
     "type": "string",
     "title": "An identifier, optionally with a namespace",
-    "pattern": "^([a-z_]+:)?[a-z_]+$"
+    "pattern": "^([a-z_]+:)?[a-z_/]+$",
+    "examples": [
+        "minecraft:diamond",
+        "diamond",
+        "namespace:path/file.txt",
+        "macrocosm:registry/custom"
+    ]
 }

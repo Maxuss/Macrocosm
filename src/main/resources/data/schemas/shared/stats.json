@@ -1,0 +1,44 @@
+{
+    "title": "Statistics",
+    "description": "Statistics contain different stats inside itself",
+    "type": "object",
+    "propertyNames": {
+        "title": "Statistic",
+        "description": "A single statistic name",
+        "type": "string",
+        "enum": [
+            "damage",
+            "strength",
+            "ferocity",
+            "crit_chance",
+            "crit_damage",
+            "bonus_attack_speed",
+            "sea_creature_chance",
+            "ability_damage",
+            "true_damage",
+            "health",
+            "defense",
+            "true_defense",
+            "speed",
+            "intelligence",
+            "mining_speed",
+            "mining_fortune",
+            "excavating_fortune",
+            "farming_fortune",
+            "foraging_fortune",
+            "treasure_chance",
+            "pet_luck",
+            "magic_find",
+            "damage_boost",
+            "damage_reduction"
+        ]
+    },
+    "patternProperties": {
+        "^.*$": {
+            "title": "Statistic Value",
+            "description": "Value of this statistic",
+            "type": "number"
+        }
+    },
+    "additionalProperties": false
+}

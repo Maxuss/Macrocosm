@@ -14,9 +14,10 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
     EPIC(NamedTextColor.DARK_PURPLE),
     LEGENDARY(NamedTextColor.GOLD),
     MYTHIC(NamedTextColor.LIGHT_PURPLE),
-    GODLIKE(NamedTextColor.AQUA, false),
+    DIVINE(NamedTextColor.AQUA, false),
     SPECIAL(NamedTextColor.RED, true),
-    VERY_SPECIAL(TextColor.color(0xE45878))
+    VERY_SPECIAL(TextColor.color(0xE45878)),
+    UNOBTAINABLE(TextColor.color(0xA64CFD))
     ;
 
     fun format(upgraded: Boolean, ty: ItemType, dungeonised: Boolean = false) = text("<bold>")
@@ -41,22 +42,24 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         RARE -> EPIC
         EPIC -> LEGENDARY
         LEGENDARY -> MYTHIC
-        MYTHIC -> GODLIKE
-        GODLIKE -> SPECIAL
+        MYTHIC -> DIVINE
+        DIVINE -> SPECIAL
         SPECIAL -> VERY_SPECIAL
         VERY_SPECIAL -> COMMON
+        UNOBTAINABLE -> UNOBTAINABLE
     }
 
     fun previous() = when (this) {
-        COMMON -> GODLIKE
+        COMMON -> DIVINE
         UNCOMMON -> COMMON
         RARE -> UNCOMMON
         EPIC -> RARE
         LEGENDARY -> EPIC
         MYTHIC -> LEGENDARY
-        GODLIKE -> MYTHIC
-        SPECIAL -> GODLIKE
+        DIVINE -> MYTHIC
+        SPECIAL -> DIVINE
         VERY_SPECIAL -> SPECIAL
+        UNOBTAINABLE -> UNOBTAINABLE
     }
 
     companion object {

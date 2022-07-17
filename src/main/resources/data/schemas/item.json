@@ -1,0 +1,178 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "macrocosm:item",
+    "type": "object",
+    "title": "Root Tag",
+    "propertyNames": {
+        "type": "string",
+        "pattern": "[a-z_]+"
+    },
+    "additionalProperties": {
+        "required": [
+            "type",
+            "rarity"
+        ],
+        "properties": {
+            "name": {
+                "title": "Item Name",
+                "description": "Name component of this item",
+                "$ref": "shared/component.json"
+            },
+            "description": {
+                "title": "Item Description",
+                "description": "Description of item, will be later split into lines of ~25 chars and parsed with MiniMessage",
+                "$ref": "shared/component.json"
+            },
+            "type": {
+                "$ref": "#/definitions/item_type"
+            },
+            "rarity": {
+                "title": "Item Rarity",
+                "description": "Changes rarity of the item",
+                "$ref": "shared/rarity.json"
+            },
+            "head_skin": {
+                "title": "Head Skin Base64",
+                "description": "Base64 of the head skin, automatically sets material of this item to PLAYER_HEAD",
+                "type": "string"
+            },
+            "material": {
+                "title": "Item Material",
+                "description": "Material of the item.",
+                "type": "string",
+                "pattern": "[a-zA-Z_]+",
+                "$ref": "https://json.schemastore.org/minecraft-item-modifier.json"
+            },
+
+            "model": {
+                "title": "Item Model",
+                "description": "Model for this item",
+                "$ref": "shared/model.json"
+            },
+            "animation": {
+                "title": "Item Animation",
+                "description": "Animation for this item",
+                "$ref": "shared/animation.json"
+            },
+
+            "abilities": {
+                "title": "Related Abilities",
+                "description": "Marks this item as AbilityItem and adds provided abilities to it",
+                "type": "array",
+                "items": {
+                    "title": "Ability ID",
+                    "description": "Identifier of desired ability",
+                    "$ref": "shared/identifier.json"
+                }
+            },
+            "special_stats": {
+                "title": "Special Statistics",
+                "description": "Special Stats of this item",
+                "$ref": "shared/special_stats.json"
+            },
+            "breaking_power": {
+                "title": "Breaking Power",
+                "description": "Breaking Power of this item",
+                "type": "integer"
+            },
+            "stats": {
+                "title": "Item Stats",
+                "description": "Stats of this item",
+                "$ref": "shared/stats.json"
+            },
+            "runes": {
+                "title": "Rune Slots",
+                "description": "Rune Slots for this item",
+                "type": "array",
+                "items": {
+                    "$ref": "shared/rune.json"
+                }
+            },
+
+            "recipe": {
+                "title": "Related Recipe",
+                "description": "Marks this item as RecipeItem and adds provided recipe to it",
+                "$ref": "shared/identifier.json"
+            },
+            "glow": {
+                "title": "Glow",
+                "description": "Whether the item should glow",
+                "type": "boolean"
+            }
+        },
+        "oneOf": [
+            {
+                "required": [
+                    "material"
+                ],
+                "oneOf": [
+                    {
+                        "required": [
+                            "abilities"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "recipe"
+                        ]
+                    }
+                ]
+            },
+            {
+                "required": [
+                    "head_skin"
+                ],
+                "oneOf": [
+                    {
+                        "required": [
+                            "abilities"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "recipe"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "additionalProperties": false
+    },
+
+    "definitions": {
+        "item_type": {
+            "title": "Item Type",
+            "description": "Type of item, applicable reforges and enchants depend on it.",
+            "type": "string",
+            "enum": [
+                "sword",
+                "longsword",
+                "dagger",
+                "bow",
+                "axe",
+                "pickaxe",
+                "drill",
+                "shovel",
+                "shield",
+                "wand",
+                "gauntlet",
+                "fishing_rod",
+                "helmet",
+                "chestplate",
+                "leggings",
+                "boots",
+                "accessory",
+                "charm",
+                "enchanted_book",
+                "deployable",
+                "consumable",
+                "reforge_stone",
+                "necklace",
+                "cloak",
+                "belt",
+                "gloves",
+                "other"
+            ]
+        }
+    }
+}

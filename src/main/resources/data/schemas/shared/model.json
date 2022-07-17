@@ -1,0 +1,29 @@
+{
+    "title": "Item Model",
+    "description": "Definition of item model",
+    "type": "object",
+    "required": ["id", "from", "to"],
+    "properties": {
+        "id": {
+            "title": "Model ID",
+            "description": "Custom Model Data to be applied",
+            "type": "integer"
+        },
+        "from": {
+            "title": "Changed Model",
+            "description": "Identifier of model to be changed",
+            "$ref": "identifier.json"
+        },
+        "to": {
+            "title": "New Model",
+            "description": "Identifier of model to change to",
+            "$ref": "identifier.json"
+        },
+        "parent": {
+            "title": "Parent Model",
+            "description": "Parent model, 'macrocosm:item/generated' by default",
+            "$ref": "identifier.json"
+        }
+    },
+    "additionalProperties": false
+}

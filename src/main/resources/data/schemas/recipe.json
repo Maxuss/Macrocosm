@@ -1,5 +1,4 @@
 {
-    "$comment": "Some descriptions in this file are from https://github.com/skylinerw/guides/blob/master/java/recipes.md",
     "$schema": "http://json-schema.org/draft-07/schema",
     "$id": "macrocosm:recipe",
     "type": "object",

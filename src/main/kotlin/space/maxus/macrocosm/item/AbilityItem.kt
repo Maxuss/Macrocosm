@@ -29,6 +29,7 @@ open class AbilityItem(
     override var breakingPower: Int = 0,
     runeTypes: List<RuneSlot> = listOf(),
     protected val description: String? = null,
+    id: Identifier? = null,
     protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
     override var amount: Int = 1
@@ -38,7 +39,6 @@ open class AbilityItem(
                 return
             else field = value
         }
-    override val id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", ""))
     override var name: Component = text(itemName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
@@ -75,7 +75,8 @@ open class AbilityItem(
             abilities,
             specialStats.clone(),
             metaModifier = metaModifier,
-            description = description
+            description = description,
+            id = id
         )
         item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
         item.reforge = reforge?.clone()
@@ -105,4 +106,6 @@ open class AbilityItem(
         result = 31 * result + enchantments.hashCode()
         return result
     }
+
+    override val id: Identifier = id ?: Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", ""))
 }

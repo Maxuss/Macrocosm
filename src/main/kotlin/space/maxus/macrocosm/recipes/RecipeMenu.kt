@@ -17,13 +17,11 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.annotations.DevelopmentOnly
 import space.maxus.macrocosm.util.anyNull
 import space.maxus.macrocosm.util.containsAny
 import space.maxus.macrocosm.util.generic.collect
 import space.maxus.macrocosm.util.giveOrDrop
 
-@OptIn(DevelopmentOnly::class)
 @Suppress("SENSELESS_COMPARISON")
 object RecipeMenu : Listener {
     private val result = ItemValue.placeholderDescripted(Material.BARRIER, "<red><!italic>Recipe Required")

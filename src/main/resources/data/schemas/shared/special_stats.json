@@ -1,0 +1,25 @@
+{
+    "title": "Special Statistics",
+    "description": "Special Statistics that are usually internal",
+    "type": "object",
+    "propertyNames": {
+        "type": "string",
+        "enum": [
+            "kb_boost",
+            "kb_resistance",
+            "fire_resistance",
+            "blast_resistance",
+            "fall_resistance",
+            "stat_boost",
+            "extra_regen",
+            "speed_cap_boost"
+        ]
+    },
+    "patternProperties": {
+        "^.*$": {
+            "type": "number",
+            "title": "Statistic Value",
+            "description": "Value of this Special Statistic"
+        }
+    }
+}
