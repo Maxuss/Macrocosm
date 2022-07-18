@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.axay.kspigot.extensions.pluginKey
+import net.axay.kspigot.runnables.KSpigotRunnable
+import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
@@ -48,6 +50,28 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
+
+inline fun runNTimes(times: Long, period: Long, noinline finishCallback: () -> Unit = { }, crossinline runnable: (KSpigotRunnable) -> Unit): KSpigotRunnable {
+    var counter = 0
+    val max = if(times <= 0) 1 else times
+    return task(period = period) {
+        runnable(it)
+
+        if(it.isCancelled) {
+            return@task
+        }
+        counter++
+        if(counter >= max) {
+            it.cancel()
+            finishCallback()
+            return@task
+        }
+    }!!
+}
+
+fun unreachable(): Nothing {
+    throw IllegalStateException("Unreachable condition reached!")
+}
 
 fun String.stripTags() = MiniMessage.miniMessage().stripTags(this)
 

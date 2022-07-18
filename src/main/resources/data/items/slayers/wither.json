@@ -1,0 +1,14 @@
+{
+    "cataclysm": {
+        "type": "longsword",
+        "rarity": "epic",
+        "material": "stone_sword",
+        "name": "The Cataclysm",
+        "abilities": ["cataclysm", "decadence"],
+        "stats": {
+            "damage": 180,
+            "strength": 150,
+            "defense": 200
+        }
+    }
+}

@@ -31,7 +31,7 @@ enum class Statistic(
     DAMAGE(
         StatisticType.OFFENSIVE,
         NamedTextColor.RED,
-        "❁",
+        "\uD83D\uDDE1",
         10f,
         hiddenFancy = true
     ),

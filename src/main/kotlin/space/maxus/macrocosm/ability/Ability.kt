@@ -96,6 +96,13 @@ enum class Ability(val ability: MacrocosmAbility) {
     BELIE(ZombieHeartHealing("Belie", 50f)),
     ACUPUNCTURE(VoodooDollAbility),
 
+    // wither
+    CATACLYSM(EntityDamageMulAbility("Fading Hatred", listOf(EntityType.WITHER_SKELETON), 0.5f)),
+    CATASTROPHE(EntityDamageMulAbility("Decaying Animus", listOf(EntityType.WITHER_SKELETON), 1f)),
+    CALAMITY(EntityDamageMulAbility("Withering Malice", listOf(EntityType.WITHER_SKELETON), 2f)),
+
+    DECADENCE(DecadenceAbility),
+
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility)
 
