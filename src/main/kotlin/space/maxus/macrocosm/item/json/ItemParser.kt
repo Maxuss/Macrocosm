@@ -8,6 +8,7 @@ import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.pack.PackProvider
+import space.maxus.macrocosm.recipes.RecipeParser
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistic
@@ -49,6 +50,9 @@ object ItemParser {
             pool.shutdown()
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
             info("Registered ${amount.get()} items from .json definitions!")
+
+            // only starting recipe parser after all items are registered to prevent data racing
+            RecipeParser.init()
         }
     }
 
@@ -58,9 +62,12 @@ object ItemParser {
         val rarity = Rarity.valueOf(obj["rarity"].asString.uppercase())
         val name = if(obj.has("name")) obj["name"].asString else id.path.replace("_", " ").capitalized()
         val desc = if(obj.has("description")) obj["description"].asString else null
-        val itemType = ItemType.valueOf(obj["type"].asString.uppercase())
+        val itemType = if(obj.has("type")) ItemType.valueOf(obj["type"].asString.uppercase()) else null
 
-        val base: MacrocosmItem = if(obj.has("recipe")) {
+        val base: MacrocosmItem = if(obj.has("reforge")) {
+            val reforge = Identifier.parse(obj["reforge"].asString)
+            ReforgeStone(Registry.REFORGE.find(reforge), name, rarity, headSkin ?: throw AssertionError("Schema expected head skin for reforge item!"))
+        } else if(!obj.has("abilities")) {
             // parsing recipe item
             RecipeItem(type, rarity, name, headSkin, desc, if(obj.has("glow")) obj["glow"].asBoolean else false)
         } else {
@@ -72,7 +79,7 @@ object ItemParser {
             val runes = if(obj.has("runes")) obj["runes"].asJsonArray.map { ele -> if(ele.isJsonObject) RuneSlot.fromId(Identifier.parse(ele.asJsonObject["specific"].asString)) else RuneSlot.fromId(Identifier.parse(ele.asString)) } else listOf()
             if(headSkin != null)
                 SkullAbilityItem(
-                    itemType,
+                    itemType!!,
                     name,
                     rarity,
                     headSkin,
@@ -86,7 +93,7 @@ object ItemParser {
                 )
             else
                 AbilityItem(
-                    itemType,
+                    itemType!!,
                     name,
                     rarity,
                     type,
@@ -113,12 +120,22 @@ object ItemParser {
     }
 
     private fun parseModel(obj: JsonObject): Model {
-        return Model(
-            obj["id"].asInt,
-            obj["from"].asString,
-            obj["to"].asString,
-            if(obj.has("parent")) obj["parent"].asString else "item/generated"
-        )
+        return if(obj.has("raw") && obj["raw"].asBoolean)
+                RawModel(
+                    obj["id"].asInt,
+                    obj["from"].asString,
+                    obj["to"].asString,
+                )
+            else
+                Model(
+                    obj["id"].asInt,
+                    obj["from"].asString,
+                    obj["to"].asString,
+                    if(obj.has("parent"))
+                        obj["parent"].asString
+                    else
+                        "item/generated"
+                )
     }
 
     private fun parseAnimation(obj: JsonObject): Animation {

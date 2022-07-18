@@ -67,7 +67,7 @@ object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your a
             var tick = 0
             task(period = 1L) {
                 tick++
-                if(tick >= 120) {
+                if(tick >= 120 || stand.eyeLocation.block.isSolid) {
                     it.cancel()
                     stand.remove()
                     return@task

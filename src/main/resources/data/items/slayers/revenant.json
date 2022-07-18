@@ -1,0 +1,249 @@
+{
+    "revenant_flesh": {
+        "material": "rotten_flesh",
+        "rarity": "uncommon",
+        "glow": true
+    },
+    "foul_flesh": {
+        "material": "charcoal",
+        "rarity": "rare",
+        "glow": true
+    },
+    "rancid_flesh": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFkN2M4MTZmYzhjNjM2ZDdmNTBhOTNhMGJhN2FhZWZmMDZjOTZhNTYxNjQ1ZTllYjFiZWYzOTE2NTVjNTMxIn19fQ==",
+        "rarity": "epic",
+        "description": "It has been decomposing for ages"
+    },
+    "revenant_viscera": {
+        "material": "cooked_porkchop",
+        "rarity": "rare",
+        "glow": true
+    },
+    "revenant_innards": {
+        "material": "cooked_salmon",
+        "rarity": "rare",
+        "glow": true,
+        "description": "NOT tasty."
+    },
+    "revenant_catalyst": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc2NDA2MGI4MThlNGE2NzA2NzEzYzg1MWRmNTJhZmZiNzAwODM3MDE5Y2JkNzcxMjZlYTE1NGU3MGNkNjcxYyJ9fX0=",
+        "description": "Smells really weird...",
+        "rarity": "epic"
+    },
+    "reaper_catalyst": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmU2Y2EzY2U1ZDg5YWNiMDZhNjQzZjQ5ZjUyNzQ4NTVlZGVlNmVlYjFhNTQ1MTViMzA0MGExYjNmOGNiYjdhMSJ9fX0=",
+        "description": "Some necromantic symbols are scrawled on it...",
+        "rarity": "epic"
+    },
+    "beheaded_horror": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGJhZDk5ZWQzYzgyMGI3OTc4MTkwYWQwOGE5MzRhNjhkZmE5MGQ5OTg2ODI1ZGExYzk3ZjZmMjFmNDlhZDYyNiJ9fX0=",
+        "description": "Makes for a nice trophy, or... you can wear it.",
+        "rarity": "epic"
+    },
+    "decaying_brain": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjNmYTIxMTk5OWJkMzcxYjcwZTlmZjhkZTUyMDFlMTEzNDMwNGUzNDBiODEzZjVhZjE2MTE1ZWRkNjVhMmFjZCJ9fX0=",
+        "description": "Gathered straight from the Revenant's cranium, and preserved as it is.",
+        "rarity": "legendary"
+    },
+    "scythe_blade": {
+        "material": "diamond",
+        "rarity": "legendary",
+        "description": "Did not became dull at all despite being in Revenant's tomb for centuries."
+    },
+    "wardens_heart": {
+        "name": "Warden's Heart",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjZkNzljMDI2ODc0Nzk0MWRmOWEyYTQ1MTAzY2JkNzMxZmRlZGNiYTU4OGY2NDNiNjcwZmQ3N2FhMmJkOTE4YyJ9fX0=",
+        "rarity": "legendary",
+        "description": "The <gold>Legendary<dark_gray> Warden's Heart gave Revenant godly powers. Now it's yours."
+    },
+    "raging_essence": {
+        "rarity": "mythic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmIwNTVjODEwYmRkZmQxNjI2NGVjOGQ0MzljNDMyODNlMzViY2E3MWE1MDk4M2UxNWUzNjRjZDhhYjdjNjY4ZiJ9fX0=",
+        "description": "The <gold>Legendary<dark_gray> Raging Essence gave Entombed Revenant godly powers. Now it's yours."
+    },
+    "forbidden_scrolls": {
+        "type": "other",
+        "rarity": "epic",
+        "material": "paper",
+        "abilities": ["necromantic_ritual"]
+    },
+    "undead_sword": {
+        "type": "sword",
+        "material": "stone_sword",
+        "rarity": "uncommon",
+        "stats": {
+            "damage": 50,
+            "strength": 50
+        },
+        "abilities": ["undead_sword"],
+        "runes": ["offensive"]
+    },
+    "revenant_falchion": {
+        "type": "sword",
+        "material": "iron_sword",
+        "rarity": "rare",
+        "stats": {
+            "damage": 100,
+            "strength": 80
+        },
+        "abilities": ["revenant_falchion","revenant_life_steal"],
+        "runes": [
+            "combat"
+        ]
+    },
+    "reaper_falchion": {
+        "type": "sword",
+        "material": "diamond_sword",
+        "rarity": "epic",
+        "stats": {
+            "damage": 200,
+            "strength": 120,
+            "ferocity": 10
+        },
+        "abilities": ["reaper_falchion","reaper_life_steal"],
+        "runes": ["combat","offensive"]
+    },
+    "reaper_scythe": {
+        "type": "sword",
+        "rarity": "legendary",
+        "material": "diamond_hoe",
+        "stats": {
+            "damage": 333,
+            "strength": 33,
+            "intelligence": 333
+        },
+        "abilities": ["reaper_weapon","reaper_scythe"],
+        "runes": ["combat","offensive","offensive"]
+    },
+    "axe_of_the_shredded": {
+        "type": "sword",
+        "name": "Axe of the Shredded",
+        "rarity": "legendary",
+        "material": "diamond_axe",
+        "stats": {
+            "damage": 250,
+            "strength": 180,
+            "ferocity": 20
+        },
+        "abilities": ["reaper_weapon","aots_throw"],
+        "runes": ["combat","defensive","defensive"]
+    },
+    "wand_of_healing": {
+        "type": "wand",
+        "name": "Wand of Healing",
+        "rarity": "uncommon",
+        "material": "stick",
+        "abilities": ["small_heal"],
+        "runes": ["defensive"]
+    },
+    "wand_of_mending": {
+        "type": "wand",
+        "name": "Wand of Mending",
+        "rarity": "rare",
+        "material": "stick",
+        "abilities": ["medium_heal"],
+        "runes": ["defensive"]
+    },
+    "wand_of_restoration": {
+        "type": "wand",
+        "name": "Wand of Restoration",
+        "rarity": "epic",
+        "material": "stick",
+        "abilities": ["big_heal"],
+        "runes": ["defensive", "utility"]
+    },
+    "wand_of_atonement": {
+        "type": "wand",
+        "name": "Wand of Atonement",
+        "rarity": "legendary",
+        "material": "stick",
+        "abilities": ["huge_heal"],
+        "runes": ["defensive","utility","defensive"]
+    },
+    "reaper_gem": {
+        "reforge": "blood_soaked",
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjMxNzUyODZjZDNiYTFhM2E5YzkwODI5NzdkMDlkZDM3YjE3N2FiZjM3YTQ2NjU4MGMyN2QxZGVlNzJiM2MxOCJ9fX0="
+    },
+    "voodoo_doll": {
+        "type": "other",
+        "rarity": "rare",
+        "material": "pufferfish",
+        "abilities": ["acupuncture"],
+        "description": "Who do you voodoo?"
+    },
+    "undead_heart": {
+        "type": "helmet",
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTVlYjI1ZDZjNWE5OGM5YWRhMjE5NDE0Zjg1YzAzYzU4MDY1YmMzMzJkNGY0YzE1MWFjYWJmZDJmMjhhNTlmMCJ9fX0=",
+        "stats": {
+            "health": 200,
+            "defense": 50
+        },
+        "abilities": ["negate"],
+        "runes": ["defensive"]
+    },
+    "crystallized_heart": {
+        "type": "helmet",
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY0ZjI1Y2ZmZjc1NGYyODdhOTgzOGQ4ZWZlMDM5OTgwNzNjMjJkZjdhOWQzMDI1YzQyNWUzZWQ3ZmY1MmMyMCJ9fX0=",
+        "stats": {
+            "health": 250,
+            "defense": 120
+        },
+        "abilities": ["vitiate"],
+        "runes": ["defensive", "defensive"]
+    },
+    "revived_heart": {
+        "type": "helmet",
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg1MTRkODIzMGI3NTUxMWE1YTVhNjljYTkzZGNiMmQzZTdjZDFhMjhjNDhkYzM4MDg3ZjE1OGQyODNiN2ZhNyJ9fX0=",
+        "stats": {
+            "health": 350,
+            "defense": 150,
+            "intelligence": 50
+        },
+        "abilities": ["belie"],
+        "runes": ["defensive", "utility", "offensive"],
+        "description": "Gross! Why would anyone ever wear this!"
+    },
+    "wardens_helmet": {
+        "name": "Warden's Helmet",
+        "type": "helmet",
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVlYjBiZDg1YWFkZGYwZDI5ZWQwODJlYWMwM2ZjYWRlNDNkMGVlODAzYjBlODE2MmFkZDI4YTYzNzlmYjU0ZSJ9fX0=",
+        "stats": {
+            "health": 250,
+            "defense": 300,
+            "strength": 50
+        },
+        "abilities": ["brute_force"],
+        "runes": ["combat", "offensive", "utility"]
+    },
+    "reaper_mask": {
+        "type": "helmet",
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiZWUyM2I1YzcyNmFlOGUzZDAyMWU4YjRmNzUyNTYxOWFiMTAyYTRlMDRiZTk4M2I2MTQxNDM0OWFhYWM2NyJ9fX0=",
+        "stats": {
+            "health": 150,
+            "defense": 100,
+            "intelligence": 50,
+            "strength": 10
+        },
+        "abilities": ["reaper_blood"],
+        "runes": ["combat","defensive"]
+    },
+    "entombed_mask": {
+        "type": "helmet",
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmUyNGZkOWM2NDAwNTc3N2M3ODZmZTMxYWY2NWM1NzJlMzBkYTc5Njk4YTllZDIxMWFmMTQ3YzY0ZjcyYmE1ZCJ9fX0=",
+        "stats": {
+            "health": 300,
+            "defense": 400,
+            "intelligence": 150,
+            "strength": 50
+        },
+        "abilities": ["forever_in_tomb"],
+        "runes": ["combat","defensive","defensive"]
+    }
+}

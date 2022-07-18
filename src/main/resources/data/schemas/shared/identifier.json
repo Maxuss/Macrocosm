@@ -7,7 +7,7 @@
     "examples": [
         "minecraft:diamond",
         "diamond",
-        "namespace:path/file.txt",
+        "namespace:path/file",
         "macrocosm:registry/custom"
     ]
 }

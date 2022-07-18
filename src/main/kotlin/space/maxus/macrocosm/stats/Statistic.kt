@@ -114,7 +114,7 @@ enum class Statistic(
         addExtraLore = {
             val regen = it[HEALTH] / 100f
             add("")
-            add("<gray>Regeneration: <red>${Formatting.stats(regen.toBigDecimal())}/s")
+            add("<gray>Regeneration: <red>${Formatting.stats(regen.toBigDecimal())} HP/s")
         }
     ),
     DEFENSE(
@@ -158,7 +158,7 @@ enum class Statistic(
         addExtraLore = {
             val damageIncrease = it[INTELLIGENCE]
             add("")
-            add("Magic Damage: <aqua>+${damageIncrease.roundToInt()}%")
+            add("<gray>Magic Damage: <aqua>+${damageIncrease.roundToInt()}%")
         }
     ),
 
@@ -265,7 +265,7 @@ enum class Statistic(
     }
 
     fun explicitFormatFancy(num: Float): Component {
-        val comp = text("$specialChar $this <white>").color(color).append(type.format(num))
-        return (if (percents) comp.append("%".toComponent()) else comp).noitalic()
+        val comp = text("$specialChar $this ").color(color).append(type.format(num).color(NamedTextColor.WHITE))
+        return (if (percents) comp.append("%".toComponent().color(NamedTextColor.WHITE)) else comp).noitalic()
     }
 }

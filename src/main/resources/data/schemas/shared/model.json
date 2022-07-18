@@ -4,6 +4,11 @@
     "type": "object",
     "required": ["id", "from", "to"],
     "properties": {
+        "raw": {
+            "title": "Is Raw",
+            "description": "Whether the model should be raw",
+            "type": "boolean"
+        },
         "id": {
             "title": "Model ID",
             "description": "Custom Model Data to be applied",

@@ -33,7 +33,6 @@ import space.maxus.macrocosm.pets.types.WaspPet
 import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.RecipeMenu
-import space.maxus.macrocosm.recipes.RecipeParser
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Registry
@@ -109,7 +108,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         ZoneType.init()
         Cosmetics.init()
         SlayerType.init()
-        RecipeParser.init()
         ItemParser.init()
 
         SeaCreatures.init()

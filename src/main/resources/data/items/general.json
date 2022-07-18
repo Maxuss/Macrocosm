@@ -1,0 +1,156 @@
+{
+    "aspect_of_the_end": {
+        "material": "diamond_sword",
+        "type": "sword",
+        "rarity": "rare",
+        "stats": {
+            "damage": 100,
+            "strength": 50,
+            "intelligence": 150
+        },
+        "abilities": ["instant_transmission"],
+        "runes": [
+            "offensive"
+        ]
+    },
+    "emerald_pickaxe": {
+        "material": "diamond_pickaxe",
+        "type": "pickaxe",
+        "rarity": "rare",
+        "stats": {
+            "damage": 30,
+            "defense": 50,
+            "mining_speed": 450,
+            "mining_fortune": 150
+        },
+        "abilities": ["emerald_affection_pickaxe"],
+        "breaking_power": 6,
+        "runes": [
+            "mining"
+        ]
+    },
+    "aspect_of_the_dragons": {
+        "material": "diamond_sword",
+        "type": "sword",
+        "rarity": "legendary",
+        "stats": {
+            "damage": 225,
+            "strength": 100,
+            "crit_chance": 15
+        },
+        "abilities": ["aotd"],
+        "runes": [
+            "combat",
+            "offensive"
+        ]
+    },
+    "ice_spray_wand": {
+        "material": "stick",
+        "type": "wand",
+        "rarity": "rare",
+        "stats": {
+            "damage": 120,
+            "intelligence": 300,
+            "ability_damage": 5
+        },
+        "abilities": ["ice_cone"],
+        "runes": [
+            "combat",
+            "utility"
+        ]
+    },
+    "eternal_terror_wand": {
+        "material": "blaze_rod",
+        "type": "wand",
+        "rarity": "epic",
+        "stats": {
+            "damage": 80,
+            "intelligence": 250,
+            "health": 250,
+            "ability_damage": 15
+        },
+        "runes": [
+            "offensive",
+            "defensive"
+        ],
+        "abilities": ["infinite_terror"],
+        "description": "It's morbin' time",
+        "model": {
+            "id": 0,
+            "from": "item/blaze_rod",
+            "to": "macrocosm:item/eternal_terror_wand",
+            "parent": "item/handheld"
+        },
+        "animation": {
+            "frames": 10,
+            "time": 2,
+            "interpolate": true
+        }
+    },
+    "hyperions_ring": {
+        "material": "gold_ingot",
+        "type": "other",
+        "rarity": "legendary",
+        "name": "Hyperion's Ring",
+        "stats": {
+            "intelligence": 50,
+            "ability_damage": 5
+        },
+        "abilities": ["death_defy"],
+        "description": "Only works in off hand",
+        "model": {
+            "id": 1,
+            "from": "item/gold_ingot",
+            "to": "macrocosm:item/hyperions_ring",
+            "raw": true
+        }
+    },
+    "yeti_sword": {
+        "material": "iron_sword",
+        "type": "sword",
+        "rarity": "legendary",
+        "stats": {
+            "damage": 180,
+            "strength": 250,
+            "intelligence": 300
+        },
+        "abilities": ["terrain_toss"],
+        "runes": [
+            "combat",
+            "defensive",
+            "defensive"
+        ]
+    },
+    "void_prism": {
+        "material": "prismarine_shard",
+        "type": "sword",
+        "rarity": "legendary",
+        "stats": {
+            "damage": 150,
+            "strength": 80,
+            "intelligence": 500
+        },
+        "abilities": ["antimatter_ray"],
+        "runes": [
+            "combat",
+            {
+                "specific": "diamond"
+            },
+            {
+                "specific": "diamond"
+            }
+        ]
+    },
+    "rancorous_staff": {
+        "material": "stick",
+        "type": "sword",
+        "rarity": "epic",
+        "stats": {
+            "damage": 80,
+            "strength": 70,
+            "intelligence": 150
+        },
+        "abilities": ["pure_hatred"],
+        "runes": ["offensive","utility"]
+    }
+}

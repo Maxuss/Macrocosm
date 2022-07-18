@@ -1,0 +1,16 @@
+{
+    "aspect_of_the_end": {
+        "pattern": [
+            "P",
+            "P",
+            "D"
+        ],
+        "matrix": {
+            "P": {
+                "item": "enchanted_ender_pearl",
+                "amount": 16
+            },
+            "D": "enchanted_diamond"
+        }
+    }
+}

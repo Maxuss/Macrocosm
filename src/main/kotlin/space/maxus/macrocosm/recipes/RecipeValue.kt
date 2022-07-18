@@ -1,21 +1,11 @@
 package space.maxus.macrocosm.recipes
 
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.recipes.types.shapedRecipe
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.generic.id
 import java.util.concurrent.TimeUnit
 
 enum class RecipeValue(private val recipe: MacrocosmRecipe) {
-    ASPECT_OF_THE_END(
-        shapedRecipe(
-            "aspect_of_the_end", ItemValue.ASPECT_OF_THE_END.item, 1,
-            listOf(" P ", " P ", " D "),
-            'P' to (id("enchanted_ender_pearl") to 16), 'D' to (id("enchanted_diamond") to 1)
-        )
-    ),
-
     ;
 
     companion object {

@@ -9,19 +9,18 @@
     },
     "additionalProperties": {
         "required": [
-            "type",
             "rarity"
         ],
         "properties": {
             "name": {
                 "title": "Item Name",
                 "description": "Name component of this item",
-                "$ref": "shared/component.json"
+                "type": "string"
             },
             "description": {
                 "title": "Item Description",
                 "description": "Description of item, will be later split into lines of ~25 chars and parsed with MiniMessage",
-                "$ref": "shared/component.json"
+                "type": "string"
             },
             "type": {
                 "$ref": "#/definitions/item_type"
@@ -89,50 +88,30 @@
                 }
             },
 
-            "recipe": {
-                "title": "Related Recipe",
-                "description": "Marks this item as RecipeItem and adds provided recipe to it",
-                "$ref": "shared/identifier.json"
-            },
             "glow": {
                 "title": "Glow",
-                "description": "Whether the item should glow",
+                "description": "Whether the item should glow, does not work for ability items.",
                 "type": "boolean"
+            },
+
+            "reforge": {
+                "title": "Stored Reforge",
+                "description": "The reforge stored in this item, automatically makes this item a reforge stone",
+                "$ref": "shared/identifier.json"
             }
+        },
+        "dependencies": {
+            "reforge": ["head_skin"]
         },
         "oneOf": [
             {
                 "required": [
                     "material"
-                ],
-                "oneOf": [
-                    {
-                        "required": [
-                            "abilities"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "recipe"
-                        ]
-                    }
                 ]
             },
             {
                 "required": [
                     "head_skin"
-                ],
-                "oneOf": [
-                    {
-                        "required": [
-                            "abilities"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "recipe"
-                        ]
-                    }
                 ]
             }
         ],
