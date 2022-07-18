@@ -10,7 +10,7 @@ object DataGenerators {
     fun registries() {
         val logger = LoggerFactory.getLogger("space.maxus.macrocosm.data.Main")
         logger.info("Starting data generator")
-        val dirPath = Path(System.getProperty("user.dir"), "MacrocosmDatagen")
+        val dirPath = Path(System.getProperty("user.dir"), "MacrocosmResources")
         if (dirPath.toFile().exists())
             dirPath.toFile().deleteRecursively()
         dirPath.createDirectories()

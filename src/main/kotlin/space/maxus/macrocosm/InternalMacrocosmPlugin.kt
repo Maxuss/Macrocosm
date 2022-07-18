@@ -161,7 +161,9 @@ class InternalMacrocosmPlugin : KSpigot() {
         Registry.RESOURCE_GENERATORS.register(id("mcmeta"), MetaGenerator)
 
         if (dumpTestData) {
-            DataGenerators.registries()
+            Threading.runAsyncRaw(isDaemon = true) {
+                DataGenerators.registries()
+            }
         }
 
         val cfgFile = dataFolder.resolve("config.yml")

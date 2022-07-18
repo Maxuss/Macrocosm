@@ -23,14 +23,21 @@ open class SlayerBase(
     tier: Int,
     experience: Double,
     stats: Statistics,
+    @Transient
     override var mainHand: MacrocosmItem? = null,
+    @Transient
     override var offHand: MacrocosmItem? = null,
+    @Transient
     override var helmet: MacrocosmItem? = null,
+    @Transient
     override var chestplate: MacrocosmItem? = null,
+    @Transient
     override var leggings: MacrocosmItem? = null,
+    @Transient
     override var boots: MacrocosmItem? = null,
     disguiseSkin: String? = null,
     sounds: EntitySoundBank? = null,
+    @Transient
     override val rewardingSkill: SkillType = SkillType.COMBAT,
     actualName: String? = null
 ) : EntityBase(
