@@ -13,23 +13,26 @@ import org.bukkit.Particle.DustOptions
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
+import org.bukkit.event.EventPriority
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.entity.macrocosm
+import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.runNTimes
-import space.maxus.macrocosm.util.unreachable
+import java.util.*
 import kotlin.random.Random
 
-object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Shoot a chunk of <gradient:#AB6C08:#B77A1A:#291A01>Hatred Energy</gradient> that explodes dealing <red>[5000:0.15] ${Statistic.DAMAGE.display}<gray> and healing for <red>1%<gray> of damage dealt.") {
-    override val cost: AbilityCost = AbilityCost(300, 150, 2)
+object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Constructs a <gradient:#AB6C08:#B77A1A:#291A01>Hatred Shield<gray>, that consumes <red>next 5 hits<gray> you take and explodes, dealing <red>500%<gray> of damage taken to nearby enemies.") {
+    override val cost: AbilityCost = AbilityCost(300, 200, 8)
+
+    private val activePlayers: HashMap<UUID, Int> = hashMapOf()
+    private val takenDamage: HashMap<UUID, Float> = hashMapOf()
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
@@ -39,71 +42,93 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Shoo
             val player = e.player
             val p = player.paper!!
 
-            val base = p.eyeLocation
-            val dir = base.direction.multiply(4f).normalize().multiply(1.3f)
-            sound(Sound.ENTITY_GHAST_WARN) {
-                playAt(base)
-            }
-            runNTimes(4, 2, {
-                val amount = explodeBall(player, base)
-                player.sendMessage("<gray>Your <red>Decadence<gray> hit nearby entities for <red>${Formatting.withCommas(amount.toBigDecimal())}<gray> damage!")
-                player.heal(amount * .01f)
-                sound(Sound.ENTITY_GHAST_HURT) {
-                    pitch = 0f
-                    volume = 3f
-                    playAt(base)
-                }
-            }) {
-                base.add(dir)
+            activePlayers[p.uniqueId] = 5
+            takenDamage[p.uniqueId] = 0f
 
-                renderBall(base)
+            sound(Sound.ENTITY_GHAST_SCREAM) {
+                pitch = 0f
+                volume = 5f
+                playAt(p.location)
+            }
+
+            sound(Sound.ENTITY_BLAZE_AMBIENT) {
+                pitch = 2f
+                volume = 5f
+                playAt(p.location)
+            }
+
+            runNTimes(70, 2, {
+                explodeBall(player, p.eyeLocation, takenDamage[p.uniqueId]!! * 5f)
+                activePlayers.remove(p.uniqueId)
+                takenDamage.remove(p.uniqueId)
+            }) {
+                if(activePlayers[p.uniqueId]!! <= 0) {
+                    it.cancel()
+                    return@runNTimes
+                }
+                renderBall(p.eyeLocation.add(vec(y = -.5)))
+            }
+        }
+
+        listen<PlayerReceiveDamageEvent>(priority = EventPriority.LOWEST) { e ->
+            val p = e.player.paper ?: return@listen
+            if(takenDamage.contains(p.uniqueId)) {
+                takenDamage[p.uniqueId] = takenDamage[p.uniqueId]!! + e.damage
+                activePlayers[p.uniqueId] = activePlayers[p.uniqueId]!! - 1
+                e.isCancelled = true
             }
         }
     }
 
-    fun explodeBall(player: MacrocosmPlayer, pos: Location): Float {
+    fun explodeBall(player: MacrocosmPlayer, pos: Location, damage: Float) {
         async {
             for (i in 0..20) {
-                val color = when (Random.nextInt(0, 6)) {
+                val color = when (Random.nextInt(0, 4)) {
                     0 -> 0xD67E0A
-                    1 -> 0xB76D0B
-                    2 -> 0x985907
-                    3 -> 0xB96B05
-                    4 -> 0x8A5106
-                    5 -> 0xFFFFFF
-                    else -> unreachable()
+                    1 -> 0x2D2315
+                    else -> 0xD67E0A
                 }
 
                 particle(Particle.REDSTONE) {
                     data = DustOptions(Color.fromRGB(color), 2f)
                     offset = Vector.getRandom()
                     amount = 5
-                    extra = 1.2f
+                    extra = 2f
 
                     spawnAt(pos)
                 }
             }
         }
 
-        val damage = DamageCalculator.calculateMagicDamage(5000, .15f, player.stats()!!)
-        val paper = player.paper ?: return 0f
+        val paper = player.paper ?: return
         var total = 0f
-        for(entity in pos.getNearbyLivingEntities(4.0)) {
+        var hit = 0
+        for(entity in pos.getNearbyLivingEntities(5.0)) {
             if(entity is ArmorStand || entity is Player)
                 continue
 
             total += damage
+            hit++
             entity.macrocosm?.damage(damage, paper)
         }
-        return total
+
+        sound(Sound.ENTITY_WARDEN_SONIC_BOOM) {
+            pitch = 2f
+            volume = 4f
+
+            playAt(pos)
+        }
+
+        if(hit != 0 && total != 0f)
+            player.sendMessage("<gray>Your <red>Decadence<gray> hit $hit enemies for <red>${Formatting.withCommas(total.toBigDecimal())}<gray> damage!")
     }
 
     fun renderBall(pos: Location) {
         var i = 0f
         val at = pos.clone()
         while(i < Mth.PI) {
-            val radius = Mth.sin(i) * 0.2
-            val y = Mth.cos(i) * 0.2
+            val radius = Mth.sin(i) * 1.5
+            val y = Mth.cos(i) * 1.5
 
             var a = 0f
             while(a < Mth.PI * 2) {
@@ -114,14 +139,12 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Shoo
 
                 at.add(vecConst)
 
-                val color = when(Random.nextInt(0, 5)) {
-                    0 -> 0x201914
-                    1 -> 0x362415
-                    2 -> 0x47341B
-                    3 -> 0x3B341F
-                    4 -> 0x322724
-                    else -> unreachable()
+                val color = when (Random.nextInt(0, 4)) {
+                    0 -> 0xD67E0A
+                    1 -> 0x2D2315
+                    else -> 0x1B1002
                 }
+
                 particle(Particle.REDSTONE) {
                     data = DustOptions(Color.fromRGB(color), 1.2f)
                     amount = 2
@@ -131,10 +154,10 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Shoo
 
                 at.subtract(vecConst)
 
-                a += Mth.PI / 5f
+                a += Mth.PI / 10f
             }
 
-            i += Mth.PI / 5f
+            i += Mth.PI / 10f
         }
     }
 }

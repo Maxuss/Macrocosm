@@ -58,6 +58,7 @@ inline fun runNTimes(times: Long, period: Long, noinline finishCallback: () -> U
         runnable(it)
 
         if(it.isCancelled) {
+            finishCallback()
             return@task
         }
         counter++
