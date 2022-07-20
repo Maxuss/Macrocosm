@@ -37,10 +37,10 @@ object EnderDragonPet : Pet(
         magicFind = 3f
     }
 ) {
-    override val effects: PetEffects = FixedPetEffects(
+    override val effects: LazyEffects = FixedLazyEffects(
         listOf(
-            DustPetParticle(0x6705AD, 1.5f, 2, vec()),
-            DustPetParticle(0x140221, 1.5f, 2, vec())
+            DustLazyParticle(0x6705AD, 1.5f, 2, vec()),
+            DustLazyParticle(0x140221, 1.5f, 2, vec())
         )
     )
 

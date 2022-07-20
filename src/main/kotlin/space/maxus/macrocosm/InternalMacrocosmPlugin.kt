@@ -93,8 +93,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
 
-        // PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
-        // protocolManager.addPacketListener(MiningHandler)
+//        PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
+//        protocolManager.addPacketListener(MiningHandler)
 
         ReforgeType.init()
         StatRune.init()

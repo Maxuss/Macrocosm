@@ -13,9 +13,8 @@ class Ticker(val range: IntRange) {
             }
             Direction.BACKWARDS -> {
                 cursor--
-                if(cursor <= range.first) {
+                if(cursor <= range.first)
                     direction = Direction.FORWARD
-                }
             }
         }
         return cursor

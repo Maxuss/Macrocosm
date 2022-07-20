@@ -7,8 +7,8 @@ import kotlin.random.Random
 object DamageCalculator {
     private fun crits(stats: Statistics) = Random.nextFloat() < (stats.critChance / 100f)
 
-    fun calculateMagicDamage(base: Int, scaling: Float, stats: Statistics): Float {
-        return base * (1 + (stats.abilityDamage) / 100f) * (1 + (stats.intelligence / 100f) * scaling) * (1 + (stats.damageBoost / 100f))
+    fun calculateMagicDamage(base: Number, scaling: Float, stats: Statistics): Float {
+        return base.toFloat() * (1 + (stats.abilityDamage) / 100f) * (1 + (stats.intelligence / 100f) * scaling) * (1 + (stats.damageBoost / 100f))
     }
 
     fun calculateStandardDealt(amount: Float, stats: Statistics): Pair<Float, Boolean> {

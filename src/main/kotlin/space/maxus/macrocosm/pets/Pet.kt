@@ -31,7 +31,7 @@ abstract class Pet(
     private val baseStats: Statistics = Statistics.zero(),
     private val baseSpecials: SpecialStatistics = SpecialStatistics()
 ) : Listener {
-    abstract val effects: PetEffects
+    abstract val effects: LazyEffects
 
     fun abilitiesForRarity(rarity: Rarity): List<PetAbility> {
         return if (rarity <= Rarity.UNCOMMON)

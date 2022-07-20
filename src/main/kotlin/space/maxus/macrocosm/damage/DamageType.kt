@@ -5,6 +5,7 @@ enum class DamageType {
     CRITICAL,
     FIRE,
     FROST,
+    ELECTRIC,
+    @Deprecated("Magic damage type looks really bad and should not be used", replaceWith = ReplaceWith("DamageType.DEFAULT"))
     MAGIC,
-    ELECTRIC
 }

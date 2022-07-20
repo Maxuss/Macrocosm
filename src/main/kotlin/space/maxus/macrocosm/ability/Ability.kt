@@ -102,6 +102,8 @@ enum class Ability(val ability: MacrocosmAbility) {
     CALAMITY(EntityDamageMulAbility("Withering Malice", listOf(EntityType.WITHER_SKELETON), 2f)),
 
     DECADENCE(DecadenceAbility),
+    LETHARGY(LethargyAbility),
+    MYSPYS(MyspysAbility),
 
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility)

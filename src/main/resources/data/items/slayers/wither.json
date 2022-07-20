@@ -1,7 +1,7 @@
 {
     "cataclysm": {
         "type": "longsword",
-        "rarity": "epic",
+        "rarity": "rare",
         "material": "stone_sword",
         "name": "The Cataclysm",
         "abilities": ["cataclysm", "decadence"],
@@ -9,6 +9,32 @@
             "damage": 180,
             "strength": 150,
             "defense": 200
+        }
+    },
+    "catastrophe": {
+        "type": "longsword",
+        "rarity": "epic",
+        "material": "iron_sword",
+        "name": "The Catastrophe",
+        "abilities": ["catastrophe","lethargy"],
+        "stats": {
+            "damage": 200,
+            "strength": 200,
+            "defense": 300,
+            "ferocity": 10
+        }
+    },
+    "calamity": {
+        "type": "sword",
+        "rarity": "legendary",
+        "material": "netherite_hoe",
+        "name": "The Calamity",
+        "abilities": ["calamity","myspys"],
+        "stats": {
+            "damage": 270,
+            "strength": 250,
+            "defense": 500,
+            "ferocity": 25
         }
     }
 }

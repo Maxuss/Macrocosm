@@ -25,7 +25,7 @@ object TestPet : Pet(
         health = 10f
         ferocity = 10f
     }) {
-    override val effects: PetEffects = FixedPetEffects(listOf(BlockPetParticle(Material.SEA_PICKLE)))
+    override val effects: LazyEffects = FixedLazyEffects(listOf(BlockLazyParticle(Material.SEA_PICKLE)))
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {

@@ -61,7 +61,7 @@ val WITHER_SCROLL_IMPLOSION = WitherScrollAbility(
         if (entity is Player || entity is ArmorStand)
             continue
 
-        DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.MAGIC)
+        DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.DEFAULT)
         entity.macrocosm?.damage(damage, paper)
     }
     particle(Particle.EXPLOSION_HUGE) {
@@ -130,7 +130,7 @@ val WITHER_SCROLL_SHADOW_WARP = WitherScrollAbility(
                 it.cancel()
                 val mc = entity.macrocosm!!
                 mc.damage(damage)
-                DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.MAGIC)
+                DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.DEFAULT)
                 sound(Sound.ENTITY_ENDERMAN_HURT) {
                     pitch = .7f
                     playFor(paper)

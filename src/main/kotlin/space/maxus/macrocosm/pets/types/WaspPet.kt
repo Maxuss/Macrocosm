@@ -50,10 +50,10 @@ object WaspPet : Pet(
         foragingFortune = 15f
     }
 ) {
-    override val effects: PetEffects = FixedPetEffects(
+    override val effects: LazyEffects = FixedLazyEffects(
         listOf(
-            DustPetParticle(0xFFE03D, 1.5f, 2, vec()),
-            DustPetParticle(0x000000, 1.5f, 2, vec())
+            DustLazyParticle(0xFFE03D, 1.5f, 2, vec()),
+            DustLazyParticle(0x000000, 1.5f, 2, vec())
         )
     )
 

@@ -39,11 +39,11 @@ object PhoenixPet : Pet(
         intelligence = 40f
     }
 ) {
-    override val effects: PetEffects = TieredPetEffects(
-        Rarity.EPIC to listOf(DefaultPetParticle(Particle.DRIP_LAVA, 1, vec(.1, .1, .1))),
+    override val effects: LazyEffects = TieredLazyEffects(
+        Rarity.EPIC to listOf(DefaultLazyParticle(Particle.DRIP_LAVA, 1, vec(.1, .1, .1))),
         Rarity.LEGENDARY to listOf(
-            DustPetParticle(0x383838, 1f, 1, vec()),
-            DustPetParticle(0xDC7217, 1.1f, 1, vec())
+            DustLazyParticle(0x383838, 1f, 1, vec()),
+            DustLazyParticle(0xDC7217, 1.1f, 1, vec())
         )
     )
 

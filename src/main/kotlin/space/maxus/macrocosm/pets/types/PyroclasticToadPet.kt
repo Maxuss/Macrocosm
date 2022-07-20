@@ -49,15 +49,15 @@ object PyroclasticToadPet : Pet(
         intelligence = 5f
     }
 ) {
-    override val effects: PetEffects = TieredPetEffects(
+    override val effects: LazyEffects = TieredLazyEffects(
         Rarity.EPIC to listOf(
-            DustPetParticle(0x403F40, 2f, 2, vec()),
-            DustPetParticle(0xDC6500, 1.5f, 3, vec(-.5f))
+            DustLazyParticle(0x403F40, 2f, 2, vec()),
+            DustLazyParticle(0xDC6500, 1.5f, 3, vec(-.5f))
         ),
         Rarity.LEGENDARY to listOf(
-            DustPetParticle(0x403F40, 2f, 1, vec()),
-            DustPetParticle(0xDC6500, 1.5f, 2, vec(-.5f)),
-            DefaultPetParticle(Particle.DRIP_LAVA, 1, vec())
+            DustLazyParticle(0x403F40, 2f, 1, vec()),
+            DustLazyParticle(0xDC6500, 1.5f, 2, vec(-.5f)),
+            DefaultLazyParticle(Particle.DRIP_LAVA, 1, vec())
         )
     )
 

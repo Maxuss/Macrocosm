@@ -23,6 +23,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.events.PlayerRightClickEvent
+import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.util.runNTimes
 import java.util.*
@@ -110,6 +111,7 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
             total += damage
             hit++
             entity.macrocosm?.damage(damage, paper)
+            DamageHandlers.summonDamageIndicator(entity.location, damage)
         }
 
         sound(Sound.ENTITY_WARDEN_SONIC_BOOM) {
@@ -149,7 +151,7 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
                     data = DustOptions(Color.fromRGB(color), 1.2f)
                     amount = 2
 
-                    spawnAt(at.clone().add(vec(x - .05, y - .05, z - 0.5)))
+                    spawnAt(at)
                 }
 
                 at.subtract(vecConst)

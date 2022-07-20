@@ -44,20 +44,20 @@ object BeePet : Pet(
         critChance = 2f
     }
 ) {
-    override val effects: PetEffects = TieredPetEffects(
-        Rarity.COMMON to listOf(DustPetParticle(0xD2D2D1, 0.8f, 3, vec())),
-        Rarity.UNCOMMON to listOf(DustPetParticle(0xD2D2D1, 0.8f, 3, vec())),
+    override val effects: LazyEffects = TieredLazyEffects(
+        Rarity.COMMON to listOf(DustLazyParticle(0xD2D2D1, 0.8f, 3, vec())),
+        Rarity.UNCOMMON to listOf(DustLazyParticle(0xD2D2D1, 0.8f, 3, vec())),
         Rarity.RARE to listOf(
-            DustPetParticle(0xFFE2B4, 0.8f, 2, vec()),
-            DustPetParticle(0xF9D59D, 0.8f, 2, vec()),
+            DustLazyParticle(0xFFE2B4, 0.8f, 2, vec()),
+            DustLazyParticle(0xF9D59D, 0.8f, 2, vec()),
         ),
         Rarity.EPIC to listOf(
-            DustPetParticle(0xFFE2B4, 0.8f, 2, vec()),
-            DustPetParticle(0xF9D59D, 0.8f, 2, vec()),
+            DustLazyParticle(0xFFE2B4, 0.8f, 2, vec()),
+            DustLazyParticle(0xF9D59D, 0.8f, 2, vec()),
         ),
         Rarity.LEGENDARY to listOf(
-            BlockPetParticle(Material.HONEY_BLOCK, 2),
-            DustPetParticle(0xF9D59D, 0.8f, 2, vec()),
+            BlockLazyParticle(Material.HONEY_BLOCK, 2),
+            DustLazyParticle(0xF9D59D, 0.8f, 2, vec()),
         )
     )
 
