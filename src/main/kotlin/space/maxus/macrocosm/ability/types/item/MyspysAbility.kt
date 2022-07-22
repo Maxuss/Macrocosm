@@ -1,5 +1,7 @@
 package space.maxus.macrocosm.ability.types.item
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.bukkit.title
 import net.axay.kspigot.extensions.geometry.vec
@@ -41,6 +43,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
     override val cost: AbilityCost = AbilityCost(1000, 800, 30)
 
     private val enabled: MutableList<UUID> = mutableListOf()
+    private val fountains: Multimap<UUID, Location> = HashMultimap.create()
 
     override fun registerListeners() {
         // geysers
@@ -51,6 +54,10 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
             val p = e.player.paper ?: return@listen
             if(enabled.contains(p.uniqueId)) {
                 e.isCancelled = true
+                val got = if(fountains.containsKey(p.uniqueId)) fountains.get(p.uniqueId) else null
+                if(got != null && got.size >= 3) {
+                    fountains.remove(p.uniqueId, got.last())
+                }
                 summonGeyser(e.damaged.location, e.player, DamageCalculator.calculateMagicDamage(3000, .1f, e.player.stats()!!))
             }
         }
@@ -142,14 +149,20 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
     private fun summonGeyser(at: Location, by: MacrocosmPlayer, damage: Float) {
         val ticker = Ticker(0..4)
         val p = by.paper
+        fountains.put(by.ref, at)
         runNTimes(7, 5, {
             sound(Sound.ENTITY_GENERIC_EXTINGUISH_FIRE) {
                 pitch = 0f
                 volume = 7f
 
                 playAt(at)
+                fountains.remove(by.ref, at)
             }
         }) {
+            if(!fountains.containsEntry(by.ref, at)) {
+                it.cancel()
+                return@runNTimes
+            }
             val tick = ticker.tick()
 
             renderGeyser(at, tick)

@@ -9,6 +9,7 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.buffs.BuffRegistry
+import space.maxus.macrocosm.item.runes.types.FlameboundRune
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
@@ -115,6 +116,19 @@ private fun colorFromTier(tier: Int): TextColor {
         4 -> NamedTextColor.DARK_PURPLE
         5 -> NamedTextColor.GOLD
         else -> NamedTextColor.LIGHT_PURPLE
+    }
+}
+
+enum class SpecialRunes(val rune: RuneType) {
+    FLAMEBOUND(FlameboundRune)
+    ;
+
+    companion object {
+        fun init() {
+            for(v in values()) {
+                BuffRegistry.registerRune(id(v.name.lowercase()), v.rune)
+            }
+        }
     }
 }
 
@@ -232,6 +246,7 @@ enum class StatRune(override val spec: RuneSpec, override val display: String, o
             for(value in values()) {
                 BuffRegistry.registerRune(value.id, value)
             }
+            SpecialRunes.init()
         }
     }
 }

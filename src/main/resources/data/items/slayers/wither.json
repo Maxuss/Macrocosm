@@ -1,4 +1,44 @@
 {
+    "flaming_ashes": {
+        "material": "gunpowder",
+        "rarity": "uncommon",
+        "glow": true
+    },
+    "bloody_cinder": {
+        "material": "redstone",
+        "rarity": "rare",
+        "glow": true
+    },
+    "blazing_alloy": {
+        "material": "gold_ingot",
+        "rarity": "rare",
+        "glow": true
+    },
+    "everburning_catalyst": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjdjNDE5MzBmOGZmMGYyYjA0MzBlMTY5YWU1ZjM4ZTk4NGRmMTI0NDIxNTcwNWM2ZjE3Mzg2Mjg0NDU0M2U5ZCJ9fX0=",
+        "rarity": "epic",
+        "description": "Could make a good fuel."
+    },
+    "crude_oil": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjFkMjE4NTFmODE3MDUxN2VlYjViODc4MmZkM2Q0MTg4MWUwNmExZDMyYTQxMWIyM2MwMTUyZTIyYzJjZCJ9fX0=",
+        "rarity": "uncommon",
+        "description": "The smell..."
+    },
+    "diesel_distillate": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODY5NTZmZjE3ZjNhYjUyZWQ5N2QzNmUxNmFlOWI0YTU1NjM5ODJiNzgyNWMzNTYyNzhjMWZmMGEyZWU2NTZhIn19fQ==",
+        "rarity": "epic",
+        "description": "Might be a bit more useful than it's predcessor."
+    },
+    "jet_fuel": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWE1YmFlODU2ZWFkZmI1YmE3ZTllMjE5ZDgyMGQ5YjY1ZTg5YTM0Y2U1NTQxNDJmNTZlYmRlM2ZmNzU2NSJ9fX0=",
+        "rarity": "epic",
+        "description": "Highly reactive but will be very useful when paired with a strong catalyst."
+    },
+    "light_gasoline": {
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTZiY2QxODBiMWM4ZmM0Y2EzOWNmNDY3YzM0NWFlODNjYzE2YjYzY2IyNTU3MDM0NjAxMDNhM2VlYmE0NTcifX19",
+        "rarity": "epic",
+        "description": "Main power source for energy generators."
+    },
     "cataclysm": {
         "type": "longsword",
         "rarity": "rare",

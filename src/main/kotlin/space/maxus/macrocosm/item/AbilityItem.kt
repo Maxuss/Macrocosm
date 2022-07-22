@@ -53,6 +53,10 @@ open class AbilityItem(
     override var skin: SkullSkin? = null
     @PreviewFeature
     override var isDungeonised: Boolean = false
+
+    override var tempColor: Int? = null
+    override var tempSkin: String? = null
+
     override fun buildLore(lore: MutableList<Component>) {
         super.buildLore(lore)
         if(description != null) {

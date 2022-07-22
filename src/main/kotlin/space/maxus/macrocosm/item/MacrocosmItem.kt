@@ -49,9 +49,11 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.allNull
 import space.maxus.macrocosm.util.annotations.PreviewFeature
 import space.maxus.macrocosm.util.generic.getId
 import space.maxus.macrocosm.util.generic.putId
+import space.maxus.macrocosm.util.unreachable
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
@@ -100,6 +102,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         get() {
             return 1.0 + enchantments.toList().sumOf { (ench, lvl) -> ench.levels.indexOf(lvl) * 25.0 } + (stars / min(maxStars, 1).toDouble()) * 1000 + (if(reforge != null) 1000 else 0) + if(rarityUpgraded) 15000 else 0
         }
+
+
+    var tempColor: Int? get() = null; set(_) { /* no-op */ }
+    var tempSkin: String? get() = null; set(_) { /* no-op */ }
 
     @PreviewFeature
     var isDungeonised: Boolean get() = false; set(_) { /* no-op */ }
@@ -285,6 +291,13 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             this.skin = Registry.COSMETIC.find(nbt.getId("Skin")) as SkullSkin
         }
         this.amount = from.amount
+
+        val baseCmp = from.nbtData
+        if(baseCmp.contains("__TempColor"))
+            this.tempColor = baseCmp.getInt("__TempColor")
+        if(baseCmp.contains("__TempSkin"))
+            this.tempSkin = baseCmp.getString("__TempSkin")
+
         return this
     }
 
@@ -503,22 +516,33 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             // adding extra meta
             addExtraMeta(this)
 
-            if(this is LeatherArmorMeta && dye != null) {
-                val d = dye!!
-                lore.add(0, "".toComponent())
-                lore.add(0, text("<#${d.color.toString(16)}>${d.specialChar} ${d.name} Dye").noitalic())
-                setColor(Color.fromRGB(d.color))
-                lore(lore)
+            if(this is LeatherArmorMeta) {
+                if(tempColor != null) {
+                    setColor(Color.fromRGB(tempColor!!))
+                } else if(dye != null) {
+                    val d = dye!!
+                    lore.add(0, "".toComponent())
+                    lore.add(0, text("<#${d.color.toString(16)}>${d.specialChar} ${d.name} Dye").noitalic())
+                    setColor(Color.fromRGB(d.color))
+                    lore(lore)
+                }
             }
 
-            if(this is SkullMeta && skin != null) {
-                val s = skin!!
-                lore.add(0, "".toComponent())
-                lore.add(0, text("<dark_gray>${skin!!.name} Skin").noitalic())
+            if(this is SkullMeta && !allNull(tempSkin, skin)) {
+                val texture = if(tempSkin != null) {
+                    tempSkin!!
+                } else if(skin != null) {
+                    val s = skin!!
+                    lore.add(0, "".toComponent())
+                    lore.add(0, text("<dark_gray>${skin!!.name} Skin").noitalic())
+                    lore(lore)
+                    s.skin
+                } else {
+                    unreachable()
+                }
                 val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
-                profile.setProperty(ProfileProperty("textures", s.skin))
+                profile.setProperty(ProfileProperty("textures", texture))
                 playerProfile = profile
-                lore(lore)
             }
         }
 
@@ -588,6 +612,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         addExtraNbt(nbt)
 
         val nms = CraftItemStack.asNMSCopy(item)
+        if(tempSkin != null)
+            nms.tag?.putString("__TempSkin", tempSkin!!)
+        if(tempColor != null)
+            nms.tag?.putInt("__TempColor", tempColor!!)
         nms.tag?.put(MACROCOSM_TAG, nbt)
         return nms.asBukkitCopy()
     }

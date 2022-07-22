@@ -4,9 +4,7 @@ import net.axay.kspigot.event.listen
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import org.bukkit.inventory.EquipmentSlot
-import space.maxus.macrocosm.ability.AbilityBase
-import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.ability.AbilityType
+import space.maxus.macrocosm.ability.*
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.stats.Statistic
 import java.util.UUID
@@ -20,6 +18,7 @@ class ZombieWandAbility(name: String, val amount: Float, val length: Int, manaCo
             healTasks.remove(id)?.cancel()
             val stats = e.player.stats()!!
             var tick = 0
+            val trueAmount = if((Ability.ROTTEN_HEART_T1.ability as FullSetBonus).ensureSetRequirement(e.player)) amount * 1.75f else if((Ability.ROTTEN_HEART_T2.ability as FullSetBonus).ensureSetRequirement(e.player)) amount * 2.5f else amount
             healTasks[id] = task(period = 20L) {
                 tick++
                 if(tick >= length) {
@@ -27,7 +26,7 @@ class ZombieWandAbility(name: String, val amount: Float, val length: Int, manaCo
                     healTasks.remove(id)
                     return@task
                 }
-                e.player.heal(amount, stats)
+                e.player.heal(trueAmount, stats)
             }!!
         }
     }

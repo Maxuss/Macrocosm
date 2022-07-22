@@ -86,6 +86,30 @@ enum class Ability(val ability: MacrocosmAbility) {
         400
     ))),
 
+    GHOUL_BUSTER_ARMOR_BONUS(GhoulBusterAbility),
+
+    ROTTEN_HEART_T1(RottenHeartAbility(.75f)),
+    ROTTEN_HEART_T2(RottenHeartAbility(1.5f)),
+
+    HEAT_RESISTANT_ARMOR_BONUS(EntityKillCounterBonus("Heat Resistance", listOf(EntityType.WITHER_SKELETON), Statistic.DEFENSE)),
+    VOLCANO_STRIDER_ARMOR_BONUS(EntityKillCounterBonus("Volcano Strider", listOf(EntityType.WITHER_SKELETON), Statistic.DEFENSE, listOf(
+        0,
+        30,
+        80,
+        120,
+        150,
+        200,
+        250,
+        300,
+        350,
+        400
+    ))),
+
+    ENRAGE_ARMOR_ABILITY(EnrageAbility),
+
+    FIRE_BRANDS_ARMOR_BONUS(FireBrandAbility("Fire Brands", 1000f)),
+    FIRE_VORTICES_ARMOR_BONUS(FireBrandAbility("Fire Vortices", 2500f)),
+
     SMALL_HEAL(ZombieWandAbility("Small Heal", 50f, 4, 100)),
     MEDIUM_HEAL(ZombieWandAbility("Medium Heal", 90f, 5, 150)),
     BIG_HEAL(ZombieWandAbility("Big Heal", 120f, 6, 150)),

@@ -70,6 +70,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var playtime: Long = 0
     var baseStats: Statistics = Statistics.default()
     var tempStats: Statistics = Statistics.zero()
+    var tempSpecs: SpecialStatistics = SpecialStatistics()
     var purse: Float = 0f
     var bank: Float = 0f
     var currentHealth: Float = stats()!!.health
@@ -477,6 +478,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (activePet != null) {
             stats.increase(activePet!!.prototype.specialStats(activePet!!.level(this), activePet!!.rarity(this)))
         }
+
+        stats.increase(tempSpecs)
+
         val e = PlayerCalculateSpecialStatsEvent(this, stats)
         e.callEvent()
         specialCache = e.stats.clone()

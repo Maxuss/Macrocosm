@@ -216,7 +216,7 @@ object Armor {
             strength = 10f
             intelligence = 20f
         },
-        abilities = listOf(Ability.REVENANT_ARMOR_BONUS.ability),
+        abilities = listOf(Ability.REVENANT_ARMOR_BONUS.ability, Ability.ROTTEN_HEART_T1.ability),
         runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE))
     ), ThreePieceArmor { })
 
@@ -231,12 +231,50 @@ object Armor {
             strength = 40f
             intelligence = 50f
         },
-        abilities = listOf(Ability.REAPER_ARMOR_BONUS.ability),
+        abilities = listOf(Ability.REAPER_ARMOR_BONUS.ability, Ability.GHOUL_BUSTER_ARMOR_BONUS.ability, Ability.ROTTEN_HEART_T2.ability),
         runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)),
         chestMeta = colorMeta(0x1B1B1B),
         legsMeta = colorMeta(0x1B1B1B),
         bootMeta = colorMeta(0x272727)
     ), ThreePieceArmor { })
+
+    val HEAT_RESISTANT_ARMOR = register(object: KillCountingArmor(
+        "Heat Resistant",
+        "heat_resistant",
+        "LEATHER",
+        Rarity.RARE,
+        stats {
+            health = 50f
+            defense = 100f
+            strength = 15f
+            ferocity = 5f
+        },
+        abilities = listOf(Ability.HEAT_RESISTANT_ARMOR_BONUS.ability, Ability.FIRE_BRANDS_ARMOR_BONUS.ability),
+        runes = listOf(RuneSlot.COMBAT, RuneSlot.UTILITY),
+        chestMeta = colorMeta(0x333333),
+        legsMeta = colorMeta(0x505050),
+        bootMeta = colorMeta(0x232323),
+        headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2Y0MTNmNzYxMTgwNzI5NzBjN2NmZThmOTFmZTk4NjU4ZDJhZTk2M2IyZTQ2ZWFhOTQ0NDMzZDMzMjU5ZmUyYyJ9fX0="
+    ) { })
+
+    val VOLCANO_STRIDER_ARMOR = register(object: KillCountingArmor(
+        "Volcano Strider",
+        "volcano_strider",
+        "LEATHER",
+        Rarity.EPIC,
+        stats {
+            health = 100f
+            defense = 200f
+            strength = 30f
+            ferocity = 10f
+        },
+        abilities = listOf(Ability.VOLCANO_STRIDER_ARMOR_BONUS.ability, Ability.ENRAGE_ARMOR_ABILITY.ability, Ability.FIRE_VORTICES_ARMOR_BONUS.ability),
+        runes = listOf(RuneSlot.COMBAT, RuneSlot.COMBAT, RuneSlot.UTILITY),
+        chestMeta = colorMeta(0xFD9C02),
+        legsMeta = colorMeta(0xFFBB50),
+        bootMeta = colorMeta(0xDA8603),
+        headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM5OWVkNGIzZjdkZmNkNTg5NjUxYmNlNjEzNWM1MDRjZmY2MDc0YzUwYTI4NzMyY2IzOGQwYjliYWRhMTYwZiJ9fX0="
+    ) { })
 
     private fun register(item: ArmorItem, model: Model? = null): ArmorItem {
         cache.add(Pair(item, model))

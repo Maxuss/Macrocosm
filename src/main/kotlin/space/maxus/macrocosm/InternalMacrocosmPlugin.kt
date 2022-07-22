@@ -39,16 +39,20 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
 import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.util.annotations.UnsafeFeature
+import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
 import kotlin.random.Random
 
+@OptIn(UnsafeFeature::class)
 class InternalMacrocosmPlugin : KSpigot() {
     companion object {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
         lateinit var PACKET_MANAGER: ProtocolManager; private set
+        lateinit var UNSAFE: Unsafe; private set
     }
 
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
@@ -58,10 +62,14 @@ class InternalMacrocosmPlugin : KSpigot() {
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
+    @UnsafeFeature
+    val unsafe: Unsafe get() = UNSAFE
+
     override fun load() {
         isInDevEnvironment = System.getenv().containsKey("macrocosmDev")
         integratedServer = MacrocosmServer((if(isInDevEnvironment) "devMini" else "mini")+Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
+        UNSAFE = Unsafe(Random.nextInt())
         Threading.runAsyncRaw {
             Database.connect()
             playersLazy = Database.readAllPlayers().toMutableList()

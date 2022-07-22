@@ -74,6 +74,10 @@ fun unreachable(): Nothing {
     throw IllegalStateException("Unreachable condition reached!")
 }
 
+fun todo(message: String = "Not finished yet!"): Nothing {
+    throw IllegalStateException("TODO reached: $message")
+}
+
 fun String.stripTags() = MiniMessage.miniMessage().stripTags(this)
 
 fun renderBar(percentage: Float, notches: Int, from: TextColor, to: TextColor = from, background: TextColor = NamedTextColor.GRAY): String {

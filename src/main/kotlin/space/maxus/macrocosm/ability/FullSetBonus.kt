@@ -20,20 +20,24 @@ import space.maxus.macrocosm.text.text
  * @param name Name of the ability. Supports MM tags.
  * @param description Description of this ability. Will be partitioned to 25 chars per line, not including MM tags
  */
-open class FullSetBonus(name: String, description: String) : AbilityBase(AbilityType.PASSIVE, name, description) {
+open class FullSetBonus(name: String, description: String, val threePiece: Boolean = false) : AbilityBase(AbilityType.PASSIVE, name, description) {
     /**
      * Ensures that the provided [player] has set with this ability
      *
      * @param player Player to be checked against
      * @return True if all checks passed, false otherwise
      */
-    protected fun ensureSetRequirement(player: MacrocosmPlayer): Boolean {
-        return listOf(
+    fun ensureSetRequirement(player: MacrocosmPlayer): Boolean {
+        return (if(threePiece) listOf(
+            player.chestplate,
+            player.leggings,
+            player.boots
+        ) else listOf(
             player.helmet,
             player.chestplate,
             player.leggings,
             player.boots
-        ).map { it != null && it.abilities.contains(this) }.all { it }
+        )).map { it != null && it.abilities.contains(this) }.all { it }
     }
 
     /**
@@ -44,9 +48,11 @@ open class FullSetBonus(name: String, description: String) : AbilityBase(Ability
      */
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
-        tmp.add(text("<gold>Full Set Bonus: $name").noitalic())
-        for (desc in description.reduceToList()) {
-            tmp.add(text("<gray>$desc</gray>").noitalic())
+        tmp.add(text("<gold>Full Set Bonus: $name${if(type != AbilityType.PASSIVE) " <yellow><bold>"+type.name.replace("_", " ").uppercase() else ""}").noitalic())
+        for(part in description.split("<br>")) {
+            for (desc in part.reduceToList(30)) {
+                tmp.add(text("<gray>$desc</gray>").noitalic())
+            }
         }
         tmp.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
