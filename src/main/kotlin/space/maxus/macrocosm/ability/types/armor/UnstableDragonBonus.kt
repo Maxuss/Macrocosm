@@ -17,7 +17,7 @@ object UnstableDragonBonus: FullSetBonus("Unstable Blood", "Sometimes strikes ne
     override fun registerListeners() {
         task(delay = 20L, period = 120L) {
             for(player in Bukkit.getOnlinePlayers().parallelStream()) {
-                val mc = player.macrocosm!!
+                val mc = player.macrocosm ?: continue
                 if(!ensureSetRequirement(mc))
                     continue
                 val dmg = DamageCalculator.calculateMagicDamage((mc.stats()!!.critDamage * 10).roundToInt(), .4f, mc.stats()!!)

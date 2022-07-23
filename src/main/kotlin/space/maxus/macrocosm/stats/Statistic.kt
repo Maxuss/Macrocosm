@@ -236,6 +236,15 @@ enum class Statistic(
         displaySkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzNlZjQ3YmE3OWM3YjU1MGNmMGQ2OTQ2NWM4MmU2ZTcyYjUxNDY4NTk3OGZlNWY3YjZkMTJlMTQyNDAyZmRkZiJ9fX0=",
         description = "Magic Find increases chance of getting rare items."
     ),
+    SUMMONING_POWER(
+        StatisticType.DEFENSIVE,
+        TextColor.color(0x7620D8),
+        "☻",
+        0f,
+        secret = true,
+        displaySkin = "ewogICJ0aW1lc3RhbXAiIDogMTY1ODU2NDY1NjI2NSwKICAicHJvZmlsZUlkIiA6ICIxM2U3NjczMGRlNTI0MTk3OTA5YTZkNTBlMGEyMjAzYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtX3h1cyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS85MzJiOTUxNzYxZDE2M2IxY2Y1NmJjYTFmODk2NWQ0NWRmNTdjZDYzMmQ0YjQzNjA4NmFkN2VjYjI1YTlmMzMzIgogICAgfQogIH0KfQ==",
+        description = "Summoning Power increases the maximum amount of minions you can have at the moment."
+    ),
 
     DAMAGE_BOOST(StatisticType.OFFENSIVE, NamedTextColor.GOLD, "⚠", 0f, true, true),
     DAMAGE_REDUCTION(StatisticType.DEFENSIVE, NamedTextColor.GOLD, "⓪", 0f, true, true),

@@ -179,6 +179,12 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
             self[Statistic.MAGIC_FIND] = value
         }
 
+    var summoningPower: Int
+        get() = self[Statistic.SUMMONING_POWER]!!.roundToInt()
+        set(value) {
+            self[Statistic.SUMMONING_POWER] = value.toFloat()
+        }
+
     var damageBoost: Float
         get() = self[Statistic.DAMAGE_BOOST]!!
         set(value) {
@@ -331,7 +337,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
         for ((stat, _) in self) {
             if (self[stat]!! == 0f)
                 continue
-            self[stat] = self[stat]!!.roundToInt().toFloat()
+            self[stat] = ceil(self[stat]!!).roundToInt().toFloat()
         }
     }
 

@@ -4,8 +4,8 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.generators.Model
 import space.maxus.macrocosm.generators.CMDGenerator
+import space.maxus.macrocosm.generators.Model
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneSpec
 import space.maxus.macrocosm.item.runes.StatRune
@@ -196,6 +196,7 @@ object Armor {
             defense = 250f
             intelligence = 50f
             strength = 10f
+            summoningPower = 1
         },
         abilities = listOf(MasterNecromancerBonus),
         runes = listOf(RuneSlot.COMBAT, RuneSlot.UTILITY),

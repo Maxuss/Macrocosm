@@ -13,6 +13,7 @@ import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerQuitEvent
 import space.maxus.macrocosm.ability.TieredSetBonus
 import space.maxus.macrocosm.entity.EntityValue
@@ -24,7 +25,6 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
-import kotlin.collections.HashMap
 
 object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <red>Zombie Youngling<gray>, <red>Golden Ghoul<gray> or a <red>Corpse Giant<gray>, depending on amount of pieces worn.") {
     private val baby = hashMapOf<UUID, UUID>()
@@ -32,7 +32,7 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
     private val giant = hashMapOf<UUID, UUID>()
 
     override fun registerListeners() {
-        listen<PlayerArmorChangeEvent> { e ->
+        listen<PlayerArmorChangeEvent>(priority = EventPriority.LOWEST) { e ->
             if(e.newItem == e.oldItem)
                 return@listen
             val player = e.player.uniqueId
@@ -93,7 +93,7 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
             }
         }
 
-        listen<PlayerQuitEvent> { e ->
+        listen<PlayerQuitEvent>(priority = EventPriority.LOWEST) { e ->
             val player = e.player.uniqueId
             sanitizeRemove(player, baby)
             sanitizeRemove(player, golden)
