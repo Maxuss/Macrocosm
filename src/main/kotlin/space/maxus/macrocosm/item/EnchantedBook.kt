@@ -23,7 +23,9 @@ import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.multimap
 
 private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
-    val (_, lvl) = ench.maxByOrNull { it.value } ?: return Rarity.SPECIAL
+    if(ench.values.isEmpty())
+        return Rarity.COMMON
+    val lvl = ench.values.max()
     return if (lvl >= 8) Rarity.DIVINE
     else if (lvl >= 7) Rarity.MYTHIC
     else if (lvl >= 6) Rarity.LEGENDARY
@@ -82,7 +84,8 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
     }
 
     override fun clone(): MacrocosmItem {
-        val clone = EnchantedBook(enchantments)
+        val clone = EnchantedBook()
+        clone.enchantments.putAll(this.enchantments)
         clone.rarity = rarityFromEnchants(clone.enchantments)
         clone.name = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
         return clone

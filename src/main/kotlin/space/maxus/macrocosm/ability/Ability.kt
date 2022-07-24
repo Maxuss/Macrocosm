@@ -6,6 +6,7 @@ import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
 import space.maxus.macrocosm.ability.types.other.SlayerQuestAbility
+import space.maxus.macrocosm.ability.types.summoning.TestSummon
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
@@ -130,7 +131,8 @@ enum class Ability(val ability: MacrocosmAbility) {
     MYSPYS(MyspysAbility),
 
     FIERY_SLASH(FierySlashAbility),
-    INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility)
+    INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),
+    TEST_SUMMON(TestSummon)
 
     ;
 

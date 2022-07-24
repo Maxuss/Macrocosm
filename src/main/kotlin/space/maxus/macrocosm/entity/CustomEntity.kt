@@ -14,7 +14,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.loot.GlobalLootPool
 import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmEntity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
@@ -51,7 +51,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
     init {
         val handle = (paper as? CraftEntity)?.handle
-        if(handle is DelegatedMacrocosmEntity) {
+        if(handle is NativeMacrocosmEntity) {
             id = handle.delegateId
             val delegate = Registry.ENTITY.find(id)
             name = delegate.name

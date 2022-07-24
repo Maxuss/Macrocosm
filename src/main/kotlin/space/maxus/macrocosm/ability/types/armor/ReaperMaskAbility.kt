@@ -19,8 +19,8 @@ import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
 import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
-import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
+import space.maxus.macrocosm.nms.NativeMacrocosmEntity
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
@@ -57,7 +57,7 @@ object ReaperMaskAbility: AbilityBase(AbilityType.PASSIVE, "Reaper Blood", "Summ
         }
     }
 
-    class SupportZombie(level: Level, private val owner: UUID): Zombie(level), OwnableEntity, DelegatedMacrocosmEntity {
+    class SupportZombie(level: Level, override val owner: UUID): Zombie(level), OwnableEntity, NativeMacrocosmEntity {
         override val delegateId: Identifier = id("reaper_mask_zombie")
 
         override fun registerGoals() {

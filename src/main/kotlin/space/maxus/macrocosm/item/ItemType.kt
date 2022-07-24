@@ -12,6 +12,7 @@ enum class ItemType(
     LONGSWORD,
     DAGGER,
     BOW,
+    STAFF,
     AXE(tool = true),
     PICKAXE(false, true),
     DRILL(false, true),
@@ -48,10 +49,10 @@ enum class ItemType(
     }
 
     companion object {
-        fun melee() = listOf(AXE, SWORD, LONGSWORD, GAUNTLET, DAGGER)
+        fun melee() = listOf(AXE, SWORD, LONGSWORD, GAUNTLET, DAGGER, STAFF)
         fun ranged() = listOf(BOW)
-        fun weapons() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, DAGGER)
-        fun weaponsWand() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, WAND, DAGGER)
+        fun weapons() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, DAGGER, STAFF)
+        fun weaponsWand() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, WAND, DAGGER, STAFF)
         fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL, FISHING_ROD)
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)

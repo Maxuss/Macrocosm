@@ -52,7 +52,7 @@ open class SlayerBase(
     fun summonBy(at: Location, summoner: Player) {
         val entity = spawn(at)
         entity.persistentDataContainer.set(pluginKey("SUMMONER"), PersistentDataType.STRING, summoner.uniqueId.toString())
-        summoner.macrocosm!!.summonedBoss = entity.uniqueId
+        summoner.macrocosm!!.boundSlayerBoss = entity.uniqueId
     }
 
     override fun spawn(at: Location): LivingEntity {

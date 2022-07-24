@@ -49,12 +49,12 @@ object SlayerHandlers: Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onDeath(e: PlayerDeathEvent) {
-        if(e.player.summonedBoss == null || e.player.slayerQuest == null || e.isCancelled)
+        if(e.player.boundSlayerBoss == null || e.player.slayerQuest == null || e.isCancelled)
             return
         val quest = e.player.slayerQuest!!
         if(quest.status != SlayerStatus.SLAY_BOSS)
             return
-        Bukkit.getEntity(e.player.summonedBoss!!)?.remove()
+        Bukkit.getEntity(e.player.boundSlayerBoss!!)?.remove()
 
         e.player.sendMessage("<red><bold>SLAYER QUEST FAILED! YOU DIED!")
         e.player.sendMessage("<gray>Good luck next time!")
@@ -81,7 +81,7 @@ object SlayerHandlers: Listener {
         // player has killed the boss, update status and give experience
         val newQuest = SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.SUCCESS)
         player.updateSlayerQuest(newQuest)
-        player.summonedBoss = null
+        player.boundSlayerBoss = null
 
         player.sendMessage("<gold><bold>NICE! SLAYER BOSS SLAIN!")
         val currentLevel = player.slayers[quest.type]!!

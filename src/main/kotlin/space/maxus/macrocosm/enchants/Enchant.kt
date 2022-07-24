@@ -475,6 +475,7 @@ enum class Enchant(val enchant: Enchantment) {
 
     ULTIMATE_WISE(UltimateWiseEnchantment),
     ULTIMATE_BULK(UltimateBulkEnchantment),
+    ULTIMATE_CONTROL(UltimateControlEnchantment),
 
     ONE_FOR_ALL(OneForAllEnchantment),
     LEGION(LegionEnchantment)

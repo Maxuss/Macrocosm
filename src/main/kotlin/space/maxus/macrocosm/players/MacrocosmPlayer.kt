@@ -46,13 +46,12 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.GSON
 import java.sql.Statement
 import java.time.Instant
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -83,7 +82,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> = HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, listOf() ,.0) })
-    var summonedBoss: UUID? = null
+    var boundSlayerBoss: UUID? = null
+    var summons: MutableList<UUID> = mutableListOf()
+    var summonSlotsUsed: Int = 0
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null

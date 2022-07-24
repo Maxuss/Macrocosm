@@ -11,7 +11,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 import space.maxus.macrocosm.entity.Entities
 import space.maxus.macrocosm.entity.readNbt
 import space.maxus.macrocosm.item.MACROCOSM_TAG
-import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmEntity
 
 object EntityHandlers : Listener {
     @EventHandler
@@ -22,7 +22,7 @@ object EntityHandlers : Listener {
         if (entity.readNbt().contains(MACROCOSM_TAG) || entity is Player || entity is ArmorStand)
             return
 
-        if((entity as CraftEntity).handle is DelegatedMacrocosmEntity) {
+        if((entity as CraftEntity).handle is NativeMacrocosmEntity) {
             // delaying task to let it spawn
             task(delay = 20L) {
                 Entities.toMacrocosmReloading(entity)

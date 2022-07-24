@@ -21,6 +21,21 @@ import java.util.concurrent.TimeUnit
 private fun registerPool(id: String, pool: LootPool): LootPool = Registry.LOOT_POOL.register(id(id), pool)
 
 enum class EntityValue(val entity: MacrocosmEntity) {
+    TEST_SUMMON(
+        EntityBase(
+            text("Test Summon"),
+            EntityType.SPIDER,
+            LootPool.of(),
+            .0,
+            stats {
+                strength = 100f
+                health = 50000f
+                speed = 200f
+            },
+            playerFriendly = true
+        )
+    ),
+
     // sea creatures
     SQUID(
         EntityBase(

@@ -4,7 +4,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MACROCOSM_TAG
-import space.maxus.macrocosm.nms.DelegatedMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmEntity
 import space.maxus.macrocosm.util.generic.getId
 
 val LivingEntity.macrocosm: MacrocosmEntity? get() = Entities.toMacrocosm(this)
@@ -15,7 +15,7 @@ object Entities {
         if (entity is Player)
             return null
         val handle = (entity as? CraftEntity)?.handle
-        if(handle is DelegatedMacrocosmEntity)
+        if(handle is NativeMacrocosmEntity)
             return CustomEntity(entity.uniqueId)
         val tag = entity.readNbt()
         if (tag.contains(MACROCOSM_TAG)) {
@@ -33,7 +33,7 @@ object Entities {
         if (entity is Player)
             return null
         val handle = (entity as? CraftEntity)?.handle
-        if(handle is DelegatedMacrocosmEntity)
+        if(handle is NativeMacrocosmEntity)
             return CustomEntity(entity.uniqueId)
         val tag = entity.readNbt()
         if (tag.contains(MACROCOSM_TAG)) {

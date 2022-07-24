@@ -36,6 +36,9 @@ object DataListener {
             val player = Macrocosm.onlinePlayers.remove(id)
             player?.storeSelf(Database.statement)
             player?.activePet?.despawn(player)
+            player?.summons?.forEach { summon ->
+                e.player.world.getEntity(summon)?.remove()
+            }
         }
     }
 }
