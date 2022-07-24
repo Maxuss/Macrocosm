@@ -182,6 +182,9 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     FLAMETHROWER(FlamethrowerAbility),
 
+    HUNTERS_STILETTO_PASSIVE(HuntersStilettoPassive),
+    HUNTERS_STILETTO_ACTIVE(HuntersStilettoActive),
+
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),
     ;

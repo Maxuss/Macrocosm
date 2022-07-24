@@ -57,6 +57,19 @@
             "parent": "item/handheld"
         }
     },
+    "hunters_stiletto": {
+        "type": "dagger",
+        "name": "Hunter's Stiletto",
+        "material": "iron_sword",
+        "rarity": "epic",
+        "stats": {
+            "damage": 210,
+            "strength": 120,
+            "intelligence": 150,
+            "speed": 50
+        },
+        "abilities": ["hunters_stiletto_passive", "hunters_stiletto_active"]
+    },
     "cataclysm": {
         "type": "longsword",
         "rarity": "rare",

@@ -1,12 +1,12 @@
 {
     "providers": [
         {
-            "file": "macrocosm:font/owner.png",
+            "file": "macrocosm:font/signs/mark.png",
             "chars": [
                 "\uE238"
             ],
-            "height": 12,
-            "ascent": 8,
+            "height": 6,
+            "ascent": 6,
             "type": "bitmap"
         }
     ]
