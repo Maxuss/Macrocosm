@@ -13,9 +13,10 @@ import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
-object BeekeeperArmorBonus: FullSetBonus(
+object BeekeeperArmorBonus : FullSetBonus(
     "Honey Barrage",
-    "Acquire <gold>Honey Shield<gray> when hurt, that <green>blocks<gray> next <green>2<gray> hits.") {
+    "Acquire <gold>Honey Shield<gray> when hurt, that <green>blocks<gray> next <green>2<gray> hits."
+) {
     private val amount: HashMap<UUID, Int> = hashMapOf()
     override val cost: AbilityCost = AbilityCost(cooldown = 10)
 

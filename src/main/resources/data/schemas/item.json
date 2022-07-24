@@ -42,7 +42,6 @@
                 "pattern": "[a-zA-Z_]+",
                 "$ref": "https://json.schemastore.org/minecraft-item-modifier.json"
             },
-
             "model": {
                 "title": "Item Model",
                 "description": "Model for this item",
@@ -53,7 +52,6 @@
                 "description": "Animation for this item",
                 "$ref": "shared/animation.json"
             },
-
             "abilities": {
                 "title": "Related Abilities",
                 "description": "Marks this item as AbilityItem and adds provided abilities to it",
@@ -87,13 +85,11 @@
                     "$ref": "shared/rune.json"
                 }
             },
-
             "glow": {
                 "title": "Glow",
                 "description": "Whether the item should glow, does not work for ability items.",
                 "type": "boolean"
             },
-
             "reforge": {
                 "title": "Stored Reforge",
                 "description": "The reforge stored in this item, automatically makes this item a reforge stone",
@@ -101,7 +97,9 @@
             }
         },
         "dependencies": {
-            "reforge": ["head_skin"]
+            "reforge": [
+                "head_skin"
+            ]
         },
         "oneOf": [
             {
@@ -117,7 +115,6 @@
         ],
         "additionalProperties": false
     },
-
     "definitions": {
         "item_type": {
             "title": "Item Type",

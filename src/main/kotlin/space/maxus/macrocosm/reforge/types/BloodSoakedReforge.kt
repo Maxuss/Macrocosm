@@ -8,7 +8,7 @@ import space.maxus.macrocosm.reforge.ReforgeBase
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-object BloodSoakedReforge: ReforgeBase(
+object BloodSoakedReforge : ReforgeBase(
     "Blood-Soaked",
     "Bloodlust",
     "Heal for <green>0.5%<gray> of your maximum ${Statistic.HEALTH.display}<gray> each hit.",

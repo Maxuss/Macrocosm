@@ -28,7 +28,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 
-object InfiniteTerrorAbility:
+object InfiniteTerrorAbility :
     AbilityBase(
         AbilityType.RIGHT_CLICK,
         "Infinite Terror",
@@ -38,17 +38,18 @@ object InfiniteTerrorAbility:
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
                 return@listen
             val p = e.player.paper!!
             val damage = DamageCalculator.calculateMagicDamage(30000, .13f, e.player.stats()!!)
 
-            val nearest = (p.getTargetBlock(6)?.location ?: p.eyeLocation.direction.multiply(2f).normalize().relativeLocation(p.location)).clone()
+            val nearest = (p.getTargetBlock(6)?.location ?: p.eyeLocation.direction.multiply(2f).normalize()
+                .relativeLocation(p.location)).clone()
 
             spawnTargetingBats(nearest)
 
-            for(entity in nearest.getNearbyLivingEntities(5.0)) {
-                if(entity is Player || entity is ArmorStand || entity is Bat)
+            for (entity in nearest.getNearbyLivingEntities(5.0)) {
+                if (entity is Player || entity is ArmorStand || entity is Bat)
                     continue
 
                 entity.macrocosm!!.damage(damage, p)
@@ -68,7 +69,7 @@ object InfiniteTerrorAbility:
 
     private fun spawnTargetingBats(target: Location) {
         // amount of bats
-        for(i in 0 until 15) {
+        for (i in 0 until 15) {
             task(delay = 5L + i * 2) {
                 val vector = Vector.getRandom()
                 val relative = vector.relativeLocation(target)
@@ -84,10 +85,11 @@ object InfiniteTerrorAbility:
 
                 task(delay = 0L, period = 5L) { s ->
                     ticks++
-                    if(ticks > 4) {
+                    if (ticks > 4) {
                         s.cancel()
                     } else
-                        entity.velocity = target.toVector().subtract(entity.location.toVector()).normalize().multiply(1.5f)
+                        entity.velocity =
+                            target.toVector().subtract(entity.location.toVector()).normalize().multiply(1.5f)
                 }
 
                 task(delay = 20L) {

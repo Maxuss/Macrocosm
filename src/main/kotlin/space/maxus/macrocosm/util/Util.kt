@@ -51,18 +51,23 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
 
-inline fun runNTimes(times: Long, period: Long, noinline finishCallback: () -> Unit = { }, crossinline runnable: (KSpigotRunnable) -> Unit): KSpigotRunnable {
+inline fun runNTimes(
+    times: Long,
+    period: Long,
+    noinline finishCallback: () -> Unit = { },
+    crossinline runnable: (KSpigotRunnable) -> Unit
+): KSpigotRunnable {
     var counter = 0
-    val max = if(times <= 0) 1 else times
+    val max = if (times <= 0) 1 else times
     return task(period = period) {
         runnable(it)
 
-        if(it.isCancelled) {
+        if (it.isCancelled) {
             finishCallback()
             return@task
         }
         counter++
-        if(counter >= max) {
+        if (counter >= max) {
             it.cancel()
             finishCallback()
             return@task
@@ -80,23 +85,30 @@ fun todo(message: String = "Not finished yet!"): Nothing {
 
 fun String.stripTags() = MiniMessage.miniMessage().stripTags(this)
 
-fun renderBar(percentage: Float, notches: Int, from: TextColor, to: TextColor = from, background: TextColor = NamedTextColor.GRAY): String {
+fun renderBar(
+    percentage: Float,
+    notches: Int,
+    from: TextColor,
+    to: TextColor = from,
+    background: TextColor = NamedTextColor.GRAY
+): String {
     val tiles = min(ceil(percentage * (notches + (notches / 3))).roundToInt(), notches)
-    return "<gradient:${from.asHexString()}:${to.asHexString()}>" + "-".repeat(tiles) + "</gradient><${background.asHexString()}>" + "-".repeat(notches - tiles)
+    return "<gradient:${from.asHexString()}:${to.asHexString()}>" + "-".repeat(tiles) + "</gradient><${background.asHexString()}>" + "-".repeat(
+        notches - tiles
+    )
 }
 
 fun ticksToTime(ticks: Long): String {
     var hours = (ticks / 1000) + 6
     var minutes = (ticks % 1000) / (1000 / 60)
-    while(minutes >= 60) {
+    while (minutes >= 60) {
         hours++
         minutes -= 60
     }
-    val suffix = if(hours >= 24) {
+    val suffix = if (hours >= 24) {
         hours -= 24
         "AM"
-    }
-    else if(hours > 12) {
+    } else if (hours > 12) {
         hours -= 12
         "PM"
     } else "AM"
@@ -104,7 +116,7 @@ fun ticksToTime(ticks: Long): String {
 }
 
 fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, value: V): Int {
-    if(this.containsKey(key)) {
+    if (this.containsKey(key)) {
         val v = this[key]!!
         v.add(value)
         this[key] = v
@@ -144,13 +156,13 @@ fun createFloatingBlock(loc: Location, item: ItemStack): ArmorStand {
 }
 
 fun File.recreateFile() {
-    if(this.exists())
+    if (this.exists())
         this.delete()
     this.createNewFile()
 }
 
 fun File.recreateDir() {
-    if(this.exists())
+    if (this.exists())
         this.deleteRecursively()
     this.mkdirs()
 }
@@ -192,7 +204,7 @@ fun threadScoped(
 }
 
 inline fun <reified T> Collection<T>.padNulls(demand: Int): MutableCollection<T?> {
-    if(size >= demand) {
+    if (size >= demand) {
         val new = mutableListOf<T?>()
         new.addAll(this)
         return new
@@ -205,7 +217,7 @@ inline fun <reified T> Collection<T>.padNulls(demand: Int): MutableCollection<T?
 }
 
 inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollection<T> {
-    if(size >= demand) {
+    if (size >= demand) {
         val new = mutableListOf<T>()
         new.addAll(this)
         return new
@@ -218,7 +230,7 @@ inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollecti
 }
 
 fun Random.nextSignedDouble(): Double {
-    return if(nextBoolean()) nextDouble() else -nextDouble()
+    return if (nextBoolean()) nextDouble() else -nextDouble()
 }
 
 inline fun <reified K, reified V> multimap(): Multimap<K, V> = ArrayListMultimap.create()
@@ -229,5 +241,5 @@ inline fun <reified T> allNull(vararg nullables: T?): Boolean = nullables.all { 
 fun String.containsAny(vararg possibles: String): Boolean = possibles.any { contains(it) }
 
 fun Player.giveOrDrop(item: ItemStack) {
-    if(inventory.firstEmpty() == -1) world.dropItem(location, item) else inventory.addItem(item)
+    if (inventory.firstEmpty() == -1) world.dropItem(location, item) else inventory.addItem(item)
 }

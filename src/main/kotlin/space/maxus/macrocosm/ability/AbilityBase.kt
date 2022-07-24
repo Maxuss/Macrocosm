@@ -35,7 +35,11 @@ abstract class AbilityBase(
      * @return True if the item and cost requirements are met, false otherwise
      */
     @Suppress("SameParameterValue")
-    protected open fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot, silent: Boolean = false): Boolean {
+    protected open fun ensureRequirements(
+        player: MacrocosmPlayer,
+        slot: EquipmentSlot,
+        silent: Boolean = false
+    ): Boolean {
         val item = player.paper!!.inventory.getItem(slot)
         if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
             return false

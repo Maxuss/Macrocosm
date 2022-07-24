@@ -16,7 +16,7 @@ import space.maxus.macrocosm.registry.Clone
 import space.maxus.macrocosm.util.stripTags
 import kotlin.math.min
 
-class SlayerQuest(val type: SlayerType, val tier: Int, val collectedExp: Float, val status: SlayerStatus): Clone {
+class SlayerQuest(val type: SlayerType, val tier: Int, val collectedExp: Float, val status: SlayerStatus) : Clone {
     override fun clone(): Clone {
         return SlayerQuest(type, tier, collectedExp, status)
     }
@@ -36,7 +36,7 @@ class SlayerQuest(val type: SlayerType, val tier: Int, val collectedExp: Float, 
         var timer = 0L
         var extraPitch = 0f
         task(period = 1L) {
-            if(timer >= 20) {
+            if (timer >= 20) {
                 sound(Sound.ENTITY_WITHER_SPAWN) {
                     pitch = 2f
                     volume = 4f

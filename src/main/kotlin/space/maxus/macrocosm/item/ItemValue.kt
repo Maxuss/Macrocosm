@@ -35,7 +35,11 @@ import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.generic.id
 
-enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, private val animation: Animation? = null) {
+enum class ItemValue(
+    val item: MacrocosmItem,
+    private val model: Model? = null,
+    private val animation: Animation? = null
+) {
     NULL(AbilityItem(ItemType.OTHER, "null", Rarity.COMMON, Material.PLAYER_HEAD, Statistics.zero())),
 
     ENCHANTED_BOOK(EnchantedBook()),
@@ -94,12 +98,20 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
     ),
 
     // shortbows
-    THE_QUEENS_STINGER(Shortbow("The Queen's Stinger", Rarity.LEGENDARY, stats = stats {
-        damage = 250f
-        strength = 200f
-        critDamage = 150f
-        critChance = 25f
-    }, extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability), runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE)))),
+    THE_QUEENS_STINGER(
+        Shortbow(
+            "The Queen's Stinger",
+            Rarity.LEGENDARY,
+            stats = stats {
+                damage = 250f
+                strength = 200f
+                critDamage = 150f
+                critChance = 25f
+            },
+            extraAbilities = listOf(Ability.HONEYCOMB_BULWARK.ability),
+            runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE))
+        )
+    ),
 
     // entity equipment
     COLORED_LEATHER_HELMET(
@@ -132,33 +144,77 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
 
     // admin items
     MAXUS_CAT_PLUSHIE(
-        LimitedEditionItem(ItemType.OTHER, "Maxus' Cat Plushie", Rarity.SPECIAL, Material.PLAYER_HEAD, stats { intelligence = -1f }, metaModifier = {
-            val skull = it as SkullMeta
-            val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
-            profile.setProperty(ProfileProperty("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM1MjUzYjBjOTZhZTRmYmNkZTY2OWJjYmE4ZWRjNDk5MTRmMmU5NTVmMDUyMjU5NTkxMWE3OTE5Yjk1OTdkMyJ9fX0"))
-            skull.playerProfile = profile
-        })
+        LimitedEditionItem(
+            ItemType.OTHER,
+            "Maxus' Cat Plushie",
+            Rarity.SPECIAL,
+            Material.PLAYER_HEAD,
+            stats { intelligence = -1f },
+            metaModifier = {
+                val skull = it as SkullMeta
+                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
+                profile.setProperty(
+                    ProfileProperty(
+                        "textures",
+                        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM1MjUzYjBjOTZhZTRmYmNkZTY2OWJjYmE4ZWRjNDk5MTRmMmU5NTVmMDUyMjU5NTkxMWE3OTE5Yjk1OTdkMyJ9fX0"
+                    )
+                )
+                skull.playerProfile = profile
+            })
     ),
 
     //#region transmutation
     SAPPHIRE_SHARD(
-        RecipeItem(Material.AMETHYST_SHARD, Rarity.EPIC, "Sapphire Shard", description = "It shines with sorrow", glow = true),
+        RecipeItem(
+            Material.AMETHYST_SHARD,
+            Rarity.EPIC,
+            "Sapphire Shard",
+            description = "It shines with sorrow",
+            glow = true
+        ),
         Model(2, "item/amethyst_shard", "macrocosm:item/sapphire_shard")
     ),
 
     PRISMATIC_SHARD(
-        RecipeItem(Material.AMETHYST_SHARD, Rarity.LEGENDARY, "Prismatic Shard", description = "It is said that this gemstone can produce solar energy out of nothing."),
+        RecipeItem(
+            Material.AMETHYST_SHARD,
+            Rarity.LEGENDARY,
+            "Prismatic Shard",
+            description = "It is said that this gemstone can produce solar energy out of nothing."
+        ),
         Model(3, "item/amethyst_shard", "macrocosm:item/prismatic_shard"),
         Animation(11)
     ),
 
     // indev
-    ENCHANTED_ADAMANTITE(RecipeItem(Material.REDSTONE, Rarity.EPIC, "Enchanted Adamantite", description = "Dwarves thought this metal was a myth...", glow = true)),
+    ENCHANTED_ADAMANTITE(
+        RecipeItem(
+            Material.REDSTONE,
+            Rarity.EPIC,
+            "Enchanted Adamantite",
+            description = "Dwarves thought this metal was a myth...",
+            glow = true
+        )
+    ),
 
     INFERNAL_GREATSWORD(InfernalGreatsword()),
-    INFERNO_VERTEX(RecipeItem(Material.PLAYER_HEAD, Rarity.EPIC, "Inferno Vertex", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWUyMjFiYjczMzE3MjIwNzMxNWFjZWRjYzVjOTk4MzZhNjM5ODYyYTM3MjdkYTZkNWRmMzZiODUxZmMxOTFjNCJ9fX0=")),
+    INFERNO_VERTEX(
+        RecipeItem(
+            Material.PLAYER_HEAD,
+            Rarity.EPIC,
+            "Inferno Vertex",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWUyMjFiYjczMzE3MjIwNzMxNWFjZWRjYzVjOTk4MzZhNjM5ODYyYTM3MjdkYTZkNWRmMzZiODUxZmMxOTFjNCJ9fX0="
+        )
+    ),
     MOLTEN_POWDER(RecipeItem(Material.BLAZE_POWDER, Rarity.RARE, "Molten Powder", glow = true)),
-    FIERY_CORE(RecipeItem(Material.PLAYER_HEAD, Rarity.LEGENDARY, "Fiery Core", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjAwYzE2NzM4YzM3MjQ4NDYyOGNhMTVjZjdiMDczMWI4MTBiZDMxNDJlMDdjMTA1M2I1ZTNkYTZiNmU1MjNjYSJ9fX0="))
+    FIERY_CORE(
+        RecipeItem(
+            Material.PLAYER_HEAD,
+            Rarity.LEGENDARY,
+            "Fiery Core",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjAwYzE2NzM4YzM3MjQ4NDYyOGNhMTVjZjdiMDczMWI4MTBiZDMxNDJlMDdjMTA1M2I1ZTNkYTZiNmU1MjNjYSJ9fX0="
+        )
+    )
     ;
 
     companion object {
@@ -184,19 +240,20 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             }
         }
 
-        fun placeholderHeadDesc(skin: String, name: String, vararg description: String) = itemStack(Material.PLAYER_HEAD) {
-            meta<SkullMeta> {
-                displayName(text(name).noitalic())
-                persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
-                val reduced = description.map { s -> text("<gray>$s").noitalic() }.toMutableList()
-                lore(reduced)
-                flags(*ItemFlag.values())
+        fun placeholderHeadDesc(skin: String, name: String, vararg description: String) =
+            itemStack(Material.PLAYER_HEAD) {
+                meta<SkullMeta> {
+                    displayName(text(name).noitalic())
+                    persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
+                    val reduced = description.map { s -> text("<gray>$s").noitalic() }.toMutableList()
+                    lore(reduced)
+                    flags(*ItemFlag.values())
 
-                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
-                profile.setProperty(ProfileProperty("textures", skin))
-                this.playerProfile = profile
+                    val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
+                    profile.setProperty(ProfileProperty("textures", skin))
+                    this.playerProfile = profile
+                }
             }
-        }
 
         fun placeholderDescripted(type: Material, name: String, vararg description: String) = itemStack(type) {
             meta {
@@ -317,14 +374,20 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
             Rarity.EPIC,
             Rarity.LEGENDARY
         )
+
         private fun initRunes() {
             val pool = Threading.newFixedPool(5)
 
             for ((id, allowed) in BuffRegistry.runes) {
                 pool.execute {
                     val baseName = id.path.replace("_", " ").capitalized()
-                    for(rarity in runeQualities) {
-                        val item = RuneItem(allowed, "${allowed.display} <${allowed.color.asHexString()}>${rarityToRuneTier(rarity)} $baseName Rune", rarity, allowed.headSkin)
+                    for (rarity in runeQualities) {
+                        val item = RuneItem(
+                            allowed,
+                            "${allowed.display} <${allowed.color.asHexString()}>${rarityToRuneTier(rarity)} $baseName Rune",
+                            rarity,
+                            allowed.headSkin
+                        )
 
                         Registry.ITEM.register(item.id, item)
                     }
@@ -372,10 +435,17 @@ enum class ItemValue(val item: MacrocosmItem, private val model: Model? = null, 
                         val (item, model, animation) = Triple(value.item, value.model, value.animation)
                         val id = id(value.name.lowercase())
                         Registry.ITEM.register(id(value.name.lowercase()), item)
-                        if(model != null) {
+                        if (model != null) {
                             Registry.MODEL_PREDICATES.register(id, model)
-                            if(animation != null) {
-                                MetaGenerator.enqueue("assets/macrocosm/textures/${model.to.replace("macrocosm:", "")}.png", AnimationData(animation))
+                            if (animation != null) {
+                                MetaGenerator.enqueue(
+                                    "assets/macrocosm/textures/${
+                                        model.to.replace(
+                                            "macrocosm:",
+                                            ""
+                                        )
+                                    }.png", AnimationData(animation)
+                                )
                             }
                         }
                     }

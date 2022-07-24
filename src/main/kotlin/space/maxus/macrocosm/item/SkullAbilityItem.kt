@@ -13,7 +13,6 @@ import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import java.util.*
 
 open class SkullAbilityItem(
     type: ItemType,
@@ -27,7 +26,7 @@ open class SkullAbilityItem(
     runeTypes: List<RuneSlot> = listOf(),
     description: String? = null,
     id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", "")),
-    ) : AbilityItem(
+) : AbilityItem(
     type,
     itemName,
     rarity,

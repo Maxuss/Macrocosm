@@ -20,20 +20,21 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
 import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
-object ReaperMaskAbility: AbilityBase(AbilityType.PASSIVE, "Reaper Blood", "Summons a <red>Revenant Zombie<gray> to assist you.") {
+object ReaperMaskAbility :
+    AbilityBase(AbilityType.PASSIVE, "Reaper Blood", "Summons a <red>Revenant Zombie<gray> to assist you.") {
     private val summoned: HashMap<UUID, UUID> = hashMapOf()
 
     override fun registerListeners() {
         listen<PlayerArmorChangeEvent> { e ->
-            if(e.newItem == e.oldItem)
+            if (e.newItem == e.oldItem)
                 return@listen
             val player = e.player.uniqueId
-            if(e.newItem?.macrocosm?.abilities?.contains(this) == true && !summoned.containsKey(player)) {
+            if (e.newItem?.macrocosm?.abilities?.contains(this) == true && !summoned.containsKey(player)) {
                 val world = e.player.world
                 val loc = e.player.location
 
@@ -42,14 +43,15 @@ object ReaperMaskAbility: AbilityBase(AbilityType.PASSIVE, "Reaper Blood", "Summ
                 EntityValue.REAPER_MASK_ZOMBIE.entity.loadChanges(entity.bukkitLivingEntity)
                 world.handle.addFreshEntity(entity)
                 summoned[e.player.uniqueId] = entity.uuid
-            } else if(e.oldItem?.macrocosm?.abilities?.contains(this) == true) {
-                val entity = Bukkit.getEntity(summoned[e.player.uniqueId] ?: return@listen) ?: run { summoned.remove(e.player.uniqueId); return@listen }
+            } else if (e.oldItem?.macrocosm?.abilities?.contains(this) == true) {
+                val entity = Bukkit.getEntity(summoned[e.player.uniqueId] ?: return@listen)
+                    ?: run { summoned.remove(e.player.uniqueId); return@listen }
                 entity.remove()
                 summoned.remove(e.player.uniqueId)
             }
         }
         listen<PlayerQuitEvent> { e ->
-            if(summoned.containsKey(e.player.uniqueId)) {
+            if (summoned.containsKey(e.player.uniqueId)) {
                 val entity = Bukkit.getEntity(summoned[e.player.uniqueId] ?: return@listen) ?: return@listen
                 entity.remove()
                 summoned.remove(e.player.uniqueId)
@@ -57,7 +59,7 @@ object ReaperMaskAbility: AbilityBase(AbilityType.PASSIVE, "Reaper Blood", "Summ
         }
     }
 
-    class SupportZombie(level: Level, override val owner: UUID): Zombie(level), OwnableEntity, NativeMacrocosmEntity {
+    class SupportZombie(level: Level, override val owner: UUID) : Zombie(level), OwnableEntity, NativeMacrocosmSummon {
         override val delegateId: Identifier = id("reaper_mask_zombie")
 
         override fun registerGoals() {

@@ -11,7 +11,12 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 
-object CleaveEnchantment : EnchantmentBase("Cleave", "Deals <green>[4]%<gray> of your ${Statistic.DAMAGE.display}<gray> to all mobs within <green>[0.9]<gray> blocks of target.", 1..6, ItemType.melee()) {
+object CleaveEnchantment : EnchantmentBase(
+    "Cleave",
+    "Deals <green>[4]%<gray> of your ${Statistic.DAMAGE.display}<gray> to all mobs within <green>[0.9]<gray> blocks of target.",
+    1..6,
+    ItemType.melee()
+) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead)

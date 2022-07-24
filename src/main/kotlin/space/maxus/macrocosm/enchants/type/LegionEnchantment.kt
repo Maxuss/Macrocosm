@@ -7,7 +7,12 @@ import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.ItemType
 
-object LegionEnchantment : UltimateEnchantment("Legion", "Increases <blue>ALL<gray> your stats by <yellow>[1]%<gray> for every player within <blue>10 blocks<gray> of you.", 1..5, ItemType.armor()) {
+object LegionEnchantment : UltimateEnchantment(
+    "Legion",
+    "Increases <blue>ALL<gray> your stats by <yellow>[1]%<gray> for every player within <blue>10 blocks<gray> of you.",
+    1..5,
+    ItemType.armor()
+) {
     @EventHandler
     fun onStatCalculation(e: PlayerCalculateStatsEvent) {
         val (ok, lvl) = ensureRequirementsStacking(

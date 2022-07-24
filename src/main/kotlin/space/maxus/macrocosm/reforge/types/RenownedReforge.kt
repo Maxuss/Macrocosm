@@ -25,7 +25,7 @@ object RenownedReforge : ReforgeBase(
     @EventHandler
     fun onStatCalculate(e: PlayerCalculateStatsEvent) {
         val amount = getArmorUsedAmount(e.player)
-        if(amount <= 0)
+        if (amount <= 0)
             return
 
         e.stats.multiply(1 + (.03f * amount))

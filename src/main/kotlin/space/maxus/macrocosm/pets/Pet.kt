@@ -74,7 +74,7 @@ abstract class Pet(
     }
 
     internal fun buildName(pet: StoredPet, player: MacrocosmPlayer): Component =
-        text("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if(pet.skin != null) "☆" else ""}")
+        text("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if (pet.skin != null) "☆" else ""}")
 
     fun stats(level: Int, rarity: Rarity): Statistics {
         val clone = baseStats.clone()
@@ -106,7 +106,7 @@ abstract class Pet(
         stand.isCustomNameVisible = true
         stand.customName(buildName(stored, player))
         stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
-        val skin = if(stored.skin != null) (Registry.COSMETIC.find(stored.skin) as SkullSkin).skin else headSkin
+        val skin = if (stored.skin != null) (Registry.COSMETIC.find(stored.skin) as SkullSkin).skin else headSkin
         stand.equipment.helmet = ItemValue.placeholderHead(skin, "PetEntity", "")
 
         player.sendMessage("<green>You spawned your <${stored.rarity.color.asHexString()}>$name<green>.")

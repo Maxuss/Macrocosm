@@ -36,10 +36,10 @@ class SlayerAbility(
     }
 
     inline fun applyToBosses(handler: (MacrocosmEntity, LivingEntity, Int) -> Unit) {
-        for((ty, boss) in bosses.entries().parallelStream()) {
-            if(ty == slayerType) {
+        for ((ty, boss) in bosses.entries().parallelStream()) {
+            if (ty == slayerType) {
                 val entity = Bukkit.getEntity(boss) as? LivingEntity
-                if(entity == null) {
+                if (entity == null) {
                     bosses.remove(ty, boss)
                     continue
                 }

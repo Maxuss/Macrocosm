@@ -44,7 +44,10 @@
         "rarity": "rare",
         "material": "stone_sword",
         "name": "The Cataclysm",
-        "abilities": ["cataclysm", "decadence"],
+        "abilities": [
+            "cataclysm",
+            "decadence"
+        ],
         "stats": {
             "damage": 180,
             "strength": 150,
@@ -56,7 +59,10 @@
         "rarity": "epic",
         "material": "iron_sword",
         "name": "The Catastrophe",
-        "abilities": ["catastrophe","lethargy"],
+        "abilities": [
+            "catastrophe",
+            "lethargy"
+        ],
         "stats": {
             "damage": 200,
             "strength": 200,
@@ -69,7 +75,10 @@
         "rarity": "legendary",
         "material": "netherite_hoe",
         "name": "The Calamity",
-        "abilities": ["calamity","myspys"],
+        "abilities": [
+            "calamity",
+            "myspys"
+        ],
         "stats": {
             "damage": 270,
             "strength": 250,

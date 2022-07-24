@@ -36,14 +36,16 @@ private fun descriptAbility(family: MutableList<EntityType>, mul: Float): String
 }
 
 
-class EntityDamageMulAbility(name: String, private val affected: List<EntityType>, private val multiplier: Float): AbilityBase(
-    AbilityType.PASSIVE, name, descriptAbility(affected.toMutableList(), multiplier)) {
+class EntityDamageMulAbility(name: String, private val affected: List<EntityType>, private val multiplier: Float) :
+    AbilityBase(
+        AbilityType.PASSIVE, name, descriptAbility(affected.toMutableList(), multiplier)
+    ) {
 
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
-            if(!affected.contains(e.damaged.type))
+            if (!affected.contains(e.damaged.type))
                 return@listen
             e.damage *= (1 + multiplier)
         }

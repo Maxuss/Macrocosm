@@ -14,8 +14,8 @@ import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.util.math.Chance
 import space.maxus.macrocosm.util.game.Pools
+import space.maxus.macrocosm.util.math.Chance
 import space.maxus.macrocosm.util.summon
 import kotlin.random.Random
 
@@ -47,13 +47,15 @@ class FishingPool(
             Material.PUFFERFISH, Material.STRING
         )
 
-        fun withStrength(str: Float) = LootPoolBuilder(mutableListOf(
-            vanilla(Material.COD, .7, amount = 1..3),
-            vanilla(Material.SALMON, .7, amount = 1..3),
-            vanilla(Material.PUFFERFISH, .4, amount = 1..3),
-            vanilla(Material.LILY_PAD, 1.0, amount = 2..3),
+        fun withStrength(str: Float) = LootPoolBuilder(
+            mutableListOf(
+                vanilla(Material.COD, .7, amount = 1..3),
+                vanilla(Material.SALMON, .7, amount = 1..3),
+                vanilla(Material.PUFFERFISH, .4, amount = 1..3),
+                vanilla(Material.LILY_PAD, 1.0, amount = 2..3),
 
-            )).multiplyAmount(str)
+                )
+        ).multiplyAmount(str)
     }
 
     fun summonSeaCreature(creature: SeaCreature, player: MacrocosmPlayer, hook: FishHook) {

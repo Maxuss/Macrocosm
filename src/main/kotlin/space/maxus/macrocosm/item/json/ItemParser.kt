@@ -36,10 +36,10 @@ object ItemParser {
             }
 
             val amount = AtomicInteger(0)
-            for(file in PackProvider.enumerateEntries(fs.getPath("data", "items"))) {
+            for (file in PackProvider.enumerateEntries(fs.getPath("data", "items"))) {
                 info("Converting items from ${file.fileName}...")
                 val data = GSON.fromJson(file.readText(), JsonObject::class.java)
-                for((key, obj) in data.entrySet()) {
+                for ((key, obj) in data.entrySet()) {
                     pool.execute {
                         val id = Identifier.parse(key)
                         Registry.ITEM.register(id, parseAndPrepare(id, obj.asJsonObject))
@@ -57,27 +57,40 @@ object ItemParser {
     }
 
     fun parseAndPrepare(id: Identifier, obj: JsonObject): MacrocosmItem {
-        val type = if(obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else Material.PLAYER_HEAD
-        val headSkin = if(type == Material.PLAYER_HEAD) obj["head_skin"].asString else null
+        val type =
+            if (obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else Material.PLAYER_HEAD
+        val headSkin = if (type == Material.PLAYER_HEAD) obj["head_skin"].asString else null
         val rarity = Rarity.valueOf(obj["rarity"].asString.uppercase())
-        val name = if(obj.has("name")) obj["name"].asString else id.path.replace("_", " ").capitalized()
-        val desc = if(obj.has("description")) obj["description"].asString else null
-        val itemType = if(obj.has("type")) ItemType.valueOf(obj["type"].asString.uppercase()) else null
+        val name = if (obj.has("name")) obj["name"].asString else id.path.replace("_", " ").capitalized()
+        val desc = if (obj.has("description")) obj["description"].asString else null
+        val itemType = if (obj.has("type")) ItemType.valueOf(obj["type"].asString.uppercase()) else null
 
-        val base: MacrocosmItem = if(obj.has("reforge")) {
+        val base: MacrocosmItem = if (obj.has("reforge")) {
             val reforge = Identifier.parse(obj["reforge"].asString)
-            ReforgeStone(Registry.REFORGE.find(reforge), name, rarity, headSkin ?: throw AssertionError("Schema expected head skin for reforge item!"))
-        } else if(!obj.has("abilities")) {
+            ReforgeStone(
+                Registry.REFORGE.find(reforge),
+                name,
+                rarity,
+                headSkin ?: throw AssertionError("Schema expected head skin for reforge item!")
+            )
+        } else if (!obj.has("abilities")) {
             // parsing recipe item
-            RecipeItem(type, rarity, name, headSkin, desc, if(obj.has("glow")) obj["glow"].asBoolean else false)
+            RecipeItem(type, rarity, name, headSkin, desc, if (obj.has("glow")) obj["glow"].asBoolean else false)
         } else {
             // parsing ability item
             val stats = if (obj.has("stats")) parseStats(obj.get("stats").asJsonObject) else Statistics.zero()
-            val abils = obj["abilities"].asJsonArray.mapNotNull { ele -> Registry.ABILITY.findOrNull(Identifier.parse(ele.asString)) }.toMutableList()
-            val specialStats = if (obj.has("special_stats")) parseSpecialStats(obj.get("special_stats").asJsonObject) else SpecialStatistics()
-            val bp = if(obj.has("breaking_power")) obj["breaking_power"].asInt else 0
-            val runes = if(obj.has("runes")) obj["runes"].asJsonArray.map { ele -> if(ele.isJsonObject) RuneSlot.fromId(Identifier.parse(ele.asJsonObject["specific"].asString)) else RuneSlot.fromId(Identifier.parse(ele.asString)) } else listOf()
-            if(headSkin != null)
+            val abils =
+                obj["abilities"].asJsonArray.mapNotNull { ele -> Registry.ABILITY.findOrNull(Identifier.parse(ele.asString)) }
+                    .toMutableList()
+            val specialStats =
+                if (obj.has("special_stats")) parseSpecialStats(obj.get("special_stats").asJsonObject) else SpecialStatistics()
+            val bp = if (obj.has("breaking_power")) obj["breaking_power"].asInt else 0
+            val runes = if (obj.has("runes")) obj["runes"].asJsonArray.map { ele ->
+                if (ele.isJsonObject) RuneSlot.fromId(Identifier.parse(ele.asJsonObject["specific"].asString)) else RuneSlot.fromId(
+                    Identifier.parse(ele.asString)
+                )
+            } else listOf()
+            if (headSkin != null)
                 SkullAbilityItem(
                     itemType!!,
                     name,
@@ -106,13 +119,16 @@ object ItemParser {
                     id = id
                 )
         }
-        val model = if(obj.has("model")) parseModel(obj["model"].asJsonObject) else null
-        val animation = if(obj.has("animation")) parseAnimation(obj["animation"].asJsonObject) else null
+        val model = if (obj.has("model")) parseModel(obj["model"].asJsonObject) else null
+        val animation = if (obj.has("animation")) parseAnimation(obj["animation"].asJsonObject) else null
 
-        if(model != null) {
+        if (model != null) {
             Registry.MODEL_PREDICATES.register(id, model)
-            if(animation != null) {
-                MetaGenerator.enqueue("assets/macrocosm/textures/${model.to.replace("macrocosm:", "")}.png", AnimationData(animation))
+            if (animation != null) {
+                MetaGenerator.enqueue(
+                    "assets/macrocosm/textures/${model.to.replace("macrocosm:", "")}.png",
+                    AnimationData(animation)
+                )
             }
         }
 
@@ -120,26 +136,26 @@ object ItemParser {
     }
 
     private fun parseModel(obj: JsonObject): Model {
-        return if(obj.has("raw") && obj["raw"].asBoolean)
-                RawModel(
-                    obj["id"].asInt,
-                    obj["from"].asString,
-                    obj["to"].asString,
-                )
-            else
-                Model(
-                    obj["id"].asInt,
-                    obj["from"].asString,
-                    obj["to"].asString,
-                    if(obj.has("parent"))
-                        obj["parent"].asString
-                    else
-                        "item/generated"
-                )
+        return if (obj.has("raw") && obj["raw"].asBoolean)
+            RawModel(
+                obj["id"].asInt,
+                obj["from"].asString,
+                obj["to"].asString,
+            )
+        else
+            Model(
+                obj["id"].asInt,
+                obj["from"].asString,
+                obj["to"].asString,
+                if (obj.has("parent"))
+                    obj["parent"].asString
+                else
+                    "item/generated"
+            )
     }
 
     private fun parseAnimation(obj: JsonObject): Animation {
-        return if(obj.has("frames")) Animation(
+        return if (obj.has("frames")) Animation(
             obj["frames"].asInt,
             if (obj.has("time")) obj["time"].asInt else 2,
             if (obj.has("interpolate")) obj["interpolate"].asBoolean else false
@@ -153,7 +169,7 @@ object ItemParser {
     private fun parseSpecialStats(obj: JsonObject): SpecialStatistics {
         val zero = SpecialStatistics()
 
-        for((key, value) in obj.entrySet()) {
+        for ((key, value) in obj.entrySet()) {
             val stat = SpecialStatistic.valueOf(key.uppercase())
             val v = value.asNumber.toFloat()
             zero[stat] = v
@@ -166,7 +182,7 @@ object ItemParser {
     private fun parseStats(obj: JsonObject): Statistics {
         val zero = Statistics.zero()
 
-        for((key, value) in obj.entrySet()) {
+        for ((key, value) in obj.entrySet()) {
             val stat = Statistic.valueOf(key.uppercase())
             val v = value.asNumber.toFloat()
             zero[stat] = v

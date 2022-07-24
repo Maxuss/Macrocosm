@@ -12,7 +12,7 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
-interface NativeMacrocosmEntity: OwnableEntity {
+interface NativeMacrocosmSummon : OwnableEntity {
     val delegateId: Identifier
     val owner: UUID
 

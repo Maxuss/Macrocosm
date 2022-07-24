@@ -13,7 +13,7 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 
-class RevenantHorror(stats: Statistics, tier: Int, exp: Double): SlayerBase(
+class RevenantHorror(stats: Statistics, tier: Int, exp: Double) : SlayerBase(
     EntityType.ZOMBIE,
     SlayerType.REVENANT_HORROR,
     tier,
@@ -26,7 +26,7 @@ class RevenantHorror(stats: Statistics, tier: Int, exp: Double): SlayerBase(
     boots = VanillaItem(Material.DIAMOND_BOOTS)
 )
 
-object AtonedHorror: SlayerBase(
+object AtonedHorror : SlayerBase(
     EntityType.ZOMBIE,
     SlayerType.REVENANT_HORROR,
     5,
@@ -48,7 +48,7 @@ object AtonedHorror: SlayerBase(
     actualName = "<aqua>Atoned Horror"
 )
 
-object EntombedReaper: SlayerBase(
+object EntombedReaper : SlayerBase(
     EntityType.ZOMBIE,
     SlayerType.REVENANT_HORROR,
     6,

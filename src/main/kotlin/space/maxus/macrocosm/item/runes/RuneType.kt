@@ -28,16 +28,19 @@ interface RuneSlot {
         val GATHERING: RuneSlot get() = DefaultRuneSlot(id("gathering"), "♣") { rune -> rune.spec.isGathering }
         val UTILITY: RuneSlot get() = DefaultRuneSlot(id("utility"), "☯") { rune -> rune.spec.isUtility }
 
-        fun specific(spec: RuneSpec): RuneSlot = DefaultRuneSlot(id(spec.name.lowercase()), spec.display) { rune -> rune.spec == spec }
-        fun typeBound(rune: RuneType): RuneSlot = DefaultRuneSlot(rune.id, rune.display) { newRune -> newRune.id == rune.id }
+        fun specific(spec: RuneSpec): RuneSlot =
+            DefaultRuneSlot(id(spec.name.lowercase()), spec.display) { rune -> rune.spec == spec }
+
+        fun typeBound(rune: RuneType): RuneSlot =
+            DefaultRuneSlot(rune.id, rune.display) { newRune -> newRune.id == rune.id }
 
         fun fromId(id: Identifier): RuneSlot {
-            return when(val p = id.path) {
+            return when (val p = id.path) {
                 "combat" -> COMBAT
                 "gathering" -> GATHERING
                 "utility" -> UTILITY
                 else -> {
-                    if(RuneSpec.values().map { it.name.lowercase() }.contains(p))
+                    if (RuneSpec.values().map { it.name.lowercase() }.contains(p))
                         return specific(RuneSpec.valueOf(p.uppercase()))
                     return typeBound(BuffRegistry.findRune(id))
                 }
@@ -45,7 +48,11 @@ interface RuneSlot {
         }
     }
 
-    private data class DefaultRuneSlot(override val id: Identifier, override val display: String, private val accepts: (RuneType) -> Boolean): RuneSlot {
+    private data class DefaultRuneSlot(
+        override val id: Identifier,
+        override val display: String,
+        private val accepts: (RuneType) -> Boolean
+    ) : RuneSlot {
         override fun accepts(rune: RuneType): Boolean {
             return this.accepts.invoke(rune)
         }
@@ -69,15 +76,17 @@ enum class RuneSpec(val display: String) {
     UTILITY("⌛")
     ;
 
-    val isCombat get() = when(this) {
-        OFFENSIVE, DEFENSIVE -> true
-        else -> false
-    }
+    val isCombat
+        get() = when (this) {
+            OFFENSIVE, DEFENSIVE -> true
+            else -> false
+        }
 
-    val isGathering get() = when(this) {
-        OFFENSIVE, DEFENSIVE, UTILITY -> false
-        else -> true
-    }
+    val isGathering
+        get() = when (this) {
+            OFFENSIVE, DEFENSIVE, UTILITY -> false
+            else -> true
+        }
 
     val isUtility get() = this == UTILITY
 }
@@ -99,7 +108,8 @@ interface RuneType {
     fun descript(): String
 
     fun runeTier(item: MacrocosmItem): Int {
-        return item.runes.entries().filter { (slot, state) -> slot.accepts(this) && state.applied != null }.sumOf { (_, state) -> state.tier }
+        return item.runes.entries().filter { (slot, state) -> slot.accepts(this) && state.applied != null }
+            .sumOf { (_, state) -> state.tier }
     }
 
     fun render(tier: Int): Component {
@@ -125,14 +135,21 @@ enum class SpecialRunes(val rune: RuneType) {
 
     companion object {
         fun init() {
-            for(v in values()) {
+            for (v in values()) {
                 BuffRegistry.registerRune(id(v.name.lowercase()), v.rune)
             }
         }
     }
 }
 
-enum class StatRune(override val spec: RuneSpec, override val display: String, override val color: TextColor, val baseStats: Statistics, private val modifiedStats: String, override val headSkin: String): RuneType {
+enum class StatRune(
+    override val spec: RuneSpec,
+    override val display: String,
+    override val color: TextColor,
+    val baseStats: Statistics,
+    private val modifiedStats: String,
+    override val headSkin: String
+) : RuneType {
     EMERALD(
         RuneSpec.OFFENSIVE,
         "◎",
@@ -230,7 +247,7 @@ enum class StatRune(override val spec: RuneSpec, override val display: String, o
     override fun register() {
         listen<ItemCalculateStatsEvent> { e ->
             val tier = runeTier(e.item)
-            if(tier <= 0)
+            if (tier <= 0)
                 return@listen
 
             e.stats.increase(baseStats.clone().apply { multiply(tier.toFloat()) })
@@ -243,7 +260,7 @@ enum class StatRune(override val spec: RuneSpec, override val display: String, o
 
     companion object {
         fun init() {
-            for(value in values()) {
+            for (value in values()) {
                 BuffRegistry.registerRune(value.id, value)
             }
             SpecialRunes.init()

@@ -119,7 +119,7 @@ object Database {
         fun incrementGet(item: Identifier): Int {
             val stmt = statement
             val res = stmt.executeQuery("SELECT * FROM LimitedEdition WHERE ITEM='$item'")
-            val edition = (if(res.next()) res.getInt("AMOUNT") else 0) + 1
+            val edition = (if (res.next()) res.getInt("AMOUNT") else 0) + 1
             stmt.executeUpdate("INSERT OR REPLACE INTO LimitedEdition VALUES('$item', $edition)")
             stmt.close()
             return edition

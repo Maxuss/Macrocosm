@@ -27,10 +27,15 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistic
 
 
-object HoneycombBulwarkAbility: AbilityBase(AbilityType.LEFT_CLICK, "Honeycomb Bulwark", "Shoot a <gold>Honeycomb Wave<gray> in front of you, pushing all enemies away, and dealing them <red>10.000 ${Statistic.DAMAGE.display}<gray>.", AbilityCost(health = 500, cooldown = 3)) {
+object HoneycombBulwarkAbility : AbilityBase(
+    AbilityType.LEFT_CLICK,
+    "Honeycomb Bulwark",
+    "Shoot a <gold>Honeycomb Wave<gray> in front of you, pushing all enemies away, and dealing them <red>10.000 ${Statistic.DAMAGE.display}<gray>.",
+    AbilityCost(health = 500, cooldown = 3)
+) {
     override fun registerListeners() {
         listen<PlayerLeftClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             spawnHoneycombWave(e.player.paper!!, e.player.paper!!.location)

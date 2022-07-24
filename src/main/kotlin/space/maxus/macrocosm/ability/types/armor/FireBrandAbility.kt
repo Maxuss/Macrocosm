@@ -23,17 +23,20 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.math.MathHelper
 
-class FireBrandAbility(name: String, val dmg: Float): FullSetBonus(name, "Shoot firebrands out of yourself when you are hit, the firebrands deal <red>${Formatting.withCommas(dmg.toBigDecimal())} ${Statistic.DAMAGE.display}<gray>.") {
+class FireBrandAbility(name: String, val dmg: Float) : FullSetBonus(
+    name,
+    "Shoot firebrands out of yourself when you are hit, the firebrands deal <red>${Formatting.withCommas(dmg.toBigDecimal())} ${Statistic.DAMAGE.display}<gray>."
+) {
     override val cost: AbilityCost = AbilityCost(cooldown = 5)
 
     override fun registerListeners() {
         listen<PlayerReceiveDamageEvent> { e ->
-            if(!this.ensureSetRequirement(e.player))
+            if (!this.ensureSetRequirement(e.player))
                 return@listen
-            if(!this.cost.ensureRequirements(e.player, id, true))
+            if (!this.cost.ensureRequirements(e.player, id, true))
                 return@listen
             val loc = e.player.paper?.location ?: return@listen
-            for(i in 1..(1..3).random()) {
+            for (i in 1..(1..3).random()) {
                 task(delay = i * 5L) {
                     summonBrand(loc.clone(), Vector.getRandom(), e.player)
                     sound(Sound.ENTITY_BLAZE_SHOOT) {
@@ -55,7 +58,7 @@ class FireBrandAbility(name: String, val dmg: Float): FullSetBonus(name, "Shoot 
         val parabolic = MathHelper.parabola(start, end, 12)
 
         val p = by.paper
-        for(pos in parabolic) {
+        for (pos in parabolic) {
             particle(Particle.FLAME) {
                 extra = 0f
                 amount = 3
@@ -72,7 +75,7 @@ class FireBrandAbility(name: String, val dmg: Float): FullSetBonus(name, "Shoot 
                 spawnAt(pos)
             }
 
-            for(entity in pos.getNearbyLivingEntities(1.5) { it !is Player && it !is ArmorStand }) {
+            for (entity in pos.getNearbyLivingEntities(1.5) { it !is Player && it !is ArmorStand }) {
                 entity.macrocosm?.damage(dmg, p)
                 DamageHandlers.summonDamageIndicator(pos, dmg, DamageType.FIRE)
             }

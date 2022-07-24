@@ -17,7 +17,7 @@ interface RenderComponent {
         fun dynamic(title: () -> Component, lines: () -> List<Component>): RenderComponent = Dynamic(title, lines)
     }
 
-    private data class Dynamic(val title: () -> Component, val lines: () -> List<Component>): RenderComponent {
+    private data class Dynamic(val title: () -> Component, val lines: () -> List<Component>) : RenderComponent {
         override fun title(): Component {
             return this.title.invoke()
         }
@@ -27,7 +27,7 @@ interface RenderComponent {
         }
     }
 
-    private data class Fixed(val title: Component, val lines: List<Component>): RenderComponent {
+    private data class Fixed(val title: Component, val lines: List<Component>) : RenderComponent {
         override fun title(): Component {
             return title
         }
@@ -37,7 +37,7 @@ interface RenderComponent {
         }
     }
 
-    private class Simple(val title: String, description: String): RenderComponent {
+    private class Simple(val title: String, description: String) : RenderComponent {
         private val desc: List<Component>
 
         init {

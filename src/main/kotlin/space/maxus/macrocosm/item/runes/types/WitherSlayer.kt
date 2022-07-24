@@ -11,25 +11,26 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.runNTimes
-import java.util.UUID
+import java.util.*
 import kotlin.math.pow
 
-object FlameboundRune: RuneType {
+object FlameboundRune : RuneType {
     override val id: Identifier = id("flamebound_rune")
     override val spec: RuneSpec = RuneSpec.OFFENSIVE
     override val display: String = "\uD83D\uDD25"
     override val color: TextColor = TextColor.color(0xD27000)
-    override val headSkin: String = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTkwY2JkNzJlNDFhOWJkNDExYmU5MjliNzNmZDI2OTIwNjM2OGIyODEwZDZjNjgxOTkxOGNiOGViNjYyMjRmNCJ9fX0="
+    override val headSkin: String =
+        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTkwY2JkNzJlNDFhOWJkNDExYmU5MjliNzNmZDI2OTIwNjM2OGIyODEwZDZjNjgxOTkxOGNiOGViNjYyMjRmNCJ9fX0="
 
     private val entities: MutableList<UUID> = mutableListOf()
 
     override fun register() {
         listen<PlayerDealDamageEvent> { e ->
             val tier = runeTier(e.player.mainHand ?: return@listen)
-            if(tier <= 0)
+            if (tier <= 0)
                 return@listen
 
-            if(entities.contains(e.damaged.uniqueId))
+            if (entities.contains(e.damaged.uniqueId))
                 return@listen
 
             entities.add(e.damaged.uniqueId)

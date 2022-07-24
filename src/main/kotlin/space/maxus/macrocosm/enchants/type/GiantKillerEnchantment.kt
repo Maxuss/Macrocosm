@@ -10,7 +10,13 @@ import space.maxus.macrocosm.stats.Statistic
 import kotlin.math.min
 
 object GiantKillerEnchantment :
-    EnchantmentBase("Giant Killer", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>[0.02]%<gray> for each percent of extra ${Statistic.HEALTH.display}<gray> that your target has above you up to <green>[5]%<gray>.", 1..7, ItemType.melee(), conflicts = listOf("TITAN_KILLER")) {
+    EnchantmentBase(
+        "Giant Killer",
+        "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>[0.02]%<gray> for each percent of extra ${Statistic.HEALTH.display}<gray> that your target has above you up to <green>[5]%<gray>.",
+        1..7,
+        ItemType.melee(),
+        conflicts = listOf("TITAN_KILLER")
+    ) {
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
@@ -36,7 +42,13 @@ object GiantKillerEnchantment :
 }
 
 object TitanKillerEnchantment :
-    EnchantmentBase("Titan Killer", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>[2]%<gray> for each percent of extra ${Statistic.DEFENSE.display}<gray> that your target has above you up to <green>[10]%<gray>.", 1..7, ItemType.melee(), conflicts = listOf("GIANT_KILLER")) {
+    EnchantmentBase(
+        "Titan Killer",
+        "Increases ${Statistic.DAMAGE.display}<gray> you deal by <green>[2]%<gray> for each percent of extra ${Statistic.DEFENSE.display}<gray> that your target has above you up to <green>[10]%<gray>.",
+        1..7,
+        ItemType.melee(),
+        conflicts = listOf("GIANT_KILLER")
+    ) {
 
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {

@@ -13,16 +13,23 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistic
 import kotlin.math.roundToInt
 
-object UnstableDragonBonus: FullSetBonus("Unstable Blood", "Sometimes strikes nearby enemies with lightning every <green>10 seconds<gray>, dealing <red>1000%<gray> of your <blue>${Statistic.CRIT_DAMAGE.display}<gray>.") {
+object UnstableDragonBonus : FullSetBonus(
+    "Unstable Blood",
+    "Sometimes strikes nearby enemies with lightning every <green>10 seconds<gray>, dealing <red>1000%<gray> of your <blue>${Statistic.CRIT_DAMAGE.display}<gray>."
+) {
     override fun registerListeners() {
         task(delay = 20L, period = 120L) {
-            for(player in Bukkit.getOnlinePlayers().parallelStream()) {
+            for (player in Bukkit.getOnlinePlayers().parallelStream()) {
                 val mc = player.macrocosm ?: continue
-                if(!ensureSetRequirement(mc))
+                if (!ensureSetRequirement(mc))
                     continue
-                val dmg = DamageCalculator.calculateMagicDamage((mc.stats()!!.critDamage * 10).roundToInt(), .4f, mc.stats()!!)
-                for(entity in player.location.getNearbyLivingEntities(10.0, 4.0).parallelStream()) {
-                    if(entity is Player || entity is ArmorStand)
+                val dmg = DamageCalculator.calculateMagicDamage(
+                    (mc.stats()!!.critDamage * 10).roundToInt(),
+                    .4f,
+                    mc.stats()!!
+                )
+                for (entity in player.location.getNearbyLivingEntities(10.0, 4.0).parallelStream()) {
+                    if (entity is Player || entity is ArmorStand)
                         continue
                     entity.world.strikeLightningEffect(entity.location)
                     entity.macrocosm?.damage(dmg, player)

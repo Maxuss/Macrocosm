@@ -48,7 +48,10 @@
                         "maximum": 64
                     }
                 },
-                "required": ["pattern", "matrix"]
+                "required": [
+                    "pattern",
+                    "matrix"
+                ]
             },
             {
                 "properties": {
@@ -72,7 +75,9 @@
                         "maximum": 64
                     }
                 },
-                "required": ["ingredients"]
+                "required": [
+                    "ingredients"
+                ]
             }
         ]
     },
@@ -93,7 +98,10 @@
                             "maximum": 64
                         }
                     },
-                    "required": ["item", "amount"]
+                    "required": [
+                        "item",
+                        "amount"
+                    ]
                 },
                 {
                     "additionalProperties": false,

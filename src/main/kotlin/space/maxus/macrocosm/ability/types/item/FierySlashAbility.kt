@@ -24,12 +24,16 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import java.util.concurrent.atomic.AtomicBoolean
 
-object FierySlashAbility: AbilityBase(AbilityType.LEFT_CLICK, "Fiery Slash", "Creates <gold>3 Fiery Arcs<gray> that extend <green>7 blocks<gray> ahead of you, dealing your melee damage to every mob that they hit!") {
+object FierySlashAbility : AbilityBase(
+    AbilityType.LEFT_CLICK,
+    "Fiery Slash",
+    "Creates <gold>3 Fiery Arcs<gray> that extend <green>7 blocks<gray> ahead of you, dealing your melee damage to every mob that they hit!"
+) {
     override val cost: AbilityCost = AbilityCost(25, cooldown = 0.3f)
 
     override fun registerListeners() {
         listen<PlayerLeftClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val p = e.player.paper!!
@@ -61,7 +65,7 @@ object FierySlashAbility: AbilityBase(AbilityType.LEFT_CLICK, "Fiery Slash", "Cr
 
             task(period = 1L) {
                 ticker++
-                if(ticker >= 7) {
+                if (ticker >= 7) {
                     it.cancel()
                     return@task
                 }
@@ -84,7 +88,7 @@ object FierySlashAbility: AbilityBase(AbilityType.LEFT_CLICK, "Fiery Slash", "Cr
             }
         }
         listen<PlayerDealDamageEvent> { e ->
-            if(e.player.mainHand?.abilities?.contains(this) != true || !e.isContact)
+            if (e.player.mainHand?.abilities?.contains(this) != true || !e.isContact)
                 return@listen
 
             e.isCancelled = true
@@ -92,23 +96,29 @@ object FierySlashAbility: AbilityBase(AbilityType.LEFT_CLICK, "Fiery Slash", "Cr
     }
 
     private fun ensureNotSolid(loc: Location, ref: AtomicBoolean) {
-        if(ref.get()) {
+        if (ref.get()) {
             // the arc is already not rendering, ignore
             return
         }
-        if(loc.block.type.isSolid) {
+        if (loc.block.type.isSolid) {
             // we hit solid block, disable this arc from rendering and dealing damage
             ref.set(true)
         }
     }
 
-    private fun damageIfPossible(loc: Location, player: MacrocosmPlayer, damage: Float, crit: Boolean, ref: AtomicBoolean) {
-        if(ref.get()) {
+    private fun damageIfPossible(
+        loc: Location,
+        player: MacrocosmPlayer,
+        damage: Float,
+        crit: Boolean,
+        ref: AtomicBoolean
+    ) {
+        if (ref.get()) {
             // we should not move
             return
         }
         val nearby = loc.getNearbyLivingEntities(1.5).filter { it !is Player && it !is ArmorStand && !it.isDead }
-        if(nearby.isEmpty()) {
+        if (nearby.isEmpty()) {
             // no entities nearby
             return
         }
@@ -120,18 +130,22 @@ object FierySlashAbility: AbilityBase(AbilityType.LEFT_CLICK, "Fiery Slash", "Cr
         val event = PlayerDealDamageEvent(player, entity, damage, crit, false)
         event.callEvent()
 
-        if(event.isCancelled) {
+        if (event.isCancelled) {
             return
         }
 
         val mc = entity.macrocosm!!
         val finalDamage = DamageCalculator.calculateStandardReceived(event.damage, mc.calculateStats())
         mc.damage(finalDamage, player.paper)
-        DamageHandlers.summonDamageIndicator(entity.location, finalDamage, if(event.crit) DamageType.CRITICAL else DamageType.DEFAULT)
+        DamageHandlers.summonDamageIndicator(
+            entity.location,
+            finalDamage,
+            if (event.crit) DamageType.CRITICAL else DamageType.DEFAULT
+        )
     }
 
     private fun extendIfPossible(loc: Location, direction: Vector, ref: AtomicBoolean) {
-        if(ref.get()) {
+        if (ref.get()) {
             // we should not move
             return
         }
@@ -139,7 +153,7 @@ object FierySlashAbility: AbilityBase(AbilityType.LEFT_CLICK, "Fiery Slash", "Cr
     }
 
     private fun renderIfPossible(location: Location, ref: AtomicBoolean) {
-        if(ref.get()) {
+        if (ref.get()) {
             // we should not move
             return
         }

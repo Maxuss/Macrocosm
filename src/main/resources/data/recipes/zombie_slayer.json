@@ -204,7 +204,6 @@
             }
         }
     },
-
     "revenant_boots": {
         "pattern": [
             "V V",
@@ -248,7 +247,6 @@
             "R": "revenant_catalyst"
         }
     },
-
     "reaper_boots": {
         "pattern": [
             "V V",
@@ -263,7 +261,6 @@
             "B": "reaper_catalyst"
         }
     },
-
     "reaper_leggings": {
         "pattern": [
             "NLN",
@@ -283,7 +280,6 @@
             "R": "reaper_catalyst"
         }
     },
-
     "reaper_chestplate": {
         "pattern": [
             "N N",
@@ -303,7 +299,6 @@
             "R": "reaper_catalyst"
         }
     },
-
     "wand_of_healing": {
         "pattern": [
             "  R",
@@ -322,7 +317,6 @@
             "O": "enchanted_dark_oak_log"
         }
     },
-
     "wand_of_mending": {
         "pattern": [
             " FV",
@@ -345,7 +339,6 @@
             }
         }
     },
-
     "wand_of_restoration": {
         "pattern": [
             " DV",
@@ -366,7 +359,6 @@
             "C": "revenant_catalyst"
         }
     },
-
     "wand_of_atonement": {
         "pattern": [
             " NI",
@@ -387,7 +379,6 @@
             }
         }
     },
-
     "master_necromancer_boots": {
         "pattern": [
             "NBN",
@@ -459,7 +450,6 @@
             "B": "beheaded_horror"
         }
     },
-
     "voodoo_doll": {
         "pattern": [
             "DVD",
@@ -481,7 +471,6 @@
             }
         }
     },
-
     "undead_heart": {
         "pattern": [
             "VFV",

@@ -18,19 +18,18 @@ import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
-import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.generic.getId
 import space.maxus.macrocosm.util.multimap
-import java.util.*
 
 class PetItem(
     override val id: Identifier,

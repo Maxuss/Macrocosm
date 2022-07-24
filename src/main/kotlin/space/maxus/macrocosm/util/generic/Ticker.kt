@@ -5,15 +5,15 @@ class Ticker(val range: IntRange) {
     private var direction: Direction = Direction.FORWARD
     fun position(): Int = cursor
     fun tick(): Int {
-        when(direction) {
+        when (direction) {
             Direction.FORWARD -> {
                 cursor++
-                if(cursor >= range.last)
+                if (cursor >= range.last)
                     direction = Direction.BACKWARDS
             }
             Direction.BACKWARDS -> {
                 cursor--
-                if(cursor <= range.first)
+                if (cursor <= range.first)
                     direction = Direction.FORWARD
             }
         }

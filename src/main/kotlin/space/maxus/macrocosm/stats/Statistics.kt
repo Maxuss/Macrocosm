@@ -231,7 +231,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
                 if (tier <= 0 || contained == null)
                     continue
                 val runeType = BuffRegistry.findRune(contained)
-                if(runeType is StatRune)
+                if (runeType is StatRune)
                     dissolvedRunes.increase(runeType.baseStats.clone().apply { multiply(tier.toFloat()) })
             }
         }
@@ -284,8 +284,14 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
                 }
             }
 
-            if(item?.isDungeonised == true) {
-                formatted = formatted.append(text(" <dark_gray>(${stat.type.formatSigned(value, false)!!.str()}${if(stat.percents) "%" else ""}<dark_gray>)"))
+            if (item?.isDungeonised == true) {
+                formatted = formatted.append(
+                    text(
+                        " <dark_gray>(${
+                            stat.type.formatSigned(value, false)!!.str()
+                        }${if (stat.percents) "%" else ""}<dark_gray>)"
+                    )
+                )
             }
 
             base.add(formatted)

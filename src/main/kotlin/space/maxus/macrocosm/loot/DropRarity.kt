@@ -13,7 +13,13 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 import kotlin.math.roundToInt
 
-open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolean = false, val name: String? = null, val odds: String = "<green>Guaranteed") {
+open class DropRarity(
+    val broadcast: Boolean,
+    val rarity: Int,
+    val greet: Boolean = false,
+    val name: String? = null,
+    val odds: String = "<green>Guaranteed"
+) {
     companion object {
         val COMMON = DropRarity(false, 0)
         val RARE = DropRarity(true, 1, name = "<gold>RARE", odds = "<aqua>Occasional")
@@ -24,7 +30,8 @@ open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolea
         val UNBELIEVABLE = DropRarity(true, 6, greet = true, "<rainbow>UNBELIEVABLE", "<rainbow>Unbelievable")
     }
 
-    data class Pet(val inner: DropRarity): DropRarity(inner.broadcast, inner.rarity, inner.greet, "<gold>PET", inner.odds)
+    data class Pet(val inner: DropRarity) :
+        DropRarity(inner.broadcast, inner.rarity, inner.greet, "<gold>PET", inner.odds)
 
     fun announceEntityDrop(player: Player, item: MacrocosmItem, artificial: Boolean = false) {
         if (!broadcast)
@@ -33,7 +40,7 @@ open class DropRarity(val broadcast: Boolean, val rarity: Int, val greet: Boolea
         val message = text(
             "<bold>$name DROP!</bold> ${
                 MiniMessage.miniMessage().serialize(item.buildName())
-            } ${if(artificial) "<light_purple>(<dark_purple>RNGesus Meter Reward<light_purple>)" else "<aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"}"
+            } ${if (artificial) "<light_purple>(<dark_purple>RNGesus Meter Reward<light_purple>)" else "<aqua>(${mf.roundToInt()} ${Statistic.MAGIC_FIND.display})"}"
         )
         player.sendMessage(message)
         if (greet) {

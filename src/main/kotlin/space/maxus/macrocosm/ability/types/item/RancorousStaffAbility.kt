@@ -24,16 +24,20 @@ import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
-import java.util.UUID
+import java.util.*
 
-object RancorousStaffAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Pure Hatred", "Begin a channel for <green>5 seconds<gray>. After that time ends, all damage you have taken will be <red>viciously<gray> reflected to your enemies.") {
+object RancorousStaffAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Pure Hatred",
+    "Begin a channel for <green>5 seconds<gray>. After that time ends, all damage you have taken will be <red>viciously<gray> reflected to your enemies."
+) {
     override val cost: AbilityCost = AbilityCost(400, cooldown = 15)
 
     private val amountTaken = hashMapOf<UUID, Float>()
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             amountTaken[e.player.ref] = 0f
@@ -45,7 +49,7 @@ object RancorousStaffAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Pure Hatred"
             var ticks = 0
             task(period = 10L) {
                 ticks++
-                if(ticks >= 10) {
+                if (ticks >= 10) {
                     val damage = amountTaken.remove(e.player.ref)!!
                     val toReflect = damage * 2
                     val p = e.player.paper!!
@@ -80,7 +84,7 @@ object RancorousStaffAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Pure Hatred"
         }
 
         listen<PlayerReceiveDamageEvent>(priority = EventPriority.LOWEST) { e ->
-            if(amountTaken.containsKey(e.player.ref)) {
+            if (amountTaken.containsKey(e.player.ref)) {
                 amountTaken[e.player.ref] = amountTaken[e.player.ref]!! + e.damage
             }
         }
@@ -94,7 +98,7 @@ object RancorousStaffAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Pure Hatred"
         var tick = 0
         task(sync = false, period = 1L) {
             tick++
-            if(tick >= 10) {
+            if (tick >= 10) {
                 it.cancel()
                 return@task
             }

@@ -11,45 +11,45 @@ import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.math.Chance
 import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.math.Chance
 
 abstract class Drop(val rarity: DropRarity, override val chance: Double, val item: Identifier, var amount: IntRange) :
     Chance {
-        fun clone(): Drop {
-            return MacrocosmDrop(item, rarity, chance, amount)
-        }
+    fun clone(): Drop {
+        return MacrocosmDrop(item, rarity, chance, amount)
+    }
 
-        fun dropRngesusReward(player: MacrocosmPlayer): ItemStack {
-            return if (this.item.namespace == "minecraft") {
-                val mat = Material.valueOf(this.item.path.uppercase())
-                val amount = this.amount.random()
-                val item = ItemStack(mat, amount)
-                if (player.paper != null) {
-                    this.rarity.announceEntityDrop(player.paper!!, item.macrocosm!!, true)
-                }
-                item.macrocosm?.build(player)!!
-            } else if (this.item.path.contains("pet")) {
-                val (id, rarity) = this.item.path.split("@")
-                val newId = id(id)
-                val basePet = Registry.ITEM.find(newId) as PetItem
-                val rar = Rarity.valueOf(rarity.uppercase())
-                basePet.stored = StoredPet(newId, rar, 1, .0)
-                basePet.rarity = rar
-                if (player.paper != null) {
-                    this.rarity.announceEntityDrop(player.paper!!, basePet, true)
-                }
-                basePet.build(player)!!
-            } else {
-                val item = Registry.ITEM.find(this.item)
-                val amount = this.amount.random()
-                if (player.paper != null) {
-                    this.rarity.announceEntityDrop(player.paper!!, item, true)
-                }
-                item.build(player)!!.apply { this.amount = amount }
+    fun dropRngesusReward(player: MacrocosmPlayer): ItemStack {
+        return if (this.item.namespace == "minecraft") {
+            val mat = Material.valueOf(this.item.path.uppercase())
+            val amount = this.amount.random()
+            val item = ItemStack(mat, amount)
+            if (player.paper != null) {
+                this.rarity.announceEntityDrop(player.paper!!, item.macrocosm!!, true)
             }
+            item.macrocosm?.build(player)!!
+        } else if (this.item.path.contains("pet")) {
+            val (id, rarity) = this.item.path.split("@")
+            val newId = id(id)
+            val basePet = Registry.ITEM.find(newId) as PetItem
+            val rar = Rarity.valueOf(rarity.uppercase())
+            basePet.stored = StoredPet(newId, rar, 1, .0)
+            basePet.rarity = rar
+            if (player.paper != null) {
+                this.rarity.announceEntityDrop(player.paper!!, basePet, true)
+            }
+            basePet.build(player)!!
+        } else {
+            val item = Registry.ITEM.find(this.item)
+            val amount = this.amount.random()
+            if (player.paper != null) {
+                this.rarity.announceEntityDrop(player.paper!!, item, true)
+            }
+            item.build(player)!!.apply { this.amount = amount }
         }
     }
+}
 
 class VanillaDrop(material: Material, amount: IntRange, rarity: DropRarity, chance: Double) :
     Drop(rarity, chance, Identifier("minecraft", material.name.lowercase()), amount)

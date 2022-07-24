@@ -20,7 +20,7 @@ object PackServer {
         server.start()
     }
 
-    private class Handler(val packZip: File): HttpHandler {
+    private class Handler(val packZip: File) : HttpHandler {
         override fun handle(exchange: HttpExchange) {
             exchange.sendResponseHeaders(200, packZip.totalSpace)
             val os = exchange.responseBody

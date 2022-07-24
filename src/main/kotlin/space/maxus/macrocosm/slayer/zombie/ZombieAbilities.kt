@@ -24,7 +24,7 @@ object ZombieAbilities {
         val healths = listOf(50, 150, 1000, 2500)
         task(period = 20L) {
             applyToBosses { mc, living, lvl ->
-                if(lvl > 4)
+                if (lvl > 4)
                     return@applyToBosses
                 val healthToRegen = healths[lvl - 1]
                 mc.currentHealth = min(mc.currentHealth + healthToRegen, mc.calculateStats().health)
@@ -52,12 +52,12 @@ object ZombieAbilities {
         val multiples = listOf(.1, .2, .3, .5)
         task(period = 5 * 20L) {
             applyToBosses { _, living, lvl ->
-                if(lvl > 4 || lvl < 2)
+                if (lvl > 4 || lvl < 2)
                     return@applyToBosses
                 val amount = multiples[lvl - 2]
 
                 val nearby = living.getNearbyEntities(6.0, 6.0, 6.0).filterIsInstance<Player>()
-                for(player in nearby) {
+                for (player in nearby) {
                     val m = player.macrocosm!!
                     val defense = amount * m.stats()!!.defense
                     m.tempStats.defense -= defense.toFloat()

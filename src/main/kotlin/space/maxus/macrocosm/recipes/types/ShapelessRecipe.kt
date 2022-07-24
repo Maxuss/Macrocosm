@@ -11,7 +11,12 @@ import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 
-fun shapelessRecipe(id: String, result: MacrocosmItem, amount: Int, vararg ingredients: Pair<Identifier, Int>): MacrocosmRecipe =
+fun shapelessRecipe(
+    id: String,
+    result: MacrocosmItem,
+    amount: Int,
+    vararg ingredients: Pair<Identifier, Int>
+): MacrocosmRecipe =
     ShapelessRecipe(id(id), ingredients.toList(), result, amount)
 
 class ShapelessRecipe(
@@ -31,7 +36,7 @@ class ShapelessRecipe(
 
         val ingredientsCopy = ingredients.toMutableList()
         grid.forEachIndexed { i, item ->
-            if(item == null || item.type.isAir)
+            if (item == null || item.type.isAir)
                 return@forEachIndexed
 
             val mc = item.macrocosm ?: return@forEachIndexed
@@ -47,7 +52,7 @@ class ShapelessRecipe(
             }
         }
 
-        if(ingredientsCopy.isNotEmpty())
+        if (ingredientsCopy.isNotEmpty())
             return Pair(false, hashMapOf())
 
         if (modify) {
@@ -90,7 +95,7 @@ class ShapelessRecipe(
         )
     }
 
-    private fun cachedIndexToInventory(index: Int): Int = when(index) {
+    private fun cachedIndexToInventory(index: Int): Int = when (index) {
         0, 1, 2 -> index + 10
         3, 4, 5 -> index + 16
         6, 7, 8 -> index + 22

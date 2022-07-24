@@ -12,11 +12,12 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.pad
 
-data class LinearInventorySlots<T: ForInventory>(val slots: List<InventorySlot>): InventorySlotCompound<T> {
+data class LinearInventorySlots<T : ForInventory>(val slots: List<InventorySlot>) : InventorySlotCompound<T> {
     override fun withInvType(invType: GUIType<T>): Collection<InventorySlot> {
         return slots
     }
 }
+
 fun IntRange.slots(row: Int): Array<InventorySlot> {
     return map { InventorySlot(row, it) }.toTypedArray()
 }
@@ -30,20 +31,35 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
 
         // specific slayer buttons
         val cmp = createRectCompound<Int>(Slots.RowFourSlotThree, Slots.RowFourSlotSeven, iconGenerator = { ty ->
-            if(ty == -1) {
-                return@createRectCompound ItemValue.placeholderDescripted(Material.COAL_BLOCK, "<yellow>Coming Soon", "<red>In development!")
+            if (ty == -1) {
+                return@createRectCompound ItemValue.placeholderDescripted(
+                    Material.COAL_BLOCK,
+                    "<yellow>Coming Soon",
+                    "<red>In development!"
+                )
             }
             val it = SlayerType.values()[ty]
-            if(it.slayer.requirementCheck(player))
-                ItemValue.placeholderDescripted(it.slayer.item, it.slayer.name, *it.slayer.description.reduceToList(20).toTypedArray())
+            if (it.slayer.requirementCheck(player))
+                ItemValue.placeholderDescripted(
+                    it.slayer.item,
+                    it.slayer.name,
+                    *it.slayer.description.reduceToList(20).toTypedArray()
+                )
             else
-                ItemValue.placeholderDescripted(it.slayer.item, it.slayer.name, *it.slayer.description.reduceToList(20).toMutableList().apply { add(""); add(it.slayer.requirementString); add(""); add("<yellow>Click to view details.") }.toTypedArray(), it.slayer.id)
+                ItemValue.placeholderDescripted(
+                    it.slayer.item,
+                    it.slayer.name,
+                    *it.slayer.description.reduceToList(20).toMutableList()
+                        .apply { add(""); add(it.slayer.requirementString); add(""); add("<yellow>Click to view details.") }
+                        .toTypedArray(),
+                    it.slayer.id
+                )
         }, onClick = { e, it ->
             e.bukkitEvent.isCancelled = true
-            if(it == -1)
+            if (it == -1)
                 return@createRectCompound
             val ty = SlayerType.values()[it]
-            if(!ty.slayer.requirementCheck(player)) {
+            if (!ty.slayer.requirementCheck(player)) {
                 player.sendMessage("<red>You do not meet requirements to start this slayer quest!")
                 player.sendMessage("${ty.slayer.name} ${ty.slayer.requirementString}")
                 e.player.closeInventory()

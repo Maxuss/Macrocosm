@@ -6,10 +6,10 @@ import kotlin.math.ln
 import kotlin.math.max
 import kotlin.math.min
 
-class ProgressivePetTable(val modifier: Float): LevelingTable {
+class ProgressivePetTable(val modifier: Float) : LevelingTable {
     companion object {
         val BASE: List<Double> = Util.make(mutableListOf()) {
-            for(i in 0..99) {
+            for (i in 0..99) {
                 val lvl = i + 1
                 val cumulative = (lvl * lvl) * ln(lvl.toDouble()) * min(max(100.0, lvl * 3.1), 180.0)
                 it.add(cumulative)
@@ -18,7 +18,7 @@ class ProgressivePetTable(val modifier: Float): LevelingTable {
     }
 
     override fun expForLevel(lvl: Int): Double {
-        if(lvl <= 1)
+        if (lvl <= 1)
             return .0
         return (BASE[lvl - 1] - BASE[lvl - 2]) * modifier
     }

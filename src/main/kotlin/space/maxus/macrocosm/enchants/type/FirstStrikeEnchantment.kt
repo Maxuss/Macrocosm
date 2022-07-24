@@ -10,7 +10,13 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 
 object FirstStrikeEnchantment :
-    EnchantmentBase("First Strike", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <blue>[25]%<gray> for the first hit on a mob.", 1..5, ItemType.melee(), conflicts = listOf("TRIPLE_STRIKE")) {
+    EnchantmentBase(
+        "First Strike",
+        "Increases ${Statistic.DAMAGE.display}<gray> you deal by <blue>[25]%<gray> for the first hit on a mob.",
+        1..5,
+        ItemType.melee(),
+        conflicts = listOf("TRIPLE_STRIKE")
+    ) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead)
@@ -29,7 +35,13 @@ object FirstStrikeEnchantment :
 }
 
 object TripleStrikeEnchantment :
-    EnchantmentBase("Triple-Strike", "Increases ${Statistic.DAMAGE.display}<gray> you deal by <blue>[10]%<gray> for the first three hits on a mob.", 1..5, ItemType.melee(), conflicts = listOf("FIRST_STRIKE")) {
+    EnchantmentBase(
+        "Triple-Strike",
+        "Increases ${Statistic.DAMAGE.display}<gray> you deal by <blue>[10]%<gray> for the first three hits on a mob.",
+        1..5,
+        ItemType.melee(),
+        conflicts = listOf("FIRST_STRIKE")
+    ) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead)

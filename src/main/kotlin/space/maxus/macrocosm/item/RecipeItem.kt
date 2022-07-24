@@ -26,10 +26,9 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.multimap
 import space.maxus.macrocosm.util.generic.putId
+import space.maxus.macrocosm.util.multimap
 import space.maxus.macrocosm.util.stripTags
-import java.util.*
 
 class RecipeItem(
     override val base: Material,
@@ -57,7 +56,7 @@ class RecipeItem(
     override var skin: SkullSkin? = null
 
     override fun buildLore(lore: MutableList<Component>) {
-        if(description != null) {
+        if (description != null) {
             val reduced = description.reduceToList(30).map { text("<dark_gray>$it").noitalic() }.toMutableList()
             reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
             lore.addAll(reduced)
@@ -73,9 +72,9 @@ class RecipeItem(
     }
 
     override fun addExtraMeta(meta: ItemMeta) {
-        if(glow)
+        if (glow)
             meta.addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
-        if(base == Material.PLAYER_HEAD && headSkin != null) {
+        if (base == Material.PLAYER_HEAD && headSkin != null) {
             val skull = meta as SkullMeta
             val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
             profile.setProperty(ProfileProperty("textures", headSkin))

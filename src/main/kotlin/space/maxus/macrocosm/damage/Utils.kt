@@ -19,7 +19,7 @@ fun truncateBigNumber(number: Float, applyFormatToInt: Boolean = false): String 
     } else if (number >= 100_000) {
         // > 100k
         "${(number / 1000f).roundToInt()}k"
-    } else if(applyFormatToInt) Formatting.stats(number.toBigDecimal(), true) else number.roundToInt().toString()
+    } else if (applyFormatToInt) Formatting.stats(number.toBigDecimal(), true) else number.roundToInt().toString()
 }
 
 fun healthColor(amount: Float, max: Float): TextColor {

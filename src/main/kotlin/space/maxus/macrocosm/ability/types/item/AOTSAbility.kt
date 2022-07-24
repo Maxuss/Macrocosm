@@ -21,10 +21,13 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.min
 
-object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your axe forward dealing <red>10%<gray> of your normal ${Statistic.DAMAGE.display}<gray> and healing <red>50 ${Statistic.HEALTH.display}<gray> per enemy hit. The ${Statistic.DAMAGE.display}<gray> and <dark_aqua>Mana Cost<gray> increases each throw.") {
+object AOTSAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Throw",
+    "Throw your axe forward dealing <red>10%<gray> of your normal ${Statistic.DAMAGE.display}<gray> and healing <red>50 ${Statistic.HEALTH.display}<gray> per enemy hit. The ${Statistic.DAMAGE.display}<gray> and <dark_aqua>Mana Cost<gray> increases each throw."
+) {
     override val cost: AbilityCost = AbilityCost(10)
 
     private var playerCosts: HashMap<UUID, Int> = hashMapOf()
@@ -32,7 +35,7 @@ object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your a
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(e.player.mainHand?.abilities?.contains(this) != true)
+            if (e.player.mainHand?.abilities?.contains(this) != true)
                 return@listen
 
             val p = e.player.paper!!
@@ -45,7 +48,7 @@ object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your a
                 playerCosts.remove(p.uniqueId)
             }!!
             val damage = min((cost / 2), 160)
-            if(!AbilityCost(newCost).ensureRequirements(e.player, id("aots_throw")))
+            if (!AbilityCost(newCost).ensureRequirements(e.player, id("aots_throw")))
                 return@listen
 
             val stats = e.player.stats()!!
@@ -67,7 +70,7 @@ object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your a
             var tick = 0
             task(period = 1L) {
                 tick++
-                if(tick >= 120 || stand.eyeLocation.block.isSolid) {
+                if (tick >= 120 || stand.eyeLocation.block.isSolid) {
                     it.cancel()
                     stand.remove()
                     return@task
@@ -76,8 +79,8 @@ object AOTSAbility: AbilityBase(AbilityType.RIGHT_CLICK,  "Throw", "Throw your a
                 loc.add(dir)
                 stand.teleport(loc)
 
-                for(entity in loc.getNearbyLivingEntities(1.0)) {
-                    if(entity is Player || entity is ArmorStand)
+                for (entity in loc.getNearbyLivingEntities(1.0)) {
+                    if (entity is Player || entity is ArmorStand)
                         continue
 
                     val mc = entity.macrocosm!!

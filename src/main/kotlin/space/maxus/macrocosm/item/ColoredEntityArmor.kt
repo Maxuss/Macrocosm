@@ -26,7 +26,6 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.multimap
-import java.util.*
 
 class ColoredEntityArmor(override val base: Material, private var color: Int) : MacrocosmItem {
     override var stats: Statistics get() = Statistics.zero(); set(_) {}

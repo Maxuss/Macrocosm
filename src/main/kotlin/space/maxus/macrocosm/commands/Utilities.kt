@@ -102,7 +102,8 @@ fun setDateCommand() = command("date") {
 
         argument("season", StringArgumentType.word()) {
             suggestList {
-                Calendar.Season.values().map { it.name }.filter { s -> s.contains(it.getArgumentOrNull("season") ?: "") }
+                Calendar.Season.values().map { it.name }
+                    .filter { s -> s.contains(it.getArgumentOrNull("season") ?: "") }
             }
 
             runs {
@@ -113,7 +114,8 @@ fun setDateCommand() = command("date") {
 
             argument("state", StringArgumentType.word()) {
                 suggestList {
-                    Calendar.SeasonState.values().map { it.name }.filter { s -> s.contains(it.getArgumentOrNull("state") ?: "") }
+                    Calendar.SeasonState.values().map { it.name }
+                        .filter { s -> s.contains(it.getArgumentOrNull("state") ?: "") }
                 }
 
                 runs {
@@ -147,14 +149,21 @@ fun payCommand() = command("pay") {
                 val from = player.macrocosm!!
                 val to = getArgument<EntitySelector>("who").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm!!
                 val amount = getArgument<Double>("amount")
-                if(from.purse < amount) {
+                if (from.purse < amount) {
                     from.sendMessage("<red>You don't have enough coins!")
                     return@runs
                 }
                 from.purse -= amount.toFloat()
                 to.purse += amount.toFloat()
-                from.sendMessage("<green>You've paid ${to.paper!!.displayName().str()} ${Formatting.withCommas(amount.toBigDecimal())}<green> coins!")
-                to.paper!!.sendMessage(from.paper!!.displayName().append(text("<green> has just paid you ${Formatting.withCommas(amount.toBigDecimal())} coins!")))
+                from.sendMessage(
+                    "<green>You've paid ${
+                        to.paper!!.displayName().str()
+                    } ${Formatting.withCommas(amount.toBigDecimal())}<green> coins!"
+                )
+                to.paper!!.sendMessage(
+                    from.paper!!.displayName()
+                        .append(text("<green> has just paid you ${Formatting.withCommas(amount.toBigDecimal())} coins!"))
+                )
                 sound(Sound.ENTITY_VILLAGER_YES) {
                     playFor(to.paper!!)
                     playFor(from.paper!!)
@@ -265,7 +274,11 @@ fun summonCommand() = command("spawnmob") {
     requires { it.hasPermission(4) }
     argument("entity", ResourceLocationArgument.id()) {
         suggestList {
-            Registry.ENTITY.iter().keys.filter { k -> k.path.contains(it.getArgumentOrNull<ResourceLocation>("entity")?.path ?: "") }
+            Registry.ENTITY.iter().keys.filter { k ->
+                k.path.contains(
+                    it.getArgumentOrNull<ResourceLocation>("entity")?.path ?: ""
+                )
+            }
         }
 
         runs {

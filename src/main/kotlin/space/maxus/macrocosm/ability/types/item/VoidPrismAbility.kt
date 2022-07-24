@@ -22,24 +22,28 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.util.generic.Ticker
-import java.util.UUID
+import java.util.*
 import kotlin.math.min
 
-object VoidPrismAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Void Tendrils", "Summons <gradient:dark_gray:dark_purple>Tendrils of Void</gradient><gray>, that increase their damage and range over time.<br><yellow>Right Click again to disable<gray>.") {
+object VoidPrismAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Void Tendrils",
+    "Summons <gradient:dark_gray:dark_purple>Tendrils of Void</gradient><gray>, that increase their damage and range over time.<br><yellow>Right Click again to disable<gray>."
+) {
     override val cost: AbilityCost = AbilityCost(250)
 
     private val tasks = hashMapOf<UUID, KSpigotRunnable>()
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             sound(Sound.ENTITY_PHANTOM_BITE) {
                 pitch = 0f
                 playAt(e.player.paper!!.location)
             }
-            if(tasks.containsKey(e.player.ref)) {
+            if (tasks.containsKey(e.player.ref)) {
                 val task = tasks[e.player.ref]!!
                 task.cancel()
                 tasks.remove(e.player.ref)
@@ -58,7 +62,7 @@ object VoidPrismAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Void Tendrils", "
                     return@task
                 }
                 val ok = ensureRequirements(e.player, EquipmentSlot.HAND)
-                if(!ok) {
+                if (!ok) {
                     it.cancel()
                     tasks.remove(e.player.ref)
                     return@task
@@ -77,7 +81,7 @@ object VoidPrismAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Void Tendrils", "
     }
 
     private fun colorsFromTick(tick: Int): List<Int> {
-        return when(tick) {
+        return when (tick) {
             in 0..3 -> listOf(0, 0x22013E, 0x22013E, 0)
             in 3..6 -> listOf(0x22013E, 0x3B006D, 0, 0x3B006D)
             in 6..9 -> listOf(0, 0x3B006D, 0x5C07A4, 0)
@@ -148,8 +152,8 @@ object VoidPrismAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Void Tendrils", "
                 spawnAt(right)
             }
 
-            for(entity in mid.getNearbyLivingEntities(1.4 + angle)) {
-                if(entity is Player || entity is ArmorStand)
+            for (entity in mid.getNearbyLivingEntities(1.4 + angle)) {
+                if (entity is Player || entity is ArmorStand)
                     continue
 
                 entity.macrocosm!!.damage(dmg, caster)

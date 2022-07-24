@@ -47,7 +47,12 @@ import kotlin.random.nextInt
 fun Entity.isPlayerDisguise() = DisguiseAPI.isDisguised(this) && DisguiseAPI.getDisguise(this) is PlayerDisguise
 
 object DamageHandlers : Listener {
-    fun internalHandleDamage(bukkitEvent: Cancellable, damager: LivingEntity, damaged: LivingEntity, checkAts: Boolean = true /* e: EntityDamageEvent */) {
+    fun internalHandleDamage(
+        bukkitEvent: Cancellable,
+        damager: LivingEntity,
+        damaged: LivingEntity,
+        checkAts: Boolean = true /* e: EntityDamageEvent */
+    ) {
         if (damager is Player) {
             val mc = damager.macrocosm!!
             if (checkAts && mc.onAtsCooldown)
@@ -148,15 +153,15 @@ object DamageHandlers : Listener {
 
     @EventHandler
     fun onProjectileHit(e: ProjectileHitEvent) {
-        if(e.entity.persistentDataContainer.has(pluginKey("despawn_me")))
+        if (e.entity.persistentDataContainer.has(pluginKey("despawn_me")))
             e.entity.remove()
         val shooter = e.entity.shooter
-        if(shooter == null || shooter !is LivingEntity || e.hitEntity is ArmorStand) {
+        if (shooter == null || shooter !is LivingEntity || e.hitEntity is ArmorStand) {
             e.isCancelled = true
             return
         }
         val damaged = e.hitEntity
-        if(damaged == null || damaged !is LivingEntity)
+        if (damaged == null || damaged !is LivingEntity)
             return
 
         if (damaged is ArmorStand) {

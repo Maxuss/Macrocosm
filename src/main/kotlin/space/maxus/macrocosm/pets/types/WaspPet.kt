@@ -40,7 +40,7 @@ object WaspPet : Pet(
         ),
         PetAbility(
             "Weaponized Honey",
-        "Every <green>10 seconds<gray> shoots a <yellow>stinger<gray> at nearest enemy, dealing <red>[1000] ${Statistic.DAMAGE.display}<gray>."
+            "Every <green>10 seconds<gray> shoots a <yellow>stinger<gray> at nearest enemy, dealing <red>[1000] ${Statistic.DAMAGE.display}<gray>."
         ),
     ),
     stats {
@@ -63,7 +63,7 @@ object WaspPet : Pet(
         if (!ok)
             return
         val amount = .001f * pet!!.level
-        if((e.item.type.armor && e.item.id.path.contains("beekeeper")) || e.item.id.path.contains("queens_stinger")) {
+        if ((e.item.type.armor && e.item.id.path.contains("beekeeper")) || e.item.id.path.contains("queens_stinger")) {
             e.stats.multiply(1 + amount)
         }
     }
@@ -89,8 +89,14 @@ object WaspPet : Pet(
                         .firstOrNull { it is LivingEntity && it !is ArmorStand } as? LivingEntity
                         ?: continue
                 val dmg = DamageCalculator.calculateMagicDamage(1000 * pet!!.level, .15f, player.stats()!!)
-                val bi = BlockIterator(nearest.world, player.paper!!.location.toVector(), nearest.location.toVector().subtract(player.paper!!.location.toVector()).normalize(), 1.0, 10)
-                while(bi.hasNext()) {
+                val bi = BlockIterator(
+                    nearest.world,
+                    player.paper!!.location.toVector(),
+                    nearest.location.toVector().subtract(player.paper!!.location.toVector()).normalize(),
+                    1.0,
+                    10
+                )
+                while (bi.hasNext()) {
                     val pos = bi.next()
                     particle(Particle.REDSTONE) {
                         data = DustOptions(Color.YELLOW, 1f)

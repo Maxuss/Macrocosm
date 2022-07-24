@@ -51,17 +51,20 @@ object RecipeMenu : Listener {
         if (!e.view.title().toLegacyString().contains("Crafting Table") || e.inventory == null)
             return
         var cancel = false
-        for(slot in e.newItems.keys) {
-            if(outputIndex == slot)
+        for (slot in e.newItems.keys) {
+            if (outputIndex == slot)
                 cancel = true
         }
         e.isCancelled = cancel
 
         val inv = e.inventory
-        rebuildInventory(e.inventory, e.whoClicked as? Player ?: return, collect(
-            inv.getItems(10..12),
-            inv.getItems(19..21),
-            inv.getItems(28..30)))
+        rebuildInventory(
+            e.inventory, e.whoClicked as? Player ?: return, collect(
+                inv.getItems(10..12),
+                inv.getItems(19..21),
+                inv.getItems(28..30)
+            )
+        )
     }
 
     @EventHandler
@@ -76,9 +79,10 @@ object RecipeMenu : Listener {
         val grid: MutableList<ItemStack?> = collect(
             inv.getItems(10..12),
             inv.getItems(19..21),
-            inv.getItems(28..30))
+            inv.getItems(28..30)
+        )
 
-        if(e.view.topInventory != inv) {
+        if (e.view.topInventory != inv) {
             task {
                 rebuildInventory(inv, player, grid)
             }
@@ -94,23 +98,23 @@ object RecipeMenu : Listener {
 
         val pickedOutput = modifiedOutput && e.action.name.containsAny("PICKUP", "MOVE")
 
-        if(!gridIndices.contains(clickedIndex) && !modifiedOutput) {
+        if (!gridIndices.contains(clickedIndex) && !modifiedOutput) {
             e.isCancelled = true
             return
         }
 
 
-        if(gridIndices.contains(clickedIndex))
+        if (gridIndices.contains(clickedIndex))
             grid[clickedToGrid(clickedIndex)] = e.cursor
 
-        if(pickedOutput && inv.getItem(outputIndex)?.itemMeta?.persistentDataContainer?.has(pluginKey("placeholder")) != true) {
+        if (pickedOutput && inv.getItem(outputIndex)?.itemMeta?.persistentDataContainer?.has(pluginKey("placeholder")) != true) {
             // collecting items used in recipe
             collectIngredients(e)
 
             // player picked up result item, rebuild inventory
             rebuildInventory(inv, player, grid, false)
             return
-        } else if(modifiedOutput) {
+        } else if (modifiedOutput) {
             // player tried to put item in result slot, we do not allow it
             e.isCancelled = true
             rebuildInventory(inv, player, grid)
@@ -131,10 +135,11 @@ object RecipeMenu : Listener {
         val grid: MutableList<ItemStack?> = collect(
             inv.getItems(10..12),
             inv.getItems(19..21),
-            inv.getItems(28..30))
+            inv.getItems(28..30)
+        )
 
-        for(item in grid) {
-            if(item != null && !item.type.isAir)
+        for (item in grid) {
+            if (item != null && !item.type.isAir)
                 p.giveOrDrop(item)
         }
     }
@@ -145,7 +150,7 @@ object RecipeMenu : Listener {
         val recipe = matching.firstOrNull()
         if (recipe == null || grid.all { it == null || it.type.isAir }) {
             // remove item we tried to craft previously from output slot
-            if(removeResult)
+            if (removeResult)
                 inv.setItem(outputIndex, result)
 
             // make an overlay that we can not craft anything
@@ -167,7 +172,8 @@ object RecipeMenu : Listener {
         val grid: MutableList<ItemStack?> = collect(
             inv.getItems(10..12),
             inv.getItems(19..21),
-            inv.getItems(28..30))
+            inv.getItems(28..30)
+        )
 
         val matching = RecipeHandler.matchingRecipes(e.view.topInventory, grid, macrocosm)
         val recipe = matching.firstOrNull()
@@ -197,7 +203,8 @@ object RecipeMenu : Listener {
     private fun Inventory.setItems(at: IntRange, item: ItemStack) = at.forEach {
         setItem(it, item)
     }
-    private fun clickedToGrid(index: Int): Int = when(index) {
+
+    private fun clickedToGrid(index: Int): Int = when (index) {
         10, 11, 12 -> index - 10
         19, 20, 21 -> index - 16
         28, 29, 30 -> index - 22

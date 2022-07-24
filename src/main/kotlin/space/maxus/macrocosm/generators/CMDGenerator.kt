@@ -26,9 +26,9 @@ open class Model(data: Int, val from: String, val to: String, val parent: String
     }
 }
 
-class RawModel(data: Int, from: String, to: String): Model(data, from, to)
+class RawModel(data: Int, from: String, to: String) : Model(data, from, to)
 
-object CMDGenerator: ResGenerator {
+object CMDGenerator : ResGenerator {
     private val enqueued: ConcurrentLinkedQueue<Model> = ConcurrentLinkedQueue()
 
     fun enqueue(model: Model) {
@@ -36,19 +36,29 @@ object CMDGenerator: ResGenerator {
     }
 
     private fun build(value: Model): ModelObject {
-        return ModelObject(value.parent, ModelTextures(value.from), listOf(ModelOverride(ModelPredicate(value.data), value.to)))
+        return ModelObject(
+            value.parent,
+            ModelTextures(value.from),
+            listOf(ModelOverride(ModelPredicate(value.data), value.to))
+        )
     }
 
     override fun yieldGenerate(): Map<String, String> {
         val map: Multimap<String, Model> = multimap()
-        for(it in enqueued) {
+        for (it in enqueued) {
             val texture = "assets/minecraft/models/${it.from}.json"
             map.put(texture, it)
         }
         return map.keySet().associateWith { path ->
             val values = map[path]
             val proto = values.first()
-            GSON.toJson(ModelObject(proto.parent, ModelTextures(proto.from), values.sortedBy { model -> model.data }.map { model -> ModelOverride(ModelPredicate(model.data), model.to) }))
+            GSON.toJson(
+                ModelObject(
+                    proto.parent,
+                    ModelTextures(proto.from),
+                    values.sortedBy { model -> model.data }
+                        .map { model -> ModelOverride(ModelPredicate(model.data), model.to) })
+            )
         }.toMap()
     }
 

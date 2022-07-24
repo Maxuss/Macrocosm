@@ -21,7 +21,7 @@ import space.maxus.macrocosm.util.pad
 import space.maxus.macrocosm.util.stripTags
 
 private fun formatChance(chance: Float): String {
-    return if(chance >= 0.01 && chance < 1)
+    return if (chance >= 0.01 && chance < 1)
         "<gray>(" + Formatting.stats((chance * 100).toBigDecimal()) + "%)"
     else ""
 }
@@ -36,7 +36,7 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
         val cmp = createCompound<SlayerDrop>(iconGenerator = { drop ->
-            if(drop is NullDrop) {
+            if (drop is NullDrop) {
                 ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
             } else {
                 if (drop.requiredLevel > playerLevel.level)
@@ -50,7 +50,7 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
                 it.meta {
                     val bufferedLore = mutableListOf<String>()
                     val f = drop.amounts.toList().first()
-                    if(drop.amounts.all { it.value == f.second }) {
+                    if (drop.amounts.all { it.value == f.second }) {
                         val amount = f.second
                         val str =
                             if (amount.first == amount.last) "${amount.first}" else "${amount.first} to ${amount.last}"
@@ -92,9 +92,10 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
     }
 }
 
-object NullDrop: SlayerDrop(vanilla(Material.AIR, -1.0), -1, -1, hashMapOf())
+object NullDrop : SlayerDrop(vanilla(Material.AIR, -1.0), -1, -1, hashMapOf())
 open class SlayerDrop(val drop: Drop, val minTier: Int, val requiredLevel: Int, val amounts: HashMap<Int, IntRange>)
 
-class VisualDrop internal constructor(rarity: DropRarity, item: Identifier, chance: Double): Drop(rarity, chance, item, 1..1)
+class VisualDrop internal constructor(rarity: DropRarity, item: Identifier, chance: Double) :
+    Drop(rarity, chance, item, 1..1)
 
 fun visual(item: String, rarity: DropRarity, chance: Double): Drop = VisualDrop(rarity, id(item), chance)

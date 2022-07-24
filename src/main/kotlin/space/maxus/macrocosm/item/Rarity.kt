@@ -30,10 +30,15 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
                             "_",
                             " "
                         )
-                    }${if(dungeonised) " DUNGEON " else ""}${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>"
+                    }${if (dungeonised) " DUNGEON " else ""}${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>"
                 )
             else
-                "${name.replace("_", " ")}${if(dungeonised) " DUNGEON " else " "}${if (ty == ItemType.OTHER) "" else ty.toString()}".toComponent()
+                "${
+                    name.replace(
+                        "_",
+                        " "
+                    )
+                }${if (dungeonised) " DUNGEON " else " "}${if (ty == ItemType.OTHER) "" else ty.toString()}".toComponent()
         ).noitalic()
 
     fun next() = when (this) {

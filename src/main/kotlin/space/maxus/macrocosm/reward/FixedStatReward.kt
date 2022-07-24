@@ -6,7 +6,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 
-class FixedStatReward(val stat: Statistic, val amount: Float, override val isHidden: Boolean = false): Reward {
+class FixedStatReward(val stat: Statistic, val amount: Float, override val isHidden: Boolean = false) : Reward {
     override fun reward(player: MacrocosmPlayer, lvl: Int) {
         player.baseStats[stat] += amount
     }

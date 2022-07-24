@@ -8,9 +8,9 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import org.bukkit.event.entity.EntityTargetEvent
 import java.util.*
 
-class MimicOwnerAttackGoal(mob: Mob): TargetGoal(mob, true, true) {
+class MimicOwnerAttackGoal(mob: Mob) : TargetGoal(mob, true, true) {
     init {
-        if(mob !is OwnableEntity)
+        if (mob !is OwnableEntity)
             throw IllegalStateException("${this.javaClass.canonicalName} expects an OwnableEntity, got ${mob.javaClass.canonicalName}!")
         setFlags(EnumSet.of(Flag.TARGET))
     }
@@ -24,7 +24,7 @@ class MimicOwnerAttackGoal(mob: Mob): TargetGoal(mob, true, true) {
         return if (entityliving == null) {
             false
         } else {
-            if(this.mob.javaClass.isInstance(entityliving.lastHurtMob ?: return false))
+            if (this.mob.javaClass.isInstance(entityliving.lastHurtMob ?: return false))
                 return false
             this.ownerLastHurt = entityliving.lastHurtMob
             val i = entityliving.lastHurtMobTimestamp

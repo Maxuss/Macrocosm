@@ -38,7 +38,8 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 fun levelFromStats(stats: Statistics, extraWeight: Float = 0f): Int {
-    val weight = stats.damage + stats.strength * 10 + stats.critDamage * 10 + stats.defense * 10 + stats.health / 10f + stats.critChance + extraWeight
+    val weight =
+        stats.damage + stats.strength * 10 + stats.critDamage * 10 + stats.defense * 10 + stats.health / 10f + stats.critChance + extraWeight
     return max(ceil(weight / 100f).roundToInt(), 1)
 }
 

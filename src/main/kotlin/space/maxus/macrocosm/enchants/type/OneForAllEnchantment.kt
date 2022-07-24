@@ -16,7 +16,7 @@ object OneForAllEnchantment : UltimateEnchantment(
     @EventHandler
     fun onItemStatCalculate(e: ItemCalculateStatsEvent) {
         val (ok, _) = ensureRequirements(e.item)
-        if(!ok)
+        if (!ok)
             return
         e.stats.damage *= 5f
     }

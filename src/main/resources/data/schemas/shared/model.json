@@ -2,7 +2,11 @@
     "title": "Item Model",
     "description": "Definition of item model",
     "type": "object",
-    "required": ["id", "from", "to"],
+    "required": [
+        "id",
+        "from",
+        "to"
+    ],
     "properties": {
         "raw": {
             "title": "Is Raw",

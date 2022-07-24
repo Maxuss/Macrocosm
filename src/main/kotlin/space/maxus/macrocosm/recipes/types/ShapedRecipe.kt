@@ -71,7 +71,10 @@ class ShapedRecipe(
                 )
                 if (item.type.isAir && expectedId == Identifier.NULL) continue
                 val mcItem =
-                    item.macrocosm ?: if(expectedId == Identifier.NULL) continue else return Pair(false, hashMapOf()) // asserting that the item is not null, because we checked that it is not air before
+                    item.macrocosm ?: if (expectedId == Identifier.NULL) continue else return Pair(
+                        false,
+                        hashMapOf()
+                    ) // asserting that the item is not null, because we checked that it is not air before
                 val (itemId, itemAmount) = Pair(mcItem.id, item.amount)
 
                 if (expectedId == Identifier.NULL) {
@@ -137,7 +140,7 @@ class ShapedRecipe(
         return ingredients
     }
 
-    private fun cachedIndexToInventory(index: Int): Int = when(index) {
+    private fun cachedIndexToInventory(index: Int): Int = when (index) {
         0, 1, 2 -> index + 10
         3, 4, 5 -> index + 16
         6, 7, 8 -> index + 22

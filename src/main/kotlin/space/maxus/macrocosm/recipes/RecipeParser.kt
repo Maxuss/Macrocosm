@@ -24,10 +24,10 @@ object RecipeParser {
             } catch (e: FileSystemAlreadyExistsException) {
                 FileSystems.getFileSystem(input)
             }
-            for(file in PackProvider.enumerateEntries(fs.getPath("data", "recipes"))) {
+            for (file in PackProvider.enumerateEntries(fs.getPath("data", "recipes"))) {
                 info("Converting recipes from ${file.fileName}...")
                 val data = GSON.fromJson(file.readText(), JsonObject::class.java)
-                for((key, obj) in data.entrySet()) {
+                for ((key, obj) in data.entrySet()) {
                     pool.execute {
                         val id = Identifier.parse(key)
                         Registry.RECIPE.register(id, parse(id, obj.asJsonObject))
@@ -39,14 +39,14 @@ object RecipeParser {
     }
 
     fun parse(id: Identifier, j: JsonObject): MacrocosmRecipe {
-        val result = if(j.has("result")) Identifier.parse(j.get("result").asString) else id
-        val amount = if(j.has("amount")) j.get("amount").asInt else 1
-        if(j.has("pattern")) {
+        val result = if (j.has("result")) Identifier.parse(j.get("result").asString) else id
+        val amount = if (j.has("amount")) j.get("amount").asInt else 1
+        if (j.has("pattern")) {
             val matrix = j.get("pattern").asJsonArray.map { it.asString }
             val map = hashMapOf<Char, Pair<Identifier, Int>>()
-            for((str, i) in j.getAsJsonObject("matrix").entrySet()) {
+            for ((str, i) in j.getAsJsonObject("matrix").entrySet()) {
                 val ch = str.toCharArray().first()
-                if(i.isJsonObject) {
+                if (i.isJsonObject) {
                     val jo = i.asJsonObject
                     map[ch] = Identifier.parse(jo.get("item").asString) to jo.get("amount").asInt
                 } else {
@@ -57,8 +57,8 @@ object RecipeParser {
         } else {
             val ingredients = j.getAsJsonArray("ingredients")
             val ings = mutableListOf<Pair<Identifier, Int>>()
-            for(i in ingredients) {
-                if(i.isJsonObject) {
+            for (i in ingredients) {
+                if (i.isJsonObject) {
                     val jo = i.asJsonObject
                     ings.add(Identifier.parse(jo.get("item").asString) to jo.get("amount").asInt)
                 } else {

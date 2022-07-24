@@ -43,7 +43,8 @@ open class SlayerBase(
 ) : EntityBase(
     text(actualName ?: "${slayer.slayer.name} ${roman(tier)}"),
     type,
-    LootPool.of(*slayer.slayer.drops.filter { it.minTier <= tier }.map { MacrocosmDrop(it.drop.item, it.drop.rarity, it.drop.chance, it.amounts[tier] ?: 0..0) }.toTypedArray()),
+    LootPool.of(*slayer.slayer.drops.filter { it.minTier <= tier }
+        .map { MacrocosmDrop(it.drop.item, it.drop.rarity, it.drop.chance, it.amounts[tier] ?: 0..0) }.toTypedArray()),
     experience,
     stats,
     disguiseSkin = disguiseSkin,
@@ -51,7 +52,11 @@ open class SlayerBase(
 ) {
     fun summonBy(at: Location, summoner: Player) {
         val entity = spawn(at)
-        entity.persistentDataContainer.set(pluginKey("SUMMONER"), PersistentDataType.STRING, summoner.uniqueId.toString())
+        entity.persistentDataContainer.set(
+            pluginKey("SUMMONER"),
+            PersistentDataType.STRING,
+            summoner.uniqueId.toString()
+        )
         summoner.macrocosm!!.boundSlayerBoss = entity.uniqueId
     }
 

@@ -11,13 +11,13 @@ interface RewardDisplay {
     fun display(name: String, vararg lore: String): ItemStack
 }
 
-data class MaterialDisplay(val material: Material): RewardDisplay {
+data class MaterialDisplay(val material: Material) : RewardDisplay {
     override fun display(name: String, vararg lore: String): ItemStack {
         return ItemValue.placeholderDescripted(material, name, *lore)
     }
 }
 
-data class SkullDisplay(val skin: String): RewardDisplay {
+data class SkullDisplay(val skin: String) : RewardDisplay {
     override fun display(name: String, vararg lore: String): ItemStack {
         return ItemValue.placeholderHeadDesc(skin, name, *lore)
     }

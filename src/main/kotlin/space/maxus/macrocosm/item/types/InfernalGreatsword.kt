@@ -10,7 +10,7 @@ import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-class InfernalGreatsword: AbilityItem(
+class InfernalGreatsword : AbilityItem(
     ItemType.LONGSWORD,
     "Infernal Greatsword",
     Rarity.LEGENDARY,

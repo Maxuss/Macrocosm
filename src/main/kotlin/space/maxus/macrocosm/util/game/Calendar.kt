@@ -18,7 +18,7 @@ import space.maxus.macrocosm.text.text
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 
-object Calendar: Listener {
+object Calendar : Listener {
     private lateinit var tickTask: KSpigotRunnable
 
     var ticksSinceDateChange: Long = 0L
@@ -35,7 +35,7 @@ object Calendar: Listener {
         ;
 
         fun next(): SeasonState {
-            return when(this) {
+            return when (this) {
                 EARLY -> MID
                 MID -> LATE
                 LATE -> EARLY
@@ -52,7 +52,7 @@ object Calendar: Listener {
         ;
 
         fun next(): Season {
-            return when(this) {
+            return when (this) {
                 SUMMER -> FALL
                 FALL -> WINTER
                 WINTER -> SPRING
@@ -73,7 +73,7 @@ object Calendar: Listener {
     }
 
     private fun dateSuffix(date: Int): String {
-        return when(date) {
+        return when (date) {
             1, 21 -> "st"
             2 -> "nd"
             3 -> "rd"
@@ -83,30 +83,34 @@ object Calendar: Listener {
 
     fun renderDate(): Component {
         val mm = MiniMessage.miniMessage()
-        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(text(" $date${
-            dateSuffix(
-                date
+        return mm.deserialize(season.display, Placeholder.parsed("state", state.display)).append(
+            text(
+                " $date${
+                    dateSuffix(
+                        date
+                    )
+                }"
             )
-        }"))
+        )
     }
 
     fun tick() {
         ticksSinceDateChange++
-        if(ticksSinceDateChange >= 4800) {
+        if (ticksSinceDateChange >= 4800) {
             // next day
             ticksSinceDateChange = 0
             date++
-            if(date == 7 || date == 14 || date > 21) {
+            if (date == 7 || date == 14 || date > 21) {
                 // next state
                 state = state.next()
-                if(state == SeasonState.EARLY) {
+                if (state == SeasonState.EARLY) {
                     // next season
                     val new = season.next()
                     val event = SeasonChangeEvent(season, new)
                     event.callEvent()
                     season = new
 
-                    if(season == Season.SPRING) {
+                    if (season == Season.SPRING) {
                         // next year
                         val yEvent = YearChangeEvent(year + 1, year)
                         yEvent.callEvent()
@@ -115,7 +119,7 @@ object Calendar: Listener {
                 }
             }
 
-            if(date >= 21)
+            if (date >= 21)
                 date = 1
         }
     }
@@ -129,7 +133,7 @@ object Calendar: Listener {
     fun save() {
         try {
             tickTask.cancel()
-        } catch(ignored: UninitializedPropertyAccessException) {
+        } catch (ignored: UninitializedPropertyAccessException) {
             /* no-op */
         }
         val file = Path(System.getProperty("user.dir"), "macrocosm", "calendar.dat")
@@ -145,7 +149,7 @@ object Calendar: Listener {
 
     fun load() {
         val file = Path(System.getProperty("user.dir"), "macrocosm", "calendar.dat")
-        if(!file.exists())
+        if (!file.exists())
             return
         val data = NbtIo.readCompressed(file.toFile())
         date = data.getInt("Date")

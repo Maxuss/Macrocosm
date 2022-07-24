@@ -8,7 +8,7 @@ import space.maxus.macrocosm.slayer.SlayerAbility
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.util.todo
 
-object WitherSlayer: Slayer(
+object WitherSlayer : Slayer(
     "<gold>Cinderflame Spirit",
     Material.CHARCOAL,
     Material.NETHERITE_SCRAP,

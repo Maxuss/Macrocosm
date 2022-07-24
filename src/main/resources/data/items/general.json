@@ -8,7 +8,9 @@
             "strength": 50,
             "intelligence": 150
         },
-        "abilities": ["instant_transmission"],
+        "abilities": [
+            "instant_transmission"
+        ],
         "runes": [
             "offensive"
         ]
@@ -23,7 +25,9 @@
             "mining_speed": 450,
             "mining_fortune": 150
         },
-        "abilities": ["emerald_affection_pickaxe"],
+        "abilities": [
+            "emerald_affection_pickaxe"
+        ],
         "breaking_power": 6,
         "runes": [
             "mining"
@@ -38,7 +42,9 @@
             "strength": 100,
             "crit_chance": 15
         },
-        "abilities": ["aotd"],
+        "abilities": [
+            "aotd"
+        ],
         "runes": [
             "combat",
             "offensive"
@@ -53,7 +59,9 @@
             "intelligence": 300,
             "ability_damage": 5
         },
-        "abilities": ["ice_cone"],
+        "abilities": [
+            "ice_cone"
+        ],
         "runes": [
             "combat",
             "utility"
@@ -73,7 +81,9 @@
             "offensive",
             "defensive"
         ],
-        "abilities": ["infinite_terror"],
+        "abilities": [
+            "infinite_terror"
+        ],
         "description": "It's morbin' time",
         "model": {
             "id": 0,
@@ -96,7 +106,9 @@
             "intelligence": 50,
             "ability_damage": 5
         },
-        "abilities": ["death_defy"],
+        "abilities": [
+            "death_defy"
+        ],
         "description": "Only works in off hand",
         "model": {
             "id": 1,
@@ -114,7 +126,9 @@
             "strength": 250,
             "intelligence": 300
         },
-        "abilities": ["terrain_toss"],
+        "abilities": [
+            "terrain_toss"
+        ],
         "runes": [
             "combat",
             "defensive",
@@ -130,7 +144,9 @@
             "strength": 80,
             "intelligence": 500
         },
-        "abilities": ["antimatter_ray"],
+        "abilities": [
+            "antimatter_ray"
+        ],
         "runes": [
             "combat",
             {
@@ -150,7 +166,12 @@
             "strength": 70,
             "intelligence": 150
         },
-        "abilities": ["pure_hatred"],
-        "runes": ["offensive","utility"]
+        "abilities": [
+            "pure_hatred"
+        ],
+        "runes": [
+            "offensive",
+            "utility"
+        ]
     }
 }

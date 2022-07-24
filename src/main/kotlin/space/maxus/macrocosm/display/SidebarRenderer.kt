@@ -16,24 +16,30 @@ import org.bukkit.scoreboard.DisplaySlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.Ticker
 import space.maxus.macrocosm.util.game.Calendar
+import space.maxus.macrocosm.util.generic.Ticker
 import space.maxus.macrocosm.util.ticksToTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import kotlin.math.max
 
-object SidebarRenderer: Listener {
-    private val renderQueue: ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, OrderedRenderComponent>> = ConcurrentHashMap()
+object SidebarRenderer : Listener {
+    private val renderQueue: ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, OrderedRenderComponent>> =
+        ConcurrentHashMap()
     private val renderPool: ExecutorService = Threading.newFixedPool(5)
 
     fun enqueue(player: Player, component: RenderComponent, priority: RenderPriority): UUID {
         val cid = UUID.randomUUID()
-        if(renderQueue.containsKey(player.uniqueId)) {
+        if (renderQueue.containsKey(player.uniqueId)) {
             renderQueue[player.uniqueId]!![cid] = OrderedRenderComponent(component, priority)
         } else {
-            renderQueue[player.uniqueId] = ConcurrentHashMap<UUID, OrderedRenderComponent>().apply { put(cid, OrderedRenderComponent(component, priority)) }
+            renderQueue[player.uniqueId] = ConcurrentHashMap<UUID, OrderedRenderComponent>().apply {
+                put(
+                    cid,
+                    OrderedRenderComponent(component, priority)
+                )
+            }
         }
         return cid
     }
@@ -48,17 +54,21 @@ object SidebarRenderer: Listener {
     private val max = objNameMap.size
     private var ticker: Ticker = Ticker(0..10)
     fun tick() {
-        for(player in Bukkit.getOnlinePlayers()) {
+        for (player in Bukkit.getOnlinePlayers()) {
             val components = renderQueue[player.uniqueId] ?: continue
             val obj = player.scoreboard.getObjective("defaultBoard")!!
             val board = player.scoreboard
             var pos = -1
             for ((_, cmp) in components.toList().sortedBy { (_, v) -> v.position.priority }) {
                 pos++
-                if(pos > objNameMap.size - 1)
+                if (pos > objNameMap.size - 1)
                     break
                 val name = objNameMap[pos]
-                val team = try { board.registerNewTeam(name) } catch (ignored: java.lang.IllegalArgumentException) { board.getTeam(name) }!!
+                val team = try {
+                    board.registerNewTeam(name)
+                } catch (ignored: java.lang.IllegalArgumentException) {
+                    board.getTeam(name)
+                }!!
                 team.addEntry(name)
                 team.prefix(cmp.title())
                 obj.getScore(name).score = max - (pos + 2)
@@ -66,10 +76,14 @@ object SidebarRenderer: Listener {
 
                 // padding
                 lines.add("".toComponent())
-                for(line in lines) {
+                for (line in lines) {
                     pos++
                     val nn = objNameMap[pos]
-                    val t = try { board.registerNewTeam(nn) } catch (ignored: java.lang.IllegalArgumentException) { board.getTeam(nn) }!!
+                    val t = try {
+                        board.registerNewTeam(nn)
+                    } catch (ignored: java.lang.IllegalArgumentException) {
+                        board.getTeam(nn)
+                    }!!
                     t.prefix(line)
                     t.addEntry(nn)
                     obj.getScore(nn).score = max - (pos + 2)
@@ -80,7 +94,7 @@ object SidebarRenderer: Listener {
 
     fun tickTitle() {
         ticker.tick()
-        for(player in Bukkit.getOnlinePlayers()) {
+        for (player in Bukkit.getOnlinePlayers()) {
             updateBoardTitle(player)
         }
     }
@@ -101,7 +115,10 @@ object SidebarRenderer: Listener {
         val endColor = TextColor.color(0xFF6825)
         val name = StringBuilder("MACROCOSM")
         name.insert(max(tick - 1, 0), "<gradient:#F5A556:#957CF9>")
-        val mmName = "<gradient:${startColor.asHexString()}:${endColor.asHexString()}><bold>"+" ".repeat(5) + name + " ".repeat(5)
+        val mmName =
+            "<gradient:${startColor.asHexString()}:${endColor.asHexString()}><bold>" + " ".repeat(5) + name + " ".repeat(
+                5
+            )
         obj.displayName(text(mmName))
     }
 
@@ -125,9 +142,9 @@ object SidebarRenderer: Listener {
         val time = world.time
         val minute = (1000L / 60L) * 10
         // only update time every few minutes or so in game
-        if(time % minute > 4)
+        if (time % minute > 4)
             return cachedDayTime
-        cachedDayTime = text((if(world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
+        cachedDayTime = text((if (world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
         return cachedDayTime
     }
 
@@ -135,7 +152,11 @@ object SidebarRenderer: Listener {
     fun onJoin(e: PlayerJoinEvent) {
         preparePlayer(e.player)
 
-        enqueue(e.player, RenderComponent.dynamic(Calendar::renderDate) { listOf(calculateDayTime()) }, RenderPriority.HIGHEST)
+        enqueue(
+            e.player,
+            RenderComponent.dynamic(Calendar::renderDate) { listOf(calculateDayTime()) },
+            RenderPriority.HIGHEST
+        )
     }
 
     @EventHandler

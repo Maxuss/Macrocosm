@@ -39,7 +39,11 @@ import java.time.Duration
 import java.util.*
 import kotlin.math.min
 
-object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform yourself into<br><gradient:#DC8F16:#3C2502:#DC8F16>Angel of Hatred<gray> for <red>5 seconds<gray>.<br>In this form you take <red>[0.5:0.2]%<gray> less damage, can fly but can not do physical damage. Instead, each hit on enemy will burst out Hatred Geysers that deal <red>[3500:0.1] ${Statistic.DAMAGE.display}<gray> for <green>2 seconds<gray>.") {
+object MyspysAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Myspys",
+    "Transform yourself into<br><gradient:#DC8F16:#3C2502:#DC8F16>Angel of Hatred<gray> for <red>5 seconds<gray>.<br>In this form you take <red>[0.5:0.2]%<gray> less damage, can fly but can not do physical damage. Instead, each hit on enemy will burst out Hatred Geysers that deal <red>[3500:0.1] ${Statistic.DAMAGE.display}<gray> for <green>2 seconds<gray>."
+) {
     override val cost: AbilityCost = AbilityCost(1000, 800, 30)
 
     private val enabled: MutableList<UUID> = mutableListOf()
@@ -48,29 +52,33 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
     override fun registerListeners() {
         // geysers
         listen<PlayerDealDamageEvent> { e ->
-            if(e.isCancelled)
+            if (e.isCancelled)
                 return@listen
 
             val p = e.player.paper ?: return@listen
-            if(enabled.contains(p.uniqueId)) {
+            if (enabled.contains(p.uniqueId)) {
                 e.isCancelled = true
-                val got = if(fountains.containsKey(p.uniqueId)) fountains.get(p.uniqueId) else null
-                if(got != null && got.size >= 3) {
+                val got = if (fountains.containsKey(p.uniqueId)) fountains.get(p.uniqueId) else null
+                if (got != null && got.size >= 3) {
                     fountains.remove(p.uniqueId, got.last())
                 }
-                summonGeyser(e.damaged.location, e.player, DamageCalculator.calculateMagicDamage(3000, .1f, e.player.stats()!!))
+                summonGeyser(
+                    e.damaged.location,
+                    e.player,
+                    DamageCalculator.calculateMagicDamage(3000, .1f, e.player.stats()!!)
+                )
             }
         }
         listen<PlayerReceiveDamageEvent>(priority = EventPriority.LOWEST) { e ->
-            if(e.isCancelled)
+            if (e.isCancelled)
                 return@listen
 
-            if(enabled.contains(e.player.ref)) {
+            if (enabled.contains(e.player.ref)) {
                 e.damage *= (1 - min(.75f, DamageCalculator.calculateMagicDamage(.005, .2f, e.player.stats()!!)))
             }
         }
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             enabled.add(e.player.ref)
@@ -98,7 +106,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
                 p.allowFlight = false
             }) {
                 until -= 4
-                val color = when(until) {
+                val color = when (until) {
                     in 0..10 -> 0xD89400
                     in 10..30 -> 0xBB8307
                     in 30..50 -> 0xC78B06
@@ -115,7 +123,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
         async {
             val ticker = Ticker(0 until 5)
             var i = 0f
-            while(i < Mth.PI * 2) {
+            while (i < Mth.PI * 2) {
                 val tick = ticker.tick()
 
                 val x = Mth.cos(i) * .3
@@ -125,7 +133,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
 
                 at.add(vecConst)
 
-                val color = when(tick) {
+                val color = when (tick) {
                     0 -> 0xD89400
                     1 -> 0xBB8307
                     2 -> 0xC78B06
@@ -159,7 +167,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
                 fountains.remove(by.ref, at)
             }
         }) {
-            if(!fountains.containsEntry(by.ref, at)) {
+            if (!fountains.containsEntry(by.ref, at)) {
                 it.cancel()
                 return@runNTimes
             }
@@ -198,7 +206,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
                 spawnAt(at)
             }
 
-            while(pos.y - y <= height) {
+            while (pos.y - y <= height) {
                 pos.add(ascent)
 
                 particle(Particle.REDSTONE) {
@@ -226,7 +234,7 @@ object MyspysAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Myspys", "Transform 
     }
 
     private fun color(tick: Int): Int {
-        return when(tick) {
+        return when (tick) {
             0 -> 0xDC8F16
             1 -> 0x1B1000
             2 -> 0x120C01

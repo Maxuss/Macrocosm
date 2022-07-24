@@ -56,16 +56,47 @@ enum class Ability(val ability: MacrocosmAbility) {
     // slayers
 
     // zombie
-    NECROMANTIC_RITUAL(SlayerQuestAbility("Necromantic Ritual", "Make a <gold>Blood Sacrifice<gray> and start a ritual to summon the <red>Profaned Revenant Boss<gray>. <br><red>The magic glyphs on this scroll<br><red>will disappear on use!<gray>.", SlayerType.REVENANT_HORROR, 6)),
+    NECROMANTIC_RITUAL(
+        SlayerQuestAbility(
+            "Necromantic Ritual",
+            "Make a <gold>Blood Sacrifice<gray> and start a ritual to summon the <red>Profaned Revenant Boss<gray>. <br><red>The magic glyphs on this scroll<br><red>will disappear on use!<gray>.",
+            SlayerType.REVENANT_HORROR,
+            6
+        )
+    ),
     BRUTE_FORCE(WardenHelmetAbility),
     REAPER_BLOOD(ReaperMaskAbility),
     FOREVER_IN_TOMB(EntombedMaskAbility),
     MASTER_NECROMANCER(MasterNecromancerBonus),
 
-    UNDEAD_SWORD(EntityDamageMulAbility("Undead Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 0.5f)),
-    REVENANT_FALCHION(EntityDamageMulAbility("Revenant Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 1f)),
-    REAPER_FALCHION(EntityDamageMulAbility("Reaper Damage", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 2f)),
-    REAPER_WEAPON(EntityDamageMulAbility("Sycophant", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), 2.5f)),
+    UNDEAD_SWORD(
+        EntityDamageMulAbility(
+            "Undead Damage",
+            listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK),
+            0.5f
+        )
+    ),
+    REVENANT_FALCHION(
+        EntityDamageMulAbility(
+            "Revenant Damage",
+            listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK),
+            1f
+        )
+    ),
+    REAPER_FALCHION(
+        EntityDamageMulAbility(
+            "Reaper Damage",
+            listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK),
+            2f
+        )
+    ),
+    REAPER_WEAPON(
+        EntityDamageMulAbility(
+            "Sycophant",
+            listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK),
+            2.5f
+        )
+    ),
     REAPER_SCYTHE(ReaperScytheAbility),
 
     REVENANT_LIFE_STEAL(LifeStealAbility(10)),
@@ -73,38 +104,58 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     AOTS_THROW(AOTSAbility),
 
-    REVENANT_ARMOR_BONUS(EntityKillCounterBonus("Undead Bulwark", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), Statistic.DEFENSE)),
-    REAPER_ARMOR_BONUS(EntityKillCounterBonus("Reaper Bulwark", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), Statistic.DEFENSE, listOf(
-        0,
-        30,
-        80,
-        120,
-        150,
-        200,
-        250,
-        300,
-        350,
-        400
-    ))),
+    REVENANT_ARMOR_BONUS(
+        EntityKillCounterBonus(
+            "Undead Bulwark",
+            listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK),
+            Statistic.DEFENSE
+        )
+    ),
+    REAPER_ARMOR_BONUS(
+        EntityKillCounterBonus(
+            "Reaper Bulwark", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), Statistic.DEFENSE, listOf(
+                0,
+                30,
+                80,
+                120,
+                150,
+                200,
+                250,
+                300,
+                350,
+                400
+            )
+        )
+    ),
 
     GHOUL_BUSTER_ARMOR_BONUS(GhoulBusterAbility),
 
     ROTTEN_HEART_T1(RottenHeartAbility(.75f)),
     ROTTEN_HEART_T2(RottenHeartAbility(1.5f)),
 
-    HEAT_RESISTANT_ARMOR_BONUS(EntityKillCounterBonus("Heat Resistance", listOf(EntityType.WITHER_SKELETON), Statistic.DEFENSE)),
-    VOLCANO_STRIDER_ARMOR_BONUS(EntityKillCounterBonus("Volcano Strider", listOf(EntityType.WITHER_SKELETON), Statistic.DEFENSE, listOf(
-        0,
-        30,
-        80,
-        120,
-        150,
-        200,
-        250,
-        300,
-        350,
-        400
-    ))),
+    HEAT_RESISTANT_ARMOR_BONUS(
+        EntityKillCounterBonus(
+            "Heat Resistance",
+            listOf(EntityType.WITHER_SKELETON),
+            Statistic.DEFENSE
+        )
+    ),
+    VOLCANO_STRIDER_ARMOR_BONUS(
+        EntityKillCounterBonus(
+            "Volcano Strider", listOf(EntityType.WITHER_SKELETON), Statistic.DEFENSE, listOf(
+                0,
+                30,
+                80,
+                120,
+                150,
+                200,
+                250,
+                300,
+                350,
+                400
+            )
+        )
+    ),
 
     ENRAGE_ARMOR_ABILITY(EnrageAbility),
 

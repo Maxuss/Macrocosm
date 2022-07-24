@@ -11,8 +11,8 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.text.text
 
 fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
     title = text("<dark_gray>Recipe Browser")
@@ -22,14 +22,15 @@ fun recipeBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = {
                 if (player.isRecipeLocked(it))
-                    ItemValue.placeholderDescripted(Material.GRAY_DYE, "<red>???", "" // TODO: 03.07.2022 Recipe obtaining types
+                    ItemValue.placeholderDescripted(
+                        Material.GRAY_DYE, "<red>???", "" // TODO: 03.07.2022 Recipe obtaining types
                     )
                 else
                     Registry.RECIPE.findOrNull(it)?.resultItem() ?: ItemStack(Material.AIR)
             },
             onClick = { e, it ->
                 e.bukkitEvent.isCancelled = true
-                if(player.isRecipeLocked(it)) {
+                if (player.isRecipeLocked(it)) {
                     player.sendMessage("<red>You haven't unlocked that recipe!")
                     sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                         pitch = 0f
@@ -87,7 +88,8 @@ fun recipesUsing(item: Identifier, player: MacrocosmPlayer) = kSpigotGUI(GUIType
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    val its = Registry.ITEM.findOrNull(v.first)?.build(player) ?: VanillaItem(Material.valueOf(v.first.path.uppercase())).build(player)!!
+                    val its = Registry.ITEM.findOrNull(v.first)?.build(player)
+                        ?: VanillaItem(Material.valueOf(v.first.path.uppercase())).build(player)!!
                     its.amount = v.second
                     its
                 }
@@ -148,7 +150,7 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventorySix
             val items = mutableListOf<ItemStack>()
             recipe.ingredients().map {
                 it.map { v ->
-                    if(v.first.namespace == "minecraft") {
+                    if (v.first.namespace == "minecraft") {
                         VanillaItem(Material.valueOf(v.first.path.uppercase()), v.second).build(player)!!
                     } else {
                         val its = Registry.ITEM.findOrNull(v.first)?.build() ?: ItemStack(Material.AIR)
@@ -163,7 +165,14 @@ fun recipeViewer(item: Identifier, player: MacrocosmPlayer): GUI<ForInventorySix
 
             // result
             placeholder(Slots.RowFourSlotEight, recipe.resultItem())
-            placeholder(Slots.RowFourSlotSix, ItemValue.placeholderDescripted(Material.CRAFTING_TABLE, "<green>Crafting Table", "Craft this recipe by using crafting table"))
+            placeholder(
+                Slots.RowFourSlotSix,
+                ItemValue.placeholderDescripted(
+                    Material.CRAFTING_TABLE,
+                    "<green>Crafting Table",
+                    "Craft this recipe by using crafting table"
+                )
+            )
 
             // TODO: 03.07.2022 Proper recipe book
             button(

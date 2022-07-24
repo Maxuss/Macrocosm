@@ -10,7 +10,13 @@ import space.maxus.macrocosm.item.ItemType
 import kotlin.math.roundToInt
 
 object UltimateWiseEnchantment :
-    UltimateEnchantment("Ultimate Wise", "Decreases <aqua>Mana Cost<gray> of your abilities by <yellow>[10]%<gray>.", 1..5, ItemType.weaponsWand(), conflicts = listOf("ULTIMATE_BULK", "ULTIMATE_CONTROL")) {
+    UltimateEnchantment(
+        "Ultimate Wise",
+        "Decreases <aqua>Mana Cost<gray> of your abilities by <yellow>[10]%<gray>.",
+        1..5,
+        ItemType.weaponsWand(),
+        conflicts = listOf("ULTIMATE_BULK", "ULTIMATE_CONTROL")
+    ) {
     @EventHandler
     fun onAbilityUse(e: AbilityCostApplyEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
@@ -32,7 +38,13 @@ object UltimateWiseEnchantment :
 }
 
 object UltimateBulkEnchantment :
-    UltimateEnchantment("Ultimate Bulk", "Decreases <red>Health Cost<gray> of your abilities by <yellow>[10]%<gray>.", 1..5, ItemType.weaponsWand(), conflicts = listOf("ULTIMATE_WISE", "ULTIMATE_CONTROL")) {
+    UltimateEnchantment(
+        "Ultimate Bulk",
+        "Decreases <red>Health Cost<gray> of your abilities by <yellow>[10]%<gray>.",
+        1..5,
+        ItemType.weaponsWand(),
+        conflicts = listOf("ULTIMATE_WISE", "ULTIMATE_CONTROL")
+    ) {
     @EventHandler
     fun onAbilityUse(e: AbilityCostApplyEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
@@ -53,7 +65,13 @@ object UltimateBulkEnchantment :
     }
 }
 
-object UltimateControlEnchantment: UltimateEnchantment("Ultimate Control", "Decreases <light_purple>Summoning Difficulty<gray> of your abilities by <yellow>[25]%<gray>.", 1..2, ItemType.weaponsWand(), conflicts = listOf("ULTIMATE_BULK", "ULTIMATE_WISE")) {
+object UltimateControlEnchantment : UltimateEnchantment(
+    "Ultimate Control",
+    "Decreases <light_purple>Summoning Difficulty<gray> of your abilities by <yellow>[25]%<gray>.",
+    1..2,
+    ItemType.weaponsWand(),
+    conflicts = listOf("ULTIMATE_BULK", "ULTIMATE_WISE")
+) {
     @EventHandler
     fun onAbilityUse(e: AbilityCostApplyEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND)
@@ -70,6 +88,11 @@ object UltimateControlEnchantment: UltimateEnchantment("Ultimate Control", "Decr
             return
 
         val cost = e.cost ?: return
-        e.cost = AbilityCost(cost.mana, cost.health, cost.cooldown, (cost.summonDifficulty * (1 - (lvl * .25f))).roundToInt())
+        e.cost = AbilityCost(
+            cost.mana,
+            cost.health,
+            cost.cooldown,
+            (cost.summonDifficulty * (1 - (lvl * .25f))).roundToInt()
+        )
     }
 }

@@ -16,44 +16,47 @@ import space.maxus.macrocosm.entity.EntityValue
 import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
 import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
-object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <red>Zombie Youngling<gray>, <red>Golden Ghoul<gray> or a <red>Corpse Giant<gray>, depending on amount of pieces worn.") {
+object MasterNecromancerBonus : TieredSetBonus(
+    "Master Necromancer",
+    "Summons a <red>Zombie Youngling<gray>, <red>Golden Ghoul<gray> or a <red>Corpse Giant<gray>, depending on amount of pieces worn."
+) {
     private val baby = hashMapOf<UUID, UUID>()
     private val golden = hashMapOf<UUID, UUID>()
     private val giant = hashMapOf<UUID, UUID>()
 
     override fun registerListeners() {
         listen<PlayerArmorChangeEvent>(priority = EventPriority.LOWEST) { e ->
-            if(e.newItem == e.oldItem)
+            if (e.newItem == e.oldItem)
                 return@listen
             val player = e.player.uniqueId
             val (ok, tier) = getArmorTier(e.player.macrocosm ?: return@listen)
-            if(tier == 1) {
+            if (tier == 1) {
                 sanitizeRemove(player, baby)
                 sanitizeRemove(player, golden)
                 sanitizeRemove(player, giant)
             }
-            if(!ok)
+            if (!ok)
                 return@listen
 
             val world = e.player.world as CraftWorld
             val pos = e.player.location
             val level = world.handle
-            when(tier) {
+            when (tier) {
                 2 -> {
                     // baby zombie
                     sanitizeRemove(player, golden)
                     sanitizeRemove(player, giant)
 
-                    if(baby.containsKey(player))
+                    if (baby.containsKey(player))
                         return@listen
                     val entity = Youngling(level, player)
-                    NativeMacrocosmEntity.summon(entity, pos, EntityValue.ZOMBIE_YOUNGLING.entity)
+                    NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_YOUNGLING.entity)
                     baby[e.player.uniqueId] = entity.uuid
                 }
                 3 -> {
@@ -61,11 +64,11 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
                     sanitizeRemove(player, baby)
                     sanitizeRemove(player, giant)
 
-                    if(golden.containsKey(player))
+                    if (golden.containsKey(player))
                         return@listen
 
                     val entity = Golden(level, player)
-                    NativeMacrocosmEntity.summon(entity, pos, EntityValue.ZOMBIE_GOLDEN.entity)
+                    NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_GOLDEN.entity)
                     golden[e.player.uniqueId] = entity.uuid
                 }
                 4 -> {
@@ -73,11 +76,11 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
                     sanitizeRemove(player, baby)
                     sanitizeRemove(player, golden)
 
-                    if(giant.containsKey(player))
+                    if (giant.containsKey(player))
                         return@listen
 
                     val entity = Giant(level, player)
-                    NativeMacrocosmEntity.summon(entity, pos, EntityValue.ZOMBIE_GIANT.entity)
+                    NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_GIANT.entity)
                     giant[e.player.uniqueId] = entity.uuid
                 }
             }
@@ -92,14 +95,14 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
     }
 
     private fun sanitizeRemove(player: UUID, map: HashMap<UUID, UUID>) {
-        if(map.containsKey(player)) {
+        if (map.containsKey(player)) {
             val entity = Bukkit.getEntity(map[player]!!) ?: run { map.remove(player); return }
             entity.remove()
             map.remove(player)
         }
     }
 
-    class Youngling(level: Level, override val owner: UUID): Zombie(level), NativeMacrocosmEntity {
+    class Youngling(level: Level, override val owner: UUID) : Zombie(level), NativeMacrocosmSummon {
         override val delegateId: Identifier = id("zombie_youngling")
 
         init {
@@ -118,7 +121,7 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
         }
     }
 
-    class Golden(level: Level, override val owner: UUID): Zombie(level), NativeMacrocosmEntity {
+    class Golden(level: Level, override val owner: UUID) : Zombie(level), NativeMacrocosmSummon {
         override val delegateId: Identifier = id("zombie_golden")
 
         override fun registerGoals() {
@@ -133,7 +136,8 @@ object MasterNecromancerBonus: TieredSetBonus("Master Necromancer", "Summons a <
         }
     }
 
-    class Giant(level: Level, override val owner: UUID): net.minecraft.world.entity.monster.Giant(EntityType.GIANT, level), NativeMacrocosmEntity {
+    class Giant(level: Level, override val owner: UUID) :
+        net.minecraft.world.entity.monster.Giant(EntityType.GIANT, level), NativeMacrocosmSummon {
         override val delegateId: Identifier = id("zombie_giant")
 
         override fun registerGoals() {

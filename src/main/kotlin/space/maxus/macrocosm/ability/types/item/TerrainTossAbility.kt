@@ -23,11 +23,11 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.util.math.MathHelper
 import space.maxus.macrocosm.util.createFloatingBlock
+import space.maxus.macrocosm.util.math.MathHelper
 
 
-object TerrainTossAbility: AbilityBase(
+object TerrainTossAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,
     "Terrain Toss",
     "Throw a chunk of terrain in front of you, that explodes on landing, and deals <red>30,000 ${Statistic.DAMAGE.display}<gray>."
@@ -36,7 +36,7 @@ object TerrainTossAbility: AbilityBase(
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val damage = DamageCalculator.calculateMagicDamage(30000, .1f, e.player.stats()!!)
@@ -91,7 +91,7 @@ object TerrainTossAbility: AbilityBase(
                     }
                     val nearbyEntities = armorStands[0].location.getNearbyLivingEntities(5.0)
                     for (entity in nearbyEntities) {
-                        if(entity is Player || entity is ArmorStand)
+                        if (entity is Player || entity is ArmorStand)
                             continue
                         entity.macrocosm!!.damage(damage, p)
                         DamageHandlers.summonDamageIndicator(entity.location, damage)
@@ -116,7 +116,9 @@ object TerrainTossAbility: AbilityBase(
     ) {
         val blockLoc: Location = playerLoc.add(0.0, -2.0, 0.0).add(Vector(xChange, yChange, zChange))
         val block: ItemStack =
-            if (blockLoc.block.type !== Material.AIR) ItemStack(blockLoc.block.state.blockData.material) else ItemStack(Material.BLUE_STAINED_GLASS)
+            if (blockLoc.block.type !== Material.AIR) ItemStack(blockLoc.block.state.blockData.material) else ItemStack(
+                Material.BLUE_STAINED_GLASS
+            )
         arrayList.add(
             createFloatingBlock(
                 baseLoc.clone().add(Vector(xChange, yChange, zChange)),

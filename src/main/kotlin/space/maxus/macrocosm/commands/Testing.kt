@@ -40,10 +40,10 @@ fun giveRecipeCommand() = command("giverecipe") {
 
         runs {
             val recipe = getArgument<ResourceLocation>("recipe").macrocosm
-            if(!Registry.RECIPE.has(recipe))
+            if (!Registry.RECIPE.has(recipe))
                 return@runs
             val mc = player.macrocosm!!
-            if(mc.unlockedRecipes.contains(recipe))
+            if (mc.unlockedRecipes.contains(recipe))
                 return@runs
             mc.unlockedRecipes.add(recipe)
         }
@@ -56,6 +56,7 @@ fun testMaddoxMenuCommand() = command("slayermenu") {
         player.openGUI(slayerChooseMenu(player.macrocosm!!))
     }
 }
+
 fun testSlayerCommand() = command("slayer") {
     argument("id", StringArgumentType.string()) {
         argument("tier", IntegerArgumentType.integer(0, 6)) {

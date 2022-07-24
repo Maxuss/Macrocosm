@@ -57,7 +57,7 @@ data class Identifier(val namespace: String, val path: String) : Tag {
         fun macro(path: String) = Identifier(Macrocosm.id, path)
         fun parse(value: String): Identifier {
             val split = value.split(':')
-            if(split.size == 1)
+            if (split.size == 1)
                 return macro(split[0])
             return Identifier(split[0], split[1])
         }

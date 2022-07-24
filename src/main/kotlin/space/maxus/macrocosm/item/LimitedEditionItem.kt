@@ -26,7 +26,18 @@ class LimitedEditionItem(
     breakingPower: Int = 0,
     runeTypes: List<RuneSlot> = listOf(),
     metaModifier: (ItemMeta) -> Unit = { }
-): AbilityItem(ty, nameStr, rarity, base, stats, abilities, specialStats, breakingPower, runeTypes, metaModifier = metaModifier) {
+) : AbilityItem(
+    ty,
+    nameStr,
+    rarity,
+    base,
+    stats,
+    abilities,
+    specialStats,
+    breakingPower,
+    runeTypes,
+    metaModifier = metaModifier
+) {
     var edition: Int = -1
     var givenBy: Component = Component.text("null")
     var givenTo: Component = Component.text("null")

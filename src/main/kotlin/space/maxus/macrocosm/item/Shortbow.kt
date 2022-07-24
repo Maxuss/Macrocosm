@@ -15,7 +15,7 @@ open class Shortbow(
     specials: SpecialStatistics = SpecialStatistics(),
     origin: Material = Material.BOW,
     runes: List<RuneSlot> = listOf()
-): AbilityItem(
+) : AbilityItem(
     ItemType.BOW,
     name,
     rarity,

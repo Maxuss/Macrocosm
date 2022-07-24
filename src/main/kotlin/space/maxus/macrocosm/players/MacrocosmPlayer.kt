@@ -81,7 +81,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var ownedPets: HashMap<String, StoredPet> = hashMapOf()
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
-    var slayers: HashMap<SlayerType, SlayerLevel> = HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, listOf() ,.0) })
+    var slayers: HashMap<SlayerType, SlayerLevel> =
+        HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, listOf(), .0) })
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
@@ -185,18 +186,18 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         sendMessage("<dark_purple><bold>SLAYER QUEST STARTED!")
         sendMessage("<dark_purple>▶ <gray>Slay <red>${Formatting.withCommas(requiredExp.toBigDecimal())} Combat XP<gray> worth of <green>${type.slayer.entities}<gray> to summon the boss!")
-        if(slayerRenderId != null)
+        if (slayerRenderId != null)
             SidebarRenderer.dequeue(p, slayerRenderId!!)
         slayerRenderId = SidebarRenderer.enqueue(p, slayerQuest!!.render(), RenderPriority.LOW)
     }
 
     fun updateSlayerQuest(new: SlayerQuest) {
         val p = paper ?: return
-        if(slayerQuest == null)
+        if (slayerQuest == null)
             return
 
         slayerQuest = new
-        if(slayerRenderId != null)
+        if (slayerRenderId != null)
             SidebarRenderer.dequeue(p, slayerRenderId!!)
         slayerRenderId = SidebarRenderer.enqueue(p, new.render(), RenderPriority.LOW)
     }
@@ -227,11 +228,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                         exp.toBigDecimal(),
                         true
                     )
-                } ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}${if(currentLevel < skill.maxLevel) "/${
-                    Formatting.withCommas(
-                        required.toBigDecimal()
-                    )
-                }" else ""})"
+                } ${skill.inst.name} XP (${Formatting.withCommas(current.toBigDecimal())}${
+                    if (currentLevel < skill.maxLevel) "/${
+                        Formatting.withCommas(
+                            required.toBigDecimal()
+                        )
+                    }" else ""
+                })"
             )
         )
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
@@ -270,7 +273,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     fun sendSkillLevelUp(skill: SkillType) {
         // extra check just in case
         // we shouldnt be here tho
-        if(skills.level(skill) >= 50)
+        if (skills.level(skill) >= 50)
             return
         val newLevel = skills.level(skill)
         val previous = newLevel - 1
@@ -344,7 +347,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             ) NamedTextColor.GOLD else if (activeEffects.contains(PotionEffectType.POISON)) NamedTextColor.DARK_GREEN else NamedTextColor.RED
 
         paper?.sendActionBar(
-            text("${currentHealth.roundToInt()}/${stats.health.roundToInt()}${Statistic.HEALTH.display}   ").color(healthColor)
+            text("${currentHealth.roundToInt()}/${stats.health.roundToInt()}${Statistic.HEALTH.display}   ").color(
+                healthColor
+            )
                 .append(text("<green>${stats.defense.roundToInt()}${Statistic.DEFENSE.display}    <aqua>${currentMana.roundToInt()}/${stats.intelligence.roundToInt()}✎ Mana"))
         )
     }
@@ -425,7 +430,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 return@forEach
             val item = Items.toMacrocosm(baseItem) ?: return@forEach
 
-            if(
+            if (
                 (it == EquipmentSlot.OFF_HAND && !item.type.leftHand) ||
                 (item.type.armor && it.name.contains("HAND")) ||
                 item.type.equipment
@@ -436,8 +441,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (activePet != null) {
             cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
         }
-        for(item in equipment.enumerate()) {
-            if(item != null) {
+        for (item in equipment.enumerate()) {
+            if (item != null) {
                 cloned.increase(item.stats(this))
             }
         }
@@ -449,7 +454,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         event.callEvent()
 
         val cache = event.stats.clone()
-        val capBoost = if(specialCache != null) {
+        val capBoost = if (specialCache != null) {
             specialCache!!.speedCapBoost
         } else 0f
         cache.speed = min(400 + capBoost, cache.speed)
@@ -608,19 +613,22 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
             // slayers
             val slayerRes = stmt.executeQuery("SELECT * FROM Slayers WHERE UUID = '$id'")
-            if(!slayerRes.next())
+            if (!slayerRes.next())
                 return null
-            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(petsRes.getString("EXPERIENCE"), object : TypeToken<HashMap<String, SlayerLevel>>() {}.type)
+            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(
+                petsRes.getString("EXPERIENCE"),
+                object : TypeToken<HashMap<String, SlayerLevel>>() {}.type
+            )
             player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
 
             // equipment
             val eqRes = stmt.executeQuery("SELECT * FROM Equipment WHERE UUID = '$id'")
-            if(!eqRes.next())
+            if (!eqRes.next())
                 return null
             val equipment = PlayerEquipment()
             listOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES).associateWith {
                 val contained = eqRes.getString(it.name)
-                if(contained == "NULL")
+                if (contained == "NULL")
                     null
                 else
                     MacrocosmItem.deserializeFromBytes(contained)

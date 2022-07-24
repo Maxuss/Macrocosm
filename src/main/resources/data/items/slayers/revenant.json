@@ -65,7 +65,9 @@
         "type": "other",
         "rarity": "epic",
         "material": "paper",
-        "abilities": ["necromantic_ritual"]
+        "abilities": [
+            "necromantic_ritual"
+        ]
     },
     "undead_sword": {
         "type": "sword",
@@ -75,8 +77,12 @@
             "damage": 50,
             "strength": 50
         },
-        "abilities": ["undead_sword"],
-        "runes": ["offensive"]
+        "abilities": [
+            "undead_sword"
+        ],
+        "runes": [
+            "offensive"
+        ]
     },
     "revenant_falchion": {
         "type": "sword",
@@ -86,7 +92,10 @@
             "damage": 100,
             "strength": 80
         },
-        "abilities": ["revenant_falchion","revenant_life_steal"],
+        "abilities": [
+            "revenant_falchion",
+            "revenant_life_steal"
+        ],
         "runes": [
             "combat"
         ]
@@ -100,8 +109,14 @@
             "strength": 120,
             "ferocity": 10
         },
-        "abilities": ["reaper_falchion","reaper_life_steal"],
-        "runes": ["combat","offensive"]
+        "abilities": [
+            "reaper_falchion",
+            "reaper_life_steal"
+        ],
+        "runes": [
+            "combat",
+            "offensive"
+        ]
     },
     "reaper_scythe": {
         "type": "sword",
@@ -112,8 +127,15 @@
             "strength": 33,
             "intelligence": 333
         },
-        "abilities": ["reaper_weapon","reaper_scythe"],
-        "runes": ["combat","offensive","offensive"]
+        "abilities": [
+            "reaper_weapon",
+            "reaper_scythe"
+        ],
+        "runes": [
+            "combat",
+            "offensive",
+            "offensive"
+        ]
     },
     "axe_of_the_shredded": {
         "type": "sword",
@@ -125,40 +147,66 @@
             "strength": 180,
             "ferocity": 20
         },
-        "abilities": ["reaper_weapon","aots_throw"],
-        "runes": ["combat","defensive","defensive"]
+        "abilities": [
+            "reaper_weapon",
+            "aots_throw"
+        ],
+        "runes": [
+            "combat",
+            "defensive",
+            "defensive"
+        ]
     },
     "wand_of_healing": {
         "type": "wand",
         "name": "Wand of Healing",
         "rarity": "uncommon",
         "material": "stick",
-        "abilities": ["small_heal"],
-        "runes": ["defensive"]
+        "abilities": [
+            "small_heal"
+        ],
+        "runes": [
+            "defensive"
+        ]
     },
     "wand_of_mending": {
         "type": "wand",
         "name": "Wand of Mending",
         "rarity": "rare",
         "material": "stick",
-        "abilities": ["medium_heal"],
-        "runes": ["defensive"]
+        "abilities": [
+            "medium_heal"
+        ],
+        "runes": [
+            "defensive"
+        ]
     },
     "wand_of_restoration": {
         "type": "wand",
         "name": "Wand of Restoration",
         "rarity": "epic",
         "material": "stick",
-        "abilities": ["big_heal"],
-        "runes": ["defensive", "utility"]
+        "abilities": [
+            "big_heal"
+        ],
+        "runes": [
+            "defensive",
+            "utility"
+        ]
     },
     "wand_of_atonement": {
         "type": "wand",
         "name": "Wand of Atonement",
         "rarity": "legendary",
         "material": "stick",
-        "abilities": ["huge_heal"],
-        "runes": ["defensive","utility","defensive"]
+        "abilities": [
+            "huge_heal"
+        ],
+        "runes": [
+            "defensive",
+            "utility",
+            "defensive"
+        ]
     },
     "reaper_gem": {
         "reforge": "blood_soaked",
@@ -169,7 +217,9 @@
         "type": "other",
         "rarity": "rare",
         "material": "pufferfish",
-        "abilities": ["acupuncture"],
+        "abilities": [
+            "acupuncture"
+        ],
         "description": "Who do you voodoo?"
     },
     "undead_heart": {
@@ -180,8 +230,12 @@
             "health": 200,
             "defense": 50
         },
-        "abilities": ["negate"],
-        "runes": ["defensive"]
+        "abilities": [
+            "negate"
+        ],
+        "runes": [
+            "defensive"
+        ]
     },
     "crystallized_heart": {
         "type": "helmet",
@@ -191,8 +245,13 @@
             "health": 250,
             "defense": 120
         },
-        "abilities": ["vitiate"],
-        "runes": ["defensive", "defensive"]
+        "abilities": [
+            "vitiate"
+        ],
+        "runes": [
+            "defensive",
+            "defensive"
+        ]
     },
     "revived_heart": {
         "type": "helmet",
@@ -203,8 +262,14 @@
             "defense": 150,
             "intelligence": 50
         },
-        "abilities": ["belie"],
-        "runes": ["defensive", "utility", "offensive"],
+        "abilities": [
+            "belie"
+        ],
+        "runes": [
+            "defensive",
+            "utility",
+            "offensive"
+        ],
         "description": "Gross! Why would anyone ever wear this!"
     },
     "wardens_helmet": {
@@ -217,8 +282,14 @@
             "defense": 300,
             "strength": 50
         },
-        "abilities": ["brute_force"],
-        "runes": ["combat", "offensive", "utility"]
+        "abilities": [
+            "brute_force"
+        ],
+        "runes": [
+            "combat",
+            "offensive",
+            "utility"
+        ]
     },
     "reaper_mask": {
         "type": "helmet",
@@ -230,8 +301,13 @@
             "intelligence": 50,
             "strength": 10
         },
-        "abilities": ["reaper_blood"],
-        "runes": ["combat","defensive"]
+        "abilities": [
+            "reaper_blood"
+        ],
+        "runes": [
+            "combat",
+            "defensive"
+        ]
     },
     "entombed_mask": {
         "type": "helmet",
@@ -243,7 +319,13 @@
             "intelligence": 150,
             "strength": 50
         },
-        "abilities": ["forever_in_tomb"],
-        "runes": ["combat","defensive","defensive"]
+        "abilities": [
+            "forever_in_tomb"
+        ],
+        "runes": [
+            "combat",
+            "defensive",
+            "defensive"
+        ]
     }
 }

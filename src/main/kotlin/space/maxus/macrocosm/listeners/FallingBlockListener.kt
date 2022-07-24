@@ -6,12 +6,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityChangeBlockEvent
 import java.util.*
 
-object FallingBlockListener: Listener {
+object FallingBlockListener : Listener {
     val stands: MutableList<UUID> = mutableListOf()
 
     @EventHandler
     fun onBlockLand(e: EntityChangeBlockEvent) {
-        if(e.entity is FallingBlock && stands.contains(e.entity.uniqueId)) {
+        if (e.entity is FallingBlock && stands.contains(e.entity.uniqueId)) {
             stands.remove(e.entity.uniqueId)
             e.isCancelled = true
         }

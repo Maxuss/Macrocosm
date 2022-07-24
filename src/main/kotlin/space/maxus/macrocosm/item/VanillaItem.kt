@@ -19,7 +19,10 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.*
+import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.item.runes.RuneSpec
+import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -266,7 +269,11 @@ private fun getRunesForItem(item: Material): List<RuneSlot> {
     return listOf()
 }
 
-class VanillaItem(override val base: Material, override var amount: Int = 1, private val metaModifier: (ItemMeta) -> Unit = { }) : MacrocosmItem {
+class VanillaItem(
+    override val base: Material,
+    override var amount: Int = 1,
+    private val metaModifier: (ItemMeta) -> Unit = { }
+) : MacrocosmItem {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
     override var stars: Int = 0
@@ -293,7 +300,7 @@ class VanillaItem(override val base: Material, override var amount: Int = 1, pri
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> =
         multimap<RuneSlot, RuneState>().apply {
-            for(slot in getRunesForItem(base)) {
+            for (slot in getRunesForItem(base)) {
                 put(slot, RuneState.EMPTY)
             }
         }

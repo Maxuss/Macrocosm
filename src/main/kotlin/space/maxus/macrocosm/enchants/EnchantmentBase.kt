@@ -88,9 +88,19 @@ abstract class EnchantmentBase(
         special.multiply(multiplier * level)
         val mm = MiniMessage.miniMessage()
         val regulatedDescription = "\\[\\d.]+".toRegex().replace(description) {
-            Formatting.stats(BigDecimal.valueOf(java.lang.Double.parseDouble(it.value.removeSurrounding("[", "]")) * level * multiplier))
+            Formatting.stats(
+                BigDecimal.valueOf(
+                    java.lang.Double.parseDouble(
+                        it.value.removeSurrounding(
+                            "[",
+                            "]"
+                        )
+                    ) * level * multiplier
+                )
+            )
         }
-        val reduced = regulatedDescription.reduceToList(25).map { mm.deserialize("<gray>$it").noitalic() }.toMutableList()
+        val reduced =
+            regulatedDescription.reduceToList(25).map { mm.deserialize("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf {
             ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
         }

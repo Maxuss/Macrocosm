@@ -12,7 +12,13 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 
 object LethalityEnchantment :
-    EnchantmentBase("Lethality", "Reduces the ${Statistic.DEFENSE.display}<gray> of your target by <green>[1.2]%<gray> each time yoy hit them. Stacks up to <green>[1]<gray> times.", 1..6, ItemType.melee(), conflicts = listOf("EXHALATION")) {
+    EnchantmentBase(
+        "Lethality",
+        "Reduces the ${Statistic.DEFENSE.display}<gray> of your target by <green>[1.2]%<gray> each time yoy hit them. Stacks up to <green>[1]<gray> times.",
+        1..6,
+        ItemType.melee(),
+        conflicts = listOf("EXHALATION")
+    ) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead || e.damaged is Player)
@@ -42,7 +48,13 @@ object LethalityEnchantment :
 }
 
 object ExhalationEnchantment :
-    EnchantmentBase("Exhalation", "Reduces the ${Statistic.DAMAGE.display}<gray> of your target by <green>[0.6]%<gray> each time you git them. Stacks up to <green>[1]<gray> times.", 1..6, ItemType.melee(), conflicts = listOf("LETHALITY")) {
+    EnchantmentBase(
+        "Exhalation",
+        "Reduces the ${Statistic.DAMAGE.display}<gray> of your target by <green>[0.6]%<gray> each time you git them. Stacks up to <green>[1]<gray> times.",
+        1..6,
+        ItemType.melee(),
+        conflicts = listOf("LETHALITY")
+    ) {
     @EventHandler
     fun onDamage(e: PlayerDealDamageEvent) {
         if (e.damaged.isDead || e.damaged is Player)

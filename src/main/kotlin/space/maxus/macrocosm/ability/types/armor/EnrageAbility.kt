@@ -23,7 +23,10 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.MutableContainer
 
-object EnrageAbility: FullSetBonus("Enrage", "Enrage, boosting your stats:<br> ▶ <white>+100 ${Statistic.SPEED.display}<br> ▶ <red>3% ${Statistic.HEALTH.display}/s<br> ▶ <red>-15% ${Statistic.DAMAGE.display}<gray> from <blue>Wither Skeletons<br> ▶ <red>+50% ${Statistic.DAMAGE.display}<gray> against <blue>Wither Skeletons<br>for <green>6 seconds<gray>.") {
+object EnrageAbility : FullSetBonus(
+    "Enrage",
+    "Enrage, boosting your stats:<br> ▶ <white>+100 ${Statistic.SPEED.display}<br> ▶ <red>3% ${Statistic.HEALTH.display}/s<br> ▶ <red>-15% ${Statistic.DAMAGE.display}<gray> from <blue>Wither Skeletons<br> ▶ <red>+50% ${Statistic.DAMAGE.display}<gray> against <blue>Wither Skeletons<br>for <green>6 seconds<gray>."
+) {
     override val type: AbilityType = AbilityType.SNEAK
     override val cost: AbilityCost = AbilityCost(500, 100, 15)
 
@@ -32,26 +35,26 @@ object EnrageAbility: FullSetBonus("Enrage", "Enrage, boosting your stats:<br> �
     override fun registerListeners() {
         listen<PlayerDealDamageEvent>(priority = EventPriority.LOW) { e ->
             enabled.take(e.player.ref) {
-                if(e.damaged.type == EntityType.WITHER_SKELETON)
+                if (e.damaged.type == EntityType.WITHER_SKELETON)
                     e.damage *= 1.5f
             }
         }
         listen<PlayerReceiveDamageEvent>(priority = EventPriority.LOW) { e ->
             enabled.take(e.player.ref) {
-                if(e.damager.type == EntityType.WITHER_SKELETON) {
+                if (e.damager.type == EntityType.WITHER_SKELETON) {
                     e.damage *= .85f
                 }
             }
         }
         @OptIn(UnsafeFeature::class)
         listen<PlayerSneakEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
 
-            if(!cost.ensureRequirements(e.player, id))
+            if (!cost.ensureRequirements(e.player, id))
                 return@listen
 
-            if(e.player.ref in enabled)
+            if (e.player.ref in enabled)
                 return@listen
 
             val p = e.player.paper ?: return@listen
@@ -67,7 +70,10 @@ object EnrageAbility: FullSetBonus("Enrage", "Enrage, boosting your stats:<br> �
             color(legs, 0x50C5D2)
             color(chest, 0x27C3D4)
             var headTag = head.nbtData
-            headTag.putString("__TempSkin", "ewogICJ0aW1lc3RhbXAiIDogMTY1ODQ3MDg1OTcwMywKICAicHJvZmlsZUlkIiA6ICIxM2U3NjczMGRlNTI0MTk3OTA5YTZkNTBlMGEyMjAzYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtX3h1cyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS82Y2RkZTljYWNkZDFhZWYwODM2ZjRiMjllYWI3NzdlMDI5YTk3YjRjMjRhOTgxY2JjODFjZjEyMjlmMjY3ZWYyIgogICAgfQogIH0KfQ==")
+            headTag.putString(
+                "__TempSkin",
+                "ewogICJ0aW1lc3RhbXAiIDogMTY1ODQ3MDg1OTcwMywKICAicHJvZmlsZUlkIiA6ICIxM2U3NjczMGRlNTI0MTk3OTA5YTZkNTBlMGEyMjAzYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtX3h1cyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS82Y2RkZTljYWNkZDFhZWYwODM2ZjRiMjllYWI3NzdlMDI5YTk3YjRjMjRhOTgxY2JjODFjZjEyMjlmMjY3ZWYyIgogICAgfQogIH0KfQ=="
+            )
             var nms = (head as CraftItemStack).handle
             nms.tag = headTag
 
@@ -90,17 +96,17 @@ object EnrageAbility: FullSetBonus("Enrage", "Enrage, boosting your stats:<br> �
             taskRunLater(20 * 6) {
                 enabled.remove(e.player.ref)
 
-                for(slot in listOf(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+                for (slot in listOf(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
                     val item = p.equipment.getItem(slot)
-                    if(item.isAirOrNull())
+                    if (item.isAirOrNull())
                         continue
-                    if(item.itemMeta is LeatherArmorMeta) {
+                    if (item.itemMeta is LeatherArmorMeta) {
                         removeColor(item)
                     } else {
                         headTag = item.nbtData
                         headTag.remove("__TempSkin")
                         nms = (item as CraftItemStack).handle
-                        if(nms == null)
+                        if (nms == null)
                             continue
                         nms.tag = headTag
                     }

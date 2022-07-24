@@ -61,7 +61,10 @@ object EnderDragonPet : Pet(
         if (!ok)
             return
         val amount = .001f * pet!!.level
-        if((e.item.type.armor && e.item.id.path.contains("dragon")) || e.item.id.path.contains("void_scepter") || e.item.id.path.contains("aspect_of_the_dragons")) {
+        if ((e.item.type.armor && e.item.id.path.contains("dragon")) || e.item.id.path.contains("void_scepter") || e.item.id.path.contains(
+                "aspect_of_the_dragons"
+            )
+        ) {
             e.stats.multiply(1 + amount)
         }
     }

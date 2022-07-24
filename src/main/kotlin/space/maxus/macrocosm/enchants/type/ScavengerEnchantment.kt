@@ -10,7 +10,12 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.ItemType
 
-object ScavengerEnchantment : EnchantmentBase("Scavenger", "Scavenge <gold>[0.3] Coins<gray> per monster level on kill.", 1..5, ItemType.weapons()) {
+object ScavengerEnchantment : EnchantmentBase(
+    "Scavenger",
+    "Scavenge <gold>[0.3] Coins<gray> per monster level on kill.",
+    1..5,
+    ItemType.weapons()
+) {
     @EventHandler
     fun onKill(e: PlayerKillEntityEvent) {
         val (ok, lvl) = ensureRequirements(e.player, EquipmentSlot.HAND, EquipmentSlot.OFF_HAND)

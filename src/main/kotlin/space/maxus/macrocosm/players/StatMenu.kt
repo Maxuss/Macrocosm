@@ -43,7 +43,10 @@ fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
         }
         placeholder(Slots.RowSixSlotFive, allStatsFancy)
 
-        button(Slots.RowOneSlotFour, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Equipment Screen")) {
+        button(
+            Slots.RowOneSlotFour,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Equipment Screen")
+        ) {
             EquipmentHandler.menu(player)
         }
         button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
@@ -52,16 +55,16 @@ fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
 
         val compound = createRectCompound<Pair<Statistic, Float>>(Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = {
-                if(it.second == -1f)
+                if (it.second == -1f)
                     return@createRectCompound glass
 
                 val (stat, amount) = it
 
                 val name = stat.formatFancy(amount) ?: return@createRectCompound glass
-                if(allNull(stat.displayItem, stat.displaySkin))
+                if (allNull(stat.displayItem, stat.displaySkin))
                     return@createRectCompound glass
 
-                val baseItem: ItemStack = if(stat.displayItem == null) {
+                val baseItem: ItemStack = if (stat.displayItem == null) {
                     val stack = ItemStack(Material.PLAYER_HEAD)
                     stack.meta<SkullMeta> {
                         val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
@@ -76,10 +79,11 @@ fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                     displayName(name)
 
                     val rawLore = stat.description
-                    if(rawLore.isBlankOrEmpty())
+                    if (rawLore.isBlankOrEmpty())
                         return@createRectCompound glass
 
-                    val lore = rawLore.reduceToList().filter { str -> !str.isBlankOrEmpty() }.map { reduced -> text("<gray>$reduced").noitalic() }.toMutableList()
+                    val lore = rawLore.reduceToList().filter { str -> !str.isBlankOrEmpty() }
+                        .map { reduced -> text("<gray>$reduced").noitalic() }.toMutableList()
 
                     val buf = mutableListOf<String>()
                     stat.addExtraLore(buf, stats)
@@ -91,10 +95,11 @@ fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
 
                 baseItem
             },
-        onClick = { e, _ ->
-            e.bukkitEvent.isCancelled = true
-        })
+            onClick = { e, _ ->
+                e.bukkitEvent.isCancelled = true
+            })
 
-        compound.addContent(stats.iter().entries.filter { (k, v) -> v != 0f && !k.hidden && !k.hiddenFancy }.map { (k, v) -> Pair(k, v) }.pad(28, Pair(Statistic.DAMAGE, -1f)))
+        compound.addContent(stats.iter().entries.filter { (k, v) -> v != 0f && !k.hidden && !k.hiddenFancy }
+            .map { (k, v) -> Pair(k, v) }.pad(28, Pair(Statistic.DAMAGE, -1f)))
     }
 }

@@ -17,7 +17,7 @@ import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.item.macrocosm
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
@@ -26,7 +26,13 @@ import space.maxus.macrocosm.util.metrics.report
 import java.util.*
 import kotlin.math.max
 
-open class SummoningAbility(name: String, description: String, cost: AbilityCost, private val entity: String, private val nativeCtor: (Level, UUID) -> LivingEntity): AbilityBase(AbilityType.RIGHT_CLICK, name, description, cost) {
+open class SummoningAbility(
+    name: String,
+    description: String,
+    cost: AbilityCost,
+    private val entity: String,
+    private val nativeCtor: (Level, UUID) -> LivingEntity
+) : AbilityBase(AbilityType.RIGHT_CLICK, name, description, cost) {
     private val entityId = id(this.entity)
     override val cost: AbilityCost = super.cost!!
 
@@ -40,7 +46,7 @@ open class SummoningAbility(name: String, description: String, cost: AbilityCost
 
     override fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot, silent: Boolean): Boolean {
         val base = super.ensureRequirements(player, slot, silent)
-        if(!base)
+        if (!base)
             return false
         return ensureSlotRequirements(player, silent)
     }
@@ -49,7 +55,7 @@ open class SummoningAbility(name: String, description: String, cost: AbilityCost
         val stats = player.stats()!!
         val power = stats.summoningPower
         val usedSlots = player.summonSlotsUsed
-        if(usedSlots >= power) {
+        if (usedSlots >= power) {
             if (!silent) {
                 player.paper!!.sendActionBar(text("<red><bold>NOT ENOUGH SUMMONING POWER"))
             }
@@ -60,13 +66,14 @@ open class SummoningAbility(name: String, description: String, cost: AbilityCost
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            val item = e.player.paper?.inventory?.getItem(EquipmentSlot.HAND) ?: report("Player in RightClickEvent was null!") { return@listen }
+            val item = e.player.paper?.inventory?.getItem(EquipmentSlot.HAND)
+                ?: report("Player in RightClickEvent was null!") { return@listen }
             if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
                 return@listen
 
             val p = e.player.paper ?: report("Player in RightClickEvent was null!") { return@listen }
 
-            if(p.isSneaking) {
+            if (p.isSneaking) {
                 // despawning
                 val entities = summoned[e.player.ref]
                 entities.forEach { eid ->
@@ -84,7 +91,7 @@ open class SummoningAbility(name: String, description: String, cost: AbilityCost
                 return@listen
             }
 
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND)) {
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND)) {
                 return@listen
             }
 
@@ -98,7 +105,7 @@ open class SummoningAbility(name: String, description: String, cost: AbilityCost
             val native = nativeCtor((p.world as CraftWorld).handle, p.uniqueId)
             val mc = Registry.ENTITY.findOrNull(entityId)
                 ?: report("Could not find provided entity to summon: $entityId!") { return@listen }
-            NativeMacrocosmEntity.summon(native, p.location, mc)
+            NativeMacrocosmSummon.summon(native, p.location, mc)
             summoned.put(e.player.ref, native.uuid)
             e.player.summons.add(native.uuid)
             e.player.summonSlotsUsed += cost.summonDifficulty

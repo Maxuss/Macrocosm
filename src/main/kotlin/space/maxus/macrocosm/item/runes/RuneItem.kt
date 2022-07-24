@@ -28,10 +28,9 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.multimap
-import java.util.*
 
 fun rarityToRuneTier(rarity: Rarity): String {
-    return when(rarity) {
+    return when (rarity) {
         Rarity.COMMON -> "Dusty"
         Rarity.UNCOMMON -> "Fine"
         Rarity.RARE -> "Grand"
@@ -73,7 +72,7 @@ class RuneItem(
         lore.add("".toComponent())
 
         val str = runeType.descript()
-        for(d in str.reduceToList(35)) {
+        for (d in str.reduceToList(35)) {
             lore.add(text("<gray>$d</gray>").noitalic())
         }
         lore.add("".toComponent())

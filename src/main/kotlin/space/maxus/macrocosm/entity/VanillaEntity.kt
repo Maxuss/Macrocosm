@@ -421,7 +421,7 @@ fun dropsFromType(ty: EntityType): List<Drop> {
 }
 
 private fun skillFromType(type: EntityType, level: Int): Pair<Double, SkillType> {
-    return when(type) {
+    return when (type) {
         EntityType.SQUID, EntityType.GLOW_SQUID -> Pair(12.0, SkillType.FISHING)
         EntityType.COD, EntityType.SALMON -> Pair(4.0, SkillType.FISHING)
         EntityType.TROPICAL_FISH, EntityType.PUFFERFISH -> Pair(5.0, SkillType.FISHING)
@@ -477,7 +477,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
     override val rewardingSkill: SkillType
     override val experience: Double
-    override val playerFriendly: Boolean get() = if(paper == null) false else isEntityFriendly(paper!!)
+    override val playerFriendly: Boolean get() = if (paper == null) false else isEntityFriendly(paper!!)
 
     init {
         val (exp, skill) = skillFromType(type, level)
@@ -510,7 +510,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
 
         val entity = paper!!
 
-        if(playerFriendly && damager is Player)
+        if (playerFriendly && damager is Player)
             return
 
         currentHealth -= amount

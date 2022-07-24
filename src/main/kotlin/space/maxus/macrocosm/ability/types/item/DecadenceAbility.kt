@@ -29,7 +29,11 @@ import space.maxus.macrocosm.util.runNTimes
 import java.util.*
 import kotlin.random.Random
 
-object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Constructs a <gradient:#AB6C08:#B77A1A:#291A01>Hatred Shield<gray>, that consumes <red>next 5 hits<gray> you take and explodes, dealing <red>500%<gray> of damage taken to nearby enemies.") {
+object DecadenceAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Decadence",
+    "Constructs a <gradient:#AB6C08:#B77A1A:#291A01>Hatred Shield<gray>, that consumes <red>next 5 hits<gray> you take and explodes, dealing <red>500%<gray> of damage taken to nearby enemies."
+) {
     override val cost: AbilityCost = AbilityCost(300, 200, 8)
 
     private val activePlayers: HashMap<UUID, Int> = hashMapOf()
@@ -37,7 +41,7 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val player = e.player
@@ -63,7 +67,7 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
                 activePlayers.remove(p.uniqueId)
                 takenDamage.remove(p.uniqueId)
             }) {
-                if(activePlayers[p.uniqueId]!! <= 0) {
+                if (activePlayers[p.uniqueId]!! <= 0) {
                     it.cancel()
                     return@runNTimes
                 }
@@ -73,7 +77,7 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
 
         listen<PlayerReceiveDamageEvent>(priority = EventPriority.LOWEST) { e ->
             val p = e.player.paper ?: return@listen
-            if(takenDamage.contains(p.uniqueId)) {
+            if (takenDamage.contains(p.uniqueId)) {
                 takenDamage[p.uniqueId] = takenDamage[p.uniqueId]!! + e.damage
                 activePlayers[p.uniqueId] = activePlayers[p.uniqueId]!! - 1
                 e.isCancelled = true
@@ -104,8 +108,8 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
         val paper = player.paper ?: return
         var total = 0f
         var hit = 0
-        for(entity in pos.getNearbyLivingEntities(5.0)) {
-            if(entity is ArmorStand || entity is Player)
+        for (entity in pos.getNearbyLivingEntities(5.0)) {
+            if (entity is ArmorStand || entity is Player)
                 continue
 
             total += damage
@@ -121,19 +125,19 @@ object DecadenceAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Decadence", "Cons
             playAt(pos)
         }
 
-        if(hit != 0 && total != 0f)
+        if (hit != 0 && total != 0f)
             player.sendMessage("<gray>Your <red>Decadence<gray> hit $hit enemies for <red>${Formatting.withCommas(total.toBigDecimal())}<gray> damage!")
     }
 
     fun renderBall(pos: Location) {
         var i = 0f
         val at = pos.clone()
-        while(i < Mth.PI) {
+        while (i < Mth.PI) {
             val radius = Mth.sin(i) * 1.5
             val y = Mth.cos(i) * 1.5
 
             var a = 0f
-            while(a < Mth.PI * 2) {
+            while (a < Mth.PI * 2) {
                 val x = Mth.cos(a) * radius
                 val z = Mth.sin(a) * radius
 

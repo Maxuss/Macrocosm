@@ -19,7 +19,19 @@ class KillCountingItem(
     runeTypes: List<RuneSlot> = listOf(),
     description: String? = null,
     metaModifier: (ItemMeta) -> Unit = { },
-): AbilityItem(type, itemName, rarity, base, stats, abilities, specialStats, breakingPower, runeTypes, description, metaModifier = metaModifier), KillStorageItem {
+) : AbilityItem(
+    type,
+    itemName,
+    rarity,
+    base,
+    stats,
+    abilities,
+    specialStats,
+    breakingPower,
+    runeTypes,
+    description,
+    metaModifier = metaModifier
+), KillStorageItem {
     override var kills: Int = 0
 
     override fun addExtraNbt(cmp: CompoundTag) {
@@ -51,7 +63,7 @@ class KillCountingItem(
 
     override fun transfer(to: MacrocosmItem) {
         super.transfer(to)
-        if(to is KillCountingItem)
+        if (to is KillCountingItem)
             to.kills = kills
     }
 

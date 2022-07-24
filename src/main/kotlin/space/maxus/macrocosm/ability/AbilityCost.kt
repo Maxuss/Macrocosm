@@ -18,7 +18,12 @@ import java.util.concurrent.TimeUnit
  * @property cooldown Cooldown to wait **in seconds**
  * @property summonDifficulty Amount of summon slots taken by each summon
  */
-data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Number = 0, val summonDifficulty: Int = 0) {
+data class AbilityCost(
+    val mana: Int = 0,
+    val health: Int = 0,
+    val cooldown: Number = 0,
+    val summonDifficulty: Int = 0
+) {
     /**
      * Builds this cost lore and inserts it into the provided [lore] list
      *
@@ -35,7 +40,7 @@ data class AbilityCost(val mana: Int = 0, val health: Int = 0, val cooldown: Num
         if (cd > 0f) {
             lore.add(text("<dark_gray>Cooldown: <green>${Formatting.stats(cd.toBigDecimal())}s").noitalic())
         }
-        if(summonDifficulty > 0) {
+        if (summonDifficulty > 0) {
             lore.add(text("<dark_gray>Summoning Difficulty: <#741CCA>$summonDifficulty").noitalic())
         }
     }

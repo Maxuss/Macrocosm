@@ -30,7 +30,7 @@ interface Metrics {
 inline fun <R> report(message: String, callback: () -> R): R {
     return Callback {
         Metrics.logger.error(message)
-        if(Metrics.handler == null)
+        if (Metrics.handler == null)
             return@Callback
         Metrics.metricThread.execute {
             Metrics.send(MetricType.REPORT, constructReportBytes(message, MetricType.REPORT))

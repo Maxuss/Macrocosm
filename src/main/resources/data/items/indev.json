@@ -3,6 +3,8 @@
         "material": "diamond_shovel",
         "rarity": "unobtainable",
         "type": "staff",
-        "abilities": ["test_summon"]
+        "abilities": [
+            "test_summon"
+        ]
     }
 }

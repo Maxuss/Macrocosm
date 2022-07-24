@@ -217,7 +217,7 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
             val pair = skillExpFromBlock(e.block) ?: return
             val (exp, type) = pair
             val expEvent = PlayerReceiveExpEvent(mc, type, exp)
-            if(!expEvent.callEvent())
+            if (!expEvent.callEvent())
                 pool.roll(mc, true)
             else {
                 e.player.addSkillExperience(expEvent.type, expEvent.amount.toDouble())

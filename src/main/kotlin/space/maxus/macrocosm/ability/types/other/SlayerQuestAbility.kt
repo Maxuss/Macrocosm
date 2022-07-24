@@ -17,16 +17,17 @@ import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.slayer.SlayerType
 
-class SlayerQuestAbility(name: String, description: String, val slayer: SlayerType, val tier: Int): AbilityBase(AbilityType.RIGHT_CLICK, name, description, AbilityCost(health = 1500)) {
+class SlayerQuestAbility(name: String, description: String, val slayer: SlayerType, val tier: Int) :
+    AbilityBase(AbilityType.RIGHT_CLICK, name, description, AbilityCost(health = 1500)) {
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
             e.player.paper!!.inventory.setItemInMainHand(null)
             var ticker = 0
             val p = e.player.paper!!
             task(period = 1L) {
-                if(ticker >= 20) {
+                if (ticker >= 20) {
                     e.player.sendMessage("<red>You have made a sacrifice with blood, and started a <gold>Profaned Slayer Quest<red>!")
                     e.player.startSlayerQuest(slayer, tier)
                     it.cancel()

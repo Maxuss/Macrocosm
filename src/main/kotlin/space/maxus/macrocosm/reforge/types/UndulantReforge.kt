@@ -4,8 +4,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityCost
-import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.events.AbilityCostApplyEvent
+import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.reforge.ReforgeBase

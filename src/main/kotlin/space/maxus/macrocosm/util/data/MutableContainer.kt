@@ -19,13 +19,13 @@ class MutableContainer<V> private constructor(private val values: ConcurrentHash
     operator fun contains(k: UUID) = values.containsKey(k)
 
     fun take(k: UUID, operator: (V) -> Unit) {
-        if(values.containsKey(k)) {
+        if (values.containsKey(k)) {
             operator(values[k]!!)
         }
     }
 
     fun takeMut(k: UUID, operator: (V) -> V) {
-        if(values.containsKey(k)) {
+        if (values.containsKey(k)) {
             values[k] = operator(values[k]!!)
         }
     }

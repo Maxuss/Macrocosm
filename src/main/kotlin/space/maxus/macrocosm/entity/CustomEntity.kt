@@ -14,7 +14,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.loot.GlobalLootPool
 import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
@@ -51,7 +51,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
     init {
         val handle = (paper as? CraftEntity)?.handle
-        if(handle is NativeMacrocosmEntity) {
+        if (handle is NativeMacrocosmSummon) {
             id = handle.delegateId
             val delegate = Registry.ENTITY.find(id)
             name = delegate.name
@@ -63,7 +63,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             playerFriendly = delegate.playerFriendly
             experience = delegate.experience
             val p = paper
-            currentHealth = if(p == null)
+            currentHealth = if (p == null)
                 delegate.currentHealth
             else {
                 val tag = p.readNbt().getCompound(MACROCOSM_TAG)
@@ -117,7 +117,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
         val handle = (damager as? CraftEntity)?.handle
-        if(playerFriendly && (damager is Player || handle is OwnableEntity))
+        if (playerFriendly && (damager is Player || handle is OwnableEntity))
             return
 
         if (Registry.SOUND.has(id)) {
@@ -154,7 +154,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         entity.kill()
 
         if (killer != null || handle is OwnableEntity) {
-            killer = if(handle is OwnableEntity) {
+            killer = if (handle is OwnableEntity) {
                 (handle.owner as? Player)?.macrocosm ?: return
             } else {
                 killer!!
@@ -172,7 +172,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             val soundBank = Registry.SOUND.find(id)
             soundBank.playRandom(entity.location, SoundType.DEATH)
         }
-        
+
         var pool = lootPool(killer)
         val event = EntityDropItemsEvent(damager, entity, pool)
         val cancelled = !event.callEvent()

@@ -20,25 +20,26 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
 import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
-object EntombedMaskAbility: AbilityBase(AbilityType.PASSIVE, "Forever in Tomb", "Summons <gold>3 Revenant Spirits<gray> to assist you.") {
+object EntombedMaskAbility :
+    AbilityBase(AbilityType.PASSIVE, "Forever in Tomb", "Summons <gold>3 Revenant Spirits<gray> to assist you.") {
     private val summoned: HashMap<UUID, Triple<UUID, UUID, UUID>> = hashMapOf()
 
     override fun registerListeners() {
         listen<PlayerArmorChangeEvent> { e ->
-            if(e.newItem == e.oldItem)
+            if (e.newItem == e.oldItem)
                 return@listen
             val player = e.player.uniqueId
-            if(e.newItem?.macrocosm?.abilities?.contains(this) == true && !summoned.containsKey(player)) {
+            if (e.newItem?.macrocosm?.abilities?.contains(this) == true && !summoned.containsKey(player)) {
                 val world = e.player.world
                 val loc = e.player.location
 
                 val arr = arrayOfNulls<UUID>(3)
-                for(i in 0..2) {
+                for (i in 0..2) {
                     val entity = SupportZombie((world as CraftWorld).handle, e.player.uniqueId)
                     entity.setPos(Vec3(loc.x, loc.y, loc.z))
                     EntityValue.ENTOMBED_MASK_ZOMBIE.entity.loadChanges(entity.bukkitLivingEntity)
@@ -46,19 +47,20 @@ object EntombedMaskAbility: AbilityBase(AbilityType.PASSIVE, "Forever in Tomb", 
                     arr[i] = entity.uuid
                 }
                 summoned[e.player.uniqueId] = Triple(arr[0]!!, arr[1]!!, arr[2]!!)
-            } else if(e.oldItem?.macrocosm?.abilities?.contains(this) == true) {
+            } else if (e.oldItem?.macrocosm?.abilities?.contains(this) == true) {
                 val triple = summoned[e.player.uniqueId]?.toList() ?: return@listen
-                for(i in 0..2) {
-                    val entity = Bukkit.getEntity(triple[i]) ?: run { summoned.remove(e.player.uniqueId); return@listen }
+                for (i in 0..2) {
+                    val entity =
+                        Bukkit.getEntity(triple[i]) ?: run { summoned.remove(e.player.uniqueId); return@listen }
                     entity.remove()
                 }
                 summoned.remove(e.player.uniqueId)
             }
         }
         listen<PlayerQuitEvent> { e ->
-            if(summoned.containsKey(e.player.uniqueId)) {
+            if (summoned.containsKey(e.player.uniqueId)) {
                 val triple = summoned[e.player.uniqueId]?.toList() ?: return@listen
-                for(i in 0..2) {
+                for (i in 0..2) {
                     val entity = Bukkit.getEntity(triple[i]) ?: return@listen
                     entity.remove()
                 }
@@ -67,7 +69,7 @@ object EntombedMaskAbility: AbilityBase(AbilityType.PASSIVE, "Forever in Tomb", 
         }
     }
 
-    class SupportZombie(level: Level, override val owner: UUID): Zombie(level), OwnableEntity, NativeMacrocosmEntity {
+    class SupportZombie(level: Level, override val owner: UUID) : Zombie(level), OwnableEntity, NativeMacrocosmSummon {
         override val delegateId: Identifier = id("entombed_mask_zombie")
 
         override fun registerGoals() {

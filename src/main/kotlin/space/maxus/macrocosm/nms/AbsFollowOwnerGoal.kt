@@ -18,7 +18,13 @@ import java.util.*
 import kotlin.math.abs
 
 @Suppress("PrivatePropertyName")
-class AbsFollowOwnerGoal(private val entity: Mob, private val speedModifier: Double, private val startDistance: Float, private val stopDistance: Float, private val canFly: Boolean): Goal() {
+class AbsFollowOwnerGoal(
+    private val entity: Mob,
+    private val speedModifier: Double,
+    private val startDistance: Float,
+    private val stopDistance: Float,
+    private val canFly: Boolean
+) : Goal() {
     private val MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2
     private val MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3
     private val MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1
@@ -30,7 +36,7 @@ class AbsFollowOwnerGoal(private val entity: Mob, private val speedModifier: Dou
     private val owned: OwnableEntity get() = entity as OwnableEntity
 
     init {
-        if(entity !is OwnableEntity)
+        if (entity !is OwnableEntity)
             throw IllegalStateException("${this.javaClass.canonicalName} expects an OwnableEntity, got ${entity.javaClass.canonicalName}!")
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK))
     }
@@ -51,7 +57,9 @@ class AbsFollowOwnerGoal(private val entity: Mob, private val speedModifier: Dou
     }
 
     override fun canContinueToUse(): Boolean {
-        return if (navigation.isDone) false else this.entity.distanceToSqr(owner ?: return false) > (stopDistance * stopDistance).toDouble()
+        return if (navigation.isDone) false else this.entity.distanceToSqr(
+            owner ?: return false
+        ) > (stopDistance * stopDistance).toDouble()
     }
 
     override fun start() {

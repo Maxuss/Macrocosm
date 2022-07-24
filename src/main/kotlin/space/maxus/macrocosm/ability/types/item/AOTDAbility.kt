@@ -22,7 +22,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 
-object AOTDAbility: AbilityBase(
+object AOTDAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,
     "Dragon Rage",
     "All monsters in front of you take <red>6,000 ${Statistic.DAMAGE.display}<gray> and massive knockback."
@@ -31,7 +31,7 @@ object AOTDAbility: AbilityBase(
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val damage = DamageCalculator.calculateMagicDamage(6000, .2f, e.player.stats()!!)
@@ -46,8 +46,8 @@ object AOTDAbility: AbilityBase(
             }
             val pos = dir.multiply(3f).relativeLocation(player.location)
             val specs = e.player.specialStats()!!
-            for(entity in pos.getNearbyLivingEntities(4.0)) {
-                if(entity is ArmorStand || entity is Player)
+            for (entity in pos.getNearbyLivingEntities(4.0)) {
+                if (entity is ArmorStand || entity is Player)
                     continue
                 val mc = entity.macrocosm!!
                 mc.damage(damage, player)
@@ -80,7 +80,11 @@ object AOTDAbility: AbilityBase(
                 val angle: Double = step * angularVelocity
                 val radius: Float = step * radiusGrow
                 val length: Float = step * lengthGrow
-                val v = Vector(Mth.cos(angle.toFloat()) * radius.toDouble(), length.toDouble(), Mth.sin(angle.toFloat()) * radius.toDouble())
+                val v = Vector(
+                    Mth.cos(angle.toFloat()) * radius.toDouble(),
+                    length.toDouble(),
+                    Mth.sin(angle.toFloat()) * radius.toDouble()
+                )
                 v.rotateAroundX((location.pitch + 90) * Mth.DEG_TO_RAD.toDouble())
                 v.rotateAroundY(-location.yaw * Mth.DEG_TO_RAD.toDouble())
                 location.add(v)

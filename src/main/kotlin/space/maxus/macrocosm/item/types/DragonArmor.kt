@@ -18,7 +18,7 @@ class DragonArmor(
     rarity: Rarity = Rarity.LEGENDARY,
     abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     applicableRuns: MutableList<RuneSlot> = mutableListOf(),
-): ArmorItem(
+) : ArmorItem(
     "$name Dragon",
     id,
     "LEATHER",

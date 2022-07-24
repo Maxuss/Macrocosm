@@ -28,9 +28,9 @@ abstract class ReforgeBase(
     protected fun getArmorUsedAmount(player: MacrocosmPlayer): Int {
         val paper = player.paper ?: return 0
         var count = 0
-        for(slot in armorSlots) {
+        for (slot in armorSlots) {
             val mc = paper.inventory.getItem(slot).macrocosm ?: return 0
-            if(mc.reforge == this)
+            if (mc.reforge == this)
                 count++
         }
         return count

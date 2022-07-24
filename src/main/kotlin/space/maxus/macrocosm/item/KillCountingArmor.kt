@@ -28,7 +28,22 @@ open class KillCountingArmor(
     commonMeta: (ItemMeta) -> Unit = { },
     runes: List<RuneSlot> = listOf(),
     headSkin: String? = null
-): ArmorItem(baseName, baseId, baseMaterial, baseRarity, baseStats, baseSpecials, abilities, headMeta, chestMeta, legsMeta, bootMeta, commonMeta, runes, headSkin) {
+) : ArmorItem(
+    baseName,
+    baseId,
+    baseMaterial,
+    baseRarity,
+    baseStats,
+    baseSpecials,
+    abilities,
+    headMeta,
+    chestMeta,
+    legsMeta,
+    bootMeta,
+    commonMeta,
+    runes,
+    headSkin
+) {
     override fun helmet(): MacrocosmItem {
         val cached = Registry.ITEM.findOrNull(id("${baseId}_helmet"))
         if (cached != null)

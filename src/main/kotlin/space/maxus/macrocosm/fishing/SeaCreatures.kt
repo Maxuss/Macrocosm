@@ -30,7 +30,8 @@ enum class SeaCreatures(val creature: SeaCreature) {
             "A melting <dark_green>Radioactive Kraken<green> rises from the depths!",
             id("radioactive_squid"),
             23,
-            FishPredicates.IN_LAVA.or { p, _, _ -> java.util.concurrent.TimeUnit.MILLISECONDS.toHours(p.playtimeMillis()) >= 12 }.build(),
+            FishPredicates.IN_LAVA.or { p, _, _ -> java.util.concurrent.TimeUnit.MILLISECONDS.toHours(p.playtimeMillis()) >= 12 }
+                .build(),
             .05
         )
     ),

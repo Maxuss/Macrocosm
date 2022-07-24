@@ -18,7 +18,7 @@ import space.maxus.macrocosm.slayer.ui.SlayerDrop
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.generic.id
 
-internal fun colorFromTier(tier: Int): TextColor = when(tier) {
+internal fun colorFromTier(tier: Int): TextColor = when (tier) {
     1 -> NamedTextColor.GREEN
     2 -> NamedTextColor.YELLOW
     3 -> NamedTextColor.RED
@@ -28,7 +28,7 @@ internal fun colorFromTier(tier: Int): TextColor = when(tier) {
     else -> NamedTextColor.GOLD
 }
 
-fun costFromTier(tier: Int): Double = when(tier) {
+fun costFromTier(tier: Int): Double = when (tier) {
     1 -> 500.0
     2 -> 1000.0
     3 -> 5000.0
@@ -38,7 +38,7 @@ fun costFromTier(tier: Int): Double = when(tier) {
     else -> 0.0
 }
 
-fun rewardExperienceForTier(tier: Int): Double = when(tier) {
+fun rewardExperienceForTier(tier: Int): Double = when (tier) {
     1 -> 5.0
     2 -> 15.0
     3 -> 100.0
@@ -48,7 +48,7 @@ fun rewardExperienceForTier(tier: Int): Double = when(tier) {
     else -> 0.0
 }
 
-fun rngMeterForTier(tier: Int): Double = when(tier) {
+fun rngMeterForTier(tier: Int): Double = when (tier) {
     4 -> .004
     5 -> .008
     6 -> .021
@@ -76,7 +76,7 @@ abstract class Slayer(
     val entities: String,
     val rewards: List<SlayerReward>,
     drops: List<SlayerDrop>
-): Listener {
+) : Listener {
     val drops = drops.sortedBy { it.requiredLevel }
     abstract fun abilitiesForTier(tier: Int): List<SlayerAbility>
     abstract fun bossModelForTier(tier: Int): MacrocosmEntity
@@ -93,7 +93,8 @@ abstract class Slayer(
     }
 
     companion object {
-        fun rewardsOf(vararg rewards: Pair<List<Reward>, RewardDisplay>) = rewards.map { SlayerReward(it.second, it.first) }
+        fun rewardsOf(vararg rewards: Pair<List<Reward>, RewardDisplay>) =
+            rewards.map { SlayerReward(it.second, it.first) }
 
         val defaultProfessionNames = listOf(
             "Noob", "Novice", "Skilled", "Destroyer", "Bulldozer"

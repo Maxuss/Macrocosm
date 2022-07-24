@@ -18,7 +18,9 @@
         },
         {
             "type": "object",
-            "required": ["specific"],
+            "required": [
+                "specific"
+            ],
             "properties": {
                 "specific": {
                     "title": "Rune ID",

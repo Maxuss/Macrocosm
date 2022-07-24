@@ -10,7 +10,7 @@ abstract class FixedLevelingTable(val levels: List<Double>) : LevelingTable {
     }
 
     override fun shouldLevelUp(lvl: Int, overflow: Double, next: Double): Boolean {
-        if(levels.size < lvl)
+        if (levels.size < lvl)
             return false
         val required = levels[lvl]
         return required - overflow - next <= .0

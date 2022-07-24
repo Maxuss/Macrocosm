@@ -11,18 +11,18 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 import space.maxus.macrocosm.entity.Entities
 import space.maxus.macrocosm.entity.readNbt
 import space.maxus.macrocosm.item.MACROCOSM_TAG
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 
 object EntityHandlers : Listener {
     @EventHandler
     fun entitySpawn(e: CreatureSpawnEvent) {
         val entity = e.entity
-        if(entity.persistentDataContainer.has(pluginKey("__IGNORE")))
+        if (entity.persistentDataContainer.has(pluginKey("__IGNORE")))
             return
         if (entity.readNbt().contains(MACROCOSM_TAG) || entity is Player || entity is ArmorStand)
             return
 
-        if((entity as CraftEntity).handle is NativeMacrocosmEntity) {
+        if ((entity as CraftEntity).handle is NativeMacrocosmSummon) {
             // delaying task to let it spawn
             task(delay = 20L) {
                 Entities.toMacrocosmReloading(entity)

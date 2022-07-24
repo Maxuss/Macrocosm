@@ -26,7 +26,11 @@ import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-object LethargyAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Lethargy", "Hit enemies for the next <red>5 seconds<gray> to accumulate <gradient:#AB6C08:#B77A1A:#291A01>Hatred Energy<gray>.<br>After 5 seconds converts energy to ${Statistic.STRENGTH.display}<gray> and applies it to your next hit.") {
+object LethargyAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Lethargy",
+    "Hit enemies for the next <red>5 seconds<gray> to accumulate <gradient:#AB6C08:#B77A1A:#291A01>Hatred Energy<gray>.<br>After 5 seconds converts energy to ${Statistic.STRENGTH.display}<gray> and applies it to your next hit."
+) {
     override val cost: AbilityCost = AbilityCost(500, 250, 10)
 
     private val hits: HashMap<UUID, Int> = hashMapOf()
@@ -35,7 +39,7 @@ object LethargyAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Lethargy", "Hit en
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
             val u = e.player.paper?.uniqueId ?: return@listen
-            if(hits.contains(u)) {
+            if (hits.contains(u)) {
                 hits[u] = hits[u]!! + 1
                 e.player.paper?.title(
                     subText = text("<gold>${hits[u]!!}")
@@ -58,18 +62,18 @@ object LethargyAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Lethargy", "Hit en
                     )
                     vector increase vec(x = .2)
                 }
-            } else if(disable.contains(u)) {
+            } else if (disable.contains(u)) {
                 val a = disable.remove(u)!!
                 e.player.tempStats.strength -= a
             }
         }
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
             val player = e.player
             val p = player.paper ?: return@listen
 
-            if(hits.contains(p.uniqueId))
+            if (hits.contains(p.uniqueId))
                 return@listen
 
             sound(Sound.ENTITY_PHANTOM_DEATH) {
@@ -88,7 +92,7 @@ object LethargyAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Lethargy", "Hit en
                 spawnAt(p.location)
             }
 
-            if(!ensureRequirements(player, EquipmentSlot.HAND))
+            if (!ensureRequirements(player, EquipmentSlot.HAND))
                 return@listen
 
             hits[p.uniqueId] = 0

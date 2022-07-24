@@ -70,7 +70,7 @@ private fun starColor(star: Int): TextColor {
 
 const val MACROCOSM_TAG = "MacrocosmValues"
 
-val ItemStack.macrocosm: MacrocosmItem? get() =  Items.toMacrocosm(this)
+val ItemStack.macrocosm: MacrocosmItem? get() = Items.toMacrocosm(this)
 fun ItemStack.macrocosmTag(): CompoundTag {
     val nbt = this.nbtData
     if (nbt.contains(MACROCOSM_TAG))
@@ -100,7 +100,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     var skin: SkullSkin?
     val sellPrice: Double
         get() {
-            return 1.0 + enchantments.toList().sumOf { (ench, lvl) -> ench.levels.indexOf(lvl) * 25.0 } + (stars / min(maxStars, 1).toDouble()) * 1000 + (if(reforge != null) 1000 else 0) + if(rarityUpgraded) 15000 else 0
+            return 1.0 + enchantments.toList().sumOf { (ench, lvl) -> ench.levels.indexOf(lvl) * 25.0 } + (stars / min(
+                maxStars,
+                1
+            ).toDouble()) * 1000 + (if (reforge != null) 1000 else 0) + if (rarityUpgraded) 15000 else 0
         }
 
 
@@ -138,14 +141,14 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     }
 
     fun addDye(dye: Dye): Boolean {
-        if(!this.base.name.contains("LEATHER"))
+        if (!this.base.name.contains("LEATHER"))
             return false
         this.dye = dye
         return true
     }
 
     fun addSkin(skin: SkullSkin): Boolean {
-        if(this.id != skin.target)
+        if (this.id != skin.target)
             return false
         this.skin = skin
         return true
@@ -173,7 +176,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             if (tier == 0 || contained == null)
                 continue
             val r = BuffRegistry.findRune(contained)
-            if(r is StatRune)
+            if (r is StatRune)
                 base.increase(r.baseStats.clone().apply { multiply(tier.toFloat()) })
         }
         base.multiply(1 + special.statBoost)
@@ -231,14 +234,14 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     }
 
     fun unlockRune(index: Int): Boolean {
-        val (rune, state) = this.runes.entries().toList()[if(index < 0) return false else index]
+        val (rune, state) = this.runes.entries().toList()[if (index < 0) return false else index]
         this.runes.remove(rune, state)
         this.runes.put(rune, RuneState(null, -1))
         return true
     }
 
     fun addRune(index: Int, rune: RuneType, tier: Int): Boolean {
-        val (slot, state) = this.runes.entries().toList()[if(index < 0) return false else index]
+        val (slot, state) = this.runes.entries().toList()[if (index < 0) return false else index]
         this.runes.remove(slot, state)
         this.runes.put(slot, RuneState(rune.id, tier))
         return true
@@ -271,10 +274,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         // clearing and reassigning runes
         this.runes.clear()
         val runes = nbt.getList("Runes", CompoundTag.TAG_COMPOUND.toInt())
-        for(i in runes.indices) {
+        for (i in runes.indices) {
             val cmp = runes.getCompound(i)
             val state = RuneState(
-                if(cmp.contains("Contained")) cmp.getId("Contained") else null,
+                if (cmp.contains("Contained")) cmp.getId("Contained") else null,
                 cmp.getInt("Tier")
             )
             val slot = RuneSlot.fromId(cmp.getId("SlotType"))
@@ -284,18 +287,18 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }
             .associateWith { buffsCmp.getInt(it.id.toString()) }
         this.buffs.putAll(buffs)
-        if(nbt.contains("Dye")) {
+        if (nbt.contains("Dye")) {
             this.dye = Registry.COSMETIC.find(nbt.getId("Dye")) as Dye
         }
-        if(nbt.contains("Skin")) {
+        if (nbt.contains("Skin")) {
             this.skin = Registry.COSMETIC.find(nbt.getId("Skin")) as SkullSkin
         }
         this.amount = from.amount
 
         val baseCmp = from.nbtData
-        if(baseCmp.contains("__TempColor"))
+        if (baseCmp.contains("__TempColor"))
             this.tempColor = baseCmp.getInt("__TempColor")
-        if(baseCmp.contains("__TempSkin"))
+        if (baseCmp.contains("__TempSkin"))
             this.tempSkin = baseCmp.getString("__TempSkin")
 
         return this
@@ -354,8 +357,8 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         to.buffs.putAll(this.buffs)
         to.dye = this.dye
         to.skin = this.skin
-        for((slot, state) in to.runes.entries()) {
-            if(this.runes.containsKey(slot)) {
+        for ((slot, state) in to.runes.entries()) {
+            if (this.runes.containsKey(slot)) {
                 to.runes.put(slot, state)
             }
         }
@@ -474,7 +477,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             for (ability in abilities) {
                 val tmp = mutableListOf<Component>()
                 ability.buildLore(tmp, player)
-                if(ability is EntityKillCounterBonus && this@MacrocosmItem is KillStorageItem) {
+                if (ability is EntityKillCounterBonus && this@MacrocosmItem is KillStorageItem) {
                     tmp.addAll(ability.addLore(this@MacrocosmItem))
                 }
                 val event = CostCompileEvent(player, this@MacrocosmItem, ability.cost?.copy())
@@ -505,21 +508,21 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             isUnbreakable = true
 
             // enchanted glint if enchanted
-            if(enchantments.isNotEmpty())
+            if (enchantments.isNotEmpty())
                 this.addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
 
             val model = Registry.MODEL_PREDICATES.findOrNull(id)
-            if(model != null) {
+            if (model != null) {
                 this.customModel = model.data
             }
 
             // adding extra meta
             addExtraMeta(this)
 
-            if(this is LeatherArmorMeta) {
-                if(tempColor != null) {
+            if (this is LeatherArmorMeta) {
+                if (tempColor != null) {
                     setColor(Color.fromRGB(tempColor!!))
-                } else if(dye != null) {
+                } else if (dye != null) {
                     val d = dye!!
                     lore.add(0, "".toComponent())
                     lore.add(0, text("<#${d.color.toString(16)}>${d.specialChar} ${d.name} Dye").noitalic())
@@ -528,10 +531,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                 }
             }
 
-            if(this is SkullMeta && !allNull(tempSkin, skin)) {
-                val texture = if(tempSkin != null) {
+            if (this is SkullMeta && !allNull(tempSkin, skin)) {
+                val texture = if (tempSkin != null) {
                     tempSkin!!
-                } else if(skin != null) {
+                } else if (skin != null) {
                     val s = skin!!
                     lore.add(0, "".toComponent())
                     lore.add(0, text("<dark_gray>${skin!!.name} Skin").noitalic())
@@ -561,9 +564,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         // rarity
         nbt.putBoolean("RarityUpgraded", rarityUpgraded)
         nbt.putInt("Rarity", rarity.ordinal)
-        if(dye != null)
+        if (dye != null)
             nbt.putId("Dye", Registry.COSMETIC.byValue(dye!!)!!)
-        if(skin != null)
+        if (skin != null)
             nbt.putId("Skin", Registry.COSMETIC.byValue(skin!!)!!)
 
         // reforges
@@ -590,11 +593,11 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
         // runes
         val runeList = ListTag()
-        for((slot, state) in runes.entries().parallelStream()) {
+        for ((slot, state) in runes.entries().parallelStream()) {
             val runeCmp = CompoundTag()
             runeCmp.putId("SlotType", slot.id)
             runeCmp.putInt("Tier", state.tier)
-            if(state.applied != null)
+            if (state.applied != null)
                 runeCmp.putId("Contained", state.applied)
             runeList.add(runeCmp)
         }
@@ -612,9 +615,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         addExtraNbt(nbt)
 
         val nms = CraftItemStack.asNMSCopy(item)
-        if(tempSkin != null)
+        if (tempSkin != null)
             nms.tag?.putString("__TempSkin", tempSkin!!)
-        if(tempColor != null)
+        if (tempColor != null)
             nms.tag?.putInt("__TempColor", tempColor!!)
         nms.tag?.put(MACROCOSM_TAG, nbt)
         return nms.asBukkitCopy()

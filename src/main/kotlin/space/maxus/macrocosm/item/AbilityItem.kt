@@ -22,7 +22,10 @@ import space.maxus.macrocosm.util.annotations.PreviewFeature
 import space.maxus.macrocosm.util.multimap
 
 open class AbilityItem(
-    override val type: ItemType, protected val itemName: String, override var rarity: Rarity, override val base: Material,
+    override val type: ItemType,
+    protected val itemName: String,
+    override var rarity: Rarity,
+    override val base: Material,
     override var stats: Statistics,
     override val abilities: MutableList<MacrocosmAbility> = mutableListOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
@@ -44,13 +47,14 @@ open class AbilityItem(
     override var reforge: Reforge? = null
     override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap<RuneSlot, RuneState>().apply {
-        for(ty in runeTypes) {
+        for (ty in runeTypes) {
             put(ty, RuneState.EMPTY)
         }
     }
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var dye: Dye? = null
     override var skin: SkullSkin? = null
+
     @PreviewFeature
     override var isDungeonised: Boolean = false
 
@@ -59,7 +63,7 @@ open class AbilityItem(
 
     override fun buildLore(lore: MutableList<Component>) {
         super.buildLore(lore)
-        if(description != null) {
+        if (description != null) {
             lore.addAll(description.reduceToList().map { text("<dark_gray>$it").noitalic() })
         }
     }

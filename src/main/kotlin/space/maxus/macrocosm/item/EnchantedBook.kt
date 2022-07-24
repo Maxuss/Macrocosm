@@ -23,7 +23,7 @@ import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.multimap
 
 private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
-    if(ench.values.isEmpty())
+    if (ench.values.isEmpty())
         return Rarity.COMMON
     val lvl = ench.values.max()
     return if (lvl >= 8) Rarity.DIVINE

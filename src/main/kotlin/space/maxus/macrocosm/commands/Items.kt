@@ -59,7 +59,9 @@ fun giveAdminItemCommand() = command("giveadminstuff") {
                 item.givenTo = toDisplay
                 item.givenBy = fromDisplay
                 item.edition = edition
-                player.sendMessage(text("<green>You have given ").append(toDisplay).append(text("<green> #$edition ${item.nameStr}!")))
+                player.sendMessage(
+                    text("<green>You have given ").append(toDisplay).append(text("<green> #$edition ${item.nameStr}!"))
+                )
                 to.sendMessage(fromDisplay.append(text("<gold> has given you <red>#$edition ${item.nameStr}<gold>! <aqua><bold>WOW!")))
                 to.inventory.addItem(item.build(to.macrocosm!!)!!)
             }

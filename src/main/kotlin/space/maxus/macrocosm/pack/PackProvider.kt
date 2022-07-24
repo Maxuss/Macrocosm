@@ -19,7 +19,7 @@ import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
 
 
-object PackProvider: Listener {
+object PackProvider : Listener {
     private const val RESOURCE_PACK_LINK: String = "http://127.0.0.1:6060/pack"
     private var RESOURCE_PACK_HASH: String = "null"
 
@@ -28,7 +28,12 @@ object PackProvider: Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onJoin(e: PlayerJoinEvent) {
-        e.player.setResourcePack(RESOURCE_PACK_LINK, RESOURCE_PACK_HASH, true, text("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!"))
+        e.player.setResourcePack(
+            RESOURCE_PACK_LINK,
+            RESOURCE_PACK_HASH,
+            true,
+            text("<light_purple>Macrocosm <aqua>requires</aqua> you to use this resource pack.\n<red>Otherwise it may not work correctly!")
+        )
     }
 
     fun init() {
@@ -74,10 +79,10 @@ object PackProvider: Listener {
     }
 
     fun enumerateEntries(dir: Path): List<Path> {
-        if(!dir.isDirectory())
+        if (!dir.isDirectory())
             return listOf(dir)
         val out = mutableListOf<Path>()
-        for(entry in dir.listDirectoryEntries()) {
+        for (entry in dir.listDirectoryEntries()) {
             out.addAll(enumerateEntries(entry))
         }
         return out
@@ -97,7 +102,7 @@ object PackProvider: Listener {
         val zip = ZipOutputStream(out.outputStream())
 
         // iterating through directories
-        for(file in enumerateEntries(fs.getPath("pack"))) {
+        for (file in enumerateEntries(fs.getPath("pack"))) {
             val relative = file.toString().replace("pack/", "")
 
             val entry = ZipEntry(relative)
@@ -115,8 +120,8 @@ object PackProvider: Listener {
         }
 
         // generating extra data
-        for((_, generator) in Registry.RESOURCE_GENERATORS.iter()) {
-            for((relative, value) in generator.yieldGenerate()) {
+        for ((_, generator) in Registry.RESOURCE_GENERATORS.iter()) {
+            for ((relative, value) in generator.yieldGenerate()) {
                 val entry = ZipEntry(relative)
                 zip.putNextEntry(entry)
 

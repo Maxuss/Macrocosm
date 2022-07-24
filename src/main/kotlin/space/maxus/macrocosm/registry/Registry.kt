@@ -86,8 +86,10 @@ abstract class Registry<T>(val name: Identifier) {
             return register(name, reg) as CloseableRegistry<V>
         }
 
-        private fun <V: Clone> makeImmutable(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit = { _, _ -> })
-            = register(name, ImmutableRegistry(name, delegate)) as Registry<V>
+        private fun <V : Clone> makeImmutable(
+            name: Identifier,
+            delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit = { _, _ -> }
+        ) = register(name, ImmutableRegistry(name, delegate)) as Registry<V>
 
         private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) =
             register(name, DelegatedRegistry(name, delegate)) as Registry<V>
@@ -119,15 +121,15 @@ abstract class Registry<T>(val name: Identifier) {
         val SLAYER = makeDelegated<Slayer>(id("slayer")) { _, slayer ->
             val registeredAbilities = mutableListOf<String>()
             var minisRegistered = 0
-            for(tier in slayer.tiers) {
+            for (tier in slayer.tiers) {
                 (slayer.bossModelForTier(tier) as EntityBase).register(id("${slayer.id}_$tier"))
-                for(ability in slayer.abilitiesForTier(tier)) {
-                    if(registeredAbilities.contains(ability.abilityId))
+                for (ability in slayer.abilitiesForTier(tier)) {
+                    if (registeredAbilities.contains(ability.abilityId))
                         continue
                     ability.listenerRegister(ability)
                     registeredAbilities.add(ability.abilityId)
                 }
-                for(mini in slayer.minisForTier(tier)) {
+                for (mini in slayer.minisForTier(tier)) {
                     (mini as EntityBase).register(id("${slayer.id}_miniboss_$minisRegistered"))
                     minisRegistered++
                 }
@@ -136,7 +138,7 @@ abstract class Registry<T>(val name: Identifier) {
         val COSMETIC = makeDefaulted<Cosmetic>(id("cosmetic"))
         val MODEL_PREDICATES = makeDelegated<Model>(id("model")) { _, model ->
             CMDGenerator.enqueue(model)
-            if(model.to.startsWith("macrocosm:") && model !is RawModel)
+            if (model.to.startsWith("macrocosm:") && model !is RawModel)
                 TexturedModelGenerator.enqueue(model)
         }
         val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))

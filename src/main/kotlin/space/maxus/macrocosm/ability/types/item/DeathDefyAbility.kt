@@ -14,7 +14,7 @@ import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.stats.Statistic
 
-object DeathDefyAbility: AbilityBase(
+object DeathDefyAbility : AbilityBase(
     AbilityType.PASSIVE,
     "Death Defy",
     "Resurrects you with <red>Full ${Statistic.HEALTH.display}<gray> on death, and grants <green>10x ${Statistic.DEFENSE.display}<gray> and <red>+25% ${Statistic.ABILITY_DAMAGE.display}<gray> for <green>5 seconds<gray>."
@@ -23,9 +23,9 @@ object DeathDefyAbility: AbilityBase(
 
     override fun registerListeners() {
         listen<PlayerDeathEvent> { e ->
-            if(e.isCancelled)
+            if (e.isCancelled)
                 return@listen
-            if(!ensureRequirements(e.player, EquipmentSlot.OFF_HAND, true))
+            if (!ensureRequirements(e.player, EquipmentSlot.OFF_HAND, true))
                 return@listen
 
             e.isCancelled = true

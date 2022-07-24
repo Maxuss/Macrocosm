@@ -15,9 +15,9 @@ object PackDescription {
         return GSON.toJson(this)
     }
 
-    object Serializer: TypeAdapter<PackDescription>() {
+    object Serializer : TypeAdapter<PackDescription>() {
         override fun write(out: JsonWriter, value: PackDescription?) {
-            if(value == null)
+            if (value == null)
                 out.nullValue()
             else {
                 out.beginObject()

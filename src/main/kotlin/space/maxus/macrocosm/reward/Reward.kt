@@ -16,7 +16,7 @@ interface Reward {
         return List(size) { this }
     }
 
-    companion object: Reward {
+    companion object : Reward {
         override val isHidden: Boolean = false
 
         override fun reward(player: MacrocosmPlayer, lvl: Int) {

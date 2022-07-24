@@ -29,10 +29,14 @@
     },
     "oneOf": [
         {
-            "required": ["frames"]
+            "required": [
+                "frames"
+            ]
         },
         {
-            "required": ["raw_frames"]
+            "required": [
+                "raw_frames"
+            ]
         }
     ],
     "additionalProperties": false

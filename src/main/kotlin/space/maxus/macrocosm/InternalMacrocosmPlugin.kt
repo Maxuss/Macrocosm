@@ -67,7 +67,8 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     override fun load() {
         isInDevEnvironment = System.getenv().containsKey("macrocosmDev")
-        integratedServer = MacrocosmServer((if(isInDevEnvironment) "devMini" else "mini")+Random.nextBytes(1)[0].toString(16))
+        integratedServer =
+            MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         UNSAFE = Unsafe(Random.nextInt())
         Threading.runAsyncRaw {
@@ -175,7 +176,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
 
         val cfgFile = dataFolder.resolve("config.yml")
-        if(!cfgFile.exists()) {
+        if (!cfgFile.exists()) {
             saveDefaultConfig()
             reloadConfig()
         }

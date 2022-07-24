@@ -62,7 +62,7 @@ interface MacrocosmAbility {
     fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
         tmp.add(type.format(name).noitalic())
-        for(part in formatDamageNumbers(description, player).split("<br>")) {
+        for (part in formatDamageNumbers(description, player).split("<br>")) {
             for (desc in part.reduceToList()) {
                 tmp.add(text("<gray>$desc</gray>").noitalic())
             }
@@ -79,9 +79,15 @@ interface MacrocosmAbility {
             val data = res.value.replace("[", "").replace("]", "").split(":")
             val dmg = java.lang.Double.valueOf(data[0])
             val scaling = java.lang.Double.valueOf(data[1])
-            if(stats == null)
+            if (stats == null)
                 return@replace Formatting.withCommas(dmg.toBigDecimal(), true)
-            return@replace Formatting.withCommas(DamageCalculator.calculateMagicDamage(dmg.roundToInt(), scaling.toFloat(), stats).toBigDecimal(), true)
+            return@replace Formatting.withCommas(
+                DamageCalculator.calculateMagicDamage(
+                    dmg.roundToInt(),
+                    scaling.toFloat(),
+                    stats
+                ).toBigDecimal(), true
+            )
         }
     }
 }

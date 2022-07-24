@@ -25,7 +25,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 
-object IceConeAbility: AbilityBase(
+object IceConeAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,
     "Ice Cone",
     "All monsters in front of you are frozen and take <red>25,000 ${Statistic.DAMAGE.display}<gray>."
@@ -34,7 +34,7 @@ object IceConeAbility: AbilityBase(
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
                 return@listen
 
             val damage = DamageCalculator.calculateMagicDamage(25000, .1f, e.player.stats()!!)
@@ -55,8 +55,8 @@ object IceConeAbility: AbilityBase(
                 playAt(player.location)
             }
             val pos = dir.multiply(2f).relativeLocation(player.location)
-            for(entity in pos.getNearbyLivingEntities(4.0)) {
-                if(entity is ArmorStand || entity is Player)
+            for (entity in pos.getNearbyLivingEntities(4.0)) {
+                if (entity is ArmorStand || entity is Player)
                     continue
                 val mc = entity.macrocosm!!
                 mc.damage(damage, player)
@@ -79,7 +79,11 @@ object IceConeAbility: AbilityBase(
             val angle: Double = step * angularVelocity
             val radius: Float = step * radiusGrow
             val length: Float = step * lengthGrow
-            val v = Vector(Mth.cos(angle.toFloat()) * radius.toDouble(), length.toDouble(), Mth.sin(angle.toFloat()) * radius.toDouble())
+            val v = Vector(
+                Mth.cos(angle.toFloat()) * radius.toDouble(),
+                length.toDouble(),
+                Mth.sin(angle.toFloat()) * radius.toDouble()
+            )
             v.rotateAroundX((location.pitch + 90) * Mth.DEG_TO_RAD.toDouble())
             v.rotateAroundY(-location.yaw * Mth.DEG_TO_RAD.toDouble())
             location.add(v)

@@ -7,13 +7,20 @@ import net.minecraft.world.entity.monster.Spider
 import net.minecraft.world.level.Level
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
-import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.generic.id
 import java.util.*
 
-object TestSummon: SummoningAbility("Test Summon", "Summons a test entity", AbilityCost(100, summonDifficulty = 2), "test_summon", ::TestSummonEntity) {
-    private class TestSummonEntity(level: Level, override val owner: UUID): Spider(EntityType.SPIDER, level), NativeMacrocosmEntity {
+object TestSummon : SummoningAbility(
+    "Test Summon",
+    "Summons a test entity",
+    AbilityCost(100, summonDifficulty = 2),
+    "test_summon",
+    ::TestSummonEntity
+) {
+    private class TestSummonEntity(level: Level, override val owner: UUID) : Spider(EntityType.SPIDER, level),
+        NativeMacrocosmSummon {
         override val delegateId: Identifier = id("test_summon")
 
         override fun registerGoals() {

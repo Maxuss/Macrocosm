@@ -6,8 +6,11 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.zone.Zone
 
 class FishPredicateBuilder(val baseConditions: (MacrocosmPlayer, Zone, FishHook) -> Boolean) {
-    inline fun and(crossinline v: (MacrocosmPlayer, Zone, FishHook) -> Boolean) = FishPredicateBuilder { p, z, h -> baseConditions(p, z, h) && v(p, z, h) }
-    inline fun or(crossinline v: (MacrocosmPlayer, Zone, FishHook) -> Boolean) = FishPredicateBuilder { p, z, h -> baseConditions(p, z, h) || v(p, z, h) }
+    inline fun and(crossinline v: (MacrocosmPlayer, Zone, FishHook) -> Boolean) =
+        FishPredicateBuilder { p, z, h -> baseConditions(p, z, h) && v(p, z, h) }
+
+    inline fun or(crossinline v: (MacrocosmPlayer, Zone, FishHook) -> Boolean) =
+        FishPredicateBuilder { p, z, h -> baseConditions(p, z, h) || v(p, z, h) }
 
     fun below(y: Int) = and { _, _, h -> h.location.y <= y }
     fun inDimension(d: Environment) = and { _, _, h -> h.world.environment == d }
