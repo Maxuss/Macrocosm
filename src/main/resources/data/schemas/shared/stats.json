@@ -30,7 +30,8 @@
             "pet_luck",
             "magic_find",
             "damage_boost",
-            "damage_reduction"
+            "damage_reduction",
+            "summoning_power"
         ]
     },
     "patternProperties": {

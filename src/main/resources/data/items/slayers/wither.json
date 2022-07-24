@@ -39,6 +39,24 @@
         "rarity": "epic",
         "description": "Main power source for energy generators."
     },
+    "flamethrower": {
+        "material": "stick",
+        "rarity": "epic",
+        "type": "sword",
+        "stats": {
+            "damage": 200,
+            "strength": 100,
+            "intelligence": 50,
+            "ferocity": 25
+        },
+        "abilities": ["flamethrower"],
+        "model": {
+            "id": 5,
+            "from": "item/stick",
+            "to": "macrocosm:item/flamethrower",
+            "parent": "item/handheld"
+        }
+    },
     "cataclysm": {
         "type": "longsword",
         "rarity": "rare",

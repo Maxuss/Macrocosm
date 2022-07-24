@@ -163,29 +163,6 @@ enum class ItemValue(
             })
     ),
 
-    //#region transmutation
-    SAPPHIRE_SHARD(
-        RecipeItem(
-            Material.AMETHYST_SHARD,
-            Rarity.EPIC,
-            "Sapphire Shard",
-            description = "It shines with sorrow",
-            glow = true
-        ),
-        Model(2, "item/amethyst_shard", "macrocosm:item/sapphire_shard")
-    ),
-
-    PRISMATIC_SHARD(
-        RecipeItem(
-            Material.AMETHYST_SHARD,
-            Rarity.LEGENDARY,
-            "Prismatic Shard",
-            description = "It is said that this gemstone can produce solar energy out of nothing."
-        ),
-        Model(3, "item/amethyst_shard", "macrocosm:item/prismatic_shard"),
-        Animation(11)
-    ),
-
     // indev
     ENCHANTED_ADAMANTITE(
         RecipeItem(
@@ -198,23 +175,6 @@ enum class ItemValue(
     ),
 
     INFERNAL_GREATSWORD(InfernalGreatsword()),
-    INFERNO_VERTEX(
-        RecipeItem(
-            Material.PLAYER_HEAD,
-            Rarity.EPIC,
-            "Inferno Vertex",
-            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWUyMjFiYjczMzE3MjIwNzMxNWFjZWRjYzVjOTk4MzZhNjM5ODYyYTM3MjdkYTZkNWRmMzZiODUxZmMxOTFjNCJ9fX0="
-        )
-    ),
-    MOLTEN_POWDER(RecipeItem(Material.BLAZE_POWDER, Rarity.RARE, "Molten Powder", glow = true)),
-    FIERY_CORE(
-        RecipeItem(
-            Material.PLAYER_HEAD,
-            Rarity.LEGENDARY,
-            "Fiery Core",
-            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjAwYzE2NzM4YzM3MjQ4NDYyOGNhMTVjZjdiMDczMWI4MTBiZDMxNDJlMDdjMTA1M2I1ZTNkYTZiNmU1MjNjYSJ9fX0="
-        )
-    )
     ;
 
     companion object {

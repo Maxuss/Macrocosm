@@ -1,9 +1,10 @@
 package space.maxus.macrocosm.util.data
 
+import space.maxus.macrocosm.util.generic.ConditionalCallback
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class MutableContainer<V> private constructor(private val values: ConcurrentHashMap<UUID, V>) {
+class MutableContainer<V> private constructor(val values: ConcurrentHashMap<UUID, V>) {
     companion object {
         fun <V> empty() = MutableContainer<V>(ConcurrentHashMap())
     }
@@ -18,9 +19,19 @@ class MutableContainer<V> private constructor(private val values: ConcurrentHash
 
     operator fun contains(k: UUID) = values.containsKey(k)
 
-    fun take(k: UUID, operator: (V) -> Unit) {
+    inline fun take(k: UUID, operator: (V) -> Unit) {
         if (values.containsKey(k)) {
             operator(values[k]!!)
+        }
+    }
+
+    inline fun revoke(k: UUID, operator: (V) -> Unit): ConditionalCallback {
+        val value = values.remove(k)
+        return if(value == null)
+            ConditionalCallback.fail()
+        else {
+            operator(value)
+            ConditionalCallback.success()
         }
     }
 
