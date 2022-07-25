@@ -13,6 +13,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
     RARE(NamedTextColor.BLUE),
     EPIC(NamedTextColor.DARK_PURPLE),
     LEGENDARY(NamedTextColor.GOLD),
+    RELIC(TextColor.color(0xFFE7A8)),
     MYTHIC(NamedTextColor.LIGHT_PURPLE),
     DIVINE(NamedTextColor.AQUA, false),
     SPECIAL(NamedTextColor.RED, true),
@@ -46,7 +47,8 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         UNCOMMON -> RARE
         RARE -> EPIC
         EPIC -> LEGENDARY
-        LEGENDARY -> MYTHIC
+        LEGENDARY -> RELIC
+        RELIC -> MYTHIC
         MYTHIC -> DIVINE
         DIVINE -> SPECIAL
         SPECIAL -> VERY_SPECIAL
@@ -60,6 +62,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         RARE -> UNCOMMON
         EPIC -> RARE
         LEGENDARY -> EPIC
+        RELIC -> LEGENDARY
         MYTHIC -> LEGENDARY
         DIVINE -> MYTHIC
         SPECIAL -> DIVINE

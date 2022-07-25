@@ -192,7 +192,10 @@ enum class Ability(val ability: MacrocosmAbility) {
     TITANS_KNOWLEDGE(TitansKnowledge),
     TITANS_ENERGY(TitansEnergy),
     TITANS_MIGHT(TitansMight),
-    TITANS_VALOR(TitansValor)
+    TITANS_VALOR(TitansValor),
+
+    TITANS_EMINENCE(TitansEminence),
+    TITANS_LIGHTNING(TitansLightning)
     ;
 
     companion object {

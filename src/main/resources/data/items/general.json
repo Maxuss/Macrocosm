@@ -242,5 +242,31 @@
             "id": 6,
             "raw": true
         }
+    },
+    "titans_thunder": {
+        "name": "Titan's Thunder",
+        "rarity": "relic",
+        "type": "longsword",
+        "material": "iron_sword",
+        "stats": {
+            "damage": 350,
+            "strength": 400,
+            "intelligence": 300,
+            "ability_damage": 15,
+            "defense": 200
+        },
+        "runes": ["combat","utility","combat"],
+        "description": "Power of Titans in your hand.",
+        "model": {
+            "parent": "item/handheld",
+            "id": 8,
+            "from": "item/iron_sword",
+            "to": "macrocosm:item/titans_thunder"
+        },
+        "animation": {
+            "frames": 10,
+            "time": 1
+        },
+        "abilities": ["titans_eminence", "titans_lightning"]
     }
 }
