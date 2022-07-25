@@ -187,6 +187,12 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),
+
+    // other
+    TITANS_KNOWLEDGE(TitansKnowledge),
+    TITANS_ENERGY(TitansEnergy),
+    TITANS_MIGHT(TitansMight),
+    TITANS_VALOR(TitansValor)
     ;
 
     companion object {

@@ -173,5 +173,74 @@
             "offensive",
             "utility"
         ]
+    },
+    "thunder_helmet": {
+        "name": "Thunder Helmet",
+        "rarity": "legendary",
+        "type": "helmet",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTQyNjlmYzQ4ODUzZTI3MzdiMWYzY2I4YzBkY2E5NzA0M2M5NjhmMDZhZjRjMWU5OTkzNTM4MWExYmZjZjRhYSJ9fX0=",
+        "stats": {
+            "health": 200,
+            "defense": 150,
+            "intelligence": 500
+        },
+        "abilities": ["titans_knowledge"],
+        "runes": ["combat","defensive","utility"]
+    },
+    "titans_cuirass": {
+        "name": "Titan's Cuirass",
+        "rarity": "legendary",
+        "type": "chestplate",
+        "material": "iron_chestplate",
+        "stats": {
+            "health": 300,
+            "defense": 200,
+            "ability_damage": 25
+        },
+        "abilities": ["titans_energy"],
+        "runes": ["combat","offensive","utility"],
+        "model": {
+            "id": 8,
+            "from": "item/iron_chestplate",
+            "to": "macrocosm:item/titans_cuirass"
+        }
+    },
+    "titans_gladius": {
+        "name": "Titan's Gladius",
+        "rarity": "legendary",
+        "type": "longsword",
+        "material": "iron_sword",
+        "stats": {
+            "damage": 250,
+            "strength": 400,
+            "bonus_attack_speed": 25
+        },
+        "abilities": ["titans_might"],
+        "runes": ["combat","offensive","offensive"],
+        "model": {
+            "id": 7,
+            "from": "item/iron_sword",
+            "to": "macrocosm:item/titans_gladius",
+            "parent": "item/handheld"
+        }
+    },
+    "sentinels_shield": {
+        "name": "Sentinel's Shield",
+        "rarity": "legendary",
+        "type": "shield",
+        "material": "iron_ingot",
+        "stats": {
+            "intelligence": 100,
+            "defense": 600,
+            "health": 150
+        },
+        "abilities": ["titans_valor"],
+        "runes": ["combat","defensive","defensive"],
+        "model": {
+            "from": "item/iron_ingot",
+            "to": "macrocosm:item/sentinels_shield",
+            "id": 6,
+            "raw": true
+        }
     }
 }

@@ -8,7 +8,7 @@ fun Component.noitalic() = decoration(TextDecoration.ITALIC, false)
 
 fun String.mmLength() = replace("<[^<>]+>".toRegex(), "").length
 
-fun String.reduceToList(preferredLength: Int = 25): List<String> {
+fun String.reduceToList(preferredLength: Int = 31): List<String> {
     val list = mutableListOf<String>()
     // splitting words
     val words = split("\\s(?=\\S{2,})".toRegex())

@@ -55,7 +55,8 @@
             "from": "item/stick",
             "to": "macrocosm:item/flamethrower",
             "parent": "item/handheld"
-        }
+        },
+        "runes": ["defensive","utility","utility"]
     },
     "hunters_stiletto": {
         "type": "dagger",
@@ -68,7 +69,8 @@
             "intelligence": 150,
             "speed": 50
         },
-        "abilities": ["hunters_stiletto_passive", "hunters_stiletto_active"]
+        "abilities": ["hunters_stiletto_passive", "hunters_stiletto_active"],
+        "runes": ["combat","offensive"]
     },
     "cataclysm": {
         "type": "longsword",
@@ -83,7 +85,8 @@
             "damage": 180,
             "strength": 150,
             "defense": 200
-        }
+        },
+        "runes": ["offensive"]
     },
     "catastrophe": {
         "type": "longsword",
@@ -99,7 +102,8 @@
             "strength": 200,
             "defense": 300,
             "ferocity": 10
-        }
+        },
+        "runes": ["combat", "offensive"]
     },
     "calamity": {
         "type": "sword",
@@ -115,6 +119,7 @@
             "strength": 250,
             "defense": 500,
             "ferocity": 25
-        }
+        },
+        "runes": ["combat","offensive","offensive","utility"]
     }
 }

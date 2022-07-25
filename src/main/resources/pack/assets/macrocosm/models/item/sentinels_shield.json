@@ -1,0 +1,6 @@
+{
+    "parent": "macrocosm:item/baked/shield",
+    "textures": {
+        "layer0": "macrocosm:item/sentinels_shield"
+    }
+}

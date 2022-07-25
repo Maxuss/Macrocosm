@@ -46,7 +46,7 @@ object PackProvider : Listener {
             val packFile = Path(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME).toFile()
 
             val hash = digest(packFile)
-            Macrocosm.logger.info("Resource pack SHA-1 hash: $hash")
+            Macrocosm.logger.info("Resource pack MD5 hash: $hash")
 
             RESOURCE_PACK_HASH = hash
 
