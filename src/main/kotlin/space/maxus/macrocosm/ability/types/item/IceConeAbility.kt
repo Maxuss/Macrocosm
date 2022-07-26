@@ -41,7 +41,7 @@ object IceConeAbility : AbilityBase(
             val player = e.player.paper!!
             val dir = player.eyeLocation.direction.normalize()
 
-            spawnHelix(dir, player)
+            spawnHelix(dir, player, Color.WHITE)
 
             sound(Sound.BLOCK_LAVA_EXTINGUISH) {
                 volume = 1f
@@ -71,7 +71,7 @@ object IceConeAbility : AbilityBase(
     private var radiusGrow = .006f
     private var particlesCone = 180
 
-    private fun spawnHelix(dir: Vector, player: Player) {
+    fun spawnHelix(dir: Vector, player: Player, color: Color) {
         var step = 0
         val location = player.eyeLocation.add(dir.multiply(2f))
         for (x in 0 until 120) {
@@ -89,7 +89,7 @@ object IceConeAbility : AbilityBase(
             location.add(v)
 
             particle(Particle.REDSTONE) {
-                data = DustOptions(Color.WHITE, 1f)
+                data = DustOptions(color, 1f)
                 spawnAt(location)
             }
 

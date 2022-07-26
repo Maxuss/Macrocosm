@@ -31,7 +31,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
                             "_",
                             " "
                         )
-                    }${if (dungeonised) " DUNGEON " else ""}${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>"
+                    }${if (dungeonised) " DUNGEON " else " "}${if (ty == ItemType.OTHER) "" else "$ty "}<obfuscated>a</obfuscated>"
                 )
             else
                 "${
@@ -47,8 +47,8 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         UNCOMMON -> RARE
         RARE -> EPIC
         EPIC -> LEGENDARY
-        LEGENDARY -> RELIC
-        RELIC -> MYTHIC
+        LEGENDARY -> MYTHIC
+        RELIC -> DIVINE
         MYTHIC -> DIVINE
         DIVINE -> SPECIAL
         SPECIAL -> VERY_SPECIAL
@@ -62,7 +62,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         RARE -> UNCOMMON
         EPIC -> RARE
         LEGENDARY -> EPIC
-        RELIC -> LEGENDARY
+        RELIC -> MYTHIC
         MYTHIC -> LEGENDARY
         DIVINE -> MYTHIC
         SPECIAL -> DIVINE

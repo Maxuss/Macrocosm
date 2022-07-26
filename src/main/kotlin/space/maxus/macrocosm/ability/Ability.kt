@@ -195,7 +195,16 @@ enum class Ability(val ability: MacrocosmAbility) {
     TITANS_VALOR(TitansValor),
 
     TITANS_EMINENCE(TitansEminence),
-    TITANS_LIGHTNING(TitansLightning)
+    TITANS_LIGHTNING(TitansLightning),
+
+    BRITTLE_BONES(BrittleBonesAbility),
+    BLACKSHARD_ABILITY(BlackshardAbility),
+    SKULL_HELMET_ABILITY(SkullHelmetAbility),
+    SOUL_STRIKE_ABILITY(ShieldOfDeadAbility),
+
+    ARMOR_OF_DAMNED_ACTIVE(ArmorOfDamnedActive),
+    ARMOR_OF_DAMNED_PASSIVE(ArmorOfDamnedPassive),
+
     ;
 
     companion object {

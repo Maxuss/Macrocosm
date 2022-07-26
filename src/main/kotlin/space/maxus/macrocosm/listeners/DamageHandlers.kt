@@ -135,6 +135,8 @@ object DamageHandlers : Listener {
 
     @EventHandler
     fun onStandardDamage(e: EntityDamageByEntityEvent) {
+        if(e.isCancelled)
+            return
         e.damage = 0.0
         val damager = e.damager
         val damaged = e.entity

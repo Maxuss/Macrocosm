@@ -111,7 +111,24 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
             if(!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
-            renderLine(p.eyeLocation, target.eyeLocation)
+            renderLine(p.eyeLocation, target.eyeLocation) { mov ->
+                particle(Particle.REDSTONE) {
+                    data = DustOptions(Color.fromRGB(0xB4FEFF), 0.5f)
+                    amount = 5
+                    extra = .4f
+                    offset = Vector.getRandom()
+
+                    spawnAt(mov)
+                }
+
+                particle(Particle.REDSTONE) {
+                    data = DustOptions(Color.fromRGB(0xE4FEFF), 0.7f)
+                    amount = 3
+                    extra = 0f
+
+                    spawnAt(mov)
+                }
+            }
             sound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER) {
                 pitch = 0f
                 volume = 4f
@@ -133,7 +150,24 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
     private fun recurseThroughEntities(previous: Location, player: Player, damage: Float, nearest: List<LivingEntity>, hit: MutableList<UUID>, iter: Int) {
         if(nearest.isNotEmpty() && hit.size < 15 && iter < 4) {
             nearest.forEach { entity ->
-                renderLine(previous, entity.eyeLocation)
+                renderLine(previous, entity.eyeLocation) { mov ->
+                    particle(Particle.REDSTONE) {
+                        data = DustOptions(Color.fromRGB(0xB4FEFF), 0.5f)
+                        amount = 5
+                        extra = .4f
+                        offset = Vector.getRandom()
+
+                        spawnAt(mov)
+                    }
+
+                    particle(Particle.REDSTONE) {
+                        data = DustOptions(Color.fromRGB(0xE4FEFF), 0.7f)
+                        amount = 3
+                        extra = 0f
+
+                        spawnAt(mov)
+                    }
+                }
                 sound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER) {
                     pitch = 0f
                     volume = .4f
@@ -149,7 +183,7 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
         }
     }
 
-    private fun renderLine(from: Location, to: Location) {
+    fun renderLine(from: Location, to: Location, particleHandler: (Location) -> Unit) {
         val inc = from.distance(to) / 20
 
         var i = 0
@@ -157,22 +191,7 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
             val dir = to.toVector().subtract(from.toVector()).normalize().multiply(i * inc)
             val mov = from.clone().add(dir)
 
-            particle(Particle.REDSTONE) {
-                data = DustOptions(Color.fromRGB(0xB4FEFF), 0.5f)
-                amount = 5
-                extra = .4f
-                offset = Vector.getRandom()
-
-                spawnAt(mov)
-            }
-
-            particle(Particle.REDSTONE) {
-                data = DustOptions(Color.fromRGB(0xE4FEFF), 0.7f)
-                amount = 3
-                extra = 0f
-
-                spawnAt(mov)
-            }
+            particleHandler(mov)
 
             i++
         }
