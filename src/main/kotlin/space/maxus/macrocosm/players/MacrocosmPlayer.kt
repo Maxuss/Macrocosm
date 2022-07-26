@@ -100,7 +100,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 it.cancel()
                 return@task
             }
-            val specials = recalculateSpecialStats()
+            recalculateSpecialStats()
             val stats = recalculateStats()
 
             if (currentMana < stats.intelligence)
@@ -110,7 +110,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 )
             ) {
                 currentMana = min(currentMana, stats.intelligence)
-                currentHealth = min(currentHealth + (stats.health / 100f) + specials.extraRegen, stats.health)
+                currentHealth = min(currentHealth + (stats.health / 100f) + stats.vitality, stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)

@@ -45,12 +45,6 @@ class SpecialStatistics {
             self[SpecialStatistic.STAT_BOOST] = value
         }
 
-    var extraRegen: Float
-        get() = self[SpecialStatistic.EXTRA_REGEN]!!
-        set(value) {
-            self[SpecialStatistic.EXTRA_REGEN] = value
-        }
-
     var speedCapBoost: Float
         get() = self[SpecialStatistic.SPEED_CAP_BOOST]!!
         set(value) {

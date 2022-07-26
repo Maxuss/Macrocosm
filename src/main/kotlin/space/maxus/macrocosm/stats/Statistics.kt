@@ -143,6 +143,12 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
             self[Statistic.HEALTH] = value
         }
 
+    var vitality: Float
+        get() = self[Statistic.VITALITY]!!
+        set(value) {
+            self[Statistic.VITALITY] = value
+        }
+
     var defense: Float
         get() = self[Statistic.DEFENSE]!!
         set(value) {

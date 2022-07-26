@@ -90,7 +90,7 @@ object EnrageAbility : FullSetBonus(
             }
 
             val regen = e.player.stats()!!.health * .03f
-            e.player.tempSpecs.extraRegen += regen
+            e.player.tempStats.vitality += regen
             e.player.tempStats.speed += 100
 
             taskRunLater(20 * 6) {
@@ -113,7 +113,7 @@ object EnrageAbility : FullSetBonus(
                     p.equipment.setItem(slot, Macrocosm.unsafe.reloadItem(item, e.player) ?: continue)
                 }
 
-                e.player.tempSpecs.extraRegen -= regen
+                e.player.tempStats.vitality -= regen
                 e.player.tempStats.speed -= 100
 
                 sound(Sound.ENTITY_WOLF_DEATH) {

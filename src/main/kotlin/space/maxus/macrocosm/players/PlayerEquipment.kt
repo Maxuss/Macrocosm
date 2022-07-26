@@ -16,6 +16,7 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.metrics.report
 
 class PlayerEquipment {
     var necklace: MacrocosmItem? = null
@@ -24,6 +25,16 @@ class PlayerEquipment {
     var gloves: MacrocosmItem? = null
 
     fun enumerate(): List<MacrocosmItem?> = listOf(necklace, cloak, belt, gloves)
+
+    operator fun get(ty: ItemType): MacrocosmItem? {
+        return when(ty) {
+            ItemType.NECKLACE -> necklace
+            ItemType.CLOAK -> cloak
+            ItemType.BELT -> belt
+            ItemType.GLOVES -> gloves
+            else -> report("Unexpected item type: $ty") { null }
+        }
+    }
 
     operator fun set(ty: ItemType, item: MacrocosmItem?) {
         when (ty) {

@@ -104,6 +104,14 @@ enum class Statistic(
         description = "True Damage is the damage you deal to your enemies that will be ignored by their defense."
     ),
 
+    VITALITY(
+        StatisticType.DEFENSIVE,
+        NamedTextColor.RED,
+        "♩",
+        0f,
+        displayItem = Material.GLISTERING_MELON_SLICE,
+        description = "Vitality is the extra regeneration you get every second."
+    ),
     HEALTH(
         StatisticType.DEFENSIVE,
         NamedTextColor.RED,

@@ -6,7 +6,6 @@ import net.axay.kspigot.extensions.geometry.vec
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.pets.*
@@ -28,7 +27,7 @@ object BeePet : Pet(
         ),
         PetAbility(
             "Sweet Honey",
-            "Regenerate <green>[0.02]%<gray> of your maximum ${Statistic.HEALTH.display}<gray> every second."
+            "Increases your ${Statistic.VITALITY.display} by <red>[0.02]%<gray> of your maximum ${Statistic.HEALTH.display}<gray>."
         ),
         PetAbility(
             "Nest Builder",
@@ -72,13 +71,13 @@ object BeePet : Pet(
     }
 
     @EventHandler
-    fun sweetHoneyAbility(e: PlayerCalculateSpecialStatsEvent) {
+    fun sweetHoneyAbility(e: PlayerCalculateStatsEvent) {
         val (ok, pet) = ensureRequirement(e.player, "Sweet Honey")
         if (!ok)
             return
         val maxHealth = e.player.stats()!!.health
         val heal = ((pet!!.level * .02f) * .01f)
-        e.stats.extraRegen = maxHealth * heal
+        e.stats.vitality = maxHealth * heal
     }
 
     @EventHandler

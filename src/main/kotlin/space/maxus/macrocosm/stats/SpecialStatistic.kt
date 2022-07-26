@@ -7,6 +7,5 @@ enum class SpecialStatistic {
     BLAST_RESISTANCE,
     FALL_RESISTANCE,
     STAT_BOOST,
-    EXTRA_REGEN,
     SPEED_CAP_BOOST
 }
