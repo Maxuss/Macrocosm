@@ -1,6 +1,10 @@
 package space.maxus.macrocosm.ability
 
 import org.bukkit.entity.EntityType
+import space.maxus.macrocosm.ability.equipment.ElixirOfLifeAbility
+import space.maxus.macrocosm.ability.equipment.NecklaceOfEnduranceAbility
+import space.maxus.macrocosm.ability.equipment.RingOfLifeAbility
+import space.maxus.macrocosm.ability.equipment.VialOfLifebloodAbility
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
@@ -188,7 +192,7 @@ enum class Ability(val ability: MacrocosmAbility) {
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),
 
-    // other
+    // reliquary
     TITANS_KNOWLEDGE(TitansKnowledge),
     TITANS_ENERGY(TitansEnergy),
     TITANS_MIGHT(TitansMight),
@@ -204,6 +208,12 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     ARMOR_OF_DAMNED_ACTIVE(ArmorOfDamnedActive),
     ARMOR_OF_DAMNED_PASSIVE(ArmorOfDamnedPassive),
+
+    // equipment
+    RING_OF_LIFE(RingOfLifeAbility),
+    NECKLACE_OF_ENDURANCE(NecklaceOfEnduranceAbility),
+    VIAL_OF_LIFEBLOOD(VialOfLifebloodAbility),
+    ELIXIR_OF_LIFE(ElixirOfLifeAbility)
 
     ;
 

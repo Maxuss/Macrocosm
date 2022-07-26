@@ -29,7 +29,7 @@ enum class ItemType(
     BOOTS(false, false, true),
 
     ACCESSORY(false),
-    CHARM(false, leftHand = true),
+    CHARM(false),
 
     ENCHANTED_BOOK(false),
 

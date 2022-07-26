@@ -40,7 +40,7 @@ class PlayerEquipment {
         when (ty) {
             ItemType.NECKLACE -> necklace = item
             ItemType.CLOAK -> cloak = item
-            ItemType.BELT -> belt = item
+            ItemType.BELT, ItemType.CHARM -> belt = item
             ItemType.GLOVES -> belt = item
             else -> return
         }
@@ -113,7 +113,7 @@ object EquipmentHandler : Listener {
 
         for (item in eq.enumerate()) {
             if (item != null) {
-                val (slot) = slots.entries.firstOrNull { it.value == item.type } ?: continue
+                val (slot) = slots.entries.firstOrNull { item.type in it.value } ?: continue
                 items[slot] = item.build(player) ?: continue
             }
         }
@@ -156,11 +156,11 @@ object EquipmentHandler : Listener {
             val stored = inv.getItem(clickedSlot)
             val mc = e.cursor?.macrocosm ?: return
 
-            val requiredTy = slots[clickedSlot]!!
-            if (mc.type != requiredTy)
+            val requiredTypes = slots[clickedSlot]!!
+            if (mc.type !in requiredTypes)
                 return
 
-            player.equipment[mc.type] = mc
+            player.equipment[requiredTypes.first()] = mc
             inv.setItem(clickedSlot, e.cursor)
             if (stored != empty) {
                 e.whoClicked.setItemOnCursor(stored)
@@ -172,25 +172,26 @@ object EquipmentHandler : Listener {
             if (stored == empty) {
                 return
             }
-            val ty = slots[clickedSlot]!!
-            player.equipment[ty] = null
+            val types = slots[clickedSlot]!!
+            player.equipment[types.first()] = null
             inv.setItem(clickedSlot, empty)
             e.whoClicked.setItemOnCursor(stored)
         }
     }
 
     val slots = sortedMapOf(
-        10 to ItemType.NECKLACE,
-        19 to ItemType.CLOAK,
-        28 to ItemType.BELT,
-        37 to ItemType.GLOVES
+        10 to listOf(ItemType.NECKLACE, ItemType.CHARM),
+        19 to listOf(ItemType.CLOAK),
+        28 to listOf(ItemType.BELT, ItemType.CHARM),
+        37 to listOf(ItemType.GLOVES)
     )
 
     val emptySlots = hashMapOf(
         10 to ItemValue.placeholderDescripted(
             Material.LIGHT_GRAY_STAINED_GLASS_PANE,
             "<gray>Empty Equipment Slot",
-            "<dark_gray> > Necklace"
+            "<dark_gray> > Necklace",
+            "<dark_gray> > Charm"
         ),
         19 to ItemValue.placeholderDescripted(
             Material.LIGHT_GRAY_STAINED_GLASS_PANE,
@@ -200,7 +201,8 @@ object EquipmentHandler : Listener {
         28 to ItemValue.placeholderDescripted(
             Material.LIGHT_GRAY_STAINED_GLASS_PANE,
             "<gray>Empty Equipment Slot",
-            "<dark_gray> > Belt"
+            "<dark_gray> > Belt",
+            "<dark_gray> > Charm"
         ),
         37 to ItemValue.placeholderDescripted(
             Material.LIGHT_GRAY_STAINED_GLASS_PANE,

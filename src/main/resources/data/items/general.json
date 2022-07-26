@@ -390,5 +390,44 @@
             "to": "macrocosm:item/damned_chestplate"
         },
         "abilities": ["armor_of_damned_passive", "armor_of_damned_active"]
+    },
+    "ring_of_life": {
+        "type": "charm",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2Q0MWVhNTk4NmUwZWViY2RlYTI1YzQ2NmI1NTJjNzUyOTI1ZmNlYTI2ZjVlYzI0Yzg2ODI4ZTc2YWFiNjlhNyJ9fX0=",
+        "rarity": "rare",
+        "stats": {
+            "vitality": 5
+        },
+        "abilities": ["ring_of_life"]
+    },
+    "necklace_of_endurance": {
+        "type": "necklace",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTU0YzljMTFhNDcxYTFiMDY4NmIxN2NmY2FkMGViZTI3MGI4YjBlMDJlOTZlY2M1NzNmZDQ5YTViNjk4NGQyOCJ9fX0=",
+        "rarity": "rare",
+        "stats": {
+            "health": 50
+        },
+        "abilities": ["necklace_of_endurance"]
+    },
+    "vial_of_lifeblood": {
+        "type": "charm",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmI0YTVjMjlkOTAxNzIxODUxZDg4NjhiOTA3NWY0OWM0NzZhODk0MDk4YzdlZjI2NjU4MTNjNTUyYmJjOWFkZCJ9fX0=",
+        "rarity": "epic",
+        "stats": {
+            "vitality": 3,
+            "health": 25
+        },
+        "abilities": ["vial_of_lifeblood"]
+    },
+    "elixir_of_life": {
+        "type": "charm",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjJjNmI1N2IyZDBlNzc4YjEzOWViY2Q1MTg4MTZlNGJkMGFlYWVjZGFhMDk0NGJiM2ZlZjZmZjdlMWYzZDJmMSJ9fX0=",
+        "rarity": "relic",
+        "stats": {
+            "health": 100,
+            "vitality": 10,
+            "true_defense": 3
+        },
+        "abilities": ["elixir_of_life"]
     }
 }

@@ -31,7 +31,8 @@
             "magic_find",
             "damage_boost",
             "damage_reduction",
-            "summoning_power"
+            "summoning_power",
+            "vitality"
         ]
     },
     "patternProperties": {
