@@ -21,6 +21,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.damage.healthColor
 import space.maxus.macrocosm.damage.truncateBigNumber
+import space.maxus.macrocosm.events.EntityCalculateStatsEvent
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
@@ -33,6 +34,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.generic.getId
 import space.maxus.macrocosm.util.generic.putId
+import java.util.*
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -64,6 +66,10 @@ interface MacrocosmEntity : Listener {
     val level get() = levelFromStats(calculateStats(), extraWeight())
 
     fun lootPool(player: MacrocosmPlayer?): LootPool
+
+    fun tryRetrieveUuid(): UUID? {
+        return null
+    }
 
     fun extraWeight(): Float {
         return 0f
@@ -99,7 +105,11 @@ interface MacrocosmEntity : Listener {
         base.increase(chestplate?.stats())
         base.increase(leggings?.stats())
         base.increase(boots?.stats())
-        return base
+
+        val event = EntityCalculateStatsEvent(this, base)
+        event.callEvent()
+
+        return event.stats
     }
 
     fun specialStats(): SpecialStatistics {

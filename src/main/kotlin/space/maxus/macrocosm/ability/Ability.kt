@@ -1,10 +1,7 @@
 package space.maxus.macrocosm.ability
 
 import org.bukkit.entity.EntityType
-import space.maxus.macrocosm.ability.equipment.ElixirOfLifeAbility
-import space.maxus.macrocosm.ability.equipment.NecklaceOfEnduranceAbility
-import space.maxus.macrocosm.ability.equipment.RingOfLifeAbility
-import space.maxus.macrocosm.ability.equipment.VialOfLifebloodAbility
+import space.maxus.macrocosm.ability.equipment.*
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
@@ -213,7 +210,19 @@ enum class Ability(val ability: MacrocosmAbility) {
     RING_OF_LIFE(RingOfLifeAbility),
     NECKLACE_OF_ENDURANCE(NecklaceOfEnduranceAbility),
     VIAL_OF_LIFEBLOOD(VialOfLifebloodAbility),
-    ELIXIR_OF_LIFE(ElixirOfLifeAbility)
+    ELIXIR_OF_LIFE(ElixirOfLifeAbility),
+
+    AMULET_OF_THE_UNDERTAKER_ABILITY(AmuletOfTheUndertakerAbility),
+    DEAD_MANS_BOOTS_ABILITY(DeadMansBootsAbility),
+    VAMPIRES_COWL_ABILITY(VampiresCowlAbility),
+    CLOAK_OF_UNDEAD_KING_1(CloakOfUndeadKing1),
+    CLOAK_OF_UNDEAD_KING_2(CloakOfUndeadKing2),
+
+    CHARM_OF_MANA_ABILITY(CharmOfManaAbility),
+    TALISMAN_OF_MANA_ABILITY(TalismanOfManaAbility),
+    MANA_ORB_ABILITY(ManaOrbAbility),
+    WIZARDS_WELL_1(WizardsWellAbility1),
+    WIZARDS_WELL_2(WizardsWellAbility2)
 
     ;
 

@@ -27,7 +27,7 @@ object UndulantReforge : ReforgeBase(
     fun onCalculate(e: AbilityCostApplyEvent) {
         if (!ensureRequirements(e.player, EquipmentSlot.HAND))
             return
-        e.mana = (e.mana * .75f).roundToInt()
+        e.mana = (e.mana.toFloat() * .75f).roundToInt()
         e.cooldown = (e.cooldown * .75f)
     }
 

@@ -78,7 +78,7 @@ object PyroclasticToadPet : Pet(
 
     @EventHandler
     fun sleepingWrathAbility(e: PlayerCalculateSpecialStatsEvent) {
-        val (ok, pet) = ensureRequirement(e.player, "Molten Fury")
+        val (ok, pet) = ensureRequirement(e.player, "Sleeping Wrath")
         if (!ok)
             return
         val len = e.player.paper!!.velocity.length()

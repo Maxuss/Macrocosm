@@ -31,6 +31,7 @@ import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
+import space.maxus.macrocosm.events.PlayerTickEvent
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
@@ -94,7 +95,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     val activeEffects get() = paper?.activePotionEffects?.map { it.type }
 
     init {
-        // statistic manipulations
+        // statistic manipulations + ticking
         task(period = 40L) {
             if (paper == null) {
                 it.cancel()
@@ -102,6 +103,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             }
             recalculateSpecialStats()
             val stats = recalculateStats()
+
+            PlayerTickEvent(this).callEvent()
 
             if (currentMana < stats.intelligence)
                 currentMana += stats.intelligence / 20f

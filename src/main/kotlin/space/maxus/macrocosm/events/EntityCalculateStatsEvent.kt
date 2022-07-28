@@ -2,16 +2,13 @@ package space.maxus.macrocosm.events
 
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.entity.MacrocosmEntity
+import space.maxus.macrocosm.stats.Statistics
 
-class AbilityCostApplyEvent(
-    val player: MacrocosmPlayer,
-    var mana: Number,
-    var health: Int,
-    var cooldown: Float,
-    var summonDifficulty: Int
+class EntityCalculateStatsEvent(
+    val self: MacrocosmEntity,
+    var stats: Statistics,
 ) : Event() {
-
     companion object {
         private val HANDLERS = HandlerList()
 

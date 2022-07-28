@@ -13,7 +13,7 @@ object WiseDragonBonus :
         listen<AbilityCostApplyEvent> { e ->
             if (!ensureSetRequirement(e.player))
                 return@listen
-            e.mana = (e.mana * .67).roundToInt()
+            e.mana = (e.mana.toDouble() * .67).roundToInt()
         }
 
         listen<CostCompileEvent> { e ->

@@ -3,7 +3,7 @@
     "$id": "identifier",
     "type": "string",
     "title": "An identifier, optionally with a namespace",
-    "pattern": "^([a-z_]+:)?[a-z_/]+$",
+    "pattern": "^([a-z\\d_]+:)?[a-z\\d_/]+$",
     "examples": [
         "minecraft:diamond",
         "diamond",

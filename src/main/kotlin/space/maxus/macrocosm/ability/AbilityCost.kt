@@ -57,7 +57,7 @@ data class AbilityCost(
         val event = AbilityCostApplyEvent(player, mana, health, cooldown.toFloat(), summonDifficulty)
         event.callEvent()
 
-        if (event.mana > 0 && player.currentMana < event.mana) {
+        if (event.mana.toFloat() > 0 && player.currentMana < event.mana.toFloat()) {
             if (!silent)
                 player.paper!!.sendActionBar(text("<red><bold>NOT ENOUGH MANA"))
             return false
@@ -85,7 +85,7 @@ data class AbilityCost(
             return false
         }
 
-        if (event.mana > 0) {
+        if (event.mana.toFloat() > 0) {
             player.decreaseMana(event.mana.toFloat())
         }
         if (event.health > 0) {

@@ -49,6 +49,10 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
     private val paper: LivingEntity? get() = server.getEntity(paperId) as? LivingEntity
 
+    override fun tryRetrieveUuid(): UUID {
+        return paperId
+    }
+
     init {
         val handle = (paper as? CraftEntity)?.handle
         if (handle is NativeMacrocosmSummon) {

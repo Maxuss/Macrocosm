@@ -27,6 +27,7 @@ class FireBrandAbility(name: String, val dmg: Float) : FullSetBonus(
     name,
     "Shoot firebrands out of yourself when you are hit, the firebrands deal <red>${Formatting.withCommas(dmg.toBigDecimal())} ${Statistic.DAMAGE.display}<gray>."
 ) {
+    @Transient
     override val cost: AbilityCost = AbilityCost(cooldown = 5)
 
     override fun registerListeners() {

@@ -339,9 +339,10 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
 
     fun multiply(multiplier: Float) {
         for ((stat, _) in self) {
-            if (self[stat]!! == 0f)
+            val s = self[stat]!!
+            if (s == 0f)
                 continue
-            self[stat] = self[stat]!! * multiplier
+            self[stat] = s * multiplier
         }
     }
 

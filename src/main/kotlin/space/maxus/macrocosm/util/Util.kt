@@ -51,6 +51,15 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
     .setPrettyPrinting().create()
 
+typealias NULL = Unit
+
+inline fun <T> Collection<T>.certain(predicate: (T) -> Boolean, operator: (T) -> Unit) {
+    for(value in this) {
+        if(predicate(value))
+            operator(value)
+    }
+}
+
 inline fun runNTimes(
     times: Long,
     period: Long,

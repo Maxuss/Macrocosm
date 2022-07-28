@@ -485,6 +485,10 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
         experience = exp
     }
 
+    override fun tryRetrieveUuid(): UUID {
+        return this.id
+    }
+
     override fun lootPool(player: MacrocosmPlayer?): LootPool {
         return LootPool.of(*dropsFromType(paper!!.type).toTypedArray())
     }

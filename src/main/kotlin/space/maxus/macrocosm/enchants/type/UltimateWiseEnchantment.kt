@@ -23,7 +23,7 @@ object UltimateWiseEnchantment :
         if (!ok)
             return
 
-        e.mana = (e.mana * (1 - (lvl * .1f))).roundToInt()
+        e.mana = (e.mana.toFloat() * (1 - (lvl * .1f))).roundToInt()
     }
 
     @EventHandler
@@ -33,7 +33,7 @@ object UltimateWiseEnchantment :
             return
 
         val cost = e.cost ?: return
-        e.cost = AbilityCost((cost.mana * (1 - (lvl * .1f))).roundToInt(), cost.health, cost.cooldown)
+        e.cost = AbilityCost((cost.mana * (1 - (lvl * .1f))).roundToInt(), cost.health, cost.cooldown, cost.summonDifficulty)
     }
 }
 
@@ -61,7 +61,7 @@ object UltimateBulkEnchantment :
             return
 
         val cost = e.cost ?: return
-        e.cost = AbilityCost(cost.mana, (cost.health * (1 - (lvl * .1f))).roundToInt(), cost.cooldown)
+        e.cost = AbilityCost(cost.mana, (cost.health * (1 - (lvl * .1f))).roundToInt(), cost.cooldown, cost.summonDifficulty)
     }
 }
 

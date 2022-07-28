@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.util.data
 
+import space.maxus.macrocosm.util.NULL
 import space.maxus.macrocosm.util.generic.ConditionalCallback
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -7,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 class MutableContainer<V> private constructor(val values: ConcurrentHashMap<UUID, V>) {
     companion object {
         fun <V> empty() = MutableContainer<V>(ConcurrentHashMap())
+        fun trulyEmpty() = MutableContainer<NULL>(ConcurrentHashMap())
     }
 
     operator fun set(k: UUID, v: V) {
@@ -32,6 +34,18 @@ class MutableContainer<V> private constructor(val values: ConcurrentHashMap<UUID
         else {
             operator(value)
             ConditionalCallback.success()
+        }
+    }
+
+    inline fun iter(operator: (V) -> Unit) {
+        for((_, v) in values) {
+            operator(v)
+        }
+    }
+
+    inline fun iterMut(operator: (V) -> V) {
+        for((k, v) in values) {
+            values[k] = operator(v)
         }
     }
 
