@@ -545,5 +545,27 @@
             "to": "macrocosm:item/assassins_dagger",
             "parent": "item/handheld"
         }
+    },
+    "moledrill": {
+        "type": "drill",
+        "name": "Mole Claws Powered Drill",
+        "rarity": "legendary",
+        "material": "prismarine_shard",
+        "breaking_power": 6,
+        "stats": {
+            "mining_speed": 1500,
+            "mining_fortune": 500,
+            "speed": 100
+        },
+        "abilities": ["molepick_ability"],
+        "model": {
+            "id": 22,
+            "from": "item/prismarine_shard",
+            "to": "macrocosm:item/moledrill",
+            "parent": "item/handheld"
+        },
+        "animation": {
+            "frames": 3
+        }
     }
 }

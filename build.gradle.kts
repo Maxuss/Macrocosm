@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "1.7.0"
     id("xyz.jpenilla.run-paper") version "1.0.6"
     id("io.papermc.paperweight.userdev") version "1.3.7"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "space.maxus"
