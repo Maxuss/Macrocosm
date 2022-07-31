@@ -138,7 +138,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
 
                 task(delay = 0) {
                     // drifting to synchronous env
-                    for (entity in loc.getNearbyLivingEntities(1.0) {
+                    for (entity in loc.getNearbyLivingEntities(2.0) {
                         it !is Player && it !is ArmorStand && !hit.contains(
                             it.uniqueId
                         )

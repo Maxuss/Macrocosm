@@ -22,9 +22,11 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.NULL
 import space.maxus.macrocosm.util.data.MutableContainer
+import space.maxus.macrocosm.util.game.Fmt
 import space.maxus.macrocosm.util.runNTimes
+import space.maxus.macrocosm.util.superCritMod
 
-object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "Dig straight into ground for <green>3 seconds<gray>, becoming fully <yellow>invulnerable<gray>. Upon digging out, heal for <red>50% ${Statistic.HEALTH.display}<gray> and gain <red>+100% ${Statistic.DAMAGE.display}<gray> for your next attack.<br>You can not attack or jump while underground.<br><red>Ability can only be activated<br><red>after breaking 100 blocks.") {
+object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "Dig straight into ground for <green>3 seconds<gray>, becoming fully <yellow>invulnerable<gray>. Upon digging out, heal for <red>50% ${Statistic.HEALTH.display}<gray>.<br>Your next attack after digging out will<br>be ${Fmt.SUPER_CRIT}.<br>You can not attack or jump while underground.<br><red>Ability can only be activated<br><red>after breaking 100 blocks.") {
     private val blocksBroken = MutableContainer.empty<Int>()
     private val enabled = MutableContainer.trulyEmpty()
     private val strike = MutableContainer.trulyEmpty()
@@ -63,7 +65,8 @@ object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "D
                 e.isCancelled = true
             }.otherwise {
                 strike.revoke(e.player.ref) {
-                    e.damage *= 2f
+                    e.damage *= superCritMod(e.player)
+                    e.isSuperCrit = true
                 }
             }.call()
         }

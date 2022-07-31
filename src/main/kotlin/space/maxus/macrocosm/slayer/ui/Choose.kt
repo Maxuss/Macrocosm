@@ -51,8 +51,7 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
                     it.slayer.name,
                     *it.slayer.description.reduceToList(20).toMutableList()
                         .apply { add(""); add(it.slayer.requirementString); add(""); add("<yellow>Click to view details.") }
-                        .toTypedArray(),
-                    it.slayer.id
+                        .toTypedArray()
                 )
         }, onClick = { e, it ->
             e.bukkitEvent.isCancelled = true

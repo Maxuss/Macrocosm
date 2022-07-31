@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.listeners.FallingBlockListener
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.IdentifierTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
@@ -42,7 +43,12 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-val GSON: Gson = GsonBuilder().create()
+val GSON: Gson = GsonBuilder()
+    .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
+    .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
+    .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
+    .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
+    .create()
 val GSON_PRETTY: Gson = GsonBuilder()
     .disableHtmlEscaping()
     .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
@@ -53,12 +59,19 @@ val GSON_PRETTY: Gson = GsonBuilder()
 
 typealias NULL = Unit
 
-inline fun <T> Collection<T>.certain(predicate: (T) -> Boolean, operator: (T) -> Unit) {
+fun superCritMod(p: MacrocosmPlayer): Float = 1 + (p.stats()!!.critChance / 100f)
+
+fun <T: Any> T.equalsAny(vararg possible: T): Boolean {
+    return possible.any { it == this }
+}
+
+inline fun <reified T> Collection<T>.certain(predicate: (T) -> Boolean, operator: (T) -> Unit) {
     for(value in this) {
         if(predicate(value))
             operator(value)
     }
 }
+
 
 inline fun runNTimes(
     times: Long,

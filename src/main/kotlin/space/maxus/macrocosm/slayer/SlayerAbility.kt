@@ -29,10 +29,14 @@ class SlayerAbility(
         val regexed = "\\[[\\d./]*]".toRegex().replace(description) {
             it.value.replace("[", "").replace("]", "").split("/")[tier - 1]
         }
-        val reduced = regexed.reduceToList(30).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
-        reduced.add(0, text(name))
-        return reduced
+        val output = mutableListOf<Component>()
+        output.add(text(name))
+        for(part in regexed.split("<br>")) {
+            val reduced = part.reduceToList(30).map { text("<gray>$it").noitalic() }.toMutableList()
+            reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+            output.addAll(reduced)
+        }
+        return output
     }
 
     inline fun applyToBosses(handler: (MacrocosmEntity, LivingEntity, Int) -> Unit) {
@@ -49,5 +53,18 @@ class SlayerAbility(
                 handler(slayer, entity, tier)
             }
         }
+    }
+
+    fun isSlayerBoss(entity: LivingEntity): Pair<Boolean, Int> {
+        val mc = entity.macrocosm ?: return Pair(false, -1)
+        val id = mc.getId(entity).path
+        if(!id.contains(slayerType.name.lowercase()))
+            return Pair(false, -1)
+        val tier = try {
+            Integer.valueOf(id.replace("${slayerType.name.lowercase()}_", ""))
+        } catch(e: NumberFormatException) {
+            return Pair(false, -1)
+        }
+        return Pair(true, tier)
     }
 }

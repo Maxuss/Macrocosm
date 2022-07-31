@@ -1,23 +1,27 @@
 package space.maxus.macrocosm.util.generic
 
+import java.util.concurrent.atomic.AtomicInteger
+
 class Ticker(val range: IntRange) {
-    private var cursor = range.first
+    private var cursor = AtomicInteger(range.first)
     private var direction: Direction = Direction.FORWARD
-    fun position(): Int = cursor
+    fun position(): Int = cursor.get()
     fun tick(): Int {
-        when (direction) {
-            Direction.FORWARD -> {
-                cursor++
-                if (cursor >= range.last)
-                    direction = Direction.BACKWARDS
-            }
-            Direction.BACKWARDS -> {
-                cursor--
-                if (cursor <= range.first)
-                    direction = Direction.FORWARD
-            }
-        }
-        return cursor
+        val c = when (direction) {
+                    Direction.FORWARD -> {
+                        val c = cursor.incrementAndGet()
+                        if (c >= range.last)
+                            direction = Direction.BACKWARDS
+                        c
+                    }
+                    Direction.BACKWARDS -> {
+                        val c = cursor.decrementAndGet()
+                        if (c <= range.first)
+                            direction = Direction.FORWARD
+                        c
+                    }
+                }
+        return c
     }
 
     enum class Direction {

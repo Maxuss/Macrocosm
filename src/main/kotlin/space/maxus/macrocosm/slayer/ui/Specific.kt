@@ -14,34 +14,66 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.colorFromTier
 import space.maxus.macrocosm.slayer.costFromTier
 import space.maxus.macrocosm.slayer.rewardExperienceForTier
+import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.renderBar
 import space.maxus.macrocosm.util.stripTags
+import kotlin.math.roundToInt
 
 fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventorySixByNine> =
     kSpigotGUI(GUIType.SIX_BY_NINE) {
         title = text(ty.slayer.name.stripTags())
         defaultPage = 0
         val slayer = ty.slayer
+        val slayerId = id(slayer.id)
 
         page(0) {
             placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
             val cmp = createCompound<Int>(iconGenerator = {
                 if (it >= 6)
-                    ItemValue.placeholderDescripted(
-                        Material.COAL,
-                        "<dark_aqua>${slayer.name.stripTags()} VI",
-                        "<dark_gray>Excruciating",
-                        "",
-                        *"Maddox doesn't seem to know how to summon <red>this<gray> boss!".reduceToList(20)
-                            .toTypedArray(),
-                        "<yellow>Oh... Okay."
-                    )
+                    if(!player.memory.tier6Slayers.contains(slayerId))
+                        ItemValue.placeholderDescripted(
+                            Material.COAL,
+                            "<dark_aqua>${slayer.name.stripTags()} VI",
+                            "<dark_gray>${slayer.difficulties[it - 1]}",
+                            "",
+                            *"Maddox doesn't seem to know how to summon <red>this<gray> boss!".reduceToList(20)
+                                .toTypedArray(),
+                            "<yellow>Oh... Okay."
+                        )
+                    else {
+                        val buffer = mutableListOf<String>()
+                        buffer.add("<dark_gray>" + slayer.difficulties[it - 1])
+
+                        val model = slayer.bossModelForTier(it)
+                        buffer.add("")
+                        val stats = model.calculateStats()
+                        val dmg = stats.damage * (1 + (stats.strength / 100f))
+                        buffer.add(" Health: <red>${Statistic.HEALTH.specialChar} ${Formatting.withCommas(stats.health.toBigDecimal())}")
+                        buffer.add(" Damage: <red>${Statistic.DAMAGE.specialChar} ${Formatting.withCommas(dmg.roundToInt().toBigDecimal())}")
+                        buffer.add("")
+                        slayer.abilitiesForTier(it).map { abil -> abil.descript(it).map { e -> e.str() } }
+                            .forEach { l -> l.forEach { v -> buffer.add(v) }; buffer.add("") }
+                        buffer.add("Slayer EXP: <red>${Formatting.stats(rewardExperienceForTier(it).toBigDecimal())} EXP")
+                        buffer.add("  <green>And <gradient:gold:yellow>extra fancy<green> drops!")
+                        ItemValue.placeholderDescripted(
+                            slayer.secondaryItem,
+                            "<dark_aqua>${slayer.name.stripTags()} VI",
+                            *buffer.toTypedArray()
+                        )
+                    }
                 else {
                     val buffer = mutableListOf<String>()
                     buffer.add("<dark_gray>" + slayer.difficulties[it - 1])
+                    val model = slayer.bossModelForTier(it)
+                    buffer.add("")
+                    val stats = model.calculateStats()
+                    val dmg = stats.damage * (1 + (stats.strength / 100f))
+                    buffer.add(" Health: <red>${Statistic.HEALTH.specialChar} ${Formatting.withCommas(stats.health.toBigDecimal())}")
+                    buffer.add(" Damage: <red>${Statistic.DAMAGE.specialChar} ${Formatting.withCommas(dmg.roundToInt().toBigDecimal())}")
                     buffer.add("")
                     slayer.abilitiesForTier(it).map { abil -> abil.descript(it).map { e -> e.str() } }
                         .forEach { l -> l.forEach { v -> buffer.add(v) }; buffer.add("") }

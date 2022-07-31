@@ -41,7 +41,8 @@ object Database {
                 LAST_JOIN INT,
                 PLAYTIME INT,
                 PURSE REAL,
-                BANK REAL)
+                BANK REAL,
+                MEMORY VARCHAR)
                 """.trimIndent()
             )
             st.executeUpdate(

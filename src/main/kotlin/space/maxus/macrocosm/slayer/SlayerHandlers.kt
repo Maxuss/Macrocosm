@@ -20,6 +20,7 @@ import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.generic.id
 import java.util.*
 import kotlin.math.ceil
 import kotlin.math.min
@@ -82,6 +83,11 @@ object SlayerHandlers : Listener {
         val newQuest = SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.SUCCESS)
         player.updateSlayerQuest(newQuest)
         player.boundSlayerBoss = null
+
+        val slayerId = id(quest.type.name.lowercase())
+        if(quest.tier == 6 && !player.memory.tier6Slayers.contains(slayerId)) {
+            player.memory.tier6Slayers.add(slayerId)
+        }
 
         player.sendMessage("<gold><bold>NICE! SLAYER BOSS SLAIN!")
         val currentLevel = player.slayers[quest.type]!!

@@ -52,10 +52,10 @@ object EntombedReaper : SlayerBase(
     EntityType.ZOMBIE,
     SlayerType.REVENANT_HORROR,
     6,
-    12000.0,
+    25000.0,
     stats {
-        health = 25_000_000f
-        defense = 2100f
+        health = 10_000_000f
+        defense = 1700f
         damage = 400f
         strength = 300f
         trueDefense = 2100f
@@ -63,11 +63,10 @@ object EntombedReaper : SlayerBase(
         speed = 200f
     },
     mainHand = VanillaItem(Material.NETHERITE_HOE),
-//    helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2FmZGUyODRkN2M4ZDQ0YWE1OWIyNjdmNmYwODcxY2RjZWY5OTI2YzgxNjA3YWJiZGI2MWIxNGUxYjZhOTQyZiJ9fX0="),
-//    chestplate = VanillaItem(Material.NETHERITE_CHESTPLATE),
-//    leggings = ColoredEntityArmor(Material.LEATHER_LEGGINGS, 0x000000),
-//    boots = ColoredEntityArmor(Material.LEATHER_BOOTS, 0x000000),
-    disguiseSkin = "Freddyfazbar",
+    helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2FmZGUyODRkN2M4ZDQ0YWE1OWIyNjdmNmYwODcxY2RjZWY5OTI2YzgxNjA3YWJiZGI2MWIxNGUxYjZhOTQyZiJ9fX0="),
+    chestplate = VanillaItem(Material.NETHERITE_CHESTPLATE),
+    leggings = ColoredEntityArmor(Material.LEATHER_LEGGINGS, 0x000000),
+    boots = ColoredEntityArmor(Material.LEATHER_BOOTS, 0x000000),
     sounds = EntitySoundBank.from(
         SoundType.DAMAGED to (Sound.ENTITY_PHANTOM_HURT to 0f),
         SoundType.DEATH to (Sound.ENTITY_PHANTOM_DEATH to 0f)

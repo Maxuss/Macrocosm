@@ -4,21 +4,26 @@ import space.maxus.macrocosm.util.NULL
 import space.maxus.macrocosm.util.generic.ConditionalCallback
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
-class MutableContainer<V> private constructor(val values: ConcurrentHashMap<UUID, V>) {
+class MutableContainer<V> private constructor(var values: ConcurrentHashMap<UUID, V>) {
     companion object {
         fun <V> empty() = MutableContainer<V>(ConcurrentHashMap())
         fun trulyEmpty() = MutableContainer<NULL>(ConcurrentHashMap())
     }
 
+    @Synchronized
     operator fun set(k: UUID, v: V) {
         values[k] = v
     }
 
+    @Synchronized
     fun remove(k: UUID): V? {
         return values.remove(k)
     }
 
+    @Synchronized
     operator fun contains(k: UUID) = values.containsKey(k)
 
     inline fun take(k: UUID, operator: (V) -> Unit): ConditionalCallback {
@@ -39,14 +44,28 @@ class MutableContainer<V> private constructor(val values: ConcurrentHashMap<UUID
         }
     }
 
+    @OptIn(ExperimentalContracts::class)
+    inline fun filterAll(operator: (Pair<UUID, V>) -> Boolean) {
+        contract {
+            callsInPlace(operator)
+        }
+        this.values = ConcurrentHashMap(this.values.filter { operator(it.toPair()) })
+    }
+
     inline fun iter(operator: (V) -> Unit) {
-        for((_, v) in values) {
+        for((_, v) in values.iterator()) {
             operator(v)
         }
     }
 
+    inline fun iterFull(operator: (Pair<UUID, V>) -> Unit) {
+        for((k, v) in values.iterator()) {
+            operator(Pair(k, v))
+        }
+    }
+
     inline fun iterMut(operator: (V) -> V) {
-        for((k, v) in values) {
+        for((k, v) in values.iterator()) {
             values[k] = operator(v)
         }
     }
@@ -67,7 +86,23 @@ class MutableContainer<V> private constructor(val values: ConcurrentHashMap<UUID
         else ConditionalCallback.fail()
     }
 
+    inline fun takeMutOrRemove(k: UUID, operator: (V) -> Pair<V, TakeResult>) {
+        if(values.containsKey(k)) {
+            val (new, result) = operator(values[k]!!)
+            if(result == TakeResult.REVOKE) {
+                values.remove(k)
+            } else {
+                values[k] = new
+            }
+        }
+    }
+
     override fun toString(): String {
         return "MutableContainer { values= { ${values.map { (k, v) -> k.toString() + ":" + v.toString() }} } }"
+    }
+
+    enum class TakeResult {
+        RETAIN,
+        REVOKE
     }
 }

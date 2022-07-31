@@ -11,7 +11,8 @@ class PlayerDealDamageEvent(
     val damaged: LivingEntity,
     var damage: Float,
     var crit: Boolean,
-    val isContact: Boolean = true
+    val isContact: Boolean = true,
+    var isSuperCrit: Boolean = false
 ) : Event(), Cancellable {
     private var eventCancelled = false
 

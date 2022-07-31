@@ -1,5 +1,7 @@
 package space.maxus.macrocosm.listeners
 
+import org.bukkit.Location
+import org.bukkit.block.data.BlockData
 import org.bukkit.entity.FallingBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,5 +17,13 @@ object FallingBlockListener : Listener {
             stands.remove(e.entity.uniqueId)
             e.isCancelled = true
         }
+    }
+
+    fun spawnBlock(at: Location, bd: BlockData): FallingBlock {
+        val fallingBlock = at.world.spawnFallingBlock(at, bd)
+        fallingBlock.setHurtEntities(false)
+        fallingBlock.dropItem = false
+        stands.add(fallingBlock.uniqueId)
+        return fallingBlock
     }
 }

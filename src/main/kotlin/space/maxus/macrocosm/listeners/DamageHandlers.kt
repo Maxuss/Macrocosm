@@ -84,6 +84,7 @@ object DamageHandlers : Listener {
 
         var (damage, crit) = DamageCalculator.calculateStandardDealt(damagerStats.damage, damagerStats)
 
+        var superCrit = false
         if (damager is Player) {
             val event = PlayerDealDamageEvent(damager.macrocosm!!, damaged, damage, crit)
             val cancelled = !event.callEvent()
@@ -93,6 +94,7 @@ object DamageHandlers : Listener {
             }
             damage = event.damage
             crit = event.crit
+            superCrit = event.isSuperCrit
         }
 
         if (damaged is Player) {
@@ -128,7 +130,7 @@ object DamageHandlers : Listener {
         )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
-        summonDamageIndicator(damaged.location, received, if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
+        summonDamageIndicator(damaged.location, received, if(superCrit) DamageType.CRITICAL else if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
 
         processFerocity(received, crit, damagerStats, damaged, damagerName, damager)
     }
@@ -521,6 +523,28 @@ object DamageHandlers : Listener {
                     display = display.append(char.toString().toComponent().color(color))
                 }
                 text("<white>✧</white>").append(display).append(text("<white>✧</white>"))
+            }
+            DamageType.SUPER_CRITICAL -> {
+                var display = Component.empty()
+                var digitIndex = 0
+                for (char in damageDisplay) {
+                    if (!char.isDigit()) {
+                        display.append(",".toComponent().color(NamedTextColor.GOLD))
+                        continue
+                    }
+                    digitIndex++
+                    if (digitIndex > 5) {
+                        digitIndex = 1
+                    }
+                    val color = when (digitIndex) {
+                        2 -> NamedTextColor.RED
+                        3 -> NamedTextColor.GOLD
+                        4, 5 -> NamedTextColor.YELLOW
+                        else -> NamedTextColor.WHITE
+                    }
+                    display = display.append(char.toString().toComponent().color(color))
+                }
+                text("<gold>☠</gold>").append(display).append(text("<gold>☠</gold>"))
             }
             DamageType.FIRE -> {
                 text("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")

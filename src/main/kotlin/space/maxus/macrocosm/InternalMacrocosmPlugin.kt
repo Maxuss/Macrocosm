@@ -2,6 +2,7 @@ package space.maxus.macrocosm
 
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
+import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.main.KSpigot
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.commands.*
@@ -11,6 +12,7 @@ import space.maxus.macrocosm.db.Database
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
+import space.maxus.macrocosm.events.ServerShutdownEvent
 import space.maxus.macrocosm.fishing.FishingHandler
 import space.maxus.macrocosm.fishing.SeaCreatures
 import space.maxus.macrocosm.fishing.TrophyFishes
@@ -40,6 +42,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
 import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.game.Calendar
@@ -202,6 +205,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         Threading.runAsync {
             Calendar.save()
         }
+        ZombieAbilities.doomCounter.iter { id ->
+            worlds[0].getEntity(id)?.remove()
+        }
+        ServerShutdownEvent().callEvent()
     }
 }
 

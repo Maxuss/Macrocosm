@@ -87,6 +87,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
+    var memory: PlayerMemory = PlayerMemory.nullMemory()
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
@@ -522,7 +523,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
 
-        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank)")
+        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${GSON.toJson(this.memory)}')")
         var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
         var rightHand = "VALUES ('$ref'"
         for ((k, value) in baseStats.iter()) {
@@ -571,6 +572,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val playtime = res.getLong("PLAYTIME")
             val purse = res.getFloat("PURSE")
             val bank = res.getFloat("BANK")
+            val memory: PlayerMemory = GSON.fromJson(res.getString("MEMORY"), PlayerMemory::class.java)
             val player = MacrocosmPlayer(id)
             player.rank = rank
             player.firstJoin = firstJoin
@@ -578,6 +580,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             player.playtime = playtime
             player.purse = purse
             player.bank = bank
+            player.memory = memory
 
             val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
             if (!stats.next())

@@ -2,6 +2,7 @@ package space.maxus.macrocosm.damage
 
 enum class DamageType {
     DEFAULT,
+    SUPER_CRITICAL,
     CRITICAL,
     FIRE,
     FROST,
