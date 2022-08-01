@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.ability.equipment
+package space.maxus.macrocosm.ability.types.equipment
 
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.runnables.task
@@ -49,7 +49,7 @@ object VampiresCowlAbility: EquipmentAbility("Shadow Mantle", "Your summons deal
 
     override fun registerListeners() {
         task(period = 40L, delay = 10L) {
-            players.iterMut {  p ->
+            players.iterMut { p ->
                 p + 40L
             }
         }

@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.ability.equipment
+package space.maxus.macrocosm.ability.types.equipment
 
 import net.axay.kspigot.event.listen
 import space.maxus.macrocosm.ability.EquipmentAbility

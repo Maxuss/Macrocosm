@@ -567,5 +567,17 @@
         "animation": {
             "frames": 3
         }
+    },
+    "earthquake_mallet": {
+        "type": "sword",
+        "rarity": "legendary",
+        "material": "iron_axe",
+        "stats": {
+            "damage": 300,
+            "strength": 150,
+            "speed": -15,
+            "defense": 200
+        },
+        "abilities": ["earthquake_mallet_active", "earthquake_mallet_passive"]
     }
 }

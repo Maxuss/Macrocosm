@@ -130,7 +130,16 @@ object DamageHandlers : Listener {
         )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
-        summonDamageIndicator(damaged.location, received, if(superCrit) DamageType.CRITICAL else if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
+        summonDamageIndicator(damaged.location, received, if(superCrit) DamageType.SUPER_CRITICAL else if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
+
+        if(superCrit) {
+            sound(Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR) {
+                pitch = 2f
+                volume = 3f
+
+                playAt(damaged.location)
+            }
+        }
 
         processFerocity(received, crit, damagerStats, damaged, damagerName, damager)
     }

@@ -1,8 +1,8 @@
 package space.maxus.macrocosm.ability
 
 import org.bukkit.entity.EntityType
-import space.maxus.macrocosm.ability.equipment.*
 import space.maxus.macrocosm.ability.types.armor.*
+import space.maxus.macrocosm.ability.types.equipment.*
 import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
@@ -187,6 +187,8 @@ enum class Ability(val ability: MacrocosmAbility) {
     HUNTERS_STILETTO_ACTIVE(HuntersStilettoActive),
     ASSASSINS_DAGGER_ABILITY(AssassinsDaggerAbility),
     MOLEPICK_ABILITY(MolepickAbility),
+    EARTHQUAKE_MALLET_ACTIVE(EarthquakeMalletAbility),
+    EARTHQUAKE_MALLET_PASSIVE(BeatingBagAbility),
 
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),
