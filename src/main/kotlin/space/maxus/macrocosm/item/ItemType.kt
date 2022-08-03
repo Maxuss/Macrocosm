@@ -34,6 +34,7 @@ enum class ItemType(
     ENCHANTED_BOOK(false),
 
     DEPLOYABLE(false),
+    TURRET(false),
     CONSUMABLE(false),
     REFORGE_STONE(false),
     OTHER(false, leftHand = true),

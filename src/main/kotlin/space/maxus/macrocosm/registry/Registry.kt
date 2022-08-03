@@ -16,6 +16,7 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.fishing.FishingTreasure
 import space.maxus.macrocosm.fishing.SeaCreature
 import space.maxus.macrocosm.fishing.TrophyFish
+import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
@@ -114,6 +115,7 @@ abstract class Registry<T>(val name: Identifier) {
             pluginManager.registerEvents(v, Macrocosm)
         }
         val RECIPE = makeDefaulted<MacrocosmRecipe>(id("recipe"))
+        val FORGE_RECIPE = makeDefaulted<ForgeRecipe>(id("forge_recipe"))
         val LOOT_POOL = makeDefaulted<LootPool>(id("loot_pool"))
         val SEA_CREATURE = makeDefaulted<SeaCreature>(id("sea_creature"))
         val TROPHY_FISH = makeDefaulted<TrophyFish>(id("trophy_fish"))
@@ -145,7 +147,6 @@ abstract class Registry<T>(val name: Identifier) {
 
         override fun register(id: Identifier, value: Registry<*>): Registry<*> {
             val r = super.register(id, value)
-            logger.info("Prepared registry '$id'")
             return r
         }
 

@@ -32,6 +32,7 @@ import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
 import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.events.PlayerTickEvent
+import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
@@ -88,6 +89,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
     var memory: PlayerMemory = PlayerMemory.nullMemory()
+    var activeForgeRecipes: MutableList<ActiveForgeRecipe> = mutableListOf()
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
@@ -523,7 +525,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
 
-        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${GSON.toJson(this.memory)}')")
+        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${GSON.toJson(this.memory)}', '${GSON.toJson(this.activeForgeRecipes)}')")
         var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
         var rightHand = "VALUES ('$ref'"
         for ((k, value) in baseStats.iter()) {
@@ -573,6 +575,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val purse = res.getFloat("PURSE")
             val bank = res.getFloat("BANK")
             val memory: PlayerMemory = GSON.fromJson(res.getString("MEMORY"), PlayerMemory::class.java)
+            val forgeRecipes: MutableList<ActiveForgeRecipe> = GSON.fromJson<List<ActiveForgeRecipe>>(res.getString("FORGE"), object: TypeToken<List<ActiveForgeRecipe>>() { }.type).toMutableList()
             val player = MacrocosmPlayer(id)
             player.rank = rank
             player.firstJoin = firstJoin
@@ -581,6 +584,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             player.purse = purse
             player.bank = bank
             player.memory = memory
+            player.activeForgeRecipes = forgeRecipes
 
             val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
             if (!stats.next())

@@ -1,0 +1,16 @@
+{
+    "turret_tesla_coil": {
+        "name": "Tesla Coil",
+        "material": "diamond_block",
+        "rarity": "epic",
+        "type": "turret",
+        "description": "Bzzzt!",
+        "model": {
+            "id": 20,
+            "from": "item/diamond_block",
+            "to": "macrocosm:item/tesla_coil",
+            "raw": true
+        },
+        "abilities": ["tesla_coil_active", "tesla_coil_passive"]
+    }
+}

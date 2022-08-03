@@ -1,0 +1,12 @@
+{
+    "test_item": {
+        "type": "molten",
+        "level": 15,
+        "result": "flamethrower",
+        "ingredients": [
+            "enchanted_magma",
+            "enchanted_diamond"
+        ],
+        "length": 15
+    }
+}

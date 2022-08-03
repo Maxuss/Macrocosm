@@ -25,7 +25,7 @@ object RecipeParser {
                 FileSystems.getFileSystem(input)
             }
             for (file in PackProvider.enumerateEntries(fs.getPath("data", "recipes"))) {
-                info("Converting recipes from ${file.fileName}...")
+                info("Parsing recipes from ${file.fileName}...")
                 val data = GSON.fromJson(file.readText(), JsonObject::class.java)
                 for ((key, obj) in data.entrySet()) {
                     pool.execute {

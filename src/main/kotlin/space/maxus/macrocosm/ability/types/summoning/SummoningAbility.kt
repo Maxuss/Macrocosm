@@ -51,19 +51,6 @@ open class SummoningAbility(
         return ensureSlotRequirements(player, silent)
     }
 
-    private fun ensureSlotRequirements(player: MacrocosmPlayer, silent: Boolean): Boolean {
-        val stats = player.stats()!!
-        val power = stats.summoningPower
-        val usedSlots = player.summonSlotsUsed
-        if (usedSlots >= power) {
-            if (!silent) {
-                player.paper!!.sendActionBar(text("<red><bold>NOT ENOUGH SUMMONING POWER"))
-            }
-            return false
-        }
-        return true
-    }
-
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
             val item = e.player.paper?.inventory?.getItem(EquipmentSlot.HAND)

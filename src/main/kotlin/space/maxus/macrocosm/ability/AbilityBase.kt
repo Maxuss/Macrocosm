@@ -7,6 +7,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.text.text
 
 /**
  * An abstract wrapper class for the [MacrocosmAbility] interface, allowing for easier abstraction
@@ -53,4 +54,25 @@ abstract class AbilityBase(
         }
         return true
     }
+
+    /**
+     * Ensures that player has enough summoning slots
+     *
+     * @param player player to be tested against
+     * @param silent whether to do silent check
+     * @return if all checks passed
+     */
+    protected fun ensureSlotRequirements(player: MacrocosmPlayer, silent: Boolean): Boolean {
+        val stats = player.stats()!!
+        val power = stats.summoningPower
+        val usedSlots = player.summonSlotsUsed
+        if (usedSlots >= power) {
+            if (!silent) {
+                player.paper!!.sendActionBar(text("<red><bold>NOT ENOUGH SUMMONING POWER"))
+            }
+            return false
+        }
+        return true
+    }
+
 }

@@ -1,0 +1,71 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "macrocosm:recipe",
+    "type": "object",
+    "title": "Root tag",
+    "propertyNames": {
+        "$ref": "shared/identifier.json"
+    },
+    "additionalProperties": {
+        "required": ["type","level","result","ingredients","length"],
+        "properties": {
+            "type": {
+                "type": "string",
+                "enum": ["deepslate", "molten"],
+                "title": "Forge Type",
+                "description": "Type of forge for this recipe"
+            },
+            "level": {
+                "type": "integer",
+                "title": "Recipe Level",
+                "description": "This marks required skill level to access recipe in forge. (molten -> combat, deepslate -> mining)"
+            },
+            "amount": {
+                "type": "integer",
+                "title": "Result Amount",
+                "description": "Amount of items outputted"
+            },
+            "result": {
+                "$ref": "shared/identifier.json",
+                "title": "Result Item",
+                "description": "ID of the result item"
+            },
+            "ingredients": {
+                "type": "array",
+                "title": "Ingredients",
+                "description": "Ingredients for this recipe",
+                "items": {
+                    "oneOf": [
+                        {
+                            "$ref": "shared/identifier.json",
+                            "title": "Ingredient",
+                            "description": "Single ingredient with stack count of 1"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "item":{
+                                    "$ref": "shared/identifier.json",
+                                    "title": "Ingredient",
+                                    "description": "Identifier of ingredient"
+                                },
+                                "amount": {
+                                    "type": "integer",
+                                    "title": "Amount",
+                                    "description": "Amount of ingredients"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    ]
+                }
+            },
+            "length": {
+                "type": "integer",
+                "title": "Length",
+                "description": "Duration of the crafting process in seconds"
+            }
+        },
+        "additionalProperties": false
+    }
+}

@@ -7,6 +7,8 @@ import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
 import space.maxus.macrocosm.ability.types.other.SlayerQuestAbility
+import space.maxus.macrocosm.ability.types.turret.TeslaCoilActive
+import space.maxus.macrocosm.ability.types.turret.TeslaCoilPassive
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
@@ -189,6 +191,9 @@ enum class Ability(val ability: MacrocosmAbility) {
     MOLEPICK_ABILITY(MolepickAbility),
     EARTHQUAKE_MALLET_ACTIVE(EarthquakeMalletAbility),
     EARTHQUAKE_MALLET_PASSIVE(BeatingBagAbility),
+
+    TESLA_COIL_ACTIVE(TeslaCoilActive),
+    TESLA_COIL_PASSIVE(TeslaCoilPassive),
 
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),

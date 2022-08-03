@@ -42,7 +42,8 @@ object Database {
                 PLAYTIME INT,
                 PURSE REAL,
                 BANK REAL,
-                MEMORY VARCHAR)
+                MEMORY VARCHAR,
+                FORGE VARCHAR)
                 """.trimIndent()
             )
             st.executeUpdate(
