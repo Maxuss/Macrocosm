@@ -2,7 +2,9 @@ package space.maxus.macrocosm.util.math
 
 import net.minecraft.util.Mth
 import org.bukkit.Location
+import org.bukkit.util.Vector
 import kotlin.math.abs
+import kotlin.math.atan
 
 object MathHelper {
     fun parabola(loc1: Location, loc2: Location, points: Int): List<Location> {
@@ -28,5 +30,24 @@ object MathHelper {
         val yLerp = lerp(y, loc2.y, alpha)
         val zLerp = lerp(z, loc2.z, alpha)
         return Location(world, xLerp, yLerp, zLerp)
+    }
+
+    fun Vector.extractYawPitch(): Pair<Float, Float> {
+        val pitch: Float
+        if (x == 0.0 && z == 0.0) {
+            pitch = if (y > 0) -90f else 90f
+            return Pair(0f, pitch)
+        }
+
+        val theta = Mth.atan2(-x, z)
+        val yaw = Math.toDegrees((theta + Mth.TWO_PI) % Mth.TWO_PI).toFloat()
+
+        val x2 = x * x
+        val z2 = z * z
+        val xz = Mth.sqrt((x2 + z2).toFloat())
+        pitch = Math.toDegrees(atan(-y / xz)).toFloat()
+
+        return Pair(yaw, pitch)
+
     }
 }

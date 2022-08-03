@@ -7,6 +7,8 @@ import space.maxus.macrocosm.ability.types.item.*
 import space.maxus.macrocosm.ability.types.other.EntityDamageMulAbility
 import space.maxus.macrocosm.ability.types.other.ShortbowAbility
 import space.maxus.macrocosm.ability.types.other.SlayerQuestAbility
+import space.maxus.macrocosm.ability.types.turret.FlamethrowerTurretActive
+import space.maxus.macrocosm.ability.types.turret.FlamethrowerTurretPassive
 import space.maxus.macrocosm.ability.types.turret.TeslaCoilActive
 import space.maxus.macrocosm.ability.types.turret.TeslaCoilPassive
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
@@ -194,6 +196,9 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     TESLA_COIL_ACTIVE(TeslaCoilActive),
     TESLA_COIL_PASSIVE(TeslaCoilPassive),
+
+    FLAMETHROWER_TURRET_ACTIVE(FlamethrowerTurretActive),
+    FLAMETHROWER_TURRET_PASSIVE(FlamethrowerTurretPassive),
 
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),

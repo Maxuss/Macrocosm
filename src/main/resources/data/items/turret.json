@@ -12,5 +12,19 @@
             "raw": true
         },
         "abilities": ["tesla_coil_active", "tesla_coil_passive"]
+    },
+    "turret_flamethrower": {
+        "name": "Flamethrower Turret",
+        "material": "diamond_block",
+        "rarity": "legendary",
+        "type": "turret",
+        "description": "Pshhhh",
+        "model": {
+            "id": 21,
+            "from": "item/diamond_block",
+            "to": "macrocosm:item/flamethrower_turret",
+            "raw": true
+        },
+        "abilities": ["flamethrower_turret_active", "flamethrower_turret_passive"]
     }
 }

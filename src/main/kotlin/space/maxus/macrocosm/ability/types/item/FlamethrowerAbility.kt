@@ -8,6 +8,7 @@ import net.axay.kspigot.runnables.async
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
+import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
@@ -66,6 +67,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
                         playAt(p.location)
                     }
                     val ticker = Ticker(0..3)
+                    val dmg = DamageCalculator.calculateMagicDamage(1000, .3f, e.player.stats()!!)
                     enabled[e.player.ref] = task(period = 5, delay = 0) {
                         val tick = ticker.tick()
 
@@ -91,7 +93,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
                         if(tick == 3)
                             p.inventory.removeItemAnySlot(gasoline)
 
-                        renderFlamethrower(e.player, tick)
+                        renderFlamethrower(e.player, p.eyeLocation, p.eyeLocation.direction, dmg, tick)
                         sound(Sound.ENTITY_BLAZE_SHOOT) {
                             pitch = 0f
                             volume = 3f
@@ -107,12 +109,11 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
         }
     }
 
-    private fun renderFlamethrower(player: MacrocosmPlayer, tick: Int) {
+    fun renderFlamethrower(player: MacrocosmPlayer, location: Location, direction: org.bukkit.util.Vector, damage: Float, tick: Int) {
         async {
             val p = player.paper!!
-            val loc = p.eyeLocation.add(vec(y = -.3))
-            val dmg = DamageCalculator.calculateMagicDamage(1000, .3f, player.stats()!!)
-            val dir = loc.direction
+            val loc = location.add(vec(y = -.3))
+            val dir = direction
 
             val adv = dir.clone().multiply(.3f)
 
@@ -145,8 +146,8 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
                     }) {
                         hit.add(entity.uniqueId)
 
-                        entity.macrocosm?.damage(dmg, p)
-                        DamageHandlers.summonDamageIndicator(loc, dmg, DamageType.FIRE)
+                        entity.macrocosm?.damage(damage, p)
+                        DamageHandlers.summonDamageIndicator(loc, damage, DamageType.FIRE)
                     }
                 }
 
