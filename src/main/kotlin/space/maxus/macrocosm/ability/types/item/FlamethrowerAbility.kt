@@ -113,9 +113,8 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
         async {
             val p = player.paper!!
             val loc = location.add(vec(y = -.3))
-            val dir = direction
 
-            val adv = dir.clone().multiply(.3f)
+            val adv = direction.clone().multiply(.3f)
 
             val angDec = .3
 

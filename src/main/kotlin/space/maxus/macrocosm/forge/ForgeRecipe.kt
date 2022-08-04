@@ -29,6 +29,7 @@ class ForgeRecipe(val input: HashMap<Identifier, Int>, val result: Pair<Identifi
 
         fun initRecipes() {
             Threading.runAsync(name = "ForgeRecipeParser") {
+                info("Starting forge recipe parser")
                 val pool = Threading.newFixedPool(5)
                 val input = this::class.java.classLoader.getResource("data")!!.toURI()
                 val fs = try {

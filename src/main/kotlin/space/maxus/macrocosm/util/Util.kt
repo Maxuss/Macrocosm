@@ -33,6 +33,7 @@ import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
 import java.io.File
 import java.nio.file.Path
+import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.createDirectories
@@ -58,6 +59,36 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
+
+inline fun <K, V, O> HashMap<K, V>.mapPaired(fn: (Pair<K, V>) -> O): MutableList<O> {
+    val aggregator = mutableListOf<O>()
+    for(entry in this.entries) {
+        aggregator.add(fn(entry.toPair()))
+    }
+    return aggregator
+}
+
+fun Duration.toFancyString(): String {
+    val days = this.toDaysPart()
+    val hours = this.toHoursPart()
+    val mins = this.toMinutesPart()
+    val secs = this.toSecondsPart()
+    val endStr = StringBuilder()
+
+    if(days > 0) {
+        endStr.append("${days}d ")
+    }
+    if(hours > 0) {
+        endStr.append("${hours}h ")
+    }
+    if(mins > 0) {
+        endStr.append("${mins}m ")
+    }
+    if(secs > 0) {
+        endStr.append("${secs}s ")
+    }
+    return endStr.toString()
+}
 
 fun superCritMod(p: MacrocosmPlayer): Float = 1 + (p.stats()!!.critChance / 100f)
 

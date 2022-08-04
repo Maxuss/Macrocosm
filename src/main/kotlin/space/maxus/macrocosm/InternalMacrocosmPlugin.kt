@@ -16,6 +16,7 @@ import space.maxus.macrocosm.events.ServerShutdownEvent
 import space.maxus.macrocosm.fishing.FishingHandler
 import space.maxus.macrocosm.fishing.SeaCreatures
 import space.maxus.macrocosm.fishing.TrophyFishes
+import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.generators.CMDGenerator
 import space.maxus.macrocosm.generators.MetaGenerator
 import space.maxus.macrocosm.generators.TexturedModelGenerator
@@ -122,6 +123,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Cosmetics.init()
         SlayerType.init()
         ItemParser.init()
+        ForgeRecipe.initRecipes()
 
         SeaCreatures.init()
         TrophyFishes.init()
@@ -166,6 +168,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         setSlayerLevelCommand()
         testSlayerCommand()
         testMaddoxMenuCommand()
+        openForgeMenuCommand()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

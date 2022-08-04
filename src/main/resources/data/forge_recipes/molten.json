@@ -4,8 +4,12 @@
         "level": 15,
         "result": "flamethrower",
         "ingredients": [
-            "enchanted_magma",
-            "enchanted_diamond"
+            "enchanted_gold_ingot",
+            "enchanted_diamond",
+            {
+                "item": "enchanted_iron_block",
+                "amount": 16
+            }
         ],
         "length": 15
     }
