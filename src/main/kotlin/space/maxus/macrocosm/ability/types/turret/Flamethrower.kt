@@ -55,6 +55,7 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
                 turrets.revoke(e.player.ref) { turretId ->
                     p.world.getEntity(turretId)?.remove()
                 }
+                e.player.summonSlotsUsed -= 3
                 it.cancel()
             }.otherwise {
                 if (!ensureRequirements(e.player, EquipmentSlot.HAND))
@@ -87,6 +88,7 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
                             p.sendActionBar(text("<red><bold>NOT ENOUGH GASOLINE"))
                             enabled.remove(e.player.ref)
                             p.world.getEntity(turrets.remove(e.player.ref)!!)?.remove()
+                            e.player.summonSlotsUsed -= 3
                             return@task
                         }
 
@@ -121,6 +123,8 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
         stand.disabledSlots.addAll(EquipmentSlot.values())
         stand.persistentDataContainer.set(pluginKey("ignore_damage"), PersistentDataType.BYTE, 0)
         stand.equipment.setItem(EquipmentSlot.HEAD, Registry.ITEM.find(id("turret_flamethrower")).build(player))
+        stand.customName(text("<gold>${player.paper?.name}'s <red>Flamethrower Turret"))
+        stand.isCustomNameVisible = true
         return stand
     }
 }

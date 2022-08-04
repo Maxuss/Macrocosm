@@ -26,5 +26,18 @@
             "raw": true
         },
         "abilities": ["flamethrower_turret_active", "flamethrower_turret_passive"]
+    },
+    "turret_heavy": {
+        "name": "Heavy Turret",
+        "material": "diamond_block",
+        "rarity": "epic",
+        "type": "turret",
+        "model": {
+            "id": 22,
+            "from": "item/diamond_block",
+            "to": "macrocosm:item/heavy_turret",
+            "raw": true
+        },
+        "abilities": ["heavy_turret_active", "heavy_turret_passive"]
     }
 }

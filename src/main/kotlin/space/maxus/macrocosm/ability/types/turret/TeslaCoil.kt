@@ -30,6 +30,7 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.data.MutableContainer
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.metrics.report
@@ -56,7 +57,7 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
             if(!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
-            e.player.summonSlotsUsed -= 2
+            e.player.summonSlotsUsed += 2
             val p = e.player.paper ?: report("Player was null in RightClickEvent") { return@listen }
             val stand = summonCoil(p.location, e.player)
             coils[p.uniqueId] = stand.uniqueId
@@ -64,7 +65,7 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
             val damage = DamageCalculator.calculateMagicDamage(1500, .12f, e.player.stats()!!)
 
             runNTimes(15, 20L, {
-                e.player.summonSlotsUsed += 2
+                e.player.summonSlotsUsed -= 2
                 coils.remove(p.uniqueId)
                 particle(Particle.CLOUD) {
                     amount = 5
@@ -137,6 +138,8 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
         stand.disabledSlots.addAll(EquipmentSlot.values())
         stand.persistentDataContainer.set(pluginKey("ignore_damage"), PersistentDataType.BYTE, 0)
         stand.equipment.setItem(EquipmentSlot.HEAD, Registry.ITEM.find(id("turret_tesla_coil")).build(player))
+        stand.customName(text("<gold>${player.paper?.name}'s <red>Tesla Coil"))
+        stand.isCustomNameVisible = true
         return stand
     }
 }

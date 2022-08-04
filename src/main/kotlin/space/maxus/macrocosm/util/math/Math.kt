@@ -48,6 +48,5 @@ object MathHelper {
         pitch = Math.toDegrees(atan(-y / xz)).toFloat()
 
         return Pair(yaw, pitch)
-
     }
 }

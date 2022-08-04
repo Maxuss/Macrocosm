@@ -38,6 +38,7 @@ import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import java.util.*
 import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -168,6 +169,17 @@ object DamageHandlers : Listener {
     fun onProjectileHit(e: ProjectileHitEvent) {
         if (e.entity.persistentDataContainer.has(pluginKey("despawn_me")))
             e.entity.remove()
+        if(e.entity.persistentDataContainer.has(pluginKey("damage_deal"))) {
+            val id = UUID.fromString(e.entity.persistentDataContainer.get(pluginKey("owner"), PersistentDataType.STRING))
+            val damager = e.entity.world.getEntity(id) ?: return
+            val dmg = e.entity.persistentDataContainer.get(pluginKey("damage_deal"), PersistentDataType.FLOAT)!!
+            val damaged = e.hitEntity
+            if (damaged == null || damaged !is LivingEntity)
+                return
+            damaged.macrocosm?.damage(dmg, damager)
+            summonDamageIndicator(damaged.location, dmg)
+            return
+        }
         val shooter = e.entity.shooter
         if (shooter == null || shooter !is LivingEntity || e.hitEntity is ArmorStand) {
             e.isCancelled = true
@@ -183,7 +195,6 @@ object DamageHandlers : Listener {
             damaged.kill()
             return
         }
-
 
         internalHandleDamage(e, shooter, damaged, false)
     }
