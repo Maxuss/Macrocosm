@@ -42,7 +42,8 @@ abstract class AbilityBase(
         silent: Boolean = false
     ): Boolean {
         val item = player.paper!!.inventory.getItem(slot)
-        if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
+        val mc = item.macrocosm
+        if (mc == null || !mc.abilities.contains(this))
             return false
         val success = cost?.ensureRequirements(player, id) ?: true
         if (!success) {

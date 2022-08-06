@@ -62,7 +62,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
         return Statistics.zero()
     }
 
-    override fun buildLore(lore: MutableList<Component>) {
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         lore.add(0, "".toComponent())
     }
 

@@ -24,6 +24,7 @@ import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.slayer.Slayer
+import space.maxus.macrocosm.spell.Spell
 import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.zone.Zone
@@ -144,6 +145,7 @@ abstract class Registry<T>(val name: Identifier) {
                 TexturedModelGenerator.enqueue(model)
         }
         val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))
+        val SPELL = makeDefaulted<Spell>(id("spell"))
 
         override fun register(id: Identifier, value: Registry<*>): Registry<*> {
             val r = super.register(id, value)

@@ -163,6 +163,8 @@ enum class ItemValue(
             })
     ),
 
+    SPELL_SCROLL(SpellScroll()),
+
     // indev
     ENCHANTED_ADAMANTITE(
         RecipeItem(

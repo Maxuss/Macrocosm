@@ -22,6 +22,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.util.Vector
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.listeners.FallingBlockListener
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -59,6 +60,15 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
+
+inline fun Vector.advanceInstantly(loc: Location, mod: Float, times: Int, fn: (Location) -> Unit) {
+    val pos = loc.clone()
+    val mul = this.multiply(mod)
+    for(i in 0..times) {
+        pos.add(mul)
+        fn(pos)
+    }
+}
 
 inline fun <K, V, O> HashMap<K, V>.mapPaired(fn: (Pair<K, V>) -> O): MutableList<O> {
     val aggregator = mutableListOf<O>()

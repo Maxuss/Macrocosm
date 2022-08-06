@@ -13,6 +13,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -61,8 +62,8 @@ open class AbilityItem(
     override var tempColor: Int? = null
     override var tempSkin: String? = null
 
-    override fun buildLore(lore: MutableList<Component>) {
-        super.buildLore(lore)
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
+        super.buildLore(player, lore)
         if (description != null) {
             lore.addAll(description.reduceToList().map { text("<dark_gray>$it").noitalic() })
         }

@@ -67,7 +67,7 @@ class RuneItem(
     override var skin: SkullSkin? = null
     override val maxStars: Int = 0
 
-    override fun buildLore(lore: MutableList<Component>) {
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         lore.add(text("<dark_gray>${runeType.spec.name.capitalized()} Rune").noitalic())
         lore.add("".toComponent())
 

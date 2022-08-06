@@ -3,6 +3,8 @@ package space.maxus.macrocosm.registry
 import net.minecraft.nbt.*
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.NamespacedKey
+import org.bukkit.persistence.PersistentDataAdapterContext
+import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import java.io.DataOutput
 
@@ -51,7 +53,7 @@ data class Identifier(val namespace: String, val path: String) : Tag {
         return result
     }
 
-    companion object {
+    companion object: PersistentDataType<String, Identifier> {
         val NULL = macro("null")
 
         fun macro(path: String) = Identifier(Macrocosm.id, path)
@@ -64,5 +66,20 @@ data class Identifier(val namespace: String, val path: String) : Tag {
 
         fun fromMinecraft(rl: ResourceLocation) = Identifier(rl.namespace, rl.path)
         fun fromBukkit(nk: NamespacedKey) = Identifier(nk.namespace, nk.key)
+        override fun getPrimitiveType(): Class<String> {
+            return String::class.java
+        }
+
+        override fun getComplexType(): Class<Identifier> {
+            return Identifier::class.java
+        }
+
+        override fun fromPrimitive(primitive: String, context: PersistentDataAdapterContext): Identifier {
+            return parse(primitive)
+        }
+
+        override fun toPrimitive(complex: Identifier, context: PersistentDataAdapterContext): String {
+            return complex.toString()
+        }
     }
 }

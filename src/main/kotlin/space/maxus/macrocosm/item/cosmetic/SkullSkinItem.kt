@@ -57,7 +57,7 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
     override var skin: SkullSkin? = null
     override val maxStars: Int = 0
 
-    override fun buildLore(lore: MutableList<Component>) {
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         lore.add(0, "".toComponent())
         lore.add(0, text("<dark_gray>${if (sskin.isHelmet) "Helmet" else "Pet"} Skin").noitalic())
 

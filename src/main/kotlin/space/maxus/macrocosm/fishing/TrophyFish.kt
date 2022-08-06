@@ -71,7 +71,7 @@ class TrophyFish(
     override var dye: Dye? = null
     override var skin: SkullSkin? = null
 
-    override fun buildLore(lore: MutableList<Component>) {
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         val reduced = conditions.description.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
         lore.addAll(reduced)

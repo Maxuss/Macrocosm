@@ -11,6 +11,7 @@ import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -81,8 +82,8 @@ class LimitedEditionItem(
         cmp.putString("GivenTo", MiniMessage.miniMessage().serialize(givenTo))
     }
 
-    override fun buildLore(lore: MutableList<Component>) {
-        super.buildLore(lore)
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
+        super.buildLore(player, lore)
         lore.add(text("<gray>To: ").append(givenTo).noitalic())
         lore.add(text("<gray>From: ").append(givenBy).noitalic())
         lore.add("".toComponent())

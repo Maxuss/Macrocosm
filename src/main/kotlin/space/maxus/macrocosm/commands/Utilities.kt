@@ -24,10 +24,7 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.events.YearChangeEvent
-import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.item.PetItem
-import space.maxus.macrocosm.item.Rarity
-import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.macrocosm
@@ -454,6 +451,26 @@ fun givePetItemCommand() = command("givepet") {
                     player.inventory.addItem(petItem.build(player.macrocosm!!)!!)
                 }
             }
+        }
+    }
+}
+
+fun addSpellCommand() = command("addspell") {
+    requires { it.hasPermission(4) }
+
+    argument("id", ResourceLocationArgument.id()) {
+        suggestList { ctx ->
+            Registry.SPELL.iter().keys.filter { k ->
+                k.path.contains(ctx.getArgumentOrNull<ResourceLocation>("id")?.path ?: "")
+            }
+        }
+        runs {
+            val id = ResourceLocationArgument.getId(nmsContext, "id").macrocosm
+            val spell = Registry.SPELL.find(id)
+            val scroll = player.inventory.itemInMainHand
+            val sc = scroll.macrocosm!! as SpellScroll
+            sc.spell = spell
+            player.inventory.setItemInMainHand(sc.build(player.macrocosm!!))
         }
     }
 }

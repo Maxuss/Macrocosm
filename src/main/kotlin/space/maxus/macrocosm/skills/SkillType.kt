@@ -84,12 +84,12 @@ enum class SkillType(
                 ).repeating()
         ),
         { lvl -> "<white>Grants a <dark_gray>${(lvl - 1)}%➜<green>${lvl}%<white> boost to your ${Statistic.INTELLIGENCE.display}." }),
-    CARPENTRY("Crafter",
+    MYSTICISM("Sorcerer",
         skill(
-            "Carpentry", (
+            "Mysticism", (
                 boostStat(Statistic.MAGIC_FIND, .02, hide = true, multiply = true)
                     and
-                    boostStat(Statistic.CRIT_DAMAGE, 1.5, false)
+                    boostStat(Statistic.HEALTH, 1.5, false)
                 ).repeating()
         ),
         { lvl -> "<white>Grants a <dark_gray>${(lvl - 1) * 2}%➜<green>${lvl * 2}%<white> boost to your ${Statistic.MAGIC_FIND.display}." }),

@@ -23,6 +23,7 @@ import org.bukkit.util.Vector
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
@@ -237,7 +238,7 @@ class WitherScrollAbility(
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         val tmp = mutableListOf<Component>()
         tmp.add(text("<gold>Scroll Ability: $name <yellow><bold>RIGHT CLICK<!bold>").noitalic())
-        for (desc in formatDamageNumbers(description, player).reduceToList()) {
+        for (desc in MacrocosmAbility.formatDamageNumbers(description, player).reduceToList()) {
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {

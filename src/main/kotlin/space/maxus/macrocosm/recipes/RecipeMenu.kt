@@ -15,7 +15,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.macrocosm
-import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.anyNull
 import space.maxus.macrocosm.util.containsAny
@@ -182,21 +181,15 @@ object RecipeMenu : Listener {
         }
         val indices = recipe.second
 
-        var expAmount = .0
-
         // clearing grid
         // all checks complete, and now we can actually reduce the amount of items
         for ((index, pair) in indices) {
             val (item, amount) = pair
-            expAmount += (item.amount / 6.4) * (item.rarity.ordinal + 1)
             item.amount -= amount
             if (item.amount <= 0)
                 e.view.topInventory.setItem(index, null)
             else e.view.topInventory.setItem(index, item)
         }
-
-        val player = e.whoClicked as Player
-        player.macrocosm?.addSkillExperience(SkillType.CARPENTRY, expAmount)
     }
 
     private fun Inventory.getItems(at: IntRange) = at.map { getItem(it) }

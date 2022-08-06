@@ -21,6 +21,7 @@ import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.pets.StoredPet
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -92,7 +93,7 @@ class PetItem(
         return base
     }
 
-    override fun buildLore(lore: MutableList<Component>) {
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         val pet = stored!!
         val base = Registry.PET.find(pet.id)
 

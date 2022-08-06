@@ -38,7 +38,7 @@ open class TieredSetBonus(name: String, description: String) : AbilityBase(Abili
         val tmp = mutableListOf<Component>()
         val name = "<gold>Tiered Bonus: $name"
         tmp.add(text(name).noitalic())
-        for (desc in formatDamageNumbers(description, player).reduceToList()) {
+        for (desc in MacrocosmAbility.formatDamageNumbers(description, player).reduceToList()) {
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {

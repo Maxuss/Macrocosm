@@ -128,7 +128,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         return build() ?: ItemStack(Material.AIR)
     }
 
-    fun buildLore(lore: MutableList<Component>) {
+    fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
 
     }
 
@@ -491,7 +491,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             reforge?.buildLore(lore)
 
             // extra lore
-            buildLore(lore)
+            buildLore(player, lore)
 
             // rarity
             lore.add(rarity.format(rarityUpgraded, type, isDungeonised))

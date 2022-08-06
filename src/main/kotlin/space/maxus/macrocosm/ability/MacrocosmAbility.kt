@@ -23,6 +23,24 @@ import kotlin.math.roundToInt
 interface MacrocosmAbility {
     companion object {
         private val DAMAGE_REGEX = "\\[[\\d.]+:[\\d.]+]".toRegex()
+
+        fun formatDamageNumbers(str: String, player: MacrocosmPlayer?): String {
+            val stats = player?.stats()
+            return DAMAGE_REGEX.replace(str) { res ->
+                val data = res.value.replace("[", "").replace("]", "").split(":")
+                val dmg = java.lang.Double.valueOf(data[0])
+                val scaling = java.lang.Double.valueOf(data[1])
+                if (stats == null)
+                    return@replace Formatting.withCommas(dmg.toBigDecimal(), true)
+                return@replace Formatting.withCommas(
+                    DamageCalculator.calculateMagicDamage(
+                        dmg.roundToInt(),
+                        scaling.toFloat(),
+                        stats
+                    ).toBigDecimal(), true
+                )
+            }
+        }
     }
 
     /**
@@ -73,21 +91,5 @@ interface MacrocosmAbility {
         lore.addAll(tmp)
     }
 
-    fun formatDamageNumbers(str: String, player: MacrocosmPlayer?): String {
-        val stats = player?.stats()
-        return DAMAGE_REGEX.replace(str) { res ->
-            val data = res.value.replace("[", "").replace("]", "").split(":")
-            val dmg = java.lang.Double.valueOf(data[0])
-            val scaling = java.lang.Double.valueOf(data[1])
-            if (stats == null)
-                return@replace Formatting.withCommas(dmg.toBigDecimal(), true)
-            return@replace Formatting.withCommas(
-                DamageCalculator.calculateMagicDamage(
-                    dmg.roundToInt(),
-                    scaling.toFloat(),
-                    stats
-                ).toBigDecimal(), true
-            )
-        }
-    }
+
 }

@@ -15,6 +15,7 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
+import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
@@ -49,7 +50,7 @@ class EnchantedItem(
 
     private var actualBase: String = actualId ?: base.name
 
-    override fun buildLore(lore: MutableList<Component>) {
+    override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         lore.add(text("<yellow>Right click to view recipes").noitalic())
     }
 

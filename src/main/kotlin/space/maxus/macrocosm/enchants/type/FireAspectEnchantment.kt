@@ -17,10 +17,12 @@ import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
+import space.maxus.macrocosm.global.GlobalVariables
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.NULL
 
 object FireAspectEnchantment :
     EnchantmentBase("Fire Aspect", "", 1..5, ItemType.melee(), conflicts = listOf("FROST_ASPECT")) {
@@ -53,6 +55,7 @@ object FireAspectEnchantment :
                 stats
             ).first, damagedStats
         )
+        GlobalVariables.enemiesOnFire[e.damaged.uniqueId] = NULL
         task(period = 20L) {
             if (e.damaged.isDead) {
                 it.cancel()
@@ -65,6 +68,7 @@ object FireAspectEnchantment :
             if (ticksLeft <= 0) {
                 e.damaged.isVisualFire = false
                 e.damaged.persistentDataContainer.remove(pluginKey("fa_ticks"))
+                GlobalVariables.enemiesOnFire.remove(e.damaged.uniqueId)
                 it.cancel()
                 return@task
             }
@@ -106,6 +110,7 @@ object FrostAspectEnchantment :
                 stats
             ).first, damagedStats
         )
+        GlobalVariables.frozenEnemies[e.damaged.uniqueId] = NULL
         task(period = 20L) {
             if (e.damaged.isDead) {
                 it.cancel()
@@ -118,6 +123,7 @@ object FrostAspectEnchantment :
             if (ticksLeft <= 0) {
                 e.damaged.persistentDataContainer.remove(pluginKey("fa_ticks_frost"))
                 it.cancel()
+                GlobalVariables.frozenEnemies.remove(e.damaged.uniqueId)
                 return@task
             }
 

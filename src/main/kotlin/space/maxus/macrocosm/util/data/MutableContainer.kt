@@ -11,6 +11,18 @@ class MutableContainer<V> private constructor(var values: ConcurrentHashMap<UUID
     companion object {
         fun <V> empty() = MutableContainer<V>(ConcurrentHashMap())
         fun trulyEmpty() = MutableContainer<NULL>(ConcurrentHashMap())
+
+        fun MutableContainer<NULL>.setAllWith(with: List<UUID>) {
+            for(w in with) {
+                set(w, NULL)
+            }
+        }
+
+        fun MutableContainer<NULL>.removeAllWith(with: List<UUID>) {
+            for(w in with) {
+                remove(w)
+            }
+        }
     }
 
     @Synchronized

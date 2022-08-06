@@ -44,6 +44,7 @@ import space.maxus.macrocosm.skills.AlchemyReward
 import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
+import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.game.Calendar
@@ -124,6 +125,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         SlayerType.init()
         ItemParser.init()
         ForgeRecipe.initRecipes()
+        SpellValue.initSpells()
 
         SeaCreatures.init()
         TrophyFishes.init()
@@ -157,6 +159,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         setDateCommand()
         getSlayerRewardsCommand()
         openEquipmentCommand()
+        addSpellCommand()
 
         giveRecipeCommand()
         testStatsCommand()
