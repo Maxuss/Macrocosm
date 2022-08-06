@@ -51,6 +51,7 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -111,27 +112,28 @@ class InternalMacrocosmPlugin : KSpigot() {
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
 
-        ReforgeType.init()
-        StatRune.init()
         ItemValue.init()
-        Enchant.init()
-        RecipeValue.init()
         Armor.init()
-        Buffs.init()
-        EntityValue.init()
-        PetValue.init()
-        ZoneType.init()
-        Cosmetics.init()
-        SlayerType.init()
-        ItemParser.init()
-        ForgeRecipe.initRecipes()
-        SpellValue.initSpells()
 
-        SeaCreatures.init()
-        TrophyFishes.init()
-
-        PyroclasticToadPet.init()
-        WaspPet.init()
+        Threading.runEachConcurrently(Executors.newFixedThreadPool(8),
+            ReforgeType::init,
+            StatRune::init,
+            Enchant::init,
+            RecipeValue::init,
+            Buffs::init,
+            EntityValue::init,
+            PetValue::init,
+            ZoneType::init,
+            Cosmetics::init,
+            SlayerType::init,
+            ItemParser::init,
+            ForgeRecipe::initRecipes,
+            SpellValue::initSpells,
+            SeaCreatures::init,
+            TrophyFishes::init,
+            PyroclasticToadPet::init,
+            WaspPet::init
+        )
 
         playtimeCommand()
         rankCommand()

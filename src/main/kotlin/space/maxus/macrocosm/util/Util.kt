@@ -60,6 +60,10 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
+typealias Fn = () -> Unit
+typealias FnArg<A> = (A) -> Unit
+typealias FnRet<B> = () -> B
+typealias FnArgRet<A, B> = (A) -> B
 
 inline fun Vector.advanceInstantly(loc: Location, mod: Float, times: Int, fn: (Location) -> Unit) {
     val pos = loc.clone()

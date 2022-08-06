@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.async
 
+import space.maxus.macrocosm.util.Fn
 import space.maxus.macrocosm.util.threadScoped
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -69,4 +70,13 @@ object Threading {
      * @return New [ExecutorService] provided by fixed thread pool
      */
     fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(max)
+
+    fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
+        runAsyncRaw {
+            for (fn in executors) {
+                service.execute(fn)
+            }
+            service.shutdown()
+        }
+    }
 }
