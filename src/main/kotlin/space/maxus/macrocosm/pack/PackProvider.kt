@@ -8,6 +8,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.recreateFile
 import java.io.*
 import java.math.BigInteger
@@ -42,11 +43,13 @@ object PackProvider : Listener {
             // compiling
             compile()
 
+            Monitor.enter("Pack MD5 Calculation")
             // calculating sha1 hash
             val packFile = Path(System.getProperty("user.dir"), "macrocosm").resolve(PACK_NAME).toFile()
 
             val hash = digest(packFile)
             Macrocosm.logger.info("Resource pack MD5 hash: $hash")
+            Monitor.exit()
 
             RESOURCE_PACK_HASH = hash
 
@@ -89,6 +92,7 @@ object PackProvider : Listener {
     }
 
     private fun compile() {
+        Monitor.enter("Pack compilation")
         Macrocosm.logger.info("Starting zipping resource pack...")
 
         // getting resources as a file system, for iteration
@@ -139,5 +143,6 @@ object PackProvider : Listener {
         zip.close()
         zip.flush()
         Macrocosm.logger.info("Finished zipping resource pack, calculating hash...")
+        Monitor.exit()
     }
 }

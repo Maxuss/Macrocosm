@@ -1,7 +1,9 @@
 package space.maxus.macrocosm.async
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import space.maxus.macrocosm.util.Fn
-import space.maxus.macrocosm.util.threadScoped
+import space.maxus.macrocosm.util.Monitor
+import space.maxus.macrocosm.util.threadNoinline
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -32,10 +34,14 @@ object Threading {
         crossinline runnable: ThreadContext.() -> Unit
     ) {
         activeThreads.incrementAndGet()
-        thread(true, isDaemon = isDaemon, name = name) {
+        val thr = thread(false, isDaemon = isDaemon, name = name) {
+            Monitor.enter("runAsync $name")
             runnable(ThreadContext(name))
             activeThreads.decrementAndGet()
+            Monitor.exit(Thread.currentThread())
         }
+        Monitor.inject(thr)
+        thr.start()
     }
 
     /**
@@ -49,9 +55,12 @@ object Threading {
         isDaemon: Boolean = false,
         crossinline runnable: () -> Unit
     ) {
-        threadScoped(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
+        threadNoinline(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
+            Monitor.inject(this)
+            Monitor.enter("runAsyncRaw")
             runnable()
             activeThreads.decrementAndGet()
+            Monitor.exit(this)
             interrupt()
         }
     }
@@ -61,7 +70,7 @@ object Threading {
      *
      * @return New [ExecutorService] provided by cached thread pool
      */
-    fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool()
+    fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool(ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build())
 
     /**
      * Constructs a new fixed thread pool, with [max] amount of active threads at once
@@ -69,14 +78,16 @@ object Threading {
      * @param max Max amount of threads
      * @return New [ExecutorService] provided by fixed thread pool
      */
-    fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(max)
+    fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(max, ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build())
 
     fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
         runAsyncRaw {
+            Monitor.enter("runEachConcurrently")
             for (fn in executors) {
                 service.execute(fn)
             }
             service.shutdown()
+            Monitor.exit(Thread.currentThread())
         }
     }
 }

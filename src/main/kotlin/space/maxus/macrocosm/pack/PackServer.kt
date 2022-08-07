@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.util.Monitor
 import java.io.File
 import java.net.InetSocketAddress
 import java.nio.file.Files
@@ -22,10 +23,12 @@ object PackServer {
 
     private class Handler(val packZip: File) : HttpHandler {
         override fun handle(exchange: HttpExchange) {
+            Monitor.enter("Pack Exchange for ${exchange.remoteAddress}")
             exchange.sendResponseHeaders(200, packZip.totalSpace)
             val os = exchange.responseBody
             Files.copy(packZip.toPath(), os)
             os.close()
+            Monitor.exit()
         }
     }
 }

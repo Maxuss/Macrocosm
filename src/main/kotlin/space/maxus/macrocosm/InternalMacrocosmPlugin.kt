@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.main.KSpigot
+import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
@@ -45,6 +46,7 @@ import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
+import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.game.Calendar
@@ -60,6 +62,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
         lateinit var PACKET_MANAGER: ProtocolManager; private set
         lateinit var UNSAFE: Unsafe; private set
+        lateinit var MONITOR: Monitor; private set
     }
 
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
@@ -69,15 +72,13 @@ class InternalMacrocosmPlugin : KSpigot() {
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
-    @UnsafeFeature
-    val unsafe: Unsafe get() = UNSAFE
-
     override fun load() {
         isInDevEnvironment = System.getenv().containsKey("macrocosmDev")
         integratedServer =
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         UNSAFE = Unsafe(Random.nextInt())
+        MONITOR = Monitor()
         Threading.runAsyncRaw {
             Database.connect()
             playersLazy = Database.readAllPlayers().toMutableList()
@@ -88,6 +89,9 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     override fun startup() {
+        Monitor.inject(MinecraftServer.getServer().serverThread)
+        Monitor.enter("Event Registration")
+
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
@@ -112,11 +116,15 @@ class InternalMacrocosmPlugin : KSpigot() {
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
 
+        Monitor.exit()
+        Monitor.enter("Registry Initialization")
+
+        // required to be sync
+        ReforgeType.init()
         ItemValue.init()
         Armor.init()
 
         Threading.runEachConcurrently(Executors.newFixedThreadPool(8),
-            ReforgeType::init,
             StatRune::init,
             Enchant::init,
             RecipeValue::init,
@@ -134,6 +142,9 @@ class InternalMacrocosmPlugin : KSpigot() {
             PyroclasticToadPet::init,
             WaspPet::init
         )
+
+        Monitor.exit()
+        Monitor.enter("Command Registration")
 
         playtimeCommand()
         rankCommand()
@@ -175,22 +186,31 @@ class InternalMacrocosmPlugin : KSpigot() {
         testMaddoxMenuCommand()
         openForgeMenuCommand()
 
+        Monitor.exit()
+        Monitor.enter("Resource Generation")
+
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
         Registry.RESOURCE_GENERATORS.register(id("model_data"), CMDGenerator)
         Registry.RESOURCE_GENERATORS.register(id("model"), TexturedModelGenerator)
         Registry.RESOURCE_GENERATORS.register(id("mcmeta"), MetaGenerator)
 
+        Monitor.exit()
+
         if (dumpTestData) {
             Threading.runAsyncRaw(isDaemon = true) {
+                Monitor.enter("Data generation")
                 DataGenerators.registries()
+                Monitor.exit()
             }
         }
 
         val cfgFile = dataFolder.resolve("config.yml")
         if (!cfgFile.exists()) {
+            Monitor.enter("Config")
             saveDefaultConfig()
             reloadConfig()
+            Monitor.exit()
         }
 
         config.load(cfgFile)
@@ -222,3 +242,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
 val protocolManager by lazy { InternalMacrocosmPlugin.PACKET_MANAGER }
 val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
+val monitor by lazy { InternalMacrocosmPlugin.MONITOR }
+val logger by lazy { Macrocosm.logger }
+@UnsafeFeature
+val unsafe by lazy { InternalMacrocosmPlugin.UNSAFE }

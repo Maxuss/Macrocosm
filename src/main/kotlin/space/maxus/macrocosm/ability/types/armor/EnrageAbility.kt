@@ -11,7 +11,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
-import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.ability.FullSetBonus
@@ -20,6 +19,7 @@ import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
 import space.maxus.macrocosm.events.PlayerSneakEvent
 import space.maxus.macrocosm.players.isAirOrNull
 import space.maxus.macrocosm.stats.Statistic
+import space.maxus.macrocosm.unsafe
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.MutableContainer
 
@@ -77,10 +77,10 @@ object EnrageAbility : FullSetBonus(
             var nms = (head as CraftItemStack).handle
             nms.tag = headTag
 
-            p.equipment.setBoots(Macrocosm.unsafe.reloadItem(boots, e.player), true)
-            p.equipment.setLeggings(Macrocosm.unsafe.reloadItem(legs, e.player), true)
-            p.equipment.setChestplate(Macrocosm.unsafe.reloadItem(chest, e.player), true)
-            p.equipment.setHelmet(Macrocosm.unsafe.reloadItem(head, e.player), true)
+            p.equipment.setBoots(unsafe.reloadItem(boots, e.player), true)
+            p.equipment.setLeggings(unsafe.reloadItem(legs, e.player), true)
+            p.equipment.setChestplate(unsafe.reloadItem(chest, e.player), true)
+            p.equipment.setHelmet(unsafe.reloadItem(head, e.player), true)
 
             sound(Sound.ENTITY_WOLF_GROWL) {
                 pitch = 0f
@@ -110,7 +110,7 @@ object EnrageAbility : FullSetBonus(
                             continue
                         nms.tag = headTag
                     }
-                    p.equipment.setItem(slot, Macrocosm.unsafe.reloadItem(item, e.player) ?: continue)
+                    p.equipment.setItem(slot, unsafe.reloadItem(item, e.player) ?: continue)
                 }
 
                 e.player.tempStats.vitality -= regen

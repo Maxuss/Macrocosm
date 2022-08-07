@@ -244,7 +244,7 @@ fun Path.recreateDir() {
     this.createDirectories()
 }
 
-fun threadScoped(
+fun threadNoinline(
     start: Boolean = true,
     isDaemon: Boolean = false,
     contextClassLoader: ClassLoader? = null,
