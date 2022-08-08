@@ -3,6 +3,7 @@ package space.maxus.macrocosm.api
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -45,6 +46,13 @@ private val onlineInventoryCompoundCache = ExpiringContainer.empty<String>(Durat
 suspend fun module() {
     embeddedServer(Netty, port = 6060) {
         routing {
+            // swagger docs
+            static {
+                resource("doc/swagger.yml", "doc/swagger.yml")
+                resource("doc", "doc/index.html")
+            }
+
+            // pack
             get("/pack") {
                 call.respondFile(PackProvider.packZip)
             }
@@ -71,7 +79,7 @@ suspend fun module() {
                             return@get call.respondJson(object {
                                 val success = false
                                 val error = "This registry can not be queried!"
-                            })
+                            }, HttpStatusCode.BadRequest)
                         call.respondJson(object {
                             val success = true
                             val registry = reg.iter().toMap()
@@ -90,7 +98,7 @@ suspend fun module() {
                             return@get call.respondJson(object {
                                 val success = false
                                 val error = "This registry can not be queried!"
-                            })
+                            }, HttpStatusCode.BadRequest)
                         val element = call.parameters["element"] ?: return@get call.respondJson(object {
                             val success = false
                             val error = "No element provided!"

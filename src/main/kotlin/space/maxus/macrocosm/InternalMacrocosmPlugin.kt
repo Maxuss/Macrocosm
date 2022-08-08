@@ -4,7 +4,9 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.main.KSpigot
+import net.axay.kspigot.runnables.task
 import net.minecraft.server.MinecraftServer
+import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
@@ -85,6 +87,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         UNSAFE = Unsafe(Random.nextInt())
         MONITOR = Monitor()
         Accessor.init()
+        KeyManager.load()
         Threading.runAsync {
             info("Starting REST API Server")
             Monitor.enter("REST API Server Thread")
@@ -188,6 +191,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         getSlayerRewardsCommand()
         openEquipmentCommand()
         addSpellCommand()
+        apiCommand()
 
         giveRecipeCommand()
         testStatsCommand()
@@ -234,6 +238,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         SidebarRenderer.init()
 
         PackProvider.init()
+
+        task(period = 60 * 10L, sync = false) {
+            KeyManager.requests.clear()
+        }
     }
 
     private val dumpTestData: Boolean = false
@@ -251,6 +259,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         ZombieAbilities.doomCounter.iter { id ->
             worlds[0].getEntity(id)?.remove()
         }
+        KeyManager.store()
         ServerShutdownEvent().callEvent()
     }
 }

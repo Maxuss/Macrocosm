@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.7.0"
     id("xyz.jpenilla.run-paper") version "1.0.6"
     id("io.papermc.paperweight.userdev") version "1.3.7"
+    id("org.hidetake.swagger.generator") version "2.19.2"
 }
 
 group = "space.maxus"
@@ -30,6 +31,9 @@ dependencies {
 tasks {
     build {
         dependsOn(reobfJar)
+        doLast {
+            generateReDoc.get().exec()
+        }
     }
     compileJava {
         options.encoding = "UTF-8"
@@ -46,4 +50,13 @@ tasks {
                 systemProperties[n] = b
         }
     }
+}
+
+tasks.generateReDoc.configure {
+    inputFile = file("$rootDir/src/main/resources/swagger/swagger.yml")
+    outputDir = file("$rootDir/src/main/resources/doc")
+    title = "Macrocosm API"
+    options = mapOf(
+        "spec-url" to "http://127.0.0.1:6060/doc/swagger.yml"
+    )
 }

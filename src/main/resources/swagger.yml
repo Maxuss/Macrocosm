@@ -1,0 +1,130 @@
+swagger: "2.0"
+info:
+  title: Macrocosm API
+  description: API for getting data from Macrocosm Server
+  version: 1.0.0
+tags:
+    - name: Resources
+      description: Access to resource registries
+schemes:
+  - https
+paths:
+    /resources:
+        get:
+            summary: Get all Registries
+            responses:
+                "200":
+                    description: Gets all Resource Registries that can be queried
+                    schema:
+                        $ref: "#/definitions/AllRegistries"
+            tags:
+                - Resources
+    '/resources/{registry}':
+        get:
+            parameters:
+                - name: registry
+                  in: path
+                  description: ID of registry to access
+                  required: true
+                  type: string
+            summary: Get specific Registry
+            responses:
+                "200":
+                    description: Gets contents of a specific registry
+                    schema:
+                        $ref: "#/definitions/Registry"
+                "400":
+                    description: registry parameter not provided or indicates a registry that can not be queried
+                    schema:
+                        $ref: "#/definitions/Error"
+                "404":
+                    description: registry parameter indicates an invalid registry
+                    schema:
+                        $ref: "#/definitions/Error"
+            tags:
+                - Resources
+    '/resources/{registry}/{element}':
+        get:
+            parameters:
+                - name: registry
+                  in: path
+                  description: ID of registry to access
+                  required: true
+                  type: string
+                - name: element
+                  in: path
+                  description: ID of the element to access
+                  required: true
+                  type: string
+            tags:
+                - Resources
+            responses:
+                "200":
+                    description: Gets specific element from registry
+                    schema:
+                        $ref: "#/definitions/RegistryElement"
+                "400":
+                    description: registry/element parameter not provided or indicates a registry that can not be queried
+                    schema:
+                        $ref: "#/definitions/Error"
+                "404":
+                    description: registry parameter indicates an invalid registry or could not find element in registry
+                    schema:
+                        $ref: "#/definitions/Error"
+
+definitions:
+    AllRegistries:
+        description: All registries that can be queried
+        properties:
+            success:
+                type: boolean
+                description: Whether the operation was successful. Always true
+            availableRegistries:
+                type: array
+                items:
+                    type: string
+                description: All registries that can be queried
+        example:
+            success: true
+            availableRegistries: ["item", "entity"]
+    RegistryElement:
+        description: A specific element from registry
+        properties:
+            success:
+                type: boolean
+                description: Whether the operation was successful. Always true
+            element:
+                type: object
+                description: Queried element. Content varies depending on registry type
+        example:
+            success: true
+            element:
+                abc: 123
+                boolean: true
+    Registry:
+        description: All contents of a specific registry
+        properties:
+            success:
+                type: boolean
+                description: Whether the operation was successful. Always true
+            registry:
+                type: object
+                description: Contents of the registry. Key is an identifier while value depends on registry type
+        example:
+            success: true
+            registry:
+                "macrocosm:some_item":
+                    abc: 123
+                    boolean: true
+    Error:
+        description: An error response
+        properties:
+            success:
+                type: boolean
+                description: Whether the operation was successful. Always false
+            error:
+                type: string
+                description: Error message. Depends on endpoint and usage case
+        example:
+            success: false
+            error: "Provided player is not online!"

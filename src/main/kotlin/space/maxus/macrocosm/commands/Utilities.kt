@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.cosmetic.Dye
@@ -40,6 +41,7 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.generic.macrocosm
+import java.net.InetAddress
 import kotlin.math.roundToInt
 
 fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
@@ -77,6 +79,18 @@ fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
         )
 
+    }
+}
+
+fun apiCommand() = command("api") {
+    literal("new") {
+        runs {
+            val key = KeyManager.generateRandomKey(player.uniqueId)
+            player.sendMessage(text("<green>Your new Macrocosm API Key is <click:copy_to_clipboard:$key><yellow><hover:show_text:'<green>Click to copy to clipboard'>$key</hover></click><green>!"))
+        }
+    }
+    runs {
+        player.sendMessage(text("<green>Macrocosm API documentation is located <click:open_url:'http://${InetAddress.getLocalHost().hostAddress}:6060/doc'><yellow><hover:show_text:'<gray>Click to open documentation!'>here</click><green>!"))
     }
 }
 
