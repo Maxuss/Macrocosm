@@ -13,7 +13,7 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.database
 import space.maxus.macrocosm.item.LimitedEditionItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.item.types.WitherBlade
@@ -55,7 +55,7 @@ fun giveAdminItemCommand() = command("giveadminstuff") {
                 val to = getArgument<EntitySelector>("to").findSinglePlayer(this.nmsContext.source).bukkitEntity
                 val toDisplay = to.displayName()
                 val fromDisplay = player.displayName()
-                val edition = Database.Limited.incrementGet(id)
+                val edition = database.incrementLimitedEdition(id)
                 item.givenTo = toDisplay
                 item.givenBy = fromDisplay
                 item.edition = edition

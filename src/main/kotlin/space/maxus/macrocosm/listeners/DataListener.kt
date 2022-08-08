@@ -6,7 +6,7 @@ import net.axay.kspigot.runnables.async
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.database
 import space.maxus.macrocosm.exceptions.DatabaseException
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
@@ -23,7 +23,7 @@ object DataListener {
                 Macrocosm.playersLazy.add(e.player.uniqueId)
                 Macrocosm.onlinePlayers[e.player.uniqueId] = player
                 async {
-                    player.storeSelf(Database.statement)
+                    player.storeSelf(database.statement)
                 }
             }
             val displayName = e.player.macrocosm?.rank?.playerName(e.player.name) ?: e.player.displayName()
@@ -34,7 +34,7 @@ object DataListener {
         listen<PlayerQuitEvent> { e ->
             val id = e.player.uniqueId
             val player = Macrocosm.onlinePlayers.remove(id)
-            player?.storeSelf(Database.statement)
+            player?.storeSelf(database.statement)
             player?.activePet?.despawn(player)
             player?.summons?.forEach { summon ->
                 e.player.world.getEntity(summon)?.remove()

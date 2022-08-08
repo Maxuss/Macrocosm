@@ -23,7 +23,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.collections.Collections
 import space.maxus.macrocosm.damage.clamp
-import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.database
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer
@@ -565,7 +565,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     companion object {
         fun readPlayer(id: UUID): MacrocosmPlayer? {
-            val stmt = Database.statement
+            val stmt = database.statement
             val res = stmt.executeQuery("SELECT * FROM Players where UUID = '$id'")
             if (!res.next())
                 return null

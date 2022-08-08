@@ -9,7 +9,9 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.DataGenerators
-import space.maxus.macrocosm.db.Database
+import space.maxus.macrocosm.db.DatabaseAccess
+import space.maxus.macrocosm.db.local.SqliteDatabaseImpl
+import space.maxus.macrocosm.db.postgres.PostgresDatabaseImpl
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
@@ -63,6 +65,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var PACKET_MANAGER: ProtocolManager; private set
         lateinit var UNSAFE: Unsafe; private set
         lateinit var MONITOR: Monitor; private set
+        lateinit var DATABASE: DatabaseAccess; private set
     }
 
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
@@ -73,15 +76,16 @@ class InternalMacrocosmPlugin : KSpigot() {
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
-        isInDevEnvironment = System.getenv().containsKey("macrocosmDev")
+        isInDevEnvironment = java.lang.Boolean.getBoolean("macrocosm.dev")
         integratedServer =
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         UNSAFE = Unsafe(Random.nextInt())
         MONITOR = Monitor()
         Threading.runAsyncRaw {
-            Database.connect()
-            playersLazy = Database.readAllPlayers().toMutableList()
+            DATABASE = if(isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("postgres.remote"))
+            DATABASE.connect()
+            playersLazy = DATABASE.readPlayers().toMutableList()
         }
         Threading.runAsyncRaw {
             Calendar.load()
@@ -227,7 +231,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Threading.runAsync {
             for ((id, v) in onlinePlayers) {
                 println("Saving data for player $id...")
-                v.storeSelf(Database.statement)
+                v.storeSelf(database.statement)
             }
         }
         Threading.runAsync {
@@ -242,6 +246,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
 val protocolManager by lazy { InternalMacrocosmPlugin.PACKET_MANAGER }
 val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
+val database by lazy { InternalMacrocosmPlugin.DATABASE }
 val monitor by lazy { InternalMacrocosmPlugin.MONITOR }
 val logger by lazy { Macrocosm.logger }
 @UnsafeFeature
