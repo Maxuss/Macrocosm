@@ -22,6 +22,10 @@ dependencies {
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
+    implementation("io.ktor:ktor-server-core-jvm:2.0.3")
+    implementation("io.ktor:ktor-server-netty-jvm:2.0.3")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.0.3")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.0.3")
 }
 
 tasks {
@@ -35,5 +39,12 @@ tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "17"
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    }
+    runServer {
+        for((a, b) in System.getProperties()) {
+            val n = a.toString()
+            if(n.startsWith("macrocosm"))
+                systemProperties[n] = b
+        }
     }
 }

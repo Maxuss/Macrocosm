@@ -5,5 +5,9 @@ api-version: 1.19
 libraries:
     - "net.axay:kspigot:1.19.0"
     - "org.postgresql:postgresql:42.3.6"
+    - "io.ktor:ktor-server-core-jvm:2.0.3"
+    - "io.ktor:ktor-server-netty-jvm:2.0.3"
+    - "io.ktor:ktor-server-status-pages-jvm:2.0.3"
+    - "io.ktor:ktor-server-default-headers-jvm:2.0.3"
 depend: [ ProtocolLib, LibsDisguises ]
 load: POSTWORLD

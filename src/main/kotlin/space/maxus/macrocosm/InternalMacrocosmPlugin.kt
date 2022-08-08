@@ -9,6 +9,7 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.DataGenerators
+import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.db.DatabaseAccess
 import space.maxus.macrocosm.db.local.SqliteDatabaseImpl
 import space.maxus.macrocosm.db.postgres.PostgresDatabaseImpl
@@ -83,7 +84,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         UNSAFE = Unsafe(Random.nextInt())
         MONITOR = Monitor()
         Threading.runAsyncRaw {
-            DATABASE = if(isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("postgres.remote"))
+            Accessor.init()
+            DATABASE = if(isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
             DATABASE.connect()
             playersLazy = DATABASE.readPlayers().toMutableList()
         }

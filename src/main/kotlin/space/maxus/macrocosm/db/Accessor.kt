@@ -20,7 +20,7 @@ object Accessor {
             path.createDirectories()
         }
         val lockfile = path.resolve(".lockfile")
-        firstStart = lockfile.exists()
+        firstStart = !lockfile.exists()
         if(firstStart)
             lockfile.createFile()
     }

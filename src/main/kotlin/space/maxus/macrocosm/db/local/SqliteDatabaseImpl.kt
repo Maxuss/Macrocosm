@@ -67,7 +67,7 @@ object SqliteDatabaseImpl: DatabaseAccess {
             """.trimIndent()
         )
 
-        var statQuery = "CREATE TABLE Stats(UUID VARCHAR PRIMARY KEY"
+        var statQuery = "CREATE TABLE IF NOT EXISTS Stats(UUID VARCHAR PRIMARY KEY"
         for (stat in Statistic.values()) {
             statQuery += ", ${stat.name} REAL"
         }
