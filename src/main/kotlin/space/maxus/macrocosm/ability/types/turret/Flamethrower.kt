@@ -32,7 +32,11 @@ import space.maxus.macrocosm.util.math.MathHelper.extractYawPitch
 import space.maxus.macrocosm.util.metrics.report
 import java.util.*
 
-object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethrower Turret", "Constructs a <gold>Flamethrower Turret<gray> that showers nearby enemies with fire in two directions. Deals <red>[2000:0.15] ${Statistic.DAMAGE.display}<gray> each second.<br>Consumes <yellow>1 Light Gasoline Can<gray> each second, and can stay as long as you have them in your inventory.<br><dark_gray>Only one Flamethrower Turret can<br><dark_gray>be active at once.<br><dark_gray>Right Click again to remove turret.") {
+object FlamethrowerTurretActive : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Flamethrower Turret",
+    "Constructs a <gold>Flamethrower Turret<gray> that showers nearby enemies with fire in two directions. Deals <red>[2000:0.15] ${Statistic.DAMAGE.display}<gray> each second.<br>Consumes <yellow>1 Light Gasoline Can<gray> each second, and can stay as long as you have them in your inventory.<br><dark_gray>Only one Flamethrower Turret can<br><dark_gray>be active at once.<br><dark_gray>Right Click again to remove turret."
+) {
     override val cost: AbilityCost = AbilityCost(200, cooldown = 45, summonDifficulty = 3)
     val turrets = MutableContainer.empty<UUID>()
     val enabled = MutableContainer.empty<KSpigotRunnable>()
@@ -61,9 +65,10 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
                 if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                     return@otherwise
 
-                val gasoline = Registry.ITEM.findOrNull(id("light_gasoline"))?.build(e.player) ?: report("Could not find light gasoline in registry!") { return@otherwise }
+                val gasoline = Registry.ITEM.findOrNull(id("light_gasoline"))?.build(e.player)
+                    ?: report("Could not find light gasoline in registry!") { return@otherwise }
                 val damage = DamageCalculator.calculateMagicDamage(2000, .15f, e.player.stats()!!)
-                if(p.inventory.containsAtLeast(gasoline, 1)) {
+                if (p.inventory.containsAtLeast(gasoline, 1)) {
                     e.player.summonSlotsUsed += 3
                     val stand = summonTurret(p.location, e.player)
                     turrets[p.uniqueId] = stand.uniqueId
@@ -71,13 +76,13 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
                     val ticker = Ticker(0..3)
                     enabled[p.uniqueId] = task(period = 5L) {
                         val tick = ticker.tick()
-                        if(it.isCancelled)
+                        if (it.isCancelled)
                             return@task
 
                         val paper = e.player.paper
-                        if(paper == null || !paper.inventory.containsAtLeast(gasoline, 1)) {
+                        if (paper == null || !paper.inventory.containsAtLeast(gasoline, 1)) {
                             it.cancel()
-                            if(paper == null)
+                            if (paper == null)
                                 return@task
                             sound(Sound.BLOCK_LEVER_CLICK) {
                                 pitch = 0f
@@ -92,17 +97,31 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
                             return@task
                         }
 
-                        if(tick == 3)
+                        if (tick == 3)
                             p.inventory.removeItemAnySlot(gasoline)
 
                         val location = stand.eyeLocation
-                        val nearest = stand.location.getNearbyLivingEntities(7.0) { en -> en !is ArmorStand && en !is Player }.firstOrNull() ?: return@task
+                        val nearest =
+                            stand.location.getNearbyLivingEntities(7.0) { en -> en !is ArmorStand && en !is Player }
+                                .firstOrNull() ?: return@task
                         val look = nearest.eyeLocation.toVector().subtract(location.toVector()).normalize()
                         val (yaw, _) = look.extractYawPitch()
                         stand.setRotation(yaw, 0f)
 
-                        FlamethrowerAbility.renderFlamethrower(e.player, stand.location.add(vec(y = 1f)), stand.eyeLocation.direction, damage, tick)
-                        FlamethrowerAbility.renderFlamethrower(e.player, stand.location.add(vec(y = 1f)), stand.eyeLocation.direction.rotateAroundY(Math.toRadians(180.0)), damage, tick)
+                        FlamethrowerAbility.renderFlamethrower(
+                            e.player,
+                            stand.location.add(vec(y = 1f)),
+                            stand.eyeLocation.direction,
+                            damage,
+                            tick
+                        )
+                        FlamethrowerAbility.renderFlamethrower(
+                            e.player,
+                            stand.location.add(vec(y = 1f)),
+                            stand.eyeLocation.direction.rotateAroundY(Math.toRadians(180.0)),
+                            damage,
+                            tick
+                        )
                         sound(Sound.ENTITY_BLAZE_SHOOT) {
                             pitch = 0f
                             volume = 3f
@@ -129,14 +148,18 @@ object FlamethrowerTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Flamethro
     }
 }
 
-object FlamethrowerTurretPassive: AbilityBase(AbilityType.PASSIVE, "Support", "Players within <green>7 blocks<gray> of <br><gold>Flamethrower Turret<gray> gain:<br><red>+100 ${Statistic.STRENGTH.display}<br><green>+5% ${Statistic.DEFENSE.display}") {
+object FlamethrowerTurretPassive : AbilityBase(
+    AbilityType.PASSIVE,
+    "Support",
+    "Players within <green>7 blocks<gray> of <br><gold>Flamethrower Turret<gray> gain:<br><red>+100 ${Statistic.STRENGTH.display}<br><green>+5% ${Statistic.DEFENSE.display}"
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
             val p = e.player.paper ?: return@listen
             FlamethrowerTurretActive.turrets.iter { standId ->
                 val stand = p.world.getEntity(standId) ?: return@iter
                 val distance = Mth.sqrt(p.location.distanceSquared(stand.location).toFloat())
-                if(distance <= 7f) {
+                if (distance <= 7f) {
                     e.stats.strength += 100
                     e.stats.defense *= 1.05f
                 }

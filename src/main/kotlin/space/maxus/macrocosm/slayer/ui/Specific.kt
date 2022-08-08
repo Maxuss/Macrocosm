@@ -34,7 +34,7 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
 
             val cmp = createCompound<Int>(iconGenerator = {
                 if (it >= 6)
-                    if(!player.memory.tier6Slayers.contains(slayerId))
+                    if (!player.memory.tier6Slayers.contains(slayerId))
                         ItemValue.placeholderDescripted(
                             Material.COAL,
                             "<dark_aqua>${slayer.name.stripTags()} VI",
@@ -53,7 +53,13 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                         val stats = model.calculateStats()
                         val dmg = stats.damage * (1 + (stats.strength / 100f))
                         buffer.add(" Health: <red>${Statistic.HEALTH.specialChar} ${Formatting.withCommas(stats.health.toBigDecimal())}")
-                        buffer.add(" Damage: <red>${Statistic.DAMAGE.specialChar} ${Formatting.withCommas(dmg.roundToInt().toBigDecimal())}")
+                        buffer.add(
+                            " Damage: <red>${Statistic.DAMAGE.specialChar} ${
+                                Formatting.withCommas(
+                                    dmg.roundToInt().toBigDecimal()
+                                )
+                            }"
+                        )
                         buffer.add("")
                         slayer.abilitiesForTier(it).map { abil -> abil.descript(it).map { e -> e.str() } }
                             .forEach { l -> l.forEach { v -> buffer.add(v) }; buffer.add("") }
@@ -73,7 +79,13 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                     val stats = model.calculateStats()
                     val dmg = stats.damage * (1 + (stats.strength / 100f))
                     buffer.add(" Health: <red>${Statistic.HEALTH.specialChar} ${Formatting.withCommas(stats.health.toBigDecimal())}")
-                    buffer.add(" Damage: <red>${Statistic.DAMAGE.specialChar} ${Formatting.withCommas(dmg.roundToInt().toBigDecimal())}")
+                    buffer.add(
+                        " Damage: <red>${Statistic.DAMAGE.specialChar} ${
+                            Formatting.withCommas(
+                                dmg.roundToInt().toBigDecimal()
+                            )
+                        }"
+                    )
                     buffer.add("")
                     slayer.abilitiesForTier(it).map { abil -> abil.descript(it).map { e -> e.str() } }
                         .forEach { l -> l.forEach { v -> buffer.add(v) }; buffer.add("") }

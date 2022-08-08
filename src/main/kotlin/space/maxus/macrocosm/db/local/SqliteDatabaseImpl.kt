@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.sql.Statement
 import java.util.*
 
-object SqliteDatabaseImpl: DatabaseAccess {
+object SqliteDatabaseImpl : DatabaseAccess {
     private lateinit var playerDb: Connection
     private var firstStart: Boolean = false
 

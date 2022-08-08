@@ -20,7 +20,11 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.data.MutableContainer
 
-object ShieldOfDeadAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Strike", "Accumulate all damage you deal within the next <green>5 seconds<gray>.<br>All the damage accumulated will then be converted to a powerful ray and <green>half<gray> of it is dealt to nearby enemies as ${Statistic.TRUE_DAMAGE.display}<gray>.") {
+object ShieldOfDeadAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Soul Strike",
+    "Accumulate all damage you deal within the next <green>5 seconds<gray>.<br>All the damage accumulated will then be converted to a powerful ray and <green>half<gray> of it is dealt to nearby enemies as ${Statistic.TRUE_DAMAGE.display}<gray>."
+) {
     override val cost: AbilityCost = AbilityCost(500, 100, 25)
 
     private val enabled = MutableContainer.empty<Float>()
@@ -31,14 +35,14 @@ object ShieldOfDeadAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Strike", 
             }
         }
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
                 return@listen
 
             enabled[e.player.ref] = 0f
 
             taskRunLater(5 * 20L) {
                 val amount = enabled.remove(e.player.ref)!!
-                if(amount <= 0f)
+                if (amount <= 0f)
                     return@taskRunLater
                 e.player.sendMessage("<gray>Your <aqua>Soul Strike<gray> accumulated <red>${Formatting.withCommas(amount.toBigDecimal())} ${Statistic.DAMAGE.display}<gray>!")
                 val p = e.player.paper ?: return@taskRunLater
@@ -51,7 +55,8 @@ object ShieldOfDeadAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Soul Strike", 
 
                 IceConeAbility.spawnHelix(p.eyeLocation.direction, p, Color.TEAL)
 
-                p.eyeLocation.direction.multiply(2f).relativeLocation(p.eyeLocation).getNearbyLivingEntities(4.0) { it !is Player && it !is ArmorStand }.forEach { entity ->
+                p.eyeLocation.direction.multiply(2f).relativeLocation(p.eyeLocation)
+                    .getNearbyLivingEntities(4.0) { it !is Player && it !is ArmorStand }.forEach { entity ->
                     entity.macrocosm?.damage(amount / 2f)
                     DamageHandlers.summonDamageIndicator(entity.location, amount / 2f)
                 }

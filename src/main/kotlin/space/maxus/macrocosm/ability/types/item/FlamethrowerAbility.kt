@@ -32,7 +32,11 @@ import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.metrics.report
 import java.util.*
 
-object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle flamethrower, shooting fire forward of yourself. The flames deal <red>[1000:0.3] ${Statistic.DAMAGE.display}<gray>/s.") {
+object FlamethrowerAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Burn",
+    "Toggle flamethrower, shooting fire forward of yourself. The flames deal <red>[1000:0.3] ${Statistic.DAMAGE.display}<gray>/s."
+) {
     override fun buildLore(lore: MutableList<Component>, player: MacrocosmPlayer?) {
         super.buildLore(lore, player)
         lore.add(text("<dark_gray>Consumption: <yellow>1 Light Gasoline Can<dark_gray>/s").noitalic())
@@ -42,7 +46,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val p = e.player.paper ?: report("Player in RightClickEvent was null!") { return@listen }
@@ -58,8 +62,9 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
 
                 return@listen
             }.otherwise {
-                val gasoline = Registry.ITEM.findOrNull(id("light_gasoline"))?.build(e.player) ?: report("Could not find light gasoline in registry!") { return@otherwise }
-                if(p.inventory.containsAtLeast(gasoline, 1)) {
+                val gasoline = Registry.ITEM.findOrNull(id("light_gasoline"))?.build(e.player)
+                    ?: report("Could not find light gasoline in registry!") { return@otherwise }
+                if (p.inventory.containsAtLeast(gasoline, 1)) {
                     sound(Sound.BLOCK_LEVER_CLICK) {
                         pitch = 0f
                         volume = 5f
@@ -71,13 +76,13 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
                     enabled[e.player.ref] = task(period = 5, delay = 0) {
                         val tick = ticker.tick()
 
-                        if(it.isCancelled)
+                        if (it.isCancelled)
                             return@task
 
                         val paper = e.player.paper
-                        if(paper == null || !paper.inventory.containsAtLeast(gasoline, 1)) {
+                        if (paper == null || !paper.inventory.containsAtLeast(gasoline, 1)) {
                             it.cancel()
-                            if(paper == null)
+                            if (paper == null)
                                 return@task
                             sound(Sound.BLOCK_LEVER_CLICK) {
                                 pitch = 0f
@@ -90,7 +95,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
                             return@task
                         }
 
-                        if(tick == 3)
+                        if (tick == 3)
                             p.inventory.removeItemAnySlot(gasoline)
 
                         renderFlamethrower(e.player, p.eyeLocation, p.eyeLocation.direction, dmg, tick)
@@ -109,7 +114,13 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
         }
     }
 
-    fun renderFlamethrower(player: MacrocosmPlayer, location: Location, direction: org.bukkit.util.Vector, damage: Float, tick: Int) {
+    fun renderFlamethrower(
+        player: MacrocosmPlayer,
+        location: Location,
+        direction: org.bukkit.util.Vector,
+        damage: Float,
+        tick: Int
+    ) {
         async {
             val p = player.paper!!
             val loc = location.add(vec(y = -.3))
@@ -120,7 +131,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
 
             var i = 1
             val hit = mutableListOf<UUID>()
-            while(i < 20) {
+            while (i < 20) {
                 loc.add(adv)
 
                 adv.rotateAroundZ(Math.toRadians(angDec * 3))
@@ -133,7 +144,7 @@ object FlamethrowerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Burn", "Toggle
                     spawnAt(loc)
                 }
 
-                if(tick != 3 && tick != 0)
+                if (tick != 3 && tick != 0)
                     return@async
 
                 task(delay = 0) {

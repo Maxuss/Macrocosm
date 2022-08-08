@@ -37,7 +37,12 @@ import space.maxus.macrocosm.util.metrics.report
 import space.maxus.macrocosm.util.runNTimes
 import java.util.*
 
-object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Constructs a <aqua>Tesla Coil<gray> on your position that will stand for <green>15 seconds<gray>. While active, the turret deals <red>[1500:0.12] ${Statistic.DAMAGE.display}<gray> each second to enemies within <green>7 blocks<gray>.<br><dark_gray>Only one Tesla Coil can be active<br><dark_gray>at once.", AbilityCost(500, cooldown = 60, summonDifficulty = 2)) {
+object TeslaCoilActive : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Tesla Coil",
+    "Constructs a <aqua>Tesla Coil<gray> on your position that will stand for <green>15 seconds<gray>. While active, the turret deals <red>[1500:0.12] ${Statistic.DAMAGE.display}<gray> each second to enemies within <green>7 blocks<gray>.<br><dark_gray>Only one Tesla Coil can be active<br><dark_gray>at once.",
+    AbilityCost(500, cooldown = 60, summonDifficulty = 2)
+) {
     val coils = MutableContainer.empty<UUID>()
 
     override fun ensureRequirements(player: MacrocosmPlayer, slot: EquipmentSlot, silent: Boolean): Boolean {
@@ -54,7 +59,7 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             e.player.summonSlotsUsed += 2
@@ -87,17 +92,18 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
 
                     playAt(stand.location)
                 }
-                stand.location.getNearbyLivingEntities(7.0) { en -> en !is ArmorStand && en !is Player }.forEach {  entity ->
-                    entity.macrocosm?.damage(damage, p)
-                    DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.ELECTRIC)
-                    particle(Particle.REDSTONE) {
-                        data = DustOptions(Color.WHITE, 2f)
-                        amount = 5
-                        offset = Vector.getRandom()
+                stand.location.getNearbyLivingEntities(7.0) { en -> en !is ArmorStand && en !is Player }
+                    .forEach { entity ->
+                        entity.macrocosm?.damage(damage, p)
+                        DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.ELECTRIC)
+                        particle(Particle.REDSTONE) {
+                            data = DustOptions(Color.WHITE, 2f)
+                            amount = 5
+                            offset = Vector.getRandom()
 
-                        spawnAt(entity.location)
+                            spawnAt(entity.location)
+                        }
                     }
-                }
 
                 renderCircle(stand)
 
@@ -113,7 +119,7 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
 
             val start = stand.location.add(vec(z = -8, y = .8f))
 
-            while(i < Mth.TWO_PI) {
+            while (i < Mth.TWO_PI) {
                 val x = Mth.cos(i) * 1f
                 val z = Mth.sin(i) * 1f
 
@@ -144,14 +150,18 @@ object TeslaCoilActive: AbilityBase(AbilityType.RIGHT_CLICK, "Tesla Coil", "Cons
     }
 }
 
-object TeslaCoilPassive: AbilityBase(AbilityType.PASSIVE, "Support", "Players within <green>7 blocks<gray> of <aqua>Tesla Coil<gray> gain:<br><aqua>+200 ${Statistic.INTELLIGENCE.display}<br><red>+10% ${Statistic.ABILITY_DAMAGE.display}") {
+object TeslaCoilPassive : AbilityBase(
+    AbilityType.PASSIVE,
+    "Support",
+    "Players within <green>7 blocks<gray> of <aqua>Tesla Coil<gray> gain:<br><aqua>+200 ${Statistic.INTELLIGENCE.display}<br><red>+10% ${Statistic.ABILITY_DAMAGE.display}"
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
             val p = e.player.paper ?: return@listen
             TeslaCoilActive.coils.iter { standId ->
                 val stand = p.world.getEntity(standId) ?: return@iter
                 val distance = Mth.sqrt(p.location.distanceSquared(stand.location).toFloat())
-                if(distance <= 7f) {
+                if (distance <= 7f) {
                     e.stats.intelligence += 200
                     e.stats.abilityDamage += 10
                 }

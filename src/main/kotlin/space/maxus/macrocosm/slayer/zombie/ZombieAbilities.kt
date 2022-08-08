@@ -113,7 +113,7 @@ object ZombieAbilities {
             applyToBosses { boss, living, _ ->
                 living.location.getNearbyPlayers(15.0) { !affected.contains(it.uniqueId) }.forEach {
                     val mc = it.macrocosm ?: return@forEach
-                    if(!affected.contains(it.uniqueId)) {
+                    if (!affected.contains(it.uniqueId)) {
                         val mod = -mc.stats()!!.speed * .5f
                         mc.tempStats.speed += mod
                         affected.add(it.uniqueId)
@@ -146,7 +146,7 @@ object ZombieAbilities {
         task(period = 20L) {
             doomCounter.filterAll { (eId, cId) ->
                 val e = worlds[0].getEntity(eId)
-                if(!(e == null || e.isDead)) {
+                if (!(e == null || e.isDead)) {
                     true
                 } else {
                     val c = worlds[0].getEntity(cId)
@@ -155,7 +155,7 @@ object ZombieAbilities {
                 }
             }
             applyToBosses { _, living, lvl ->
-                if(lvl != 6)
+                if (lvl != 6)
                     return@applyToBosses
                 doomMeter.setOrTakeMut(living.uniqueId) { l ->
                     val t = l ?: 0
@@ -177,7 +177,7 @@ object ZombieAbilities {
         }
         listen<PlayerReceiveDamageEvent> { e ->
             val (success, tier) = isSlayerBoss(e.damager)
-            if(!success || tier != 6)
+            if (!success || tier != 6)
                 return@listen
             var level = 0
             doomMeter.takeMut(e.damager.uniqueId) {
@@ -199,12 +199,12 @@ object ZombieAbilities {
     ) {
         task(period = 20L) {
             doomMeter.iterFull { (id, count) ->
-                if(count % 10 == 0) {
-                    val living =  (worlds[0].getEntity(id) as? LivingEntity) ?: return@iterFull
+                if (count % 10 == 0) {
+                    val living = (worlds[0].getEntity(id) as? LivingEntity) ?: return@iterFull
                     val boss = living.macrocosm ?: return@iterFull
                     val missing = 10_000_000f - boss.currentHealth
                     val percentage = missing * .005f
-                    for(nearby in living.location.getNearbyPlayers(5.0)) {
+                    for (nearby in living.location.getNearbyPlayers(5.0)) {
                         summonDoomstone(nearby.location, percentage)
                     }
                 }
@@ -220,10 +220,13 @@ object ZombieAbilities {
     ) {
         task(period = 20L) {
             doomMeter.iterFull { (id, count) ->
-                if(count.equalsAny(25, 50, 100, 200)) {
-                    val living =  (worlds[0].getEntity(id) as? LivingEntity) ?: return@iterFull
+                if (count.equalsAny(25, 50, 100, 200)) {
+                    val living = (worlds[0].getEntity(id) as? LivingEntity) ?: return@iterFull
                     living.macrocosm ?: return@iterFull
-                    chargeAtNearby((living.location.getNearbyPlayers(10.0).firstOrNull() ?: return@iterFull).location, living)
+                    chargeAtNearby(
+                        (living.location.getNearbyPlayers(10.0).firstOrNull() ?: return@iterFull).location,
+                        living
+                    )
                 }
             }
         }
@@ -237,8 +240,8 @@ object ZombieAbilities {
     ) {
         task(period = 20L) {
             doomMeter.iterFull { (id, count) ->
-                if(count.equalsAny( 75, 150, 300)) {
-                    val living =  (worlds[0].getEntity(id) as? LivingEntity) ?: return@iterFull
+                if (count.equalsAny(75, 150, 300)) {
+                    val living = (worlds[0].getEntity(id) as? LivingEntity) ?: return@iterFull
                     val boss = living.macrocosm ?: return@iterFull
                     repel(living, boss)
                 }
@@ -252,7 +255,7 @@ object ZombieAbilities {
                     playAt(e.damaged.location)
                 }
                 e.isCancelled = true
-                Pair(it - 1, if(it == 1) MutableContainer.TakeResult.REVOKE else MutableContainer.TakeResult.RETAIN)
+                Pair(it - 1, if (it == 1) MutableContainer.TakeResult.REVOKE else MutableContainer.TakeResult.RETAIN)
             }
         }
         // rendering shields
@@ -305,10 +308,11 @@ object ZombieAbilities {
 
                 playAt(entity.location)
             }
-            for(nearest in entity.location.getNearbyPlayers(3.0)) {
+            for (nearest in entity.location.getNearbyPlayers(3.0)) {
                 nearest.macrocosm?.damage(dmg, text("<dark_green>Exanimated Repel"))
                 DamageHandlers.summonDamageIndicator(nearest.location, dmg)
-                nearest.velocity = nearest.location.toVector().subtract(entity.location.toVector()).normalize().rotateAroundX(Math.toRadians(45.0)).normalize().multiply(6f)
+                nearest.velocity = nearest.location.toVector().subtract(entity.location.toVector()).normalize()
+                    .rotateAroundX(Math.toRadians(45.0)).normalize().multiply(6f)
             }
 
             // shield
@@ -335,7 +339,7 @@ object ZombieAbilities {
         }
         val hit = mutableListOf<UUID>()
         task(period = 2L) {
-            if(to.getNearbyLivingEntities(2.0).contains(entity)) {
+            if (to.getNearbyLivingEntities(2.0).contains(entity)) {
                 it.cancel()
                 return@task
             }
@@ -343,7 +347,7 @@ object ZombieAbilities {
             val dir = to.toVector().subtract(entity.location.toVector()).normalize().multiply(3f)
             entity.velocity = dir
 
-            for(player in entity.location.getNearbyPlayers(3.0) { p -> !hit.contains(p.uniqueId) }) {
+            for (player in entity.location.getNearbyPlayers(3.0) { p -> !hit.contains(p.uniqueId) }) {
                 player.macrocosm?.damage(1500f, text("Entombed Horror"))
                 hit.add(player.uniqueId)
                 DamageHandlers.summonDamageIndicator(player.location, 7500f)
@@ -368,7 +372,12 @@ object ZombieAbilities {
         val fallingBlock = FallingBlockListener.spawnBlock(pivot, bd)
         fallingBlock.velocity = vec(y = -1).normalize().multiply(.7f)
         task(delay = 10L) {
-            fallingBlock.location.getNearbyPlayers(4.0).forEach { it.macrocosm?.damage(dmg, text("Doomstone Tomb")); DamageHandlers.summonDamageIndicator(it.location, dmg) }
+            fallingBlock.location.getNearbyPlayers(4.0).forEach {
+                it.macrocosm?.damage(
+                    dmg,
+                    text("Doomstone Tomb")
+                ); DamageHandlers.summonDamageIndicator(it.location, dmg)
+            }
             sound(Sound.BLOCK_ANVIL_LAND) {
                 volume = 4f
                 pitch = 0f

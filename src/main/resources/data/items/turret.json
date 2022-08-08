@@ -11,7 +11,10 @@
             "to": "macrocosm:item/tesla_coil",
             "raw": true
         },
-        "abilities": ["tesla_coil_active", "tesla_coil_passive"]
+        "abilities": [
+            "tesla_coil_active",
+            "tesla_coil_passive"
+        ]
     },
     "turret_flamethrower": {
         "name": "Flamethrower Turret",
@@ -25,7 +28,10 @@
             "to": "macrocosm:item/flamethrower_turret",
             "raw": true
         },
-        "abilities": ["flamethrower_turret_active", "flamethrower_turret_passive"]
+        "abilities": [
+            "flamethrower_turret_active",
+            "flamethrower_turret_passive"
+        ]
     },
     "turret_heavy": {
         "name": "Heavy Turret",
@@ -38,6 +44,9 @@
             "to": "macrocosm:item/heavy_turret",
             "raw": true
         },
-        "abilities": ["heavy_turret_active", "heavy_turret_passive"]
+        "abilities": [
+            "heavy_turret_active",
+            "heavy_turret_passive"
+        ]
     }
 }

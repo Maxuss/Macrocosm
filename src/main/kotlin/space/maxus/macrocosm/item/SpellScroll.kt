@@ -30,7 +30,7 @@ import space.maxus.macrocosm.util.generic.getId
 import space.maxus.macrocosm.util.generic.id
 import space.maxus.macrocosm.util.generic.putId
 
-class SpellScroll: MacrocosmItem {
+class SpellScroll : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()
     override var specialStats: SpecialStatistics = SpecialStatistics()
     override var amount: Int = 1
@@ -45,11 +45,12 @@ class SpellScroll: MacrocosmItem {
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = HashMultimap.create()
-    var spell: Spell? = null; set(value) {
-        field = value
-        name = text(value?.name ?: "Empty Spell Scroll")
-        rarity = value?.rarity ?: rarity
-    }
+    var spell: Spell? = null
+        set(value) {
+            field = value
+            name = text(value?.name ?: "Empty Spell Scroll")
+            rarity = value?.rarity ?: rarity
+        }
     override var rarity: Rarity = spell?.rarity ?: Rarity.COMMON
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
@@ -57,7 +58,7 @@ class SpellScroll: MacrocosmItem {
 
     override val maxStars: Int = 0
     override fun addExtraNbt(cmp: CompoundTag) {
-        cmp.putId("Spell", if(spell == null) Identifier.NULL else Registry.SPELL.byValue(spell!!)!!)
+        cmp.putId("Spell", if (spell == null) Identifier.NULL else Registry.SPELL.byValue(spell!!)!!)
     }
 
     override fun reforge(ref: Reforge) {
@@ -66,7 +67,7 @@ class SpellScroll: MacrocosmItem {
 
     override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         val sp = spell
-        if(sp == null) {
+        if (sp == null) {
             lore.addAll(
                 listOf(
                     "This is an empty Spell Scroll, apply",
@@ -76,8 +77,9 @@ class SpellScroll: MacrocosmItem {
         } else {
             lore.add(text("<gold>Spell: ${sp.name} <yellow><bold>RIGHT CLICK").noitalic())
             val tmp = mutableListOf<Component>()
-            for(part in MacrocosmAbility.formatDamageNumbers(sp.description, player).split("<br>")) {
-                tmp.addAll(part.reduceToList(31).filter { t -> !t.isBlankOrEmpty() }.map { t -> text("<gray>$t").noitalic() })
+            for (part in MacrocosmAbility.formatDamageNumbers(sp.description, player).split("<br>")) {
+                tmp.addAll(part.reduceToList(31).filter { t -> !t.isBlankOrEmpty() }
+                    .map { t -> text("<gray>$t").noitalic() })
             }
             lore.addAll(tmp)
             lore.add(text("<dark_gray>Spell Level: <dark_purple>${sp.requiredKnowledge}").noitalic())
@@ -100,7 +102,7 @@ class SpellScroll: MacrocosmItem {
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt) as SpellScroll
         val spId = nbt.getId("Spell")
-        if(spId.isNotNull())
+        if (spId.isNotNull())
             base.spell = Registry.SPELL.find(spId)
         return base
     }

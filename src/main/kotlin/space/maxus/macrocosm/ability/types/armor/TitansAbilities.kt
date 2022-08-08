@@ -28,10 +28,14 @@ import space.maxus.macrocosm.util.metrics.report
 import java.util.*
 import kotlin.math.min
 
-object TitansKnowledge: AbilityBase(AbilityType.PASSIVE, "Titan's Knowledge", "This mysterious helmet drains your ability power<gray>.<br>Your ${Statistic.ABILITY_DAMAGE.display}<gray> is <green>halved<gray>.") {
+object TitansKnowledge : AbilityBase(
+    AbilityType.PASSIVE,
+    "Titan's Knowledge",
+    "This mysterious helmet drains your ability power<gray>.<br>Your ${Statistic.ABILITY_DAMAGE.display}<gray> is <green>halved<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HEAD))
+            if (!ensureRequirements(e.player, EquipmentSlot.HEAD))
                 return@listen
 
             e.stats.abilityDamage /= 2f
@@ -39,10 +43,14 @@ object TitansKnowledge: AbilityBase(AbilityType.PASSIVE, "Titan's Knowledge", "T
     }
 }
 
-object TitansEnergy: AbilityBase(AbilityType.PASSIVE, "Titan's Energy", "This magical cuirass drains your mana pool.<br>Your ${Statistic.INTELLIGENCE.display}<gray> is capped at <green>10x<gray> of your ${Statistic.ABILITY_DAMAGE.display}<gray>.") {
+object TitansEnergy : AbilityBase(
+    AbilityType.PASSIVE,
+    "Titan's Energy",
+    "This magical cuirass drains your mana pool.<br>Your ${Statistic.INTELLIGENCE.display}<gray> is capped at <green>10x<gray> of your ${Statistic.ABILITY_DAMAGE.display}<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.CHEST))
+            if (!ensureRequirements(e.player, EquipmentSlot.CHEST))
                 return@listen
 
             val cap = e.stats.abilityDamage * 10f
@@ -51,10 +59,14 @@ object TitansEnergy: AbilityBase(AbilityType.PASSIVE, "Titan's Energy", "This ma
     }
 }
 
-object TitansMight: AbilityBase(AbilityType.PASSIVE, "Titan's Might", "This powerful gladius is light, making it hard to parry with.<br>Your ${Statistic.DEFENSE.display}<gray> is capped at <green>2x<gray> the <green>sum of<gray> your ${Statistic.SPEED.display}<gray> and ${Statistic.BONUS_ATTACK_SPEED.display}<gray>.") {
+object TitansMight : AbilityBase(
+    AbilityType.PASSIVE,
+    "Titan's Might",
+    "This powerful gladius is light, making it hard to parry with.<br>Your ${Statistic.DEFENSE.display}<gray> is capped at <green>2x<gray> the <green>sum of<gray> your ${Statistic.SPEED.display}<gray> and ${Statistic.BONUS_ATTACK_SPEED.display}<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val cap = 2f * (e.stats.speed + e.stats.attackSpeed)
@@ -63,10 +75,14 @@ object TitansMight: AbilityBase(AbilityType.PASSIVE, "Titan's Might", "This powe
     }
 }
 
-object TitansValor: AbilityBase(AbilityType.PASSIVE, "Titan's Valor", "This gleaming shield is unimaginably heavy.<br>Your ${Statistic.STRENGTH.display}<gray> is capped at <green>1/2<gray> of your ${Statistic.DEFENSE.display}<gray>.") {
+object TitansValor : AbilityBase(
+    AbilityType.PASSIVE,
+    "Titan's Valor",
+    "This gleaming shield is unimaginably heavy.<br>Your ${Statistic.STRENGTH.display}<gray> is capped at <green>1/2<gray> of your ${Statistic.DEFENSE.display}<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.OFF_HAND))
                 return@listen
 
             val cap = e.stats.defense / 2f
@@ -75,10 +91,14 @@ object TitansValor: AbilityBase(AbilityType.PASSIVE, "Titan's Valor", "This glea
     }
 }
 
-object TitansEminence: AbilityBase(AbilityType.PASSIVE, "Titan's Eminence", "Boosts your offensive stats based on defensive ones.<br>${Statistic.DAMAGE.display}<gray>: <green>+2x ${Statistic.TRUE_DEFENSE.display}<br>${Statistic.ABILITY_DAMAGE.display}<gray>: <green>+0.03x ${Statistic.INTELLIGENCE.display}<br>${Statistic.CRIT_DAMAGE.display}<gray>: <green>+0.5x ${Statistic.SPEED.display}<gray>.") {
+object TitansEminence : AbilityBase(
+    AbilityType.PASSIVE,
+    "Titan's Eminence",
+    "Boosts your offensive stats based on defensive ones.<br>${Statistic.DAMAGE.display}<gray>: <green>+2x ${Statistic.TRUE_DEFENSE.display}<br>${Statistic.ABILITY_DAMAGE.display}<gray>: <green>+0.03x ${Statistic.INTELLIGENCE.display}<br>${Statistic.CRIT_DAMAGE.display}<gray>: <green>+0.5x ${Statistic.SPEED.display}<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val dmgBonus = e.stats.trueDefense * 2f
@@ -92,7 +112,11 @@ object TitansEminence: AbilityBase(AbilityType.PASSIVE, "Titan's Eminence", "Boo
     }
 }
 
-object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning", "Cast a <aqua>Chain Lightning<gray>, going through up to <green>4<gray> enemy iterations. Deals <red>[7000:0.15] ${Statistic.DAMAGE.display}<gray> decreasing by each enemy pierced.") {
+object TitansLightning : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Titan's Lightning",
+    "Cast a <aqua>Chain Lightning<gray>, going through up to <green>4<gray> enemy iterations. Deals <red>[7000:0.15] ${Statistic.DAMAGE.display}<gray> decreasing by each enemy pierced."
+) {
     override val cost: AbilityCost = AbilityCost(mana = 750, cooldown = 3)
 
     override fun registerListeners() {
@@ -103,12 +127,16 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
             if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
                 return@listen
 
-            val target = p.getTargetEntity(9) as? LivingEntity ?: p.location.getNearbyLivingEntities(8.0, 4.0, 8.0) { it !is Player && it !is ArmorStand }.firstOrNull() ?: kotlin.run {
+            val target = p.getTargetEntity(9) as? LivingEntity ?: p.location.getNearbyLivingEntities(
+                8.0,
+                4.0,
+                8.0
+            ) { it !is Player && it !is ArmorStand }.firstOrNull() ?: kotlin.run {
                 e.player.sendMessage("<red>No target found!")
                 return@listen
             }
 
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             renderLine(p.eyeLocation, target.eyeLocation) { mov ->
@@ -141,14 +169,22 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
             DamageHandlers.summonDamageIndicator(target.location, damage, DamageType.ELECTRIC)
 
             val hit = mutableListOf(target.uniqueId)
-            val nearest = target.location.getNearbyLivingEntities(5.0).filter { it !is Player && it !is ArmorStand && !hit.contains(it.uniqueId) }
+            val nearest = target.location.getNearbyLivingEntities(5.0)
+                .filter { it !is Player && it !is ArmorStand && !hit.contains(it.uniqueId) }
 
             recurseThroughEntities(target.eyeLocation, p, damage / 2f, nearest, hit, 1)
         }
     }
 
-    private fun recurseThroughEntities(previous: Location, player: Player, damage: Float, nearest: List<LivingEntity>, hit: MutableList<UUID>, iter: Int) {
-        if(nearest.isNotEmpty() && hit.size < 15 && iter < 4) {
+    private fun recurseThroughEntities(
+        previous: Location,
+        player: Player,
+        damage: Float,
+        nearest: List<LivingEntity>,
+        hit: MutableList<UUID>,
+        iter: Int
+    ) {
+        if (nearest.isNotEmpty() && hit.size < 15 && iter < 4) {
             nearest.forEach { entity ->
                 renderLine(previous, entity.eyeLocation) { mov ->
                     particle(Particle.REDSTONE) {
@@ -178,7 +214,15 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
                 entity.macrocosm?.damage(damage, player)
                 DamageHandlers.summonDamageIndicator(entity.location, damage, DamageType.ELECTRIC)
 
-                recurseThroughEntities(entity.eyeLocation, player, damage / 2f, entity.location.getNearbyLivingEntities(5.0).filter { it !is Player && it !is ArmorStand && !hit.contains(it.uniqueId) }, hit, iter + 1)
+                recurseThroughEntities(
+                    entity.eyeLocation,
+                    player,
+                    damage / 2f,
+                    entity.location.getNearbyLivingEntities(5.0)
+                        .filter { it !is Player && it !is ArmorStand && !hit.contains(it.uniqueId) },
+                    hit,
+                    iter + 1
+                )
             }
         }
     }
@@ -187,7 +231,7 @@ object TitansLightning: AbilityBase(AbilityType.RIGHT_CLICK, "Titan's Lightning"
         val inc = from.distance(to) / 20
 
         var i = 0
-        while(i < 20) {
+        while (i < 20) {
             val dir = to.toVector().subtract(from.toVector()).normalize().multiply(i * inc)
             val mov = from.clone().add(dir)
 

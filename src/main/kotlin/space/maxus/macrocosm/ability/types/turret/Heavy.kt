@@ -31,7 +31,11 @@ import space.maxus.macrocosm.util.metrics.report
 import space.maxus.macrocosm.util.runNTimes
 import java.util.*
 
-object HeavyTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Heavy Turret", "Constructs a <red>Heavy Turret<gray> at your current position that will stand for <green>20 seconds<gray>. While active, the turret deals <red>[5000:0.2] ${Statistic.DAMAGE.display}<gray> every <green>2 seconds<gray> to nearest enemy within <green>7 blocks<gray>.<br><dark_gray>Only one Heavy Turret can be active<br><dark_gray>at once.") {
+object HeavyTurretActive : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Heavy Turret",
+    "Constructs a <red>Heavy Turret<gray> at your current position that will stand for <green>20 seconds<gray>. While active, the turret deals <red>[5000:0.2] ${Statistic.DAMAGE.display}<gray> every <green>2 seconds<gray> to nearest enemy within <green>7 blocks<gray>.<br><dark_gray>Only one Heavy Turret can be active<br><dark_gray>at once."
+) {
     override val cost: AbilityCost = AbilityCost(500, cooldown = 90, summonDifficulty = 3)
 
     val turrets = MutableContainer.empty<UUID>()
@@ -49,7 +53,7 @@ object HeavyTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Heavy Turret", "
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             e.player.summonSlotsUsed += 3
@@ -76,14 +80,19 @@ object HeavyTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Heavy Turret", "
                 }
                 stand.remove()
             }) {
-                val nearest = stand.location.getNearbyLivingEntities(7.0) { en -> en !is Player && en !is ArmorStand }.firstOrNull() ?: return@runNTimes
+                val nearest = stand.location.getNearbyLivingEntities(7.0) { en -> en !is Player && en !is ArmorStand }
+                    .firstOrNull() ?: return@runNTimes
                 val location = stand.eyeLocation
                 val look = nearest.eyeLocation.toVector().subtract(location.toVector()).normalize()
                 val (yaw, _) = look.extractYawPitch()
                 stand.setRotation(yaw, 0f)
                 val arrow = stand.location.world.spawnArrow(location, look, 1f, 12f)
                 arrow.persistentDataContainer.set(pluginKey("damage_deal"), PersistentDataType.FLOAT, damage)
-                arrow.persistentDataContainer.set(pluginKey("owner"), PersistentDataType.STRING, e.player.ref.toString())
+                arrow.persistentDataContainer.set(
+                    pluginKey("owner"),
+                    PersistentDataType.STRING,
+                    e.player.ref.toString()
+                )
 
                 sound(Sound.ENTITY_ARROW_SHOOT) {
                     pitch = 0f
@@ -108,15 +117,18 @@ object HeavyTurretActive: AbilityBase(AbilityType.RIGHT_CLICK, "Heavy Turret", "
     }
 }
 
-object HeavyTurretPassive: AbilityBase(AbilityType.PASSIVE, "Support", "Players within <green>7 blocks<gray> of <br><red>Heavy Turret<gray> deal <red>+15% ${Statistic.DAMAGE.display}<gray>.") {
+object HeavyTurretPassive : AbilityBase(
+    AbilityType.PASSIVE,
+    "Support",
+    "Players within <green>7 blocks<gray> of <br><red>Heavy Turret<gray> deal <red>+15% ${Statistic.DAMAGE.display}<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
             val p = e.player.paper ?: return@listen
-            HeavyTurretActive.turrets.iter {
-                    standId ->
+            HeavyTurretActive.turrets.iter { standId ->
                 val stand = p.world.getEntity(standId) ?: return@iter
                 val distance = Mth.sqrt(p.location.distanceSquared(stand.location).toFloat())
-                if(distance <= 7f) {
+                if (distance <= 7f) {
                     e.damage *= 1.15f
                 }
             }

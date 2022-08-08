@@ -18,15 +18,19 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.stats.Statistic
 import java.util.*
 
-object SkullHelmetAbility: AbilityBase(AbilityType.PASSIVE, "Skull Mind", "All your melee attacks deal no damage, but instead emit a <aqua>Magic Ray<gray> that extends up to 6 blocks forward, deals <red>60%<gray> of your ${Statistic.DAMAGE.display}<gray>, scaling off your ${Statistic.INTELLIGENCE.display}<gray>.") {
+object SkullHelmetAbility : AbilityBase(
+    AbilityType.PASSIVE,
+    "Skull Mind",
+    "All your melee attacks deal no damage, but instead emit a <aqua>Magic Ray<gray> that extends up to 6 blocks forward, deals <red>60%<gray> of your ${Statistic.DAMAGE.display}<gray>, scaling off your ${Statistic.INTELLIGENCE.display}<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerLeftClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HEAD))
+            if (!ensureRequirements(e.player, EquipmentSlot.HEAD))
                 return@listen
             summonRay(e.player.paper ?: return@listen)
         }
         listen<EntityDamageByEntityEvent> { e ->
-            if(e.damager !is Player || !ensureRequirements((e.damager as Player).macrocosm!!, EquipmentSlot.HEAD))
+            if (e.damager !is Player || !ensureRequirements((e.damager as Player).macrocosm!!, EquipmentSlot.HEAD))
                 return@listen
             e.isCancelled = true
             summonRay(e.damager as Player)
@@ -36,10 +40,17 @@ object SkullHelmetAbility: AbilityBase(AbilityType.PASSIVE, "Skull Mind", "All y
     private fun summonRay(by: Player) {
         val mc = by.macrocosm!!
         val stats = mc.stats()!!
-        val dmg = DamageCalculator.calculateMagicDamage(stats.damage * (1 + (stats.strength / 100f)) * (1 + (stats.damageBoost / 100f)) * .6f, .1f, stats)
+        val dmg = DamageCalculator.calculateMagicDamage(
+            stats.damage * (1 + (stats.strength / 100f)) * (1 + (stats.damageBoost / 100f)) * .6f,
+            .1f,
+            stats
+        )
 
         val hit = mutableListOf<UUID>()
-        TitansLightning.renderLine(by.eyeLocation.add(vec(y = -.5f)), by.eyeLocation.add(by.eyeLocation.direction.multiply(10f))) {
+        TitansLightning.renderLine(
+            by.eyeLocation.add(vec(y = -.5f)),
+            by.eyeLocation.add(by.eyeLocation.direction.multiply(10f))
+        ) {
             particle(Particle.END_ROD) {
                 extra = 0f
                 amount = 2
@@ -47,7 +58,11 @@ object SkullHelmetAbility: AbilityBase(AbilityType.PASSIVE, "Skull Mind", "All y
                 spawnAt(it)
             }
 
-            it.getNearbyLivingEntities(1.0) { entity -> entity !is Player && entity !is ArmorStand && !hit.contains(entity.uniqueId) }.forEach { entity ->
+            it.getNearbyLivingEntities(1.0) { entity ->
+                entity !is Player && entity !is ArmorStand && !hit.contains(
+                    entity.uniqueId
+                )
+            }.forEach { entity ->
                 hit.add(entity.uniqueId)
                 entity.macrocosm?.damage(dmg, by)
                 DamageHandlers.summonDamageIndicator(entity.location, dmg)

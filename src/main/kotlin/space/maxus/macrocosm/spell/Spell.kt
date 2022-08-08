@@ -14,7 +14,13 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 
-abstract class Spell(val name: String, val description: String, val cost: AbilityCost, val rarity: Rarity, val requiredKnowledge: Int) {
+abstract class Spell(
+    val name: String,
+    val description: String,
+    val cost: AbilityCost,
+    val rarity: Rarity,
+    val requiredKnowledge: Int
+) {
     @Suppress("SameParameterValue")
     protected open fun ensureRequirements(
         player: MacrocosmPlayer
@@ -23,7 +29,7 @@ abstract class Spell(val name: String, val description: String, val cost: Abilit
         val mc = item.macrocosm
         if (mc !is SpellScroll || mc.spell != this)
             return false
-        if(player.skills.level(SkillType.MYSTICISM) < requiredKnowledge) {
+        if (player.skills.level(SkillType.MYSTICISM) < requiredKnowledge) {
             player.sendMessage("<red>Insufficient Mysticism level! Spell '$name<red>' requires Mysticism $requiredKnowledge!")
             sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                 pitch = 0f
@@ -48,7 +54,7 @@ abstract class Spell(val name: String, val description: String, val cost: Abilit
 
     open fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player))
+            if (!ensureRequirements(e.player))
                 return@listen
             rightClick(e.player, e.player.paper ?: return@listen)
         }

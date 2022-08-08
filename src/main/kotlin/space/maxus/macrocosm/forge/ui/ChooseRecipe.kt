@@ -29,14 +29,18 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
 
         val recipeCompound = createRectCompound<ForgeRecipe>(Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
             iconGenerator = { recipe ->
-                if(player.skills.level(forge.skill) < recipe.requiredLvl) {
-                    ItemValue.placeholderDescripted(Material.WHITE_STAINED_GLASS_PANE, "<red>???", "<red>Requires ${forge.skill.inst.name} LVL ${recipe.requiredLvl}")
+                if (player.skills.level(forge.skill) < recipe.requiredLvl) {
+                    ItemValue.placeholderDescripted(
+                        Material.WHITE_STAINED_GLASS_PANE,
+                        "<red>???",
+                        "<red>Requires ${forge.skill.inst.name} LVL ${recipe.requiredLvl}"
+                    )
                 } else {
                     val (resId, resAmount) = recipe.result
                     val resItem = Registry.ITEM.find(resId)
                     val built = resItem.build(player)!!
                     built.meta {
-                        if(resAmount > 1) {
+                        if (resAmount > 1) {
                             displayName(displayName()!!.append(text(" <gray>${resAmount}x").noitalic()))
                         }
                         val loreClone = lore()!!
@@ -58,10 +62,10 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
             },
             onClick = { e, recipe ->
                 e.bukkitEvent.isCancelled = true
-                if(player.activeForgeRecipes.size >= 5)
+                if (player.activeForgeRecipes.size >= 5)
                     player.sendMessage("<red>You have reached forge recipe limit!")
                 else {
-                    if(recipe.input.all { (id, amount) ->
+                    if (recipe.input.all { (id, amount) ->
                             val it = Registry.ITEM.find(id).build(player)!!
                             e.player.inventory.containsAtLeast(it, amount)
                         }) {
@@ -90,9 +94,17 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
             }
         )
         recipeCompound.addContent(Registry.FORGE_RECIPE.iter().filter { it.value.type == forge }.values)
-        compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Previous Page"), recipeCompound, reverse = true)
+        compoundScroll(
+            Slots.RowOneSlotEight,
+            ItemValue.placeholder(Material.ARROW, "<red>Previous Page"),
+            recipeCompound,
+            reverse = true
+        )
         compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Next Page"), recipeCompound)
-        button(Slots.RowOneSlotOne, ItemValue.placeholderDescripted(Material.ARROW, "<red>Back", "Back to ${forge.displayName}")) { e ->
+        button(
+            Slots.RowOneSlotOne,
+            ItemValue.placeholderDescripted(Material.ARROW, "<red>Back", "Back to ${forge.displayName}")
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(displayForge(player, forge))
         }
@@ -101,6 +113,7 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
 
 private fun unwrapIngredient(ingredient: Pair<Identifier, Int>): String {
     val item = Registry.ITEM.find(ingredient.first)
-    val name = if(ingredient.second > 1) item.buildName().append(text(" <gray>${ingredient.second}x").noitalic()) else item.buildName()
+    val name = if (ingredient.second > 1) item.buildName()
+        .append(text(" <gray>${ingredient.second}x").noitalic()) else item.buildName()
     return name.str()
 }

@@ -20,14 +20,18 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.data.MutableContainer
 import kotlin.math.min
 
-object BrittleBonesAbility: AbilityBase(AbilityType.SNEAK, "Brittle Bones", "Cap your ${Statistic.DEFENSE.display}<gray> at <green>1/2<gray> of your ${Statistic.HEALTH.display}<gray> but reflect <red>200%<gray> of ${Statistic.DAMAGE.display}<gray> you take for next <green>6 seconds<gray>.") {
+object BrittleBonesAbility : AbilityBase(
+    AbilityType.SNEAK,
+    "Brittle Bones",
+    "Cap your ${Statistic.DEFENSE.display}<gray> at <green>1/2<gray> of your ${Statistic.HEALTH.display}<gray> but reflect <red>200%<gray> of ${Statistic.DAMAGE.display}<gray> you take for next <green>6 seconds<gray>."
+) {
     override val cost: AbilityCost = AbilityCost(100, cooldown = 10)
 
     private val enabled = MutableContainer.empty<Boolean>()
 
     override fun registerListeners() {
         listen<PlayerSneakEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.CHEST))
+            if (!ensureRequirements(e.player, EquipmentSlot.CHEST))
                 return@listen
 
             enabled[e.player.ref] = true

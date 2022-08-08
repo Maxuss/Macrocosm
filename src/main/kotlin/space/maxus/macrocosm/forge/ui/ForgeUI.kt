@@ -32,14 +32,15 @@ fun displayForge(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
         val furnaceCompound = createRectCompound<ActiveForgeRecipe>(Slots.RowFiveSlotThree, Slots.RowFiveSlotSeven,
             iconGenerator = { recipe ->
                 val slotId = slot.incrementAndGet()
-                if(recipe.startTime != -1L) {
+                if (recipe.startTime != -1L) {
                     val actualRecipe = Registry.FORGE_RECIPE.find(recipe.id)
                     val (resId, resAmount) = actualRecipe.result
                     val result = Registry.ITEM.find(resId)
-                    val name = (if(resAmount > 1) result.buildName().append(text(" ${resAmount}x")) else result.buildName()).str()
+                    val name = (if (resAmount > 1) result.buildName()
+                        .append(text(" ${resAmount}x")) else result.buildName()).str()
                     val endItem = result.build(player)!!
                     endItem.meta {
-                        if(recipe.isDoneByNow()) {
+                        if (recipe.isDoneByNow()) {
                             displayName(text("<green>Slot #$slotId").noitalic())
                             lore(listOf(
                                 "<gray>Making $name",
@@ -57,14 +58,22 @@ fun displayForge(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
                     }
                     endItem
                 } else {
-                    ItemValue.placeholderDescripted(Material.BLAST_FURNACE, "<red>Slot #$slotId", "View and start forge processes", "using the materials that you", "have.", " ", "<yellow>Click to start a process!")
+                    ItemValue.placeholderDescripted(
+                        Material.BLAST_FURNACE,
+                        "<red>Slot #$slotId",
+                        "View and start forge processes",
+                        "using the materials that you",
+                        "have.",
+                        " ",
+                        "<yellow>Click to start a process!"
+                    )
                 }
             },
             onClick = { e, recipe ->
                 e.bukkitEvent.isCancelled = true
-                if(recipe.startTime == -1L) {
+                if (recipe.startTime == -1L) {
                     e.player.openGUI(recipeChoose(player, forge))
-                } else if(recipe.isDoneByNow()) {
+                } else if (recipe.isDoneByNow()) {
                     player.activeForgeRecipes.remove(recipe)
                     val actualRecipe = Registry.FORGE_RECIPE.find(recipe.id)
                     val (resId, resAmount) = actualRecipe.result
@@ -87,7 +96,19 @@ fun displayForge(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
 
         progressBarSlots.forEachIndexed { index, (from, to) ->
             val recipe = activeRecipes.getOrNull(index)
-            placeholder(from rectTo to, if(recipe == null) ItemValue.placeholder(Material.RED_STAINED_GLASS_PANE, "") else if(recipe.isDoneByNow()) ItemValue.placeholder(Material.LIME_STAINED_GLASS_PANE, "Recipe done!") else ItemValue.placeholder(Material.YELLOW_STAINED_GLASS_PANE, "<yellow>${recipe.leftTime().toFancyString()}"))
+            placeholder(
+                from rectTo to,
+                if (recipe == null) ItemValue.placeholder(
+                    Material.RED_STAINED_GLASS_PANE,
+                    ""
+                ) else if (recipe.isDoneByNow()) ItemValue.placeholder(
+                    Material.LIME_STAINED_GLASS_PANE,
+                    "Recipe done!"
+                ) else ItemValue.placeholder(
+                    Material.YELLOW_STAINED_GLASS_PANE,
+                    "<yellow>${recipe.leftTime().toFancyString()}"
+                )
+            )
         }
     }
 }
@@ -98,4 +119,4 @@ private val progressBarSlots = listOf(
     Slots.RowTwoSlotFive to Slots.RowFourSlotFive,
     Slots.RowTwoSlotSix to Slots.RowFourSlotSix,
     Slots.RowTwoSlotSeven to Slots.RowFourSlotSeven
-    )
+)

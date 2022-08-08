@@ -68,7 +68,7 @@ typealias FnArgRet<A, B> = (A) -> B
 inline fun Vector.advanceInstantly(loc: Location, mod: Float, times: Int, fn: (Location) -> Unit) {
     val pos = loc.clone()
     val mul = this.multiply(mod)
-    for(i in 0..times) {
+    for (i in 0..times) {
         pos.add(mul)
         fn(pos)
     }
@@ -76,7 +76,7 @@ inline fun Vector.advanceInstantly(loc: Location, mod: Float, times: Int, fn: (L
 
 inline fun <K, V, O> HashMap<K, V>.mapPaired(fn: (Pair<K, V>) -> O): MutableList<O> {
     val aggregator = mutableListOf<O>()
-    for(entry in this.entries) {
+    for (entry in this.entries) {
         aggregator.add(fn(entry.toPair()))
     }
     return aggregator
@@ -89,16 +89,16 @@ fun Duration.toFancyString(): String {
     val secs = this.toSecondsPart()
     val endStr = StringBuilder()
 
-    if(days > 0) {
+    if (days > 0) {
         endStr.append("${days}d ")
     }
-    if(hours > 0) {
+    if (hours > 0) {
         endStr.append("${hours}h ")
     }
-    if(mins > 0) {
+    if (mins > 0) {
         endStr.append("${mins}m ")
     }
-    if(secs > 0) {
+    if (secs > 0) {
         endStr.append("${secs}s ")
     }
     return endStr.toString()
@@ -106,13 +106,13 @@ fun Duration.toFancyString(): String {
 
 fun superCritMod(p: MacrocosmPlayer): Float = 1 + (p.stats()!!.critChance / 100f)
 
-fun <T: Any> T.equalsAny(vararg possible: T): Boolean {
+fun <T : Any> T.equalsAny(vararg possible: T): Boolean {
     return possible.any { it == this }
 }
 
 inline fun <reified T> Collection<T>.certain(predicate: (T) -> Boolean, operator: (T) -> Unit) {
-    for(value in this) {
-        if(predicate(value))
+    for (value in this) {
+        if (predicate(value))
             operator(value)
     }
 }

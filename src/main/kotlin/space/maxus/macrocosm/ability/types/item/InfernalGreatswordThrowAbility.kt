@@ -46,8 +46,8 @@ object InfernalGreatswordThrowAbility : AbilityBase(
             val p = e.player.paper ?: return@listen
             val pos = p.eyeLocation.add(vec(y = -1.4))
                 .add(p.eyeLocation.direction.rotateAroundY(Mth.DEG_TO_RAD * 90.0).multiply(1.1f).normalize()).add(
-                vec(y = 0.4)
-            )
+                    vec(y = 0.4)
+                )
             val inc = pos.direction.multiply(2f)
 
             val stand = p.world.spawnEntity(pos, EntityType.ARMOR_STAND) as ArmorStand

@@ -131,9 +131,13 @@ object DamageHandlers : Listener {
         )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)
 
-        summonDamageIndicator(damaged.location, received, if(superCrit) DamageType.SUPER_CRITICAL else if (crit) DamageType.CRITICAL else DamageType.DEFAULT)
+        summonDamageIndicator(
+            damaged.location,
+            received,
+            if (superCrit) DamageType.SUPER_CRITICAL else if (crit) DamageType.CRITICAL else DamageType.DEFAULT
+        )
 
-        if(superCrit) {
+        if (superCrit) {
             sound(Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR) {
                 pitch = 2f
                 volume = 3f
@@ -147,7 +151,7 @@ object DamageHandlers : Listener {
 
     @EventHandler
     fun onStandardDamage(e: EntityDamageByEntityEvent) {
-        if(e.isCancelled)
+        if (e.isCancelled)
             return
         e.damage = 0.0
         val damager = e.damager
@@ -169,8 +173,9 @@ object DamageHandlers : Listener {
     fun onProjectileHit(e: ProjectileHitEvent) {
         if (e.entity.persistentDataContainer.has(pluginKey("despawn_me")))
             e.entity.remove()
-        if(e.entity.persistentDataContainer.has(pluginKey("damage_deal"))) {
-            val id = UUID.fromString(e.entity.persistentDataContainer.get(pluginKey("owner"), PersistentDataType.STRING))
+        if (e.entity.persistentDataContainer.has(pluginKey("damage_deal"))) {
+            val id =
+                UUID.fromString(e.entity.persistentDataContainer.get(pluginKey("owner"), PersistentDataType.STRING))
             val damager = e.entity.world.getEntity(id) ?: return
             val dmg = e.entity.persistentDataContainer.get(pluginKey("damage_deal"), PersistentDataType.FLOAT)!!
             val damaged = e.hitEntity

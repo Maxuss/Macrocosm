@@ -216,7 +216,13 @@ object ZombieSlayer : Slayer(
         return when (tier) {
             1 -> listOf(ZombieAbilities.REGENERATION)
             2 -> listOf(ZombieAbilities.REGENERATION, ZombieAbilities.CRUMBLING_TOUCH)
-            6 -> listOf(ZombieAbilities.CONSTANT_FEAR, ZombieAbilities.IMPENDING_DOOM, ZombieAbilities.DOOMSTONE, ZombieAbilities.MEAT_SKEWER, ZombieAbilities.EXANIMATED_REPEL)
+            6 -> listOf(
+                ZombieAbilities.CONSTANT_FEAR,
+                ZombieAbilities.IMPENDING_DOOM,
+                ZombieAbilities.DOOMSTONE,
+                ZombieAbilities.MEAT_SKEWER,
+                ZombieAbilities.EXANIMATED_REPEL
+            )
             else -> listOf()
         }
     }

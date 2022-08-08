@@ -70,7 +70,9 @@ object Threading {
      *
      * @return New [ExecutorService] provided by cached thread pool
      */
-    fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool(ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build())
+    fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool(
+        ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build()
+    )
 
     /**
      * Constructs a new fixed thread pool, with [max] amount of active threads at once
@@ -78,7 +80,10 @@ object Threading {
      * @param max Max amount of threads
      * @return New [ExecutorService] provided by fixed thread pool
      */
-    fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(max, ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build())
+    fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(
+        max,
+        ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build()
+    )
 
     fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
         runAsyncRaw {

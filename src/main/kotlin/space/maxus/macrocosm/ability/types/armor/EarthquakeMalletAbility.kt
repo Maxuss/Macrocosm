@@ -27,17 +27,25 @@ import space.maxus.macrocosm.util.math.MathHelper
 import space.maxus.macrocosm.util.metrics.report
 import space.maxus.macrocosm.util.runNTimes
 
-object EarthquakeMalletAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Earth-shattering Jump", "Jump into air and land, dealing <red>[1000:0.1] ${Statistic.DAMAGE.display}<gray> and <yellow>Stunning<gray> all enemies within <green>4<gray> blocks.") {
+object EarthquakeMalletAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Earth-shattering Jump",
+    "Jump into air and land, dealing <red>[1000:0.1] ${Statistic.DAMAGE.display}<gray> and <yellow>Stunning<gray> all enemies within <green>4<gray> blocks."
+) {
     override val cost: AbilityCost = AbilityCost(300, cooldown = 5)
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val p = e.player.paper ?: report("Player in RightClickEvent was null!") { return@listen }
 
-            val trajectory = MathHelper.parabola(p.location, p.getTargetBlock(8)?.location ?: p.eyeLocation.add(p.eyeLocation.direction.multiply(5f)), 20)
+            val trajectory = MathHelper.parabola(
+                p.location,
+                p.getTargetBlock(8)?.location ?: p.eyeLocation.add(p.eyeLocation.direction.multiply(5f)),
+                20
+            )
 
             val dmg = DamageCalculator.calculateMagicDamage(1000, .1f, e.player.stats()!!)
 
@@ -71,33 +79,34 @@ object EarthquakeMalletAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Earth-shat
 
                         spawnAt(p.location)
                     }
-                    p.location.getNearbyLivingEntities(4.0) { entity -> entity !is Player && entity !is ArmorStand }.forEach { living ->
-                        living.macrocosm?.damage(dmg)
-                        DamageHandlers.summonDamageIndicator(living.location, dmg)
-                        GlobalVariables.stunnedEnemies[living.uniqueId] = NULL
-                        val prevAiState = living.hasAI()
-                        living.setAI(false)
-                        runNTimes(20, 2L, {
-                            GlobalVariables.stunnedEnemies.remove(living.uniqueId)
-                            living.setAI(prevAiState)
-                        }) {
-                            particle(Particle.REDSTONE) {
-                                data = Particle.DustOptions(Color.YELLOW, 1f)
-                                amount = 8
-                                offset = Vector.getRandom()
+                    p.location.getNearbyLivingEntities(4.0) { entity -> entity !is Player && entity !is ArmorStand }
+                        .forEach { living ->
+                            living.macrocosm?.damage(dmg)
+                            DamageHandlers.summonDamageIndicator(living.location, dmg)
+                            GlobalVariables.stunnedEnemies[living.uniqueId] = NULL
+                            val prevAiState = living.hasAI()
+                            living.setAI(false)
+                            runNTimes(20, 2L, {
+                                GlobalVariables.stunnedEnemies.remove(living.uniqueId)
+                                living.setAI(prevAiState)
+                            }) {
+                                particle(Particle.REDSTONE) {
+                                    data = Particle.DustOptions(Color.YELLOW, 1f)
+                                    amount = 8
+                                    offset = Vector.getRandom()
 
-                                spawnAt(living.eyeLocation)
+                                    spawnAt(living.eyeLocation)
+                                }
                             }
                         }
-                    }
                 }) {
                     iter++
-                    if(iter >= 4 && p.location.add(vec(y = -1)).block.isSolid)
+                    if (iter >= 4 && p.location.add(vec(y = -1)).block.isSolid)
                         it.cancel()
                 }
             }) {
                 iter++
-                if(iter >= 4 && p.location.add(vec(y = -1)).block.isSolid)
+                if (iter >= 4 && p.location.add(vec(y = -1)).block.isSolid)
                     it.cancel()
             }
 
@@ -105,10 +114,14 @@ object EarthquakeMalletAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Earth-shat
     }
 }
 
-object BeatingBagAbility: AbilityBase(AbilityType.PASSIVE, "Beating Bag", "Deal ${Fmt.SUPER_CRIT} damage when attacking <yellow>Stunned<gray> enemies.") {
+object BeatingBagAbility : AbilityBase(
+    AbilityType.PASSIVE,
+    "Beating Bag",
+    "Deal ${Fmt.SUPER_CRIT} damage when attacking <yellow>Stunned<gray> enemies."
+) {
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
             GlobalVariables.stunnedEnemies.take(e.damaged.uniqueId) {
                 e.isSuperCrit = true

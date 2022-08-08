@@ -7,11 +7,20 @@
         "$ref": "shared/identifier.json"
     },
     "additionalProperties": {
-        "required": ["type","level","result","ingredients","length"],
+        "required": [
+            "type",
+            "level",
+            "result",
+            "ingredients",
+            "length"
+        ],
         "properties": {
             "type": {
                 "type": "string",
-                "enum": ["deepslate", "molten"],
+                "enum": [
+                    "deepslate",
+                    "molten"
+                ],
                 "title": "Forge Type",
                 "description": "Type of forge for this recipe"
             },
@@ -44,7 +53,7 @@
                         {
                             "type": "object",
                             "properties": {
-                                "item":{
+                                "item": {
                                     "$ref": "shared/identifier.json",
                                     "title": "Ingredient",
                                     "description": "Identifier of ingredient"

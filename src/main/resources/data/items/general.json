@@ -300,7 +300,6 @@
             "titans_lightning"
         ]
     },
-
     "skull_helmet": {
         "rarity": "epic",
         "type": "helmet",
@@ -314,7 +313,9 @@
             "combat",
             "defensive"
         ],
-        "abilities": ["skull_helmet_ability"]
+        "abilities": [
+            "skull_helmet_ability"
+        ]
     },
     "blackshard": {
         "name": "Blackshard of the Dead Knight",
@@ -326,7 +327,10 @@
             "strength": 200,
             "intelligence": 150
         },
-        "runes": ["combat","utility"],
+        "runes": [
+            "combat",
+            "utility"
+        ],
         "model": {
             "id": 8,
             "from": "item/diamond_sword",
@@ -337,7 +341,9 @@
             "frames": 9,
             "time": 1
         },
-        "abilities": ["blackshard_ability"]
+        "abilities": [
+            "blackshard_ability"
+        ]
     },
     "rib_cage": {
         "rarity": "epic",
@@ -349,8 +355,13 @@
             "strength": 75,
             "true_defense": 50
         },
-        "runes": ["defensive","defensive"],
-        "abilities": ["brittle_bones"]
+        "runes": [
+            "defensive",
+            "defensive"
+        ],
+        "abilities": [
+            "brittle_bones"
+        ]
     },
     "shield_of_the_dead": {
         "rarity": "epic",
@@ -361,14 +372,20 @@
             "defense": 200,
             "true_defense": 30
         },
-        "runes": ["defensive","defensive","utility"],
+        "runes": [
+            "defensive",
+            "defensive",
+            "utility"
+        ],
         "model": {
             "id": 10,
             "raw": true,
             "from": "item/iron_ingot",
             "to": "macrocosm:item/shield_of_the_dead"
         },
-        "abilities": ["soul_strike_ability"]
+        "abilities": [
+            "soul_strike_ability"
+        ]
     },
     "armor_of_the_damned": {
         "rarity": "relic",
@@ -379,17 +396,23 @@
             "health": 500,
             "defense": 450,
             "true_defense": 100,
-
             "strength": 150,
             "crit_damage": 80
         },
-        "runes": ["combat","combat","utility"],
+        "runes": [
+            "combat",
+            "combat",
+            "utility"
+        ],
         "model": {
             "id": 10,
             "from": "item/netherite_chestplate",
             "to": "macrocosm:item/damned_chestplate"
         },
-        "abilities": ["armor_of_damned_passive", "armor_of_damned_active"]
+        "abilities": [
+            "armor_of_damned_passive",
+            "armor_of_damned_active"
+        ]
     },
     "ring_of_life": {
         "type": "charm",
@@ -398,7 +421,9 @@
         "stats": {
             "vitality": 5
         },
-        "abilities": ["ring_of_life"]
+        "abilities": [
+            "ring_of_life"
+        ]
     },
     "necklace_of_endurance": {
         "type": "necklace",
@@ -407,7 +432,9 @@
         "stats": {
             "health": 50
         },
-        "abilities": ["necklace_of_endurance"]
+        "abilities": [
+            "necklace_of_endurance"
+        ]
     },
     "vial_of_lifeblood": {
         "type": "charm",
@@ -417,7 +444,9 @@
             "vitality": 3,
             "health": 25
         },
-        "abilities": ["vial_of_lifeblood"]
+        "abilities": [
+            "vial_of_lifeblood"
+        ]
     },
     "elixir_of_life": {
         "type": "charm",
@@ -428,7 +457,9 @@
             "vitality": 10,
             "true_defense": 3
         },
-        "abilities": ["elixir_of_life"]
+        "abilities": [
+            "elixir_of_life"
+        ]
     },
     "amulet_of_undertaker": {
         "type": "charm",
@@ -439,7 +470,9 @@
             "health": 10,
             "summoning_power": 1
         },
-        "abilities": ["amulet_of_the_undertaker_ability"]
+        "abilities": [
+            "amulet_of_the_undertaker_ability"
+        ]
     },
     "dead_mans_boots": {
         "type": "boots",
@@ -451,7 +484,9 @@
             "true_defense": 80,
             "summoning_power": 2
         },
-        "abilities": ["dead_mans_boots_ability"]
+        "abilities": [
+            "dead_mans_boots_ability"
+        ]
     },
     "vampires_cowl": {
         "type": "cloak",
@@ -462,7 +497,9 @@
             "defense": 25,
             "summoning_power": 2
         },
-        "abilities": ["vampires_cowl_ability"]
+        "abilities": [
+            "vampires_cowl_ability"
+        ]
     },
     "cloak_of_undead_king": {
         "type": "cloak",
@@ -475,7 +512,10 @@
             "true_defense": 50,
             "summoning_power": 4
         },
-        "abilities": ["cloak_of_undead_king_1", "cloak_of_undead_king_2"],
+        "abilities": [
+            "cloak_of_undead_king_1",
+            "cloak_of_undead_king_2"
+        ],
         "description": "It was passed down generations by a wealthy vampire family. Nobody knows how they got it in first place."
     },
     "shard_of_the_reliquary": {
@@ -493,7 +533,9 @@
         "stats": {
             "ability_damage": 5
         },
-        "abilities": ["talisman_of_mana_ability"]
+        "abilities": [
+            "talisman_of_mana_ability"
+        ]
     },
     "charm_of_mana": {
         "type": "charm",
@@ -503,7 +545,9 @@
         "stats": {
             "intelligence": 10
         },
-        "abilities": ["charm_of_mana_ability"]
+        "abilities": [
+            "charm_of_mana_ability"
+        ]
     },
     "orb_of_mana": {
         "type": "charm",
@@ -514,7 +558,9 @@
             "intelligence": 7,
             "ability_damage": 7
         },
-        "abilities": ["mana_orb_ability"]
+        "abilities": [
+            "mana_orb_ability"
+        ]
     },
     "wizards_well": {
         "type": "charm",
@@ -525,7 +571,10 @@
             "intelligence": 50,
             "ability_damage": 15
         },
-        "abilities": ["wizards_well_1","wizards_well_2"]
+        "abilities": [
+            "wizards_well_1",
+            "wizards_well_2"
+        ]
     },
     "assassins_dagger": {
         "type": "dagger",
@@ -538,7 +587,9 @@
             "crit_chance": 25,
             "bonus_attack_speed": 25
         },
-        "abilities": ["assassins_dagger_ability"],
+        "abilities": [
+            "assassins_dagger_ability"
+        ],
         "model": {
             "id": 11,
             "from": "item/iron_sword",
@@ -557,7 +608,9 @@
             "mining_fortune": 500,
             "speed": 100
         },
-        "abilities": ["molepick_ability"],
+        "abilities": [
+            "molepick_ability"
+        ],
         "model": {
             "id": 22,
             "from": "item/prismarine_shard",
@@ -578,6 +631,9 @@
             "speed": -15,
             "defense": 200
         },
-        "abilities": ["earthquake_mallet_active", "earthquake_mallet_passive"]
+        "abilities": [
+            "earthquake_mallet_active",
+            "earthquake_mallet_passive"
+        ]
     }
 }

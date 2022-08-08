@@ -21,22 +21,38 @@ import space.maxus.macrocosm.util.NULL
 import space.maxus.macrocosm.util.certain
 import space.maxus.macrocosm.util.data.MutableContainer
 
-object AmuletOfTheUndertakerAbility: EquipmentAbility("Gloomy", "Boosts your summons' ${Statistic.DEFENSE.display}<gray> by <green>+5%<gray>.") {
+object AmuletOfTheUndertakerAbility :
+    EquipmentAbility("Gloomy", "Boosts your summons' ${Statistic.DEFENSE.display}<gray> by <green>+5%<gray>.") {
     override fun registerListeners() {
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({ it.summons.contains(id) && ensureRequirements(it, ItemType.NECKLACE, ItemType.BELT) }) {
+            Macrocosm.onlinePlayers.values.certain({
+                it.summons.contains(id) && ensureRequirements(
+                    it,
+                    ItemType.NECKLACE,
+                    ItemType.BELT
+                )
+            }) {
                 e.stats.defense *= 1.05f
             }
         }
     }
 }
 
-object DeadMansBootsAbility: AbilityBase(AbilityType.PASSIVE, "Dead Gait", "Your summons have the same ${Statistic.SPEED.display}<gray> and ${Statistic.TRUE_DEFENSE.display}<gray> as you.") {
+object DeadMansBootsAbility : AbilityBase(
+    AbilityType.PASSIVE,
+    "Dead Gait",
+    "Your summons have the same ${Statistic.SPEED.display}<gray> and ${Statistic.TRUE_DEFENSE.display}<gray> as you."
+) {
     override fun registerListeners() {
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({ it.summons.contains(id) && ensureRequirements(it, EquipmentSlot.FEET) }) {
+            Macrocosm.onlinePlayers.values.certain({
+                it.summons.contains(id) && ensureRequirements(
+                    it,
+                    EquipmentSlot.FEET
+                )
+            }) {
                 e.stats.speed = it.stats()!!.speed
                 e.stats.trueDefense = it.stats()!!.trueDefense
             }
@@ -44,7 +60,10 @@ object DeadMansBootsAbility: AbilityBase(AbilityType.PASSIVE, "Dead Gait", "Your
     }
 }
 
-object VampiresCowlAbility: EquipmentAbility("Shadow Mantle", "Your summons deal <red>+300% ${Statistic.DAMAGE.display}<gray> if you haven't dealt any damage by yourself in the past <green>10 seconds<gray>.") {
+object VampiresCowlAbility : EquipmentAbility(
+    "Shadow Mantle",
+    "Your summons deal <red>+300% ${Statistic.DAMAGE.display}<gray> if you haven't dealt any damage by yourself in the past <green>10 seconds<gray>."
+) {
     private val players = MutableContainer.empty<Long>()
 
     override fun registerListeners() {
@@ -63,9 +82,14 @@ object VampiresCowlAbility: EquipmentAbility("Shadow Mantle", "Your summons deal
         }
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({ it.summons.contains(id) && ensureRequirements(it, ItemType.CLOAK) }) {
+            Macrocosm.onlinePlayers.values.certain({
+                it.summons.contains(id) && ensureRequirements(
+                    it,
+                    ItemType.CLOAK
+                )
+            }) {
                 players.take(it.ref) { dur ->
-                    if(dur / 20L >= 10L)
+                    if (dur / 20L >= 10L)
                         e.stats.damage *= 4f
                 }
             }
@@ -73,24 +97,30 @@ object VampiresCowlAbility: EquipmentAbility("Shadow Mantle", "Your summons deal
     }
 }
 
-object CloakOfUndeadKing1: EquipmentAbility("Undead Lord", "You take <green>25%<gray> less ${Statistic.DAMAGE.display}<gray> from <blue>Undead<gray> when you have <green>at least 4<gray> summons nearby.") {
+object CloakOfUndeadKing1 : EquipmentAbility(
+    "Undead Lord",
+    "You take <green>25%<gray> less ${Statistic.DAMAGE.display}<gray> from <blue>Undead<gray> when you have <green>at least 4<gray> summons nearby."
+) {
     override fun registerListeners() {
         listen<PlayerReceiveDamageEvent> { e ->
-            if(!ensureRequirements(e.player, ItemType.CLOAK) || e.player.summons.size < 4)
+            if (!ensureRequirements(e.player, ItemType.CLOAK) || e.player.summons.size < 4)
                 return@listen
-            if(!e.damager.isUndead())
+            if (!e.damager.isUndead())
                 return@listen
             e.damage *= .75f
         }
     }
 }
 
-object CloakOfUndeadKing2: EquipmentAbility("Dark Arts of Necromancy", "Boosts <green>all<gray> of your summons' stats by <green>25%<gray> for <green>5 seconds<gray> when you kill an <blue>Undead<gray>.") {
+object CloakOfUndeadKing2 : EquipmentAbility(
+    "Dark Arts of Necromancy",
+    "Boosts <green>all<gray> of your summons' stats by <green>25%<gray> for <green>5 seconds<gray> when you kill an <blue>Undead<gray>."
+) {
     private val killed = MutableContainer.trulyEmpty()
 
     override fun registerListeners() {
         listen<PlayerKillEntityEvent> { e ->
-            if(!ensureRequirements(e.player, ItemType.CLOAK) || !e.killed.isUndead())
+            if (!ensureRequirements(e.player, ItemType.CLOAK) || !e.killed.isUndead())
                 return@listen
             killed[e.player.ref] = NULL
 
@@ -100,7 +130,12 @@ object CloakOfUndeadKing2: EquipmentAbility("Dark Arts of Necromancy", "Boosts <
         }
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({ it.summons.contains(id) && ensureRequirements(it, ItemType.CLOAK) }) {
+            Macrocosm.onlinePlayers.values.certain({
+                it.summons.contains(id) && ensureRequirements(
+                    it,
+                    ItemType.CLOAK
+                )
+            }) {
                 killed.take(it.ref) {
                     e.stats.multiply(1.25f)
                 }

@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.sql.Statement
 import java.util.*
 
-class PostgresDatabaseImpl(val address: String): DatabaseAccess {
+class PostgresDatabaseImpl(val address: String) : DatabaseAccess {
     private lateinit var connection: Connection
 
     override val statement: Statement get() = connection.createStatement()
@@ -22,7 +22,11 @@ class PostgresDatabaseImpl(val address: String): DatabaseAccess {
             logger.severe("Could not find Postgres driver!")
             return
         }
-        connection = DriverManager.getConnection("jdbc:postgresql://$address/macrocosm", System.getProperty("macrocosm.postgres.user"), System.getProperty("macrocosm.postgres.pass"))
+        connection = DriverManager.getConnection(
+            "jdbc:postgresql://$address/macrocosm",
+            System.getProperty("macrocosm.postgres.user"),
+            System.getProperty("macrocosm.postgres.pass")
+        )
         val stmt = connection.createStatement()
         stmt.queryTimeout = 30
         stmt.executeUpdate(

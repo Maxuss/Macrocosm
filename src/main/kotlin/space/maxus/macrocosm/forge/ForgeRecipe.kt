@@ -10,11 +10,17 @@ import java.nio.file.FileSystemAlreadyExistsException
 import java.nio.file.FileSystems
 import kotlin.io.path.readText
 
-class ForgeRecipe(val input: HashMap<Identifier, Int>, val result: Pair<Identifier, Int>, val type: ForgeType, val requiredLvl: Int, val length: Long) {
+class ForgeRecipe(
+    val input: HashMap<Identifier, Int>,
+    val result: Pair<Identifier, Int>,
+    val type: ForgeType,
+    val requiredLvl: Int,
+    val length: Long
+) {
     companion object {
         fun parse(jo: JsonObject): ForgeRecipe {
             val type = ForgeType.valueOf(jo["type"].asString.uppercase())
-            val resultAmount = if(jo.has("amount")) jo["amount"].asInt else 1
+            val resultAmount = if (jo.has("amount")) jo["amount"].asInt else 1
             val result = Identifier.parse(jo["result"].asString)
             val level = jo["level"].asInt
             val ingredients = jo["ingredients"].asJsonArray.map { ele ->
@@ -24,7 +30,13 @@ class ForgeRecipe(val input: HashMap<Identifier, Int>, val result: Pair<Identifi
                 } else Pair(Identifier.parse(ele.asString), 1)
             }
             val length = jo["length"].asLong
-            return ForgeRecipe(hashMapOf(*ingredients.take(9).toTypedArray()), Pair(result, resultAmount), type, level, length)
+            return ForgeRecipe(
+                hashMapOf(*ingredients.take(9).toTypedArray()),
+                Pair(result, resultAmount),
+                type,
+                level,
+                length
+            )
         }
 
         fun initRecipes() {

@@ -27,7 +27,7 @@ class PlayerEquipment {
     fun enumerate(): List<MacrocosmItem?> = listOf(necklace, cloak, belt, gloves)
 
     operator fun get(ty: ItemType): MacrocosmItem? {
-        return when(ty) {
+        return when (ty) {
             ItemType.NECKLACE -> necklace
             ItemType.CLOAK -> cloak
             ItemType.BELT -> belt

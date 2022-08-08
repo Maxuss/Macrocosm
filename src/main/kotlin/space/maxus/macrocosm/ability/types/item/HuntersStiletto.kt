@@ -21,15 +21,19 @@ import space.maxus.macrocosm.util.metrics.report
 import space.maxus.macrocosm.util.runNTimes
 import java.util.*
 
-object HuntersStilettoPassive: AbilityBase(AbilityType.PASSIVE, "Hunter's Sense", "Deal <red>+50% ${Statistic.DAMAGE.display}<gray> to <white>${Signs.ENTITY_MARK}<red> Marked Entities<gray>.") {
+object HuntersStilettoPassive : AbilityBase(
+    AbilityType.PASSIVE,
+    "Hunter's Sense",
+    "Deal <red>+50% ${Statistic.DAMAGE.display}<gray> to <white>${Signs.ENTITY_MARK}<red> Marked Entities<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             e.player.paper ?: report("Player was null in DealDamageEvent!") { return@listen }
 
-            if(!HuntersStilettoActive.markedEntities.contains(e.damaged.uniqueId))
+            if (!HuntersStilettoActive.markedEntities.contains(e.damaged.uniqueId))
                 return@listen
 
             e.damage *= 1.5f
@@ -37,7 +41,12 @@ object HuntersStilettoPassive: AbilityBase(AbilityType.PASSIVE, "Hunter's Sense"
     }
 }
 
-object HuntersStilettoActive: AbilityBase(AbilityType.RIGHT_CLICK, "Hunter's Precision", "<red>Mark <white>${Signs.ENTITY_MARK}<gray> the entity you are looking at.", AbilityCost(250)) {
+object HuntersStilettoActive : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Hunter's Precision",
+    "<red>Mark <white>${Signs.ENTITY_MARK}<gray> the entity you are looking at.",
+    AbilityCost(250)
+) {
     val markedEntities: MutableList<UUID> = mutableListOf()
 
     override fun registerListeners() {
@@ -53,12 +62,12 @@ object HuntersStilettoActive: AbilityBase(AbilityType.RIGHT_CLICK, "Hunter's Pre
                 return@listen
             }
 
-            if(entity is ArmorStand) {
+            if (entity is ArmorStand) {
                 e.player.sendMessage("<red>No target entity!")
                 return@listen
             }
 
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             markedEntities.add(entity.uniqueId)
@@ -67,7 +76,7 @@ object HuntersStilettoActive: AbilityBase(AbilityType.RIGHT_CLICK, "Hunter's Pre
             runNTimes(20, 10, {
                 markedEntities.remove(entity.uniqueId)
             }) {
-                if(entity.isDead) {
+                if (entity.isDead) {
                     it.cancel()
                     return@runNTimes
                 }

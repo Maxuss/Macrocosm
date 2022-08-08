@@ -85,7 +85,7 @@ object SlayerHandlers : Listener {
         player.boundSlayerBoss = null
 
         val slayerId = id(quest.type.name.lowercase())
-        if(quest.tier == 6 && !player.memory.tier6Slayers.contains(slayerId)) {
+        if (quest.tier == 6 && !player.memory.tier6Slayers.contains(slayerId)) {
             player.memory.tier6Slayers.add(slayerId)
         }
 

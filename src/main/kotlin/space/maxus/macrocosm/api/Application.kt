@@ -31,5 +31,9 @@ suspend fun module() {
 }
 
 private suspend fun ApplicationCall.respondJson(obj: Any?, code: HttpStatusCode = HttpStatusCode.OK) {
-    this.respondText(if(obj == null) "{\"error\": \"Internal Server Error\"}" else GSON.toJson(obj), ContentType.Application.Json, if(obj == null) HttpStatusCode.InternalServerError else code)
+    this.respondText(
+        if (obj == null) "{\"error\": \"Internal Server Error\"}" else GSON.toJson(obj),
+        ContentType.Application.Json,
+        if (obj == null) HttpStatusCode.InternalServerError else code
+    )
 }

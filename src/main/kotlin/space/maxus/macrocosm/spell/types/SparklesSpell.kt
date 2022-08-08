@@ -21,7 +21,13 @@ import space.maxus.macrocosm.util.data.MutableContainer.Companion.removeAllWith
 import space.maxus.macrocosm.util.data.MutableContainer.Companion.setAllWith
 import java.util.*
 
-object SparklesSpell: Spell("Sparks", "Shoots out some sparks, setting enemies on fire for <green>5 seconds<gray>, but dealing <red>no<gray> damage.", AbilityCost(100, cooldown = 2), Rarity.UNCOMMON, 5) {
+object SparklesSpell : Spell(
+    "Sparks",
+    "Shoots out some sparks, setting enemies on fire for <green>5 seconds<gray>, but dealing <red>no<gray> damage.",
+    AbilityCost(100, cooldown = 2),
+    Rarity.UNCOMMON,
+    5
+) {
     override fun rightClick(mc: MacrocosmPlayer, p: Player) {
         renderSparkles(p.eyeLocation)
     }
@@ -48,10 +54,11 @@ object SparklesSpell: Spell("Sparks", "Shoots out some sparks, setting enemies o
 
                             spawnAt(it)
                         }
-                        it.getNearbyLivingEntities(1.5) { e -> e !is ArmorStand && e !is Player && !hit.contains(e.uniqueId) }.forEach { e ->
-                            hit.add(e.uniqueId)
-                            e.isVisualFire = true
-                        }
+                        it.getNearbyLivingEntities(1.5) { e -> e !is ArmorStand && e !is Player && !hit.contains(e.uniqueId) }
+                            .forEach { e ->
+                                hit.add(e.uniqueId)
+                                e.isVisualFire = true
+                            }
                     }
                 }
             }

@@ -3,7 +3,7 @@ package space.maxus.macrocosm.events
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class ServerShutdownEvent: Event() {
+class ServerShutdownEvent : Event() {
     companion object {
         internal val HANDLERS = HandlerList()
 

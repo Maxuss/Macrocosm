@@ -13,13 +13,13 @@ class MutableContainer<V> private constructor(var values: ConcurrentHashMap<UUID
         fun trulyEmpty() = MutableContainer<NULL>(ConcurrentHashMap())
 
         fun MutableContainer<NULL>.setAllWith(with: List<UUID>) {
-            for(w in with) {
+            for (w in with) {
                 set(w, NULL)
             }
         }
 
         fun MutableContainer<NULL>.removeAllWith(with: List<UUID>) {
-            for(w in with) {
+            for (w in with) {
                 remove(w)
             }
         }
@@ -42,13 +42,12 @@ class MutableContainer<V> private constructor(var values: ConcurrentHashMap<UUID
         return if (values.containsKey(k)) {
             operator(values[k]!!)
             ConditionalCallback.success()
-        }
-        else ConditionalCallback.fail()
+        } else ConditionalCallback.fail()
     }
 
     inline fun revoke(k: UUID, operator: (V) -> Unit): ConditionalCallback {
         val value = values.remove(k)
-        return if(value == null)
+        return if (value == null)
             ConditionalCallback.fail()
         else {
             operator(value)
@@ -65,25 +64,25 @@ class MutableContainer<V> private constructor(var values: ConcurrentHashMap<UUID
     }
 
     inline fun iter(operator: (V) -> Unit) {
-        for((_, v) in values.iterator()) {
+        for ((_, v) in values.iterator()) {
             operator(v)
         }
     }
 
     inline fun iterFull(operator: (Pair<UUID, V>) -> Unit) {
-        for((k, v) in values.iterator()) {
+        for ((k, v) in values.iterator()) {
             operator(Pair(k, v))
         }
     }
 
     inline fun iterMut(operator: (V) -> V) {
-        for((k, v) in values.iterator()) {
+        for ((k, v) in values.iterator()) {
             values[k] = operator(v)
         }
     }
 
     inline fun setOrTakeMut(k: UUID, operator: (V?) -> V) {
-        if(values.containsKey(k)) {
+        if (values.containsKey(k)) {
             values[k] = operator(values[k]!!)
         } else {
             values[k] = operator(null)
@@ -94,14 +93,13 @@ class MutableContainer<V> private constructor(var values: ConcurrentHashMap<UUID
         return if (values.containsKey(k)) {
             values[k] = operator(values[k]!!)
             ConditionalCallback.success()
-        }
-        else ConditionalCallback.fail()
+        } else ConditionalCallback.fail()
     }
 
     inline fun takeMutOrRemove(k: UUID, operator: (V) -> Pair<V, TakeResult>) {
-        if(values.containsKey(k)) {
+        if (values.containsKey(k)) {
             val (new, result) = operator(values[k]!!)
-            if(result == TakeResult.REVOKE) {
+            if (result == TakeResult.REVOKE) {
                 values.remove(k)
             } else {
                 values[k] = new

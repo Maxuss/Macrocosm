@@ -92,7 +92,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             Monitor.exit()
         }
         Threading.runAsyncRaw {
-            DATABASE = if(isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
+            DATABASE =
+                if (isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
             DATABASE.connect()
             playersLazy = DATABASE.readPlayers().toMutableList()
         }
@@ -137,7 +138,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         ItemValue.init()
         Armor.init()
 
-        Threading.runEachConcurrently(Executors.newFixedThreadPool(8),
+        Threading.runEachConcurrently(
+            Executors.newFixedThreadPool(8),
             StatRune::init,
             Enchant::init,
             RecipeValue::init,
@@ -258,5 +260,6 @@ val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
 val database by lazy { InternalMacrocosmPlugin.DATABASE }
 val monitor by lazy { InternalMacrocosmPlugin.MONITOR }
 val logger by lazy { Macrocosm.logger }
+
 @UnsafeFeature
 val unsafe by lazy { InternalMacrocosmPlugin.UNSAFE }

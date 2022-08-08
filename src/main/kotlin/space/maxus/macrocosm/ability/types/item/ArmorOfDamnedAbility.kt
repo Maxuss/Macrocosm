@@ -28,39 +28,53 @@ import space.maxus.macrocosm.util.data.MutableContainer
 import space.maxus.macrocosm.util.runNTimes
 import java.util.*
 
-object ArmorOfDamnedPassive: AbilityBase(AbilityType.PASSIVE, "Cursed Reliquary", "You take take <red>100%<gray> more ${Statistic.DAMAGE.display}<gray> from <blue>Undead<gray> mobs.") {
+object ArmorOfDamnedPassive : AbilityBase(
+    AbilityType.PASSIVE,
+    "Cursed Reliquary",
+    "You take take <red>100%<gray> more ${Statistic.DAMAGE.display}<gray> from <blue>Undead<gray> mobs."
+) {
     override fun registerListeners() {
         listen<PlayerReceiveDamageEvent>(priority = EventPriority.HIGHEST) { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.CHEST))
+            if (!ensureRequirements(e.player, EquipmentSlot.CHEST))
                 return@listen
             e.damage *= 2f
         }
     }
 }
 
-object ArmorOfDamnedActive: AbilityBase(AbilityType.SNEAK, "Unholy Binding", "For the next <green>5 seconds<gray> accumulate all ${Statistic.DAMAGE.display}<gray> you take from <blue>Undead<gray> mobs, then rapidly shoot a volley of <#67EAA9>Soul Fireballs<gray>.<br>Each fireball deals <red>10x<gray> the damage you took.") {
+object ArmorOfDamnedActive : AbilityBase(
+    AbilityType.SNEAK,
+    "Unholy Binding",
+    "For the next <green>5 seconds<gray> accumulate all ${Statistic.DAMAGE.display}<gray> you take from <blue>Undead<gray> mobs, then rapidly shoot a volley of <#67EAA9>Soul Fireballs<gray>.<br>Each fireball deals <red>10x<gray> the damage you took."
+) {
     override val cost: AbilityCost = AbilityCost(500, cooldown = 20)
 
     private val accumulated = MutableContainer.empty<Float>()
     override fun registerListeners() {
         listen<PlayerReceiveDamageEvent> { e ->
             accumulated.takeMut(e.player.ref) {
-                if(e.damager.isUndead())
+                if (e.damager.isUndead())
                     it + e.damage
                 else it
             }
         }
         listen<PlayerSneakEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.CHEST))
+            if (!ensureRequirements(e.player, EquipmentSlot.CHEST))
                 return@listen
 
             accumulated[e.player.ref] = 0f
 
             taskRunLater(5 * 20L) {
                 val amount = accumulated.remove(e.player.ref)!!
-                if(amount <= 0f)
+                if (amount <= 0f)
                     return@taskRunLater
-                e.player.sendMessage("<gray>Your <aqua>Unholy Binding<gray> accumulated <red>${Formatting.withCommas(amount.toBigDecimal())} ${Statistic.DAMAGE.display}<gray>.")
+                e.player.sendMessage(
+                    "<gray>Your <aqua>Unholy Binding<gray> accumulated <red>${
+                        Formatting.withCommas(
+                            amount.toBigDecimal()
+                        )
+                    } ${Statistic.DAMAGE.display}<gray>."
+                )
 
                 val p = e.player.paper ?: return@taskRunLater
                 runNTimes(5, 10) {
@@ -83,7 +97,13 @@ object ArmorOfDamnedActive: AbilityBase(AbilityType.SNEAK, "Unholy Binding", "Fo
         runNTimes(10, 2) {
             pos.add(dir)
 
-            pos.getNearbyLivingEntities(1.43) { it !is Player && it !is ArmorStand && !hit.contains(it.uniqueId) }.forEach { it.macrocosm?.damage(damage); DamageHandlers.summonDamageIndicator(it.location, damage); hit.add(it.uniqueId) }
+            pos.getNearbyLivingEntities(1.43) { it !is Player && it !is ArmorStand && !hit.contains(it.uniqueId) }
+                .forEach {
+                    it.macrocosm?.damage(damage); DamageHandlers.summonDamageIndicator(
+                    it.location,
+                    damage
+                ); hit.add(it.uniqueId)
+                }
 
             renderBall(pos)
         }
@@ -122,7 +142,6 @@ object ArmorOfDamnedActive: AbilityBase(AbilityType.SNEAK, "Unholy Binding", "Fo
             }
         }
     }
-
 
 
 }

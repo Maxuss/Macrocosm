@@ -53,7 +53,7 @@ data class Identifier(val namespace: String, val path: String) : Tag {
         return result
     }
 
-    companion object: PersistentDataType<String, Identifier> {
+    companion object : PersistentDataType<String, Identifier> {
         val NULL = macro("null")
 
         fun macro(path: String) = Identifier(Macrocosm.id, path)

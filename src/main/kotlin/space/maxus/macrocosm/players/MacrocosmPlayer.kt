@@ -525,7 +525,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
 
-        stmt.executeUpdate("INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${GSON.toJson(this.memory)}', '${GSON.toJson(this.activeForgeRecipes)}')")
+        stmt.executeUpdate(
+            "INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${
+                GSON.toJson(
+                    this.memory
+                )
+            }', '${GSON.toJson(this.activeForgeRecipes)}')"
+        )
         var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
         var rightHand = "VALUES ('$ref'"
         for ((k, value) in baseStats.iter()) {
@@ -575,7 +581,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val purse = res.getFloat("PURSE")
             val bank = res.getFloat("BANK")
             val memory: PlayerMemory = GSON.fromJson(res.getString("MEMORY"), PlayerMemory::class.java)
-            val forgeRecipes: MutableList<ActiveForgeRecipe> = GSON.fromJson<List<ActiveForgeRecipe>>(res.getString("FORGE"), object: TypeToken<List<ActiveForgeRecipe>>() { }.type).toMutableList()
+            val forgeRecipes: MutableList<ActiveForgeRecipe> = GSON.fromJson<List<ActiveForgeRecipe>>(
+                res.getString("FORGE"),
+                object : TypeToken<List<ActiveForgeRecipe>>() {}.type
+            ).toMutableList()
             val player = MacrocosmPlayer(id)
             player.rank = rank
             player.firstJoin = firstJoin

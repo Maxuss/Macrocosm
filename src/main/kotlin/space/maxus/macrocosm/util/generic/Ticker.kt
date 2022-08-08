@@ -8,19 +8,19 @@ class Ticker(val range: IntRange) {
     fun position(): Int = cursor.get()
     fun tick(): Int {
         val c = when (direction) {
-                    Direction.FORWARD -> {
-                        val c = cursor.incrementAndGet()
-                        if (c >= range.last)
-                            direction = Direction.BACKWARDS
-                        c
-                    }
-                    Direction.BACKWARDS -> {
-                        val c = cursor.decrementAndGet()
-                        if (c <= range.first)
-                            direction = Direction.FORWARD
-                        c
-                    }
-                }
+            Direction.FORWARD -> {
+                val c = cursor.incrementAndGet()
+                if (c >= range.last)
+                    direction = Direction.BACKWARDS
+                c
+            }
+            Direction.BACKWARDS -> {
+                val c = cursor.decrementAndGet()
+                if (c <= range.first)
+                    direction = Direction.FORWARD
+                c
+            }
+        }
         return c
     }
 

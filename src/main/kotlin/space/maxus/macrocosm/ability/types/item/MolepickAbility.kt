@@ -26,13 +26,17 @@ import space.maxus.macrocosm.util.game.Fmt
 import space.maxus.macrocosm.util.runNTimes
 import space.maxus.macrocosm.util.superCritMod
 
-object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "Dig straight into ground for <green>3 seconds<gray>, becoming fully <yellow>invulnerable<gray>. Upon digging out, heal for <red>50% ${Statistic.HEALTH.display}<gray>.<br>Your next attack after digging out will<br>be ${Fmt.SUPER_CRIT}.<br>You can not attack or jump while underground.<br><red>Ability can only be activated<br><red>after breaking 100 blocks.") {
+object MolepickAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Deep Drilling",
+    "Dig straight into ground for <green>3 seconds<gray>, becoming fully <yellow>invulnerable<gray>. Upon digging out, heal for <red>50% ${Statistic.HEALTH.display}<gray>.<br>Your next attack after digging out will<br>be ${Fmt.SUPER_CRIT}.<br>You can not attack or jump while underground.<br><red>Ability can only be activated<br><red>after breaking 100 blocks."
+) {
     private val blocksBroken = MutableContainer.empty<Int>()
     private val enabled = MutableContainer.trulyEmpty()
     private val strike = MutableContainer.trulyEmpty()
     override fun registerListeners() {
         listen<PlayerBreakBlockEvent>(priority = EventPriority.LOWEST) { e ->
-            if(e.isCancelled || !ensureRequirements(e.player, EquipmentSlot.HAND, true))
+            if (e.isCancelled || !ensureRequirements(e.player, EquipmentSlot.HAND, true))
                 return@listen
 
             blocksBroken.setOrTakeMut(e.player.ref) {
@@ -40,11 +44,11 @@ object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "D
             }
         }
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             blocksBroken.takeMut(e.player.ref) {
-                if(it < 100) {
+                if (it < 100) {
                     e.player.sendMessage("<red>Not enough blocks broken! $it/100")
                     return@takeMut it
                 }
@@ -80,7 +84,7 @@ object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "D
     @Suppress("UnstableApiUsage")
     private fun enableAbility(player: MacrocosmPlayer) {
         val p = player.paper ?: return
-        for(op in Bukkit.getOnlinePlayers()) {
+        for (op in Bukkit.getOnlinePlayers()) {
             op.hideEntity(Macrocosm, p)
         }
         enabled[player.ref] = NULL
@@ -90,7 +94,7 @@ object MolepickAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Deep Drilling", "D
             playAt(p.location)
         }
         runNTimes(3 * 20L, 1L, {
-            for(op in Bukkit.getOnlinePlayers())
+            for (op in Bukkit.getOnlinePlayers())
                 op.showEntity(Macrocosm, p)
             sound(Sound.BLOCK_STONE_BREAK) {
                 pitch = 0f

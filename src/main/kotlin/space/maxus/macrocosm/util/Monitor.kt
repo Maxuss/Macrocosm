@@ -14,8 +14,14 @@ class Monitor {
         val exceptionHandler by lazy {
             UncaughtExceptionHandler { thr, err ->
                 val lastEntered = monitor.monitorLast(thr)
-                if(lastEntered != null)
-                    logger.warning("Monitor: caught exception at ${lastEntered.name} in thread ${lastEntered.threadName}, previously entered at ${Instant.ofEpochMilli(lastEntered.timeStamp)}. Dumping exception data...")
+                if (lastEntered != null)
+                    logger.warning(
+                        "Monitor: caught exception at ${lastEntered.name} in thread ${lastEntered.threadName}, previously entered at ${
+                            Instant.ofEpochMilli(
+                                lastEntered.timeStamp
+                            )
+                        }. Dumping exception data..."
+                    )
                 else
                     logger.warning("Monitor: caught exception at null scope! Dumping exception data...")
                 logger.severe(err.stackTraceToString())

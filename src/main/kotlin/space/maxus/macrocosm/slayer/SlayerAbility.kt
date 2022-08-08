@@ -31,7 +31,7 @@ class SlayerAbility(
         }
         val output = mutableListOf<Component>()
         output.add(text(name))
-        for(part in regexed.split("<br>")) {
+        for (part in regexed.split("<br>")) {
             val reduced = part.reduceToList(30).map { text("<gray>$it").noitalic() }.toMutableList()
             reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
             output.addAll(reduced)
@@ -58,11 +58,11 @@ class SlayerAbility(
     fun isSlayerBoss(entity: LivingEntity): Pair<Boolean, Int> {
         val mc = entity.macrocosm ?: return Pair(false, -1)
         val id = mc.getId(entity).path
-        if(!id.contains(slayerType.name.lowercase()))
+        if (!id.contains(slayerType.name.lowercase()))
             return Pair(false, -1)
         val tier = try {
             Integer.valueOf(id.replace("${slayerType.name.lowercase()}_", ""))
-        } catch(e: NumberFormatException) {
+        } catch (e: NumberFormatException) {
             return Pair(false, -1)
         }
         return Pair(true, tier)

@@ -20,8 +20,14 @@ object Accessor {
         }
         val lockfile = path.resolve(".lockfile")
         firstStart = !lockfile.exists()
-        if(firstStart) {
-            access("api.conf").writeText(Charsets.UTF_8.decode(ByteBuffer.wrap(Macrocosm.getResource("application.conf")!!.readAllBytes())).toString())
+        if (firstStart) {
+            access("api.conf").writeText(
+                Charsets.UTF_8.decode(
+                    ByteBuffer.wrap(
+                        Macrocosm.getResource("application.conf")!!.readAllBytes()
+                    )
+                ).toString()
+            )
             lockfile.createFile()
         }
     }
