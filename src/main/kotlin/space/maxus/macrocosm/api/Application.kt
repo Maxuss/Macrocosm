@@ -22,17 +22,9 @@ suspend fun spinApi() {
 
 suspend fun module() {
     embeddedServer(Netty, port = 6060) {
-        println("LOADING MODULE")
         routing {
             get("/pack") {
-                println("GOT GET FOR /pack")
                 call.respondFile(PackProvider.packZip)
-            }
-            get("/") {
-                println("GOT GET FOR /")
-                call.respondJson(object {
-                    val abc = true
-                })
             }
         }
     }.start(true)
