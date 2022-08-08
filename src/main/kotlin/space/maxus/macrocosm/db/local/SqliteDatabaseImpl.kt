@@ -64,6 +64,12 @@ object SqliteDatabaseImpl : DatabaseAccess {
                 EXPERIENCE VARCHAR DEFAULT('{}')
             );
             
+            CREATE TABLE IF NOT EXISTS Pets(
+                UUID VARCHAR PRIMARY KEY,
+                ACTIVE_PET VARCHAR,
+                PETS VARCHAR DEFAULT('{}')
+            )
+            
             """.trimIndent()
         )
 
@@ -91,9 +97,9 @@ object SqliteDatabaseImpl : DatabaseAccess {
 
     override fun incrementLimitedEdition(item: Identifier): Int {
         val stmt = statement
-        val res = stmt.executeQuery("SELECT * FROM LimitedEdition WHERE ITEM='$item'")
+        val res = stmt.executeQuery("SELECT * FROM LimitedTable WHERE ITEM='$item'")
         val edition = (if (res.next()) res.getInt("AMOUNT") else 0) + 1
-        stmt.executeUpdate("INSERT OR REPLACE INTO LimitedEdition VALUES('$item', $edition)")
+        stmt.executeUpdate("INSERT OR REPLACE INTO LimitedTable VALUES('$item', $edition)")
         stmt.close()
         return edition
     }

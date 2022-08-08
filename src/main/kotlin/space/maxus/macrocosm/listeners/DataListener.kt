@@ -17,11 +17,11 @@ object DataListener {
             if (Macrocosm.playersLazy.contains(e.player.uniqueId)) {
                 val player = MacrocosmPlayer.readPlayer(e.player.uniqueId)
                     ?: throw DatabaseException("Expected to find player with UUID ${e.player.uniqueId}!")
-                Macrocosm.onlinePlayers[e.player.uniqueId] = player
+                Macrocosm.loadedPlayers[e.player.uniqueId] = player
             } else {
                 val player = MacrocosmPlayer(e.player.uniqueId)
                 Macrocosm.playersLazy.add(e.player.uniqueId)
-                Macrocosm.onlinePlayers[e.player.uniqueId] = player
+                Macrocosm.loadedPlayers[e.player.uniqueId] = player
                 async {
                     player.storeSelf(database.statement)
                 }
@@ -33,7 +33,7 @@ object DataListener {
 
         listen<PlayerQuitEvent> { e ->
             val id = e.player.uniqueId
-            val player = Macrocosm.onlinePlayers.remove(id)
+            val player = Macrocosm.loadedPlayers.remove(id)
             player?.storeSelf(database.statement)
             player?.activePet?.despawn(player)
             player?.summons?.forEach { summon ->

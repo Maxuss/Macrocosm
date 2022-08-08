@@ -2,7 +2,7 @@ package space.maxus.macrocosm.registry
 
 import java.util.concurrent.ConcurrentHashMap
 
-class CloseableRegistry<R>(name: Identifier) : Registry<R>(name) {
+class CloseableRegistry<R>(name: Identifier, expose: Boolean) : Registry<R>(name, expose) {
     private var accepting: Boolean = false
 
     private val values: ConcurrentHashMap<Identifier, R> = ConcurrentHashMap()

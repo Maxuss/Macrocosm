@@ -89,7 +89,7 @@ object PyroclasticToadPet : Pet(
 
     fun init() {
         task(period = 10L * 20L) {
-            for ((_, player) in Macrocosm.onlinePlayers) {
+            for ((_, player) in Macrocosm.loadedPlayers) {
                 val (ok, pet) = ensureRequirement(player, "Profaned Rage")
                 if (!ok)
                     continue

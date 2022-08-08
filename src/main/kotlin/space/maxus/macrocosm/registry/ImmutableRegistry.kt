@@ -1,8 +1,8 @@
 package space.maxus.macrocosm.registry
 
 @Suppress("UNCHECKED_CAST")
-class ImmutableRegistry<R : Clone>(name: Identifier, delegate: DelegatedRegistry<R>.(Identifier, R) -> Unit) :
-    DelegatedRegistry<R>(name, delegate) {
+class ImmutableRegistry<R : Clone>(name: Identifier, delegate: DelegatedRegistry<R>.(Identifier, R) -> Unit, expose: Boolean = true) :
+    DelegatedRegistry<R>(name, delegate, expose) {
     override fun findOrNull(id: Identifier): R? {
         return super.findOrNull(id)?.clone() as? R
     }

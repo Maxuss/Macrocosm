@@ -72,7 +72,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
     val id: String = "macrocosm"
-    val onlinePlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
+    val loadedPlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
     var isInDevEnvironment: Boolean = false; private set
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
@@ -240,7 +240,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     override fun shutdown() {
         Threading.runAsync {
-            for ((id, v) in onlinePlayers) {
+            for ((id, v) in loadedPlayers) {
                 println("Saving data for player $id...")
                 v.storeSelf(database.statement)
             }

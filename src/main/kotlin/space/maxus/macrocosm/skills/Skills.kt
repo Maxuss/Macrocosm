@@ -3,7 +3,7 @@ package space.maxus.macrocosm.skills
 import com.google.gson.reflect.TypeToken
 import space.maxus.macrocosm.util.GSON
 
-class Skills(private val skillExp: HashMap<SkillType, PlayerSkill>) {
+class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) {
 
     operator fun get(sk: SkillType): Double {
         return skillExp[sk]!!.overflow

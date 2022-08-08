@@ -58,7 +58,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-val Player.macrocosm get() = Macrocosm.onlinePlayers[uniqueId]
+val Player.macrocosm get() = Macrocosm.loadedPlayers[uniqueId]
 
 @Suppress("unused", "ReplaceWithEnumMap")
 class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
@@ -74,8 +74,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var tempSpecs: SpecialStatistics = SpecialStatistics()
     var purse: Float = 0f
     var bank: Float = 0f
-    var currentHealth: Float = stats()!!.health
-    var currentMana: Float = stats()!!.intelligence
+    var currentHealth: Float = stats()?.health ?: 100f
+    var currentMana: Float = stats()?.intelligence ?: 0f
     var lastAbilityUse: HashMap<Identifier, Long> = hashMapOf()
     var unlockedRecipes: MutableList<Identifier> = mutableListOf()
     var skills: Skills = Skills.default()

@@ -26,7 +26,7 @@ object AmuletOfTheUndertakerAbility :
     override fun registerListeners() {
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({
+            Macrocosm.loadedPlayers.values.certain({
                 it.summons.contains(id) && ensureRequirements(
                     it,
                     ItemType.NECKLACE,
@@ -47,7 +47,7 @@ object DeadMansBootsAbility : AbilityBase(
     override fun registerListeners() {
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({
+            Macrocosm.loadedPlayers.values.certain({
                 it.summons.contains(id) && ensureRequirements(
                     it,
                     EquipmentSlot.FEET
@@ -82,7 +82,7 @@ object VampiresCowlAbility : EquipmentAbility(
         }
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({
+            Macrocosm.loadedPlayers.values.certain({
                 it.summons.contains(id) && ensureRequirements(
                     it,
                     ItemType.CLOAK
@@ -130,7 +130,7 @@ object CloakOfUndeadKing2 : EquipmentAbility(
         }
         listen<EntityCalculateStatsEvent> { e ->
             val id = e.self.tryRetrieveUuid() ?: return@listen
-            Macrocosm.onlinePlayers.values.certain({
+            Macrocosm.loadedPlayers.values.certain({
                 it.summons.contains(id) && ensureRequirements(
                     it,
                     ItemType.CLOAK

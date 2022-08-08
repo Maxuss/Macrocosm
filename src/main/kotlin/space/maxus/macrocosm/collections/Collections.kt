@@ -3,7 +3,7 @@ package space.maxus.macrocosm.collections
 import com.google.gson.reflect.TypeToken
 import space.maxus.macrocosm.util.GSON
 
-class Collections(private val colls: HashMap<CollectionType, PlayerCollection>) {
+class Collections(val colls: HashMap<CollectionType, PlayerCollection>) {
 
     operator fun get(coll: CollectionType): Int {
         return colls[coll]!!.total

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
 
-abstract class Registry<T>(val name: Identifier) {
+abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = true) {
     val delegates: AtomicInteger = AtomicInteger(0)
     protected val logger: Logger = LoggerFactory.getLogger("$name")
     abstract fun iter(): ConcurrentHashMap<Identifier, T>
@@ -74,27 +74,28 @@ abstract class Registry<T>(val name: Identifier) {
         file.writeText(GSON_PRETTY.toJson(iter()))
     }
 
-    companion object : DefaultedRegistry<Registry<*>>(id("global")) {
+    companion object : DefaultedRegistry<Registry<*>>(id("global"), false) {
         private val registries: ConcurrentHashMap<Identifier, Registry<*>> = ConcurrentHashMap()
         fun <V> register(registry: Registry<V>, id: Identifier, value: V) = registry.register(id, value)
         fun <V> register(registry: Registry<V>, id: String, value: V) = registry.register(id(id), value)
 
-        private fun <V> makeDefaulted(name: Identifier): Registry<V> =
-            register(name, DefaultedRegistry<V>(name)) as Registry<V>
+        private fun <V> makeDefaulted(name: Identifier, expose: Boolean = true): Registry<V> =
+            register(name, DefaultedRegistry<V>(name, expose)) as Registry<V>
 
-        private fun <V> makeCloseable(name: Identifier): CloseableRegistry<V> {
-            val reg = CloseableRegistry<V>(name)
+        private fun <V> makeCloseable(name: Identifier, expose: Boolean = true): CloseableRegistry<V> {
+            val reg = CloseableRegistry<V>(name, expose)
             reg.open()
             return register(name, reg) as CloseableRegistry<V>
         }
 
         private fun <V : Clone> makeImmutable(
             name: Identifier,
+            expose: Boolean = true,
             delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit = { _, _ -> }
-        ) = register(name, ImmutableRegistry(name, delegate)) as Registry<V>
+        ) = register(name, ImmutableRegistry(name, delegate, expose)) as Registry<V>
 
-        private fun <V> makeDelegated(name: Identifier, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) =
-            register(name, DelegatedRegistry(name, delegate)) as Registry<V>
+        private fun <V> makeDelegated(name: Identifier, expose: Boolean = true, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) =
+            register(name, DelegatedRegistry(name, delegate, expose)) as Registry<V>
 
         val ITEM = makeImmutable<MacrocosmItem>(id("item"))
         val ABILITY = makeDelegated<MacrocosmAbility>(id("ability")) { _, v ->
@@ -139,17 +140,16 @@ abstract class Registry<T>(val name: Identifier) {
             }
         }
         val COSMETIC = makeDefaulted<Cosmetic>(id("cosmetic"))
-        val MODEL_PREDICATES = makeDelegated<Model>(id("model")) { _, model ->
+        val MODEL_PREDICATES = makeDelegated<Model>(id("model"), false) { _, model ->
             CMDGenerator.enqueue(model)
             if (model.to.startsWith("macrocosm:") && model !is RawModel)
                 TexturedModelGenerator.enqueue(model)
         }
-        val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"))
+        val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"), false)
         val SPELL = makeDefaulted<Spell>(id("spell"))
 
         override fun register(id: Identifier, value: Registry<*>): Registry<*> {
-            val r = super.register(id, value)
-            return r
+            return super.register(id, value)
         }
 
         override fun dumpToFile(file: Path) {

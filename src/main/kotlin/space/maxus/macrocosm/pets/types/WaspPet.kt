@@ -80,7 +80,7 @@ object WaspPet : Pet(
 
     fun init() {
         task(period = 10 * 20L) {
-            for ((_, player) in Macrocosm.onlinePlayers) {
+            for ((_, player) in Macrocosm.loadedPlayers) {
                 val (ok, pet) = ensureRequirement(player, "Weaponized Honey")
                 if (!ok)
                     continue
