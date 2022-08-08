@@ -54,6 +54,7 @@ import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.workarounds.AsyncLauncher
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
 import java.util.concurrent.Executors
@@ -83,8 +84,14 @@ class InternalMacrocosmPlugin : KSpigot() {
         INSTANCE = this
         UNSAFE = Unsafe(Random.nextInt())
         MONITOR = Monitor()
+        Accessor.init()
+        Threading.runAsync {
+            info("Starting REST API Server")
+            Monitor.enter("REST API Server Thread")
+            AsyncLauncher.launchApi()
+            Monitor.exit()
+        }
         Threading.runAsyncRaw {
-            Accessor.init()
             DATABASE = if(isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
             DATABASE.connect()
             playersLazy = DATABASE.readPlayers().toMutableList()
