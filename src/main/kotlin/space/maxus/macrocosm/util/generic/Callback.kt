@@ -47,3 +47,32 @@ data class ConditionalCallback(val condition: () -> Boolean) {
         return condition()
     }
 }
+
+data class SuspendConditionalCallback (val condition: suspend () -> Boolean) {
+    companion object {
+        fun suspendSuccess() = SuspendConditionalCallback { true }
+        fun suspendFail() = SuspendConditionalCallback { false }
+    }
+
+    suspend inline fun then(crossinline runnable: suspend () -> Unit): SuspendConditionalCallback {
+        return SuspendConditionalCallback {
+            val stored = condition()
+            if(stored)
+                runnable()
+            stored
+        }
+    }
+
+    suspend inline fun otherwise(crossinline runnable: suspend () -> Unit): SuspendConditionalCallback {
+        return SuspendConditionalCallback {
+            val stored = condition()
+            if(!stored)
+                runnable()
+            stored
+        }
+    }
+
+    suspend fun call(): Boolean {
+        return condition()
+    }
+}

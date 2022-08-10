@@ -26,6 +26,8 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:2.0.3")
     implementation("io.ktor:ktor-server-netty-jvm:2.0.3")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.0.3")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.0.3")
+    swaggerUI("org.webjars:swagger-ui:4.11.1")
 }
 
 tasks {
@@ -53,10 +55,15 @@ tasks {
 }
 
 tasks.generateReDoc.configure {
-    inputFile = file("$rootDir/src/main/resources/swagger/swagger.yml")
+    inputFile = file("$rootDir/src/main/resources/swagger.yml")
     outputDir = file("$rootDir/src/main/resources/doc")
-    title = "Macrocosm API"
     options = mapOf(
-        "spec-url" to "http://127.0.0.1:6060/doc/swagger.yml"
+        "spec-url" to "./doc/swagger.yml"
     )
+    doLast {
+        copy {
+            from("$rootDir/src/main/resources/pack/pack.png")
+            into("$rootDir/src/main/resources/doc")
+        }
+    }
 }

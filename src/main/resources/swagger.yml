@@ -1,130 +1,508 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  title: Macrocosm API
-  description: API for getting data from Macrocosm Server
-  version: 1.0.0
-tags:
-    - name: Resources
-      description: Access to resource registries
-schemes:
-  - https
-paths:
-    /resources:
-        get:
-            summary: Get all Registries
-            responses:
-                "200":
-                    description: Gets all Resource Registries that can be queried
-                    schema:
-                        $ref: "#/definitions/AllRegistries"
-            tags:
-                - Resources
-    '/resources/{registry}':
-        get:
-            parameters:
-                - name: registry
-                  in: path
-                  description: ID of registry to access
-                  required: true
-                  type: string
-            summary: Get specific Registry
-            responses:
-                "200":
-                    description: Gets contents of a specific registry
-                    schema:
-                        $ref: "#/definitions/Registry"
-                "400":
-                    description: registry parameter not provided or indicates a registry that can not be queried
-                    schema:
-                        $ref: "#/definitions/Error"
-                "404":
-                    description: registry parameter indicates an invalid registry
-                    schema:
-                        $ref: "#/definitions/Error"
-            tags:
-                - Resources
-    '/resources/{registry}/{element}':
-        get:
-            parameters:
-                - name: registry
-                  in: path
-                  description: ID of registry to access
-                  required: true
-                  type: string
-                - name: element
-                  in: path
-                  description: ID of the element to access
-                  required: true
-                  type: string
-            tags:
-                - Resources
-            responses:
-                "200":
-                    description: Gets specific element from registry
-                    schema:
-                        $ref: "#/definitions/RegistryElement"
-                "400":
-                    description: registry/element parameter not provided or indicates a registry that can not be queried
-                    schema:
-                        $ref: "#/definitions/Error"
-                "404":
-                    description: registry parameter indicates an invalid registry or could not find element in registry
-                    schema:
-                        $ref: "#/definitions/Error"
+  description: |
+    This is an API used to interact with and access Macrocosm data.
 
-definitions:
-    AllRegistries:
-        description: All registries that can be queried
-        properties:
-            success:
-                type: boolean
-                description: Whether the operation was successful. Always true
-            availableRegistries:
-                type: array
+
+    # Authentication
+
+    Authentication requires you to provide an API key in most endpoints.
+
+    The only endpoints that **do not** enforce an API key authentication are the
+    ones in `Resources` tags.
+      
+    <!-- ReDoc-Inject: <security-definitions> -->
+  title: Macrocosm API
+  version: 0.2.0
+  x-logo:
+    altText: Macrocosm Logo
+    url: ./doc/pack.png
+basePath: /
+paths:
+  /players:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: Gets all online players at the moment
+          schema:
+            example:
+              onlinePlayers:
+                - 4adfe27e-63d3-45b9-8238-62b6ed6fdb5e
+                - 534359f7-5407-4b19-ba92-c71c370022a5
+              success: true
+            properties:
+              onlinePlayers:
+                description: All UUIDs of players online at the moment
                 items:
-                    type: string
-                description: All registries that can be queried
-        example:
-            success: true
-            availableRegistries: ["item", "entity"]
-    RegistryElement:
-        description: A specific element from registry
-        properties:
-            success:
+                  type: string
+                type: array
+              success:
                 type: boolean
-                description: Whether the operation was successful. Always true
-            element:
+            type: object
+        '403':
+          description: Access is forbidden due to wrong API key or not providing one
+          schema:
+            $ref: '#/definitions/ErrorNoKey'
+        '429':
+          description: Access is forbidden due to key throttle
+          schema:
+            $ref: '#/definitions/ErrorKeyThrottle'
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Players
+      summary: Online players
+  '/players/{player}/balance':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: UUID or name of player to access
+          in: path
+          name: player
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Gets balance of the provided player if they have joined the server
+            before
+          schema:
+            example:
+              bank: 0
+              purse: 26443203.1
+              success: true
+            properties:
+              bank:
+                description: Amount of coins in bank
+                format: double
+                type: number
+              purse:
+                description: Amount of coins in purse
+                format: double
+                type: number
+              success:
+                type: boolean
+            type: object
+        '204':
+          description: >-
+            Could not get balance of player because they have never joined the
+            server before
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Player argument not provided
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access is forbidden due to wrong API key or not providing one
+          schema:
+            $ref: '#/definitions/ErrorNoKey'
+        '429':
+          description: Access is forbidden due to key throttle
+          schema:
+            $ref: '#/definitions/ErrorKeyThrottle'
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Players
+      summary: Player Balance
+  '/players/{player}/collections':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: UUID or name of player to access
+          in: path
+          name: player
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Gets collection data of the provided player if they have joined the
+            server before
+          schema:
+            example:
+              collections:
+                NETHER_WART:
+                  exp: 12
+                  lvl: 15
+              success: true
+            properties:
+              collections:
+                description: Collection data of player
+                properties: {}
                 type: object
-                description: Queried element. Content varies depending on registry type
-        example:
-            success: true
-            element:
+              success:
+                type: boolean
+            type: object
+        '204':
+          description: >-
+            Could not get collection data of player because they have never
+            joined the server before
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Player argument not provided
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access is forbidden due to wrong API key or not providing one
+          schema:
+            $ref: '#/definitions/ErrorNoKey'
+        '429':
+          description: Access is forbidden due to key throttle
+          schema:
+            $ref: '#/definitions/ErrorKeyThrottle'
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Players
+      summary: Player Collections
+  '/players/{player}/inventory':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: UUID or name of player to access
+          in: path
+          name: player
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Gets inventory of provided player if it has played the server before
+          schema:
+            example:
+              inventory: <imagine that there is a long string>
+              success: true
+            properties:
+              inventory:
+                description: >-
+                  Inventory data of player. Base64 encoded Gzip-compressed NBT.
+                  May contain Unicode characters (like emojis)! May be 'null' if
+                  `success` is false
+                type: string
+              success:
+                type: boolean
+            type: object
+        '204':
+          description: >-
+            Could not get inventory of player because they have never joined the
+            server before
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Player argument not provided
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access is forbidden due to wrong API key or not providing one
+          schema:
+            $ref: '#/definitions/ErrorNoKey'
+        '429':
+          description: Access is forbidden due to key throttle
+          schema:
+            $ref: '#/definitions/ErrorKeyThrottle'
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Players
+      summary: Player Inventory
+  '/players/{player}/skills':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: UUID or name of player to access
+          in: path
+          name: player
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Gets skill data of the provided player if they have joined the
+            server before
+          schema:
+            example:
+              skills:
+                COMBAT:
+                  exp: 0
+                  lvl: 10
+              success: true
+            properties:
+              skills:
+                description: Skill data of player
+                properties: {}
+                type: object
+              success:
+                type: boolean
+            type: object
+        '204':
+          description: >-
+            Could not get skill data of player because they have never joined
+            the server before
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Player argument not provided
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access is forbidden due to wrong API key or not providing one
+          schema:
+            $ref: '#/definitions/ErrorNoKey'
+        '429':
+          description: Access is forbidden due to key throttle
+          schema:
+            $ref: '#/definitions/ErrorKeyThrottle'
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Players
+      summary: Player Skills
+  '/players/{player}/status':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: UUID or name of player to access
+          in: path
+          name: player
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Gets status of the provided player if they have joined the server
+            before
+          schema:
+            example:
+              foundPlayer: true
+              isOnline: false
+              success: true
+              uuid: 534359f7-5407-4b19-ba92-c71c370022a5
+            properties:
+              foundPlayer:
+                type: boolean
+              isOnline:
+                description: Whether the player is currently online
+                type: boolean
+              success:
+                type: boolean
+              uuid:
+                description: UUID of the player
+                type: string
+            type: object
+        '204':
+          description: >-
+            Could not get status of player because they have never joined the
+            server before
+          schema:
+            example:
+              foundPlayer: false
+              message: Player has never joined the server before!
+              success: true
+            properties:
+              foundPlayer:
+                type: boolean
+              message:
+                description: Cause as to why could not find player
+                type: string
+              success:
+                type: boolean
+            type: object
+        '400':
+          description: Player argument not provided
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access is forbidden due to wrong API key or not providing one
+          schema:
+            $ref: '#/definitions/ErrorNoKey'
+        '429':
+          description: Access is forbidden due to key throttle
+          schema:
+            $ref: '#/definitions/ErrorKeyThrottle'
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Players
+      summary: Player Status
+  /resources:
+    get:
+      produces:
+        - application/octet-stream
+      parameters: []
+      responses:
+        '200':
+          description: Gets all Resource Registries that can be queried
+          schema:
+            description: All registries that can be queried
+            example:
+              availableRegistries:
+                - item
+                - entity
+              success: true
+            properties:
+              availableRegistries:
+                description: All registries that can be queried
+                items:
+                  type: string
+                type: array
+              success:
+                type: boolean
+            type: object
+      tags:
+        - Resources
+      summary: All Registries
+  '/resources/{registry}':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: ID of registry to access
+          in: path
+          name: registry
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Gets contents of a specific registry
+          schema:
+            description: All contents of a specific registry
+            example:
+              registry:
+                'macrocosm:some_item':
+                  abc: 123
+                  boolean: true
+              success: true
+            properties:
+              registry:
+                description: >-
+                  Contents of the registry. Key is an identifier while value
+                  depends on registry type
+                properties: {}
+                type: object
+              success:
+                type: boolean
+            type: object
+        '400':
+          description: >-
+            registry parameter not provided or indicates a registry that can not
+            be queried
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: registry parameter indicates an invalid registry
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Resources
+      summary: Specific Registry
+  '/resources/{registry}/{element}':
+    get:
+      produces:
+        - application/octet-stream
+      parameters:
+        - description: ID of registry to access
+          in: path
+          name: registry
+          required: true
+          type: string
+        - description: ID of the element to access
+          in: path
+          name: element
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Gets specific element from registry
+          schema:
+            description: A specific element from registry
+            example:
+              element:
                 abc: 123
                 boolean: true
-    Registry:
-        description: All contents of a specific registry
-        properties:
-            success:
-                type: boolean
-                description: Whether the operation was successful. Always true
-            registry:
+              success: true
+            properties:
+              element:
+                description: Queried element. Content varies depending on registry type
+                properties: {}
                 type: object
-                description: Contents of the registry. Key is an identifier while value depends on registry type
-        example:
-            success: true
-            registry:
-                "macrocosm:some_item":
-                    abc: 123
-                    boolean: true
-    Error:
-        description: An error response
-        properties:
-            success:
+              success:
                 type: boolean
-                description: Whether the operation was successful. Always false
-            error:
-                type: string
-                description: Error message. Depends on endpoint and usage case
-        example:
-            success: false
-            error: "Provided player is not online!"
+            type: object
+        '400':
+          description: >-
+            registry/element parameter not provided or indicates a registry that
+            can not be queried
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: >-
+            registry parameter indicates an invalid registry or could not find
+            element in registry
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Resources
+      summary: Specific element from registry
+definitions:
+  Error:
+    description: An error response
+    example:
+      error: Provided player is not online!
+      success: false
+    properties:
+      error:
+        description: Error message. Depends on endpoint and usage case
+        type: string
+      success:
+        type: boolean
+    type: object
+  ErrorKeyThrottle:
+    description: Too many requests sent with a single API key
+    example:
+      error: API Key throttle max amount of requests reached (100)
+      success: false
+    properties:
+      error:
+        description: The description of the error
+        type: string
+      success:
+        type: boolean
+    type: object
+  ErrorNoKey:
+    description: API Key was not provided
+    example:
+      error: No API key provided!
+      success: false
+    properties:
+      error:
+        description: The description of the error
+        type: string
+      success:
+        type: boolean
+    type: object
+securityDefinitions:
+  ApiKeyAuth:
+    description: >-
+      Can be obtained by joining the server and executing command '/api new'.
+      The only endpoints that **do not** enforce authentication are `/resources`
+      related ones
+    in: header
+    name: API-Key
+    type: apiKey
+tags:
+  - description: Access to resource registries
+    name: Resources
+  - description: Most information related to players
+    name: Players
+x-components: {}
+
