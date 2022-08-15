@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
@@ -23,8 +24,10 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.Vector
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.listeners.FallingBlockListener
+import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.IdentifierTypeAdapter
@@ -33,10 +36,16 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
 import java.io.File
+import java.nio.file.FileSystemAlreadyExistsException
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.time.Duration
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
@@ -64,6 +73,46 @@ typealias Fn = () -> Unit
 typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
+
+inline fun <reified T> fromJson(str: String): T? = if(str == "NULL") null else GSON.fromJson<T>(str, typetoken<T>())
+fun <T> toJson(obj: T): String = GSON.toJson(obj)
+inline fun <reified T> typetoken(): java.lang.reflect.Type = object: TypeToken<T>() { }.type
+
+val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
+fun String.camelToSnakeCase(): String {
+    return camelRegex.replace(this) {
+        "_${it.value}"
+    }.lowercase(Locale.getDefault())
+}
+
+inline fun <reified K: Any?, reified V: Any?> Iterable<K>.associateWithHash(producer: FnArgRet<K, V>): HashMap<K, V> {
+    val result = hashMapOf<K, V>()
+    return associateWithTo(result, producer)
+}
+
+inline fun <reified T: Any?> ignorant(ele: T): FnArgRet<Any?, T> = { ele }
+inline fun <reified T: Any?> produce(ele: T): FnRet<T> = { ele }
+
+inline fun <reified T: Any?> T.repeated(n: Int): Array<T> = Array(n) { this }
+
+@OptIn(ExperimentalContracts::class)
+inline fun walkDataResources(vararg path: String, block: (Path) -> Unit) {
+    contract {
+        callsInPlace(block, InvocationKind.UNKNOWN)
+    }
+
+    val input = Macrocosm.javaClass.classLoader.getResource("data")!!.toURI()
+    val fs = try {
+        FileSystems.newFileSystem(input, hashMapOf<String, String>())
+    } catch (e: FileSystemAlreadyExistsException) {
+        FileSystems.getFileSystem(input)
+    }
+    val mut = path.toMutableList()
+    val first = mut.removeFirstOrNull() ?: return
+    for(file in PackProvider.enumerateEntries(fs.getPath(first, *mut.toTypedArray()))) {
+        block(file)
+    }
+}
 
 inline fun Vector.advanceInstantly(loc: Location, mod: Float, times: Int, fn: (Location) -> Unit) {
     val pos = loc.clone()

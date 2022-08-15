@@ -5,11 +5,12 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import java.math.BigDecimal
 
 class PlayerDeathEvent(
     val player: MacrocosmPlayer,
     var source: Component?,
-    var reduceCoins: Float
+    var reduceCoins: BigDecimal
 ) : Event(), Cancellable {
     private var eventCancelled = false
 

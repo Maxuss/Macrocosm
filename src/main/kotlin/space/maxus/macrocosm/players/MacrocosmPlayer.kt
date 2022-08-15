@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.players
 
-import com.google.gson.reflect.TypeToken
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
@@ -18,13 +17,17 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import org.jetbrains.exposed.sql.update
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.collections.Collections
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.database
-import space.maxus.macrocosm.db.DatabaseStore
+import space.maxus.macrocosm.db.*
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.roman
@@ -33,7 +36,10 @@ import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.events.PlayerTickEvent
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
-import space.maxus.macrocosm.item.*
+import space.maxus.macrocosm.item.Items
+import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.Rarity
+import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.ranks.Rank
@@ -45,13 +51,17 @@ import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerQuest
 import space.maxus.macrocosm.slayer.SlayerStatus
 import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.spell.essence.EssenceType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.GSON
-import java.sql.Statement
+import space.maxus.macrocosm.util.associateWithHash
+import space.maxus.macrocosm.util.fromJson
+import space.maxus.macrocosm.util.ignorant
+import space.maxus.macrocosm.util.toJson
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
 import kotlin.math.max
@@ -72,8 +82,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var baseStats: Statistics = Statistics.default()
     var tempStats: Statistics = Statistics.zero()
     var tempSpecs: SpecialStatistics = SpecialStatistics()
-    var purse: Float = 0f
-    var bank: Float = 0f
+    var purse: BigDecimal = BigDecimal(0)
+    var bank: BigDecimal = BigDecimal(0)
     var currentHealth: Float = stats()?.health ?: 100f
     var currentMana: Float = stats()?.intelligence ?: 0f
     var lastAbilityUse: HashMap<Identifier, Long> = hashMapOf()
@@ -84,12 +94,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> =
-        HashMap(SlayerType.values().associateWith { SlayerLevel(0, .0, listOf(), .0) })
+        SlayerType.values().asIterable().associateWithHash(ignorant(SlayerLevel(0, .0, listOf(), .0)))
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
     var memory: PlayerMemory = PlayerMemory.nullMemory()
     var activeForgeRecipes: MutableList<ActiveForgeRecipe> = mutableListOf()
+    var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHash(ignorant(0))
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
@@ -364,7 +375,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         if (paper == null)
             return
 
-        val event = PlayerDeathEvent(this, source, purse / 2f)
+        val event = PlayerDeathEvent(this, source, purse / 2f.toBigDecimal())
         if (!event.callEvent()) {
             sound(Sound.ENTITY_ITEM_BREAK) {
                 pitch = 0f
@@ -378,8 +389,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
         if (reason == null) {
             broadcast(text("<red>☠ <gray>").append(paper!!.displayName().append(text("<gray> died."))))
-            if (purse > 0f) {
-                paper!!.sendMessage(text("<red>You died and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
+            if (purse > 0f.toBigDecimal()) {
+                paper!!.sendMessage(text("<red>You died and lost ${Formatting.withCommas(event.reduceCoins)} coins!"))
             } else {
                 paper!!.sendMessage(text("<red>You died!"))
             }
@@ -389,10 +400,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     paper!!.displayName().append(text("<gray> died because of ").append(reason))
                 )
             )
-            if (event.reduceCoins > 0f) {
+            if (event.reduceCoins > 0f.toBigDecimal()) {
                 paper!!.sendMessage(
                     text("<red>You died because of ").append(reason)
-                        .append(text("<red> and lost ${Formatting.withCommas(event.reduceCoins.toBigDecimal())} coins!"))
+                        .append(text("<red> and lost ${Formatting.withCommas(event.reduceCoins)} coins!"))
                 )
             } else {
                 paper!!.sendMessage(text("<red>You died because of ").append(reason).append(text("<red>!")))
@@ -517,51 +528,97 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     @Suppress("SqlInsertValues")
-    override fun storeSelf(stmt: Statement) {
+    override fun storeSelf(data: DataStorage) {
         val player = paper
         if (player == null) {
             println("Tried to store offline player $ref")
             return
         }
-        val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
-
-        stmt.executeUpdate(
-            "INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${
-                GSON.toJson(
-                    this.memory
-                )
-            }', '${GSON.toJson(this.activeForgeRecipes)}')"
-        )
-        var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
-        var rightHand = "VALUES ('$ref'"
-        for ((k, value) in baseStats.iter()) {
-            leftHand += ", ${k.name}"
-            rightHand += ", $value"
+        val p = this
+        data.transact {
+            if(PlayersTable.update({ PlayersTable.uuid eq p.ref }) {
+                dump(it, p, false)
+            } <= 0) {
+                PlayersTable.insert {
+                    dump(it, p, true)
+                }
+                StatsTable.insert {
+                    it[uuid] = p.ref
+                    it[StatsTable.data] = toJson(baseStats)
+                }
+            } else {
+                StatsTable.update {
+                    it[StatsTable.data] = toJson(baseStats)
+                }
+            }
         }
-        stmt.executeUpdate("$leftHand)$rightHand)")
-        val skillsJson = skills.json()
-        val collectionJson = collections.json()
-        val recipes = GSON.toJson(unlockedRecipes.map { it.toString() })
-        stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
-        stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
 
-        val active = if (activePet != null) {
-            activePet!!.hashKey
-        } else ""
-        val pets = GSON.toJson(ownedPets)
+//        stmt.executeUpdate(
+//            "INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${
+//                GSON.toJson(
+//                    this.memory
+//                )
+//            }', '${GSON.toJson(this.activeForgeRecipes)}')"
+//        )
+//        var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
+//        var rightHand = "VALUES ('$ref'"
+//        for ((k, value) in baseStats.iter()) {
+//            leftHand += ", ${k.name}"
+//            rightHand += ", $value"
+//        }
+//        stmt.executeUpdate("$leftHand)$rightHand)")
+//        val skillsJson = skills.json()
+//        val collectionJson = collections.json()
+//        val recipes = GSON.toJson(unlockedRecipes.map { it.toString() })
+//        stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
+//        stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
+//
+//        val active = if (activePet != null) {
+//            activePet!!.hashKey
+//        } else ""
+//        val pets = GSON.toJson(ownedPets)
+//
+//        stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
+//
+//        // slayers
+//        val slayers = GSON.toJson(slayers.mapKeys { (k, _) -> k.name })
+//        stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
+//
+//        // equipment
+//        val equipment =
+//            this.equipment.enumerate().joinToString(separator = ", ") { "'${it?.serializeToBytes(this) ?: "NULL"}'" }
+//        stmt.executeUpdate("""INSERT OR REPLACE INTO Equipment VALUES ('$ref', $equipment)""")
+//
+//        // essence
+//        val essence = GSON.toJson(this.availableEssence)
+//        stmt.executeUpdate("""INSERT OR REPLACE INTO Essence VALUES ('$ref', '$essence')""")
+//
+//        stmt.close()
+    }
 
-        stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
-
-        // slayers
-        val slayers = GSON.toJson(slayers.mapKeys { (k, _) -> k.name })
-        stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
-
-        // equipment
-        val equipment =
-            this.equipment.enumerate().joinToString(separator = ", ") { "'${it?.serializeToBytes(this) ?: "NULL"}'" }
-        stmt.executeUpdate("""INSERT OR REPLACE INTO Equipment VALUES ('$ref', $equipment)""")
-
-        stmt.close()
+    private fun dump(it: UpdateBuilder<*>, p: MacrocosmPlayer, id: Boolean) {
+        val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
+        if(id)
+            it[PlayersTable.uuid] = p.ref
+        it[PlayersTable.rank] = p.rank.id()
+        it[PlayersTable.firstJoin] = p.firstJoin
+        it[PlayersTable.lastJoin] = p.lastJoin
+        it[PlayersTable.playtime] = newPlaytime
+        it[PlayersTable.purse] = p.purse
+        it[PlayersTable.bank] = p.bank
+        it[PlayersTable.memory] = toJson(p.memory)
+        it[PlayersTable.forge] = toJson(p.activeForgeRecipes)
+        it[PlayersTable.collections] = p.collections.json()
+        it[PlayersTable.skills] = p.skills.json()
+        it[PlayersTable.recipes] = toJson(p.unlockedRecipes)
+        it[PlayersTable.necklace] = if(p.equipment.necklace == null) "NULL" else toJson(p.equipment.necklace)
+        it[PlayersTable.cloak] = if(p.equipment.cloak == null) "NULL" else toJson(p.equipment.cloak)
+        it[PlayersTable.belt] = if(p.equipment.belt == null) "NULL" else toJson(p.equipment.belt)
+        it[PlayersTable.gloves] = if(p.equipment.gloves == null) "NULL" else toJson(p.equipment.gloves)
+        it[PlayersTable.slayers] = toJson(p.slayers)
+        it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
+        it[PlayersTable.pets] = toJson(p.ownedPets)
+        it[PlayersTable.essence] = toJson(availableEssence)
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
@@ -571,93 +628,109 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     companion object {
         fun readPlayer(id: UUID): MacrocosmPlayer? {
-            val stmt = database.statement
-            val res = stmt.executeQuery("SELECT * FROM Players where UUID = '$id'")
-            if (!res.next())
-                return null
-            val rank = Rank.fromId(res.getInt("RANK"))
-            val firstJoin = res.getLong("FIRST_JOIN")
-            val playtime = res.getLong("PLAYTIME")
-            val purse = res.getFloat("PURSE")
-            val bank = res.getFloat("BANK")
-            val memory: PlayerMemory = GSON.fromJson(res.getString("MEMORY"), PlayerMemory::class.java)
-            val forgeRecipes: MutableList<ActiveForgeRecipe> = GSON.fromJson<List<ActiveForgeRecipe>>(
-                res.getString("FORGE"),
-                object : TypeToken<List<ActiveForgeRecipe>>() {}.type
-            ).toMutableList()
+            val sql = database.transact {
+                PlayersTable.select { PlayersTable.uuid eq id }.map { SqlPlayerData.fromRes(it) }.firstOrNull()
+            } ?: return null
+
             val player = MacrocosmPlayer(id)
-            player.rank = rank
-            player.firstJoin = firstJoin
+            player.rank = sql.rank
+            player.firstJoin = sql.firstJoin
             player.lastJoin = Instant.now().toEpochMilli()
-            player.playtime = playtime
-            player.purse = purse
-            player.bank = bank
-            player.memory = memory
-            player.activeForgeRecipes = forgeRecipes
-
-            val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
-            if (!stats.next())
-                return null
-            player.baseStats = Statistics.fromRes(stats)
-
-            val skillsCollections = stmt.executeQuery("SELECT * FROM SkillsCollections WHERE UUID = '$id'")
-            if (!skillsCollections.next()) return null
-            val skills = Skills.fromJson(skillsCollections.getString("SKILLS"))
-            val colls = Collections.fromJson(skillsCollections.getString("COLLECTIONS"))
-            player.skills = skills
-            player.collections = colls
-
-            val recipesRes = stmt.executeQuery("SELECT * FROM Recipes WHERE UUID = '$id'")
-            if (!recipesRes.next())
-                return null
-            val recipes =
-                GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object : TypeToken<List<String>>() {}.type)
-                    .map { Identifier.parse(it) }
-            player.unlockedRecipes = recipes.toMutableList()
-
-            // pets
-            val petsRes = stmt.executeQuery("SELECT * FROM Pets WHERE UUID = '$id'")
-            if (!petsRes.next())
-                return null
-            player.ownedPets =
-                GSON.fromJson(petsRes.getString("PETS"), object : TypeToken<HashMap<String, StoredPet>>() {}.type)
-            val active = petsRes.getString("ACTIVE_PET")
-            if (active.isNotEmpty()) {
-                val pet = player.ownedPets[active]!!
+            player.playtime = sql.playtime
+            player.purse = sql.purse
+            player.bank = sql.bank
+            player.memory = sql.memory
+            player.activeForgeRecipes = sql.forge.toMutableList()
+            player.collections = sql.collections
+            player.skills = sql.skills
+            player.unlockedRecipes = sql.recipes.toMutableList()
+            player.equipment = sql.equipment
+            player.slayers = sql.slayerExp
+            player.ownedPets = sql.pets
+            if (sql.activePet.isNotEmpty()) {
+                val pet = player.ownedPets[sql.activePet]!!
                 // delaying spawning pet, to prevent weird bugs
                 task(delay = 20L) {
-                    player.activePet = Registry.PET.find(pet.id).spawn(player, active)
+                    player.activePet = Registry.PET.find(pet.id).spawn(player, sql.activePet)
                 }
             }
+            player.availableEssence = sql.essence
 
-            // slayers
-            val slayerRes = stmt.executeQuery("SELECT * FROM Slayers WHERE UUID = '$id'")
-            if (!slayerRes.next())
-                return null
-            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(
-                petsRes.getString("EXPERIENCE"),
-                object : TypeToken<HashMap<String, SlayerLevel>>() {}.type
-            )
-            player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
-
-            // equipment
-            val eqRes = stmt.executeQuery("SELECT * FROM Equipment WHERE UUID = '$id'")
-            if (!eqRes.next())
-                return null
-            val equipment = PlayerEquipment()
-            listOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES).associateWith {
-                val contained = eqRes.getString(it.name)
-                if (contained == "NULL")
-                    null
-                else
-                    MacrocosmItem.deserializeFromBytes(contained)
-            }.forEach { (ty, item) ->
-                equipment[ty] = item
-            }
-            player.equipment = equipment
-
-            stmt.close()
+            val stats = database.transact {
+                StatsTable.select { StatsTable.uuid eq id }.map { it[StatsTable.data] }.firstOrNull()
+            } ?: return null
+            player.baseStats = fromJson(stats) ?: return null
             return player
+
+//            val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
+//            if (!stats.next())
+//                return null
+//            player.baseStats = Statistics.fromRes(stats)
+//
+//            val skillsCollections = stmt.executeQuery("SELECT * FROM SkillsCollections WHERE UUID = '$id'")
+//            if (!skillsCollections.next()) return null
+//            val skills = Skills.fromJson(skillsCollections.getString("SKILLS"))
+//            val colls = Collections.fromJson(skillsCollections.getString("COLLECTIONS"))
+//            player.skills = skills
+//            player.collections = colls
+//
+//            val recipesRes = stmt.executeQuery("SELECT * FROM Recipes WHERE UUID = '$id'")
+//            if (!recipesRes.next())
+//                return null
+//            val recipes =
+//                GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object : TypeToken<List<String>>() {}.type)
+//                    .map { Identifier.parse(it) }
+//            player.unlockedRecipes = recipes.toMutableList()
+//
+//            // pets
+//            val petsRes = stmt.executeQuery("SELECT * FROM Pets WHERE UUID = '$id'")
+//            if (!petsRes.next())
+//                return null
+//            player.ownedPets =
+//                GSON.fromJson(petsRes.getString("PETS"), object : TypeToken<HashMap<String, StoredPet>>() {}.type)
+//            val active = petsRes.getString("ACTIVE_PET")
+//            if (active.isNotEmpty()) {
+//                val pet = player.ownedPets[active]!!
+//                // delaying spawning pet, to prevent weird bugs
+//                task(delay = 20L) {
+//                    player.activePet = Registry.PET.find(pet.id).spawn(player, active)
+//                }
+//            }
+//
+//            // slayers
+//            val slayerRes = stmt.executeQuery("SELECT * FROM Slayers WHERE UUID = '$id'")
+//            if (!slayerRes.next())
+//                return null
+//            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(
+//                slayerRes.getString("EXPERIENCE"),
+//                object : TypeToken<HashMap<String, SlayerLevel>>() {}.type
+//            )
+//            player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
+//
+//            // equipment
+//            val eqRes = stmt.executeQuery("SELECT * FROM Equipment WHERE UUID = '$id'")
+//            if (!eqRes.next())
+//                return null
+//            val equipment = PlayerEquipment()
+//            listOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES).associateWith {
+//                val contained = eqRes.getString(it.name)
+//                if (contained == "NULL")
+//                    null
+//                else
+//                    MacrocosmItem.deserializeFromBytes(contained)
+//            }.forEach { (ty, item) ->
+//                equipment[ty] = item
+//            }
+//            player.equipment = equipment
+//
+//            // essence
+//            val esRes = stmt.executeQuery("SELECT * FROM Essence WHERE UUID = '$id'")
+//            if(!esRes.next())
+//                return null
+//            player.availableEssence = GSON.fromJson(esRes.getString("ESSENCE"), object: TypeToken<HashMap<EssenceType, Int>>() { }.type)
+//
+//            stmt.close()
         }
     }
+
 }

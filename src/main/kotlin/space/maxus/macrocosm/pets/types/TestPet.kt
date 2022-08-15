@@ -41,7 +41,7 @@ object TestPet : Pet(
         if (!ok)
             return
         val amount = pet!!.level * 50
-        e.player.purse += amount
+        e.player.purse += amount.toBigDecimal()
         e.player.sendMessage("<green>Your Pickle Jar granted your <gold>${Formatting.withCommas(amount.toBigDecimal())} coins<green>!")
     }
 }

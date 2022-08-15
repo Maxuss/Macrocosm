@@ -26,7 +26,7 @@ object ScavengerEnchantment : EnchantmentBase(
             return
         val mc = e.killed.macrocosm!!
         val amount = lvl * .3f * mc.level
-        e.player.purse += amount
+        e.player.purse += amount.toBigDecimal()
         sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
             pitch = 2f
             volume = 0.2f

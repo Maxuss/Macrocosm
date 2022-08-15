@@ -2,29 +2,21 @@ package space.maxus.macrocosm.recipes
 
 import com.google.gson.JsonObject
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.recipes.types.ShapedRecipe
 import space.maxus.macrocosm.recipes.types.ShapelessRecipe
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.GSON
-import java.nio.file.FileSystemAlreadyExistsException
-import java.nio.file.FileSystems
+import space.maxus.macrocosm.util.walkDataResources
 import kotlin.io.path.readText
 
 object RecipeParser {
     fun init() {
         Threading.runAsync(name = "RecipeParser") {
-            val pool = Threading.newFixedPool(5)
+            val pool = Threading.newFixedPool(8)
             info("Starting recipe parser...")
 
-            val input = this.javaClass.classLoader.getResource("data")!!.toURI()
-            val fs = try {
-                FileSystems.newFileSystem(input, hashMapOf<String, String>())
-            } catch (e: FileSystemAlreadyExistsException) {
-                FileSystems.getFileSystem(input)
-            }
-            for (file in PackProvider.enumerateEntries(fs.getPath("data", "recipes"))) {
+            walkDataResources("data", "recipes") { file ->
                 info("Parsing recipes from ${file.fileName}...")
                 val data = GSON.fromJson(file.readText(), JsonObject::class.java)
                 for ((key, obj) in data.entrySet()) {
@@ -34,6 +26,7 @@ object RecipeParser {
                     }
                 }
             }
+
             pool.shutdown()
         }
     }

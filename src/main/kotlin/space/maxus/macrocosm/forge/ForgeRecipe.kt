@@ -2,12 +2,10 @@ package space.maxus.macrocosm.forge
 
 import com.google.gson.JsonObject
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.GSON
-import java.nio.file.FileSystemAlreadyExistsException
-import java.nio.file.FileSystems
+import space.maxus.macrocosm.util.walkDataResources
 import kotlin.io.path.readText
 
 class ForgeRecipe(
@@ -43,13 +41,8 @@ class ForgeRecipe(
             Threading.runAsync(name = "ForgeRecipeParser") {
                 info("Starting forge recipe parser")
                 val pool = Threading.newFixedPool(5)
-                val input = this::class.java.classLoader.getResource("data")!!.toURI()
-                val fs = try {
-                    FileSystems.newFileSystem(input, hashMapOf<String, String>())
-                } catch (e: FileSystemAlreadyExistsException) {
-                    FileSystems.getFileSystem(input)
-                }
-                for (file in PackProvider.enumerateEntries(fs.getPath("data", "forge_recipes"))) {
+
+                walkDataResources("data", "forge_recipes") { file ->
                     info("Parsing forge recipes from ${file.fileName}...")
                     val data = GSON.fromJson(file.readText(), JsonObject::class.java)
                     for ((key, obj) in data.entrySet()) {

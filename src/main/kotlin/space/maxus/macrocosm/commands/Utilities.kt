@@ -36,6 +36,8 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.rewardsMenu
+import space.maxus.macrocosm.spell.essence.EssenceType
+import space.maxus.macrocosm.spell.ui.displayInfusionTable
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
@@ -43,6 +45,7 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.generic.macrocosm
 import java.net.InetAddress
 import kotlin.math.roundToInt
+
 
 fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
     title = text("Item Browser")
@@ -79,6 +82,31 @@ fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
         )
 
+    }
+}
+
+fun infusionCommand() = command("infuse") {
+    runs {
+        try {
+            player.openGUI(displayInfusionTable(player.macrocosm!!))
+        } catch(e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+
+fun essenceCommand() = command("essence") {
+    argument("essence", StringArgumentType.word()) {
+        suggestList { ctx ->
+            EssenceType.values()
+                .filter { it.name.contains(ctx.getArgumentOrNull<String>("essence")?.uppercase() ?: "") }.map { it.name }
+        }
+
+        argument("amount", IntegerArgumentType.integer()) {
+            runs {
+                player.macrocosm!!.availableEssence[EssenceType.valueOf(StringArgumentType.getString(nmsContext, "essence"))] = getArgument("amount")
+            }
+        }
     }
 }
 
@@ -160,12 +188,12 @@ fun payCommand() = command("pay") {
                 val from = player.macrocosm!!
                 val to = getArgument<EntitySelector>("who").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm!!
                 val amount = getArgument<Double>("amount")
-                if (from.purse < amount) {
+                if (from.purse < amount.toBigDecimal()) {
                     from.sendMessage("<red>You don't have enough coins!")
                     return@runs
                 }
-                from.purse -= amount.toFloat()
-                to.purse += amount.toFloat()
+                from.purse -= amount.toBigDecimal()
+                to.purse += amount.toBigDecimal()
                 from.sendMessage(
                     "<green>You've paid ${
                         to.paper!!.displayName().str()
@@ -377,7 +405,7 @@ fun giveCoinsCommand() = command("givecoins") {
                     return@runs
                 }
                 val amount = getArgument<Int>("amount")
-                player.purse += amount
+                player.purse += amount.toBigDecimal()
                 this.player.sendMessage(text("<green>Successfully gave ${player.paper?.name} <gold>$amount coins<green>!"))
             }
         }

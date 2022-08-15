@@ -52,7 +52,7 @@ object PhoenixPet : Pet(
         val (ok, pet) = ensureRequirement(e.player, "Eternal")
         if (!ok)
             return
-        e.reduceCoins = e.reduceCoins * (1f - (pet!!.level / 100f))
+        e.reduceCoins = e.reduceCoins * (1f - (pet!!.level / 100f)).toBigDecimal()
     }
 
     @EventHandler

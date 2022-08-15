@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "macrocosm:scroll",
+    "type": "object",
+    "title": "Root tag",
+    "propertyNames": {
+        "$ref": "shared/identifier.json"
+    },
+    "additionalProperties": {
+        "required": ["result", "level", "requirements"],
+        "properties": {
+            "result": {
+                "$ref": "shared/identifier.json",
+                "title": "Result Spell"
+            },
+            "level": {
+                "type": "integer",
+                "title": "Required Level",
+                "description": "Required Mysticism level to infuse this spell"
+            },
+            "requirements": {
+                "title": "Required Ingredients",
+                "type": "array",
+                "items": {
+                    "oneOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "$ref": "#/definitions/essence_type"
+                                },
+                                "amount": {
+                                    "type": "integer",
+                                    "description": "Amount of essence required",
+                                    "title": "Amount"
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        {
+                            "$ref": "#/definitions/essence_type"
+                        }
+                    ]
+                }
+            }
+        },
+        "additionalProperties": false
+    },
+    "definitions": {
+        "essence_type": {
+            "type": "string",
+            "title": "Essence Type",
+            "description": "Type of essence to be used",
+            "enum": ["fire", "frost", "water", "shade", "life", "death", "connection"]
+        }
+    }
+}

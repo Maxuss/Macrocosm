@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "macrocosm:recipe",
+    "$id": "macrocosm:forge_recipe",
     "type": "object",
     "title": "Root tag",
     "propertyNames": {

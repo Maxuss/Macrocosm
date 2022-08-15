@@ -9,5 +9,8 @@ libraries:
     - "io.ktor:ktor-server-netty-jvm:2.0.3"
     - "io.ktor:ktor-server-default-headers-jvm:2.0.3"
     - "io.ktor:ktor-server-status-pages-jvm:2.0.3"
+    - "org.jetbrains.exposed:exposed-core:0.38.2"
+    - "org.jetbrains.exposed:exposed-jdbc:0.38.2"
+    - "org.jetbrains.exposed:exposed-dao:0.38.2"
 depend: [ ProtocolLib, LibsDisguises ]
 load: POSTWORLD

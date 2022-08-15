@@ -7,7 +7,6 @@ import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.item.runes.RuneSlot
-import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.recipes.RecipeParser
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -16,8 +15,7 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.GSON
-import java.nio.file.FileSystemAlreadyExistsException
-import java.nio.file.FileSystems
+import space.maxus.macrocosm.util.walkDataResources
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.readText
@@ -28,15 +26,8 @@ object ItemParser {
             val pool = Threading.newFixedPool(5)
             info("Starting recipe parser...")
 
-            val input = this.javaClass.classLoader.getResource("data")!!.toURI()
-            val fs = try {
-                FileSystems.newFileSystem(input, hashMapOf<String, String>())
-            } catch (e: FileSystemAlreadyExistsException) {
-                FileSystems.getFileSystem(input)
-            }
-
             val amount = AtomicInteger(0)
-            for (file in PackProvider.enumerateEntries(fs.getPath("data", "items"))) {
+            walkDataResources("data", "items") { file ->
                 info("Converting items from ${file.fileName}...")
                 val data = GSON.fromJson(file.readText(), JsonObject::class.java)
                 for ((key, obj) in data.entrySet()) {
@@ -47,6 +38,7 @@ object ItemParser {
                     }
                 }
             }
+
             pool.shutdown()
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
             info("Registered ${amount.get()} items from .json definitions!")

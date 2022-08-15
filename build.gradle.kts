@@ -15,6 +15,8 @@ repositories {
     maven { url = uri("https://jitpack.io") }
 }
 
+val exposedVersion: String by project
+
 dependencies {
     paperDevBundle("1.19-R0.1-SNAPSHOT")
     implementation("net.axay:kspigot:1.19.0")
@@ -27,7 +29,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:2.0.3")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.0.3")
     implementation("io.ktor:ktor-server-status-pages-jvm:2.0.3")
-    swaggerUI("org.webjars:swagger-ui:4.11.1")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 }
 
 tasks {

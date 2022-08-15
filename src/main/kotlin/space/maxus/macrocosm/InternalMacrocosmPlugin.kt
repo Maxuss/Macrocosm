@@ -12,9 +12,9 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.DataGenerators
 import space.maxus.macrocosm.db.Accessor
-import space.maxus.macrocosm.db.DatabaseAccess
-import space.maxus.macrocosm.db.local.SqliteDatabaseImpl
-import space.maxus.macrocosm.db.postgres.PostgresDatabaseImpl
+import space.maxus.macrocosm.db.DataStorage
+import space.maxus.macrocosm.db.impl.local.SqliteDatabaseImpl
+import space.maxus.macrocosm.db.impl.postgres.PostgresDatabaseImpl
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
@@ -51,6 +51,7 @@ import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
+import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
@@ -69,7 +70,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var PACKET_MANAGER: ProtocolManager; private set
         lateinit var UNSAFE: Unsafe; private set
         lateinit var MONITOR: Monitor; private set
-        lateinit var DATABASE: DatabaseAccess; private set
+        lateinit var DATABASE: DataStorage; private set
     }
 
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
@@ -143,6 +144,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         Threading.runEachConcurrently(
             Executors.newFixedThreadPool(8),
+            ScrollRecipe::init,
             StatRune::init,
             Enchant::init,
             RecipeValue::init,
@@ -192,6 +194,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         openEquipmentCommand()
         addSpellCommand()
         apiCommand()
+        essenceCommand()
 
         giveRecipeCommand()
         testStatsCommand()
@@ -204,6 +207,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         testSlayerCommand()
         testMaddoxMenuCommand()
         openForgeMenuCommand()
+        infusionCommand()
 
         Monitor.exit()
         Monitor.enter("Resource Generation")
@@ -250,7 +254,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Threading.runAsync {
             for ((id, v) in loadedPlayers) {
                 println("Saving data for player $id...")
-                v.storeSelf(database.statement)
+                v.storeSelf(database)
             }
         }
         Threading.runAsync {

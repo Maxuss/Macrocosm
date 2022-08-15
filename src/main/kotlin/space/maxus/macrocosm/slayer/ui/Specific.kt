@@ -113,7 +113,7 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                         e.player.closeInventory()
                     } else {
                         val cost = costFromTier(tier)
-                        if (player.purse < cost) {
+                        if (player.purse < cost.toBigDecimal()) {
                             e.player.closeInventory()
                             e.player.sendMessage(text("<red>You don't have enough coins to start this quest!"))
                             sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
@@ -122,7 +122,7 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                             }
                         } else {
                             e.player.openGUI(confirmationRedirect { p ->
-                                p.purse -= cost.toFloat()
+                                p.purse -= cost.toFloat().toBigDecimal()
                                 p.startSlayerQuest(ty, tier)
                                 p.paper!!.closeInventory()
                             })

@@ -23,7 +23,7 @@ object DataListener {
                 Macrocosm.playersLazy.add(e.player.uniqueId)
                 Macrocosm.loadedPlayers[e.player.uniqueId] = player
                 async {
-                    player.storeSelf(database.statement)
+                    player.storeSelf(database)
                 }
             }
             val displayName = e.player.macrocosm?.rank?.playerName(e.player.name) ?: e.player.displayName()
@@ -34,7 +34,7 @@ object DataListener {
         listen<PlayerQuitEvent> { e ->
             val id = e.player.uniqueId
             val player = Macrocosm.loadedPlayers.remove(id)
-            player?.storeSelf(database.statement)
+            player?.storeSelf(database)
             player?.activePet?.despawn(player)
             player?.summons?.forEach { summon ->
                 e.player.world.getEntity(summon)?.remove()
