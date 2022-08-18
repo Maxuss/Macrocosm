@@ -30,9 +30,9 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.GSON
 import space.maxus.macrocosm.util.data.ExpiringContainer
 import space.maxus.macrocosm.util.data.MutableContainer
-import space.maxus.macrocosm.util.generic.SuspendConditionalCallback
-import space.maxus.macrocosm.util.generic.getId
-import space.maxus.macrocosm.util.generic.putId
+import space.maxus.macrocosm.util.general.SuspendConditionalCallback
+import space.maxus.macrocosm.util.general.getId
+import space.maxus.macrocosm.util.general.putId
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.Duration

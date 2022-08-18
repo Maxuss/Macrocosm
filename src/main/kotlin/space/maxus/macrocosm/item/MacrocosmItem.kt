@@ -51,8 +51,8 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.allNull
 import space.maxus.macrocosm.util.annotations.PreviewFeature
-import space.maxus.macrocosm.util.generic.getId
-import space.maxus.macrocosm.util.generic.putId
+import space.maxus.macrocosm.util.general.getId
+import space.maxus.macrocosm.util.general.putId
 import space.maxus.macrocosm.util.unreachable
 import java.io.InputStream
 import java.io.OutputStream

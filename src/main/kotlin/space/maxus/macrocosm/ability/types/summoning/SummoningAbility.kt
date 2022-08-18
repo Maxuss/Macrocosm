@@ -21,7 +21,7 @@ import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.metrics.report
 import java.util.*
 import kotlin.math.max

@@ -7,7 +7,7 @@ import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
 
-@Deprecated("Apparently, PlayerArmorChangeEvent is called even if you set player's armor yourself, providing a huge CPU hot spot.")
+@Deprecated("Apparently, PlayerArmorChangeEvent is called even if you set player's armor yourself, providing a huge CPU hotspot.")
 object EquipListener : Listener {
     @Deprecated("View deprecated message for the listener object")
     @EventHandler

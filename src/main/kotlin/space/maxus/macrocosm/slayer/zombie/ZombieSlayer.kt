@@ -16,7 +16,7 @@ import space.maxus.macrocosm.slayer.ui.SlayerDrop
 import space.maxus.macrocosm.slayer.ui.visual
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.unreachable
 
 object ZombieSlayer : Slayer(

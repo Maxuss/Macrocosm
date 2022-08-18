@@ -2,10 +2,12 @@
     "sparkles": {
         "result": "sparkles",
         "level": 5,
-        "requirements": [{
-            "type": "fire",
-            "amount": 10
-        },
-            "life"]
+        "requirements": [
+            {
+                "type": "fire",
+                "amount": 2
+            },
+            "life"
+        ]
     }
 }

@@ -33,7 +33,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class ItemValue(
     val item: MacrocosmItem,

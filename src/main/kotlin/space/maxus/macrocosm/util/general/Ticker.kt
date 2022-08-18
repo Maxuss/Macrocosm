@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util.generic
+package space.maxus.macrocosm.util.general
 
 import java.util.concurrent.atomic.AtomicInteger
 

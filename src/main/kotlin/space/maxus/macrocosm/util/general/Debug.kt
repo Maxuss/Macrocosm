@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.util.generic
+package space.maxus.macrocosm.util.general
 
 import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.Macrocosm
@@ -39,7 +39,7 @@ object Debug {
                 field.isAccessible = true
                 dump.append("${field.name}: ${field.type.canonicalName} = ${field.get(obj)}\n")
             } catch (e: Exception) {
-                dump.append("!!! $field - UNRESOLVED")
+                dump.append("!!! $field - UNRESOLVED (${e.message})")
             }
         }
 
@@ -57,7 +57,7 @@ object Debug {
         if (!Macrocosm.isInDevEnvironment)
             return
 
-        Macrocosm.componentLogger.debug(comp)
+        Macrocosm.componentLogger.info(comp)
     }
 
     fun log(any: Any?) {

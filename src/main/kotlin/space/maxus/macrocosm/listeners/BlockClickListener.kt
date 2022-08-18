@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent
 import space.maxus.macrocosm.item.macrocosmTag
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.recipesUsing
-import space.maxus.macrocosm.util.generic.getId
+import space.maxus.macrocosm.util.general.getId
 
 object BlockClickListener : Listener {
     @EventHandler

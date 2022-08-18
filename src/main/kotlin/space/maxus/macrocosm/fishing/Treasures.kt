@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.fishing
 
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class Treasures(val treasure: FishingTreasure) {
 //    TEST_TREASURE(

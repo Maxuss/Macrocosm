@@ -4,7 +4,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.reforge.types.*
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class ReforgeType(val ref: Reforge) {
     SPICY(SimpleReforge("Spicy", ItemType.melee(), stats {

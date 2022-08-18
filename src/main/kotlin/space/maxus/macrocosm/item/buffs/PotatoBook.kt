@@ -5,7 +5,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 object PotatoBook : MinorItemBuff {
     override val id: Identifier = id("potato_book")

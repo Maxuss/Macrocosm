@@ -26,9 +26,9 @@ import space.maxus.macrocosm.spell.Spell
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.getId
-import space.maxus.macrocosm.util.generic.id
-import space.maxus.macrocosm.util.generic.putId
+import space.maxus.macrocosm.util.general.getId
+import space.maxus.macrocosm.util.general.id
+import space.maxus.macrocosm.util.general.putId
 
 class SpellScroll : MacrocosmItem {
     override var stats: Statistics = Statistics.zero()

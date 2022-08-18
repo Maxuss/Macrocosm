@@ -24,7 +24,7 @@ import space.maxus.macrocosm.stats.SpecialStatistic
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.util.generic.getId
+import space.maxus.macrocosm.util.general.getId
 import java.util.*
 
 class CustomEntity(private val paperId: UUID) : MacrocosmEntity {

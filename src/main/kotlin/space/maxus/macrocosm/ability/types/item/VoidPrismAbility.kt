@@ -21,7 +21,7 @@ import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
-import space.maxus.macrocosm.util.generic.Ticker
+import space.maxus.macrocosm.util.general.Ticker
 import java.util.*
 import kotlin.math.min
 

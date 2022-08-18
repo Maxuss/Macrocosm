@@ -8,7 +8,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class Enchant(val enchant: Enchantment) {
     SHARPNESS(

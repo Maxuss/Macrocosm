@@ -56,7 +56,7 @@ import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.game.Calendar
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.workarounds.AsyncLauncher
 import space.maxus.macrocosm.zone.ZoneType
 import java.util.*
@@ -130,6 +130,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)

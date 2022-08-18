@@ -2,20 +2,25 @@ package space.maxus.macrocosm.spell.ui
 
 import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
+import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
+import org.bukkit.Sound
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.SpellScroll
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.players.isAirOrNull
+import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.ui.LinearInventorySlots
 import space.maxus.macrocosm.spell.essence.EssenceType
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.itemSlot
-import space.maxus.macrocosm.util.generic.mutableButton
+import space.maxus.macrocosm.util.metrics.report
+import java.util.concurrent.atomic.AtomicReference
 
-fun displaySelectEssence(p: MacrocosmPlayer, scroll: Boolean, selectedEssence: HashMap<InventorySlot, EssenceType>, currentlySelectedSlot: SingleInventorySlot<out ForInventory>): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+fun displaySelectEssence(p: MacrocosmPlayer, scroll: AtomicReference<Boolean>, selectedEssence: HashMap<InventorySlot, EssenceType>, currentlySelectedSlot: SingleInventorySlot<out ForInventory>): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     // essence selection
     title = text("Select Essence")
     defaultPage = 0
@@ -61,8 +66,8 @@ fun displaySelectEssence(p: MacrocosmPlayer, scroll: Boolean, selectedEssence: H
             val availableAmount = p.availableEssence[ty]!!
             if (availableAmount <= 0)
                 return@createCompound
-            if (availableAmount < 10) {
-                p.sendMessage("<red>Not enough essence! Requires at least 10 essence.")
+            if (availableAmount < 5) {
+                p.sendMessage("<red>Not enough essence! Requires at least 5 essence.")
                 return@createCompound
             }
             selectedEssence[currentlySelectedSlot.inventorySlot] = ty
@@ -95,49 +100,69 @@ fun displaySelectEssence(p: MacrocosmPlayer, scroll: Boolean, selectedEssence: H
 
 fun displayInfusionTable(
     p: MacrocosmPlayer,
-    scroll: Boolean = false,
+    scroll: AtomicReference<Boolean> = AtomicReference(false),
     selectedEssence: HashMap<InventorySlot, EssenceType> = hashMapOf()
 ): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     defaultPage = 0
     title = text("Infusion Table")
 
     val essenceEmpty = ItemValue.placeholderDescripted(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Essence Slot", "<dark_gray> > <gray>No Essence", " ", "<yellow>Click to add essence!")
-    var scrollPersistent = scroll
-    val cantInfuse = ItemValue.placeholderDescripted(Material.RED_TERRACOTTA, "<red>Can not infuse!", "Place essence in the essence", "slots and an empty spell", "scroll in the middle to", "infuse!")
-    val canInfuse = ItemValue.placeholderDescripted(Material.GREEN_TERRACOTTA, "<gree>Infuse!", "<yellow>Click to infuse scroll", "<yellow>with new powers!")
+    val infuse = ItemValue.placeholderDescripted(Material.GREEN_TERRACOTTA, "<green>Infuse", "Place essence in the essence", "slots and an empty spell", "scroll in the slot above to", "infuse it!")
     page(0) {
-        title = text("Infusion Table")
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
         slots.forEach { slot ->
             val ty = selectedEssence[slot.inventorySlot]
             val item = if(ty == null) essenceEmpty else ItemValue.placeholder(ty.displayItem, "${ty.display} Essence")
             button(slot, item) { e ->
                 e.bukkitEvent.isCancelled = true
-                e.player.openGUI(displaySelectEssence(p, scrollPersistent, selectedEssence, slot))
+                if(selectedEssence[slot.inventorySlot] != null) {
+                    e.bukkitEvent.inventory.setItem(slot.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!, essenceEmpty)
+                    sound(Sound.ITEM_BOTTLE_EMPTY) {
+                        volume = 2f
+                        playFor(e.player)
+                    }
+                }
+                e.player.openGUI(displaySelectEssence(p, scroll, selectedEssence, slot))
             }
         }
-        val emptyScroll = ItemValue.placeholderDescripted(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Scroll Slot", "<dark_gray> > <gray>No Scroll", " ", "<yellow>Click with a scroll to add", "<yellow>it!")
-        itemSlot(Slots.RowThreeSlotFive, emptyScroll) { self, e ->
-            scrollPersistent = false
-            val item = e.player.itemOnCursor.macrocosm ?: return@itemSlot self.currentDisplay
-            if(item !is SpellScroll || item.spell != null)
-                return@itemSlot self.currentDisplay
-            val cursor = e.player.itemOnCursor
-            if(cursor.amount > 1) {
-                cursor.amount -= 1
-                e.player.setItemOnCursor(cursor)
-            } else {
-                e.player.setItemOnCursor(null)
-            }
-            scrollPersistent = true
-            e.guiInstance.reloadCurrentPage()
-            item.build(p)!!.apply { amount = 1 }
-        }
-        mutableButton(Slots.RowTwoSlotFive, if(scrollPersistent) canInfuse else cantInfuse) { _, e ->
+        freeSlot(Slots.RowThreeSlotFive)
+        button(Slots.RowTwoSlotFive, infuse) { e ->
             e.bukkitEvent.isCancelled = true
-            scrollPersistent = false
-            e.bukkitEvent.inventory.setItem(Slots.RowThreeSlotFive.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!, emptyScroll)
-            cantInfuse
+            val realSlot = Slots.RowThreeSlotFive.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!
+            val curs = e.bukkitEvent.inventory.getItem(realSlot)
+            scroll.set(false)
+            if(curs.isAirOrNull() || curs?.macrocosm !is SpellScroll) {
+                return@button
+            } else {
+                val mc = curs.macrocosm!! as SpellScroll
+                if(mc.spell != null)
+                    return@button
+                val playerLvl = p.skills.level(SkillType.MYSTICISM)
+                val providedEssence = selectedEssence.values
+                val available = Registry.SCROLL_RECIPE.iter().filter { (_, rec) -> playerLvl >= rec.level }.entries
+                val applicable = available.filter { (_, rec) ->
+                    rec.requirements.all { (essence, requiredAmount) ->
+                        providedEssence.count { it == essence } >= requiredAmount
+                    }
+                }
+                val recipe = applicable.maxByOrNull { (_, rec) -> rec.requirements.size }?.value ?: run {
+                    p.sendMessage("<red>Unknown recipe")
+                    return@button
+                }
+                val resultSpell = Registry.SPELL.findOrNull(recipe.result) ?: report("Invalid spell identifier in scroll recipe: ${recipe.result}!") { return@button }
+                e.bukkitEvent.inventory.setItem(realSlot, SpellScroll().apply { spell = resultSpell }.build(p) ?: report("Got null as build result for spell scroll!") { return@button })
+                selectedEssence.forEach { (eSlot, eTy) ->
+                    p.availableEssence[eTy] = p.availableEssence[eTy]!! - 1
+                    e.bukkitEvent.inventory.setItem(eSlot.realSlotIn(InventoryDimensions(9, 6))!!, essenceEmpty)
+                }
+                selectedEssence.clear()
+                sound(Sound.BLOCK_END_PORTAL_FRAME_FILL) {
+                    pitch = 0f
+                    volume = 5f
+
+                    playFor(e.player)
+                }
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.anyNull
 import space.maxus.macrocosm.util.containsAny
-import space.maxus.macrocosm.util.generic.collect
+import space.maxus.macrocosm.util.general.collect
 import space.maxus.macrocosm.util.giveOrDrop
 
 @Suppress("SENSELESS_COMPARISON")

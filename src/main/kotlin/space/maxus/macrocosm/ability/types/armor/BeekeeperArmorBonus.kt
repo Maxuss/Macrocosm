@@ -10,7 +10,7 @@ import org.bukkit.util.Vector
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.FullSetBonus
 import space.maxus.macrocosm.events.PlayerReceiveDamageEvent
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import java.util.*
 
 object BeekeeperArmorBonus : FullSetBonus(

@@ -17,7 +17,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
-import space.maxus.macrocosm.util.generic.Ticker
+import space.maxus.macrocosm.util.general.Ticker
 import space.maxus.macrocosm.util.ticksToTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

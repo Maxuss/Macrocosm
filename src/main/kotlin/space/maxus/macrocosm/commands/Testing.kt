@@ -19,7 +19,7 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
-import space.maxus.macrocosm.util.generic.macrocosm
+import space.maxus.macrocosm.util.general.macrocosm
 
 fun openForgeMenuCommand() = command("openforge") {
     argument("id", StringArgumentType.string()) {

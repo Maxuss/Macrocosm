@@ -17,7 +17,7 @@ import space.maxus.macrocosm.slayer.rewardExperienceForTier
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.renderBar
 import space.maxus.macrocosm.util.stripTags
 import kotlin.math.roundToInt

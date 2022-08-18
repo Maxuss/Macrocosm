@@ -29,7 +29,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 object InfernalGreatswordThrowAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,

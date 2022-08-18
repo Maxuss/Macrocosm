@@ -31,7 +31,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.data.MutableContainer
 import space.maxus.macrocosm.util.equalsAny
-import space.maxus.macrocosm.util.generic.Ticker
+import space.maxus.macrocosm.util.general.Ticker
 import java.util.*
 import kotlin.math.ceil
 import kotlin.math.max

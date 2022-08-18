@@ -2,7 +2,7 @@ package space.maxus.macrocosm.recipes
 
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import java.util.concurrent.TimeUnit
 
 enum class RecipeValue(private val recipe: MacrocosmRecipe) {

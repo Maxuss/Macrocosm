@@ -15,7 +15,7 @@ import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_SHIELD
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.Statistic
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 /**
  * Enum used to easily access most simple ability types

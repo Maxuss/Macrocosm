@@ -9,7 +9,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.recipes.RecipeContext
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 fun shapedRecipe(
     id: String,

@@ -2,7 +2,7 @@ package space.maxus.macrocosm.pets
 
 import space.maxus.macrocosm.pets.types.*
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class PetValue(val pet: Pet) {
     PICKLE_PET(TestPet),

@@ -20,6 +20,7 @@ import space.maxus.macrocosm.util.advanceInstantly
 import space.maxus.macrocosm.util.data.MutableContainer.Companion.removeAllWith
 import space.maxus.macrocosm.util.data.MutableContainer.Companion.setAllWith
 import java.util.*
+import kotlin.math.abs
 
 object SparklesSpell : Spell(
     "Sparks",
@@ -44,8 +45,10 @@ object SparklesSpell : Spell(
             for (i in 0..4) {
                 val cross = Vector.getRandom()
                 cross.y = cross.y.coerceIn(-0.2..0.2)
-                cross.z = cross.z.coerceIn((-.5 * dir.z)..(.5 * dir.z))
-                cross.x = cross.x.coerceIn((-.5 * dir.x)..(.5 * dir.x))
+                val absZ = abs(dir.z)
+                val absX = abs(dir.x)
+                cross.z = cross.z.coerceIn((-.5 * absZ)..(.5 * absZ))
+                cross.x = cross.x.coerceIn((-.5 * absX)..(.5 * absX))
                 task {
                     cross.advanceInstantly(at, .5f, 5) {
                         particle(Particle.FLAME) {

@@ -19,7 +19,7 @@ import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
 import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import java.util.*
 
 object MasterNecromancerBonus : TieredSetBonus(

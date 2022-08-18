@@ -12,7 +12,7 @@ import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.item.types.DragonArmor
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import java.util.concurrent.TimeUnit
 
 object Armor {

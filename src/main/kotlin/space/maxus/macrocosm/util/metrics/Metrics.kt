@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.item.toVarIntBytes
-import space.maxus.macrocosm.util.generic.Callback
+import space.maxus.macrocosm.util.general.Callback
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream

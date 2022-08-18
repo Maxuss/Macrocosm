@@ -11,7 +11,7 @@ import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 open class KillCountingArmor(
     baseName: String,

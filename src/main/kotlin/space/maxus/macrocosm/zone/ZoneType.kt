@@ -5,7 +5,7 @@ import org.bukkit.Location
 import org.bukkit.block.Biome
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class ZoneType(val zone: Zone) {
     // these only contains special zones, others are just biomes mostly

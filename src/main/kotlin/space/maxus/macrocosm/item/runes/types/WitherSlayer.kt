@@ -9,7 +9,7 @@ import space.maxus.macrocosm.item.runes.RuneSpec
 import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.runNTimes
 import java.util.*
 import kotlin.math.pow

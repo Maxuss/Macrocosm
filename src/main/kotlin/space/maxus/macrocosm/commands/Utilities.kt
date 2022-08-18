@@ -42,7 +42,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
-import space.maxus.macrocosm.util.generic.macrocosm
+import space.maxus.macrocosm.util.general.macrocosm
 import java.net.InetAddress
 import kotlin.math.roundToInt
 

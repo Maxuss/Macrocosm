@@ -20,7 +20,7 @@ import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 import java.util.*
 import kotlin.math.ceil
 import kotlin.math.min

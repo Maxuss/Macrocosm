@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalContracts::class)
 
-package space.maxus.macrocosm.util.generic
+package space.maxus.macrocosm.util.general
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind

@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.util.data
 
 import space.maxus.macrocosm.util.NULL
-import space.maxus.macrocosm.util.generic.ConditionalCallback
+import space.maxus.macrocosm.util.general.ConditionalCallback
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.contracts.ExperimentalContracts

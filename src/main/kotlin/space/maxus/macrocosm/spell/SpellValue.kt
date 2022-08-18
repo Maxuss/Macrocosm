@@ -2,7 +2,7 @@ package space.maxus.macrocosm.spell
 
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.spell.types.SparklesSpell
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 enum class SpellValue(val spell: Spell) {
     SPARKLES(SparklesSpell)

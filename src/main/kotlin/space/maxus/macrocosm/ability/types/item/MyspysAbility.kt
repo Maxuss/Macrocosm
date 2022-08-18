@@ -32,7 +32,7 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.generic.Ticker
+import space.maxus.macrocosm.util.general.Ticker
 import space.maxus.macrocosm.util.runNTimes
 import space.maxus.macrocosm.util.unreachable
 import java.time.Duration

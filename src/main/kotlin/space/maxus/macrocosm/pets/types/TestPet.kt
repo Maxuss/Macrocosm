@@ -8,7 +8,7 @@ import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.pets.*
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.stats
-import space.maxus.macrocosm.util.generic.id
+import space.maxus.macrocosm.util.general.id
 
 object TestPet : Pet(
     id("pickle_pet"),
