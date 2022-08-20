@@ -55,10 +55,12 @@ import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
+import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.workarounds.AsyncLauncher
 import space.maxus.macrocosm.zone.ZoneType
+import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.Executors
 import kotlin.random.Random
@@ -71,11 +73,18 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var UNSAFE: Unsafe; private set
         lateinit var MONITOR: Monitor; private set
         lateinit var DATABASE: DataStorage; private set
+
+        lateinit var API_VERSION: String; private set
+        lateinit var VERSION: String; private set
+
+        private data class VersionInfo(val version: String, val apiVersion: String)
     }
 
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
     val id: String = "macrocosm"
     val loadedPlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
+    val version by lazy { VERSION }
+    val apiVersion by lazy { API_VERSION }
     var isInDevEnvironment: Boolean = false; private set
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
@@ -88,6 +97,9 @@ class InternalMacrocosmPlugin : KSpigot() {
         UNSAFE = Unsafe(Random.nextInt())
         MONITOR = Monitor()
         Accessor.init()
+        val versionInfo: VersionInfo = fromJson(Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes())).toString())!!
+        API_VERSION = versionInfo.apiVersion
+        VERSION = versionInfo.version
         KeyManager.load()
         Threading.runAsync {
             info("Starting REST API Server")

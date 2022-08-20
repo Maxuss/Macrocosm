@@ -20,6 +20,7 @@ import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
 import net.minecraft.server.MinecraftServer
 import org.bukkit.Bukkit
+import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.api.KeyManager.validateKey
 import space.maxus.macrocosm.pack.PackProvider
@@ -68,7 +69,7 @@ fun Application.module() {
     }
 
     routing {
-        route("/doc") {
+        route("/") {
             get {
                 call.respondMacrocosmResource("index.html", "doc")
             }
@@ -77,6 +78,16 @@ fun Application.module() {
                 val joined = call.parameters.getAll("static")?.joinToString(File.separator) ?: return@get
                 call.respondMacrocosmResource(joined, "doc")
             }
+        }
+
+        get("/status") {
+            call.respondJson(object {
+                val success = true
+                val status = "WORKING"
+                val inDevEnv = Macrocosm.isInDevEnvironment
+                val apiVersion = InternalMacrocosmPlugin.API_VERSION
+                val version = InternalMacrocosmPlugin.VERSION
+            })
         }
 
         // pack
@@ -93,7 +104,7 @@ fun Application.module() {
                 })
             }
 
-            route("{registry?}") {
+            route("{registry}") {
                 get {
                     val reg = Registry.findOrNull(Identifier.parse(call.parameters["registry"] ?: return@get call.respondJson(object {
                         val success = false
@@ -112,7 +123,7 @@ fun Application.module() {
                         val registry = reg.iter().toMap()
                     })
                 }
-                get("{element?}") {
+                get("{element}") {
                     val regParam = call.parameters["registry"] ?: return@get call.respondJson(object {
                         val success = false
                         val error = "Registry not specified!"
@@ -151,7 +162,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player?}/status") {
+            getWithKey("/{player}/status") {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -169,7 +180,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player?}/inventory") {
+            getWithKey("/{player}/inventory") {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -215,7 +226,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player?}/balance") {
+            getWithKey("/{player}/balance") {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -231,7 +242,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player?}/skills") {
+            getWithKey("/{player}/skills") {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -246,7 +257,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player?}/collections") {
+            getWithKey("/{player}/collections") {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -273,6 +284,7 @@ fun serverSpin() {
             port = 6060
             host = "127.0.0.1"
         }
+
         module(Application::module)
     }).start(true)
 }

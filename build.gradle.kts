@@ -6,7 +6,8 @@ plugins {
 }
 
 group = "space.maxus"
-version = "1.0"
+version = "0.2.1-prealpha"
+val apiVersion = "0.6.2-alpha"
 
 repositories {
     mavenCentral()
@@ -35,8 +36,12 @@ dependencies {
 }
 
 tasks {
+    val generateVersionInfo = task("generateVersionInfo") {
+        val versionInfo = file("$rootDir/src/main/resources/MACROCOSM_VERSION_INFO")
+        versionInfo.writeText("""{"version":"$version","apiVersion":"$apiVersion"}""")
+    }
     build {
-        dependsOn(reobfJar)
+        dependsOn(reobfJar, generateVersionInfo)
         doLast {
             generateReDoc.get().exec()
         }

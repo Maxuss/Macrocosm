@@ -14,7 +14,7 @@ annotation class StrictDevelopmentOnly
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.FIELD)
 @RequiresOptIn(
-    "Elements marked by this annotation will not do anything in the production stage, as opposed to the @StrictDevelopmentOnly annotation.",
+    "Elements marked by this annotation will not do anything in the production stage, consider removing them.",
     RequiresOptIn.Level.WARNING
 )
 annotation class DevelopmentOnly
