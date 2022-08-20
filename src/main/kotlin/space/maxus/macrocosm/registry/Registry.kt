@@ -149,10 +149,8 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val RESOURCE_GENERATORS = makeDefaulted<ResGenerator>(id("resource_gen"), false)
         val SPELL = makeDefaulted<Spell>(id("spell"))
         val SCROLL_RECIPE = makeDefaulted<ScrollRecipe>(id("scroll_recipe"))
-
-        override fun register(id: Identifier, value: Registry<*>): Registry<*> {
-            return super.register(id, value)
-        }
+        val BAZAAR_ELEMENTS = makeImmutable<MacrocosmItem>(id("bazaar_elements"), false)
+        val BAZAAR_ELEMENTS_REF = makeDefaulted<Identifier>(id("bazaar_elements_ref"), false)
 
         override fun dumpToFile(file: Path) {
 

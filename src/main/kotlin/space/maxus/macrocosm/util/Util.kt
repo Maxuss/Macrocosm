@@ -74,6 +74,8 @@ typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
 
+fun <A> identity(): FnArgRet<A, A> = { a -> a }
+
 inline fun <reified T> fromJson(str: String): T? = if(str == "NULL") null else GSON.fromJson<T>(str, typetoken<T>())
 fun <T> toJson(obj: T): String = GSON.toJson(obj)
 inline fun <reified T> typetoken(): java.lang.reflect.Type = object: TypeToken<T>() { }.type

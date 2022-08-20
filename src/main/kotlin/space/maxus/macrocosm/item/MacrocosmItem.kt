@@ -680,3 +680,7 @@ fun Int.toVarIntBytes(): ByteArray {
     }
     return buffer.toByteArray()
 }
+
+inline fun <reified V: MacrocosmItem> macrocosmItem(id: Identifier, builder: V.() -> Unit = { }): V {
+    return (Registry.ITEM.find(id) as V).apply(builder)
+}
