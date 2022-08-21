@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
-class BazaarTable private constructor(private val itemData: ConcurrentHashMap<Identifier, BazaarItemData>): DatabaseStore {
+class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>): DatabaseStore {
     companion object {
         fun new() =
             BazaarTable(
@@ -41,6 +41,9 @@ class BazaarTable private constructor(private val itemData: ConcurrentHashMap<Id
             return BazaarTable(outMap)
         }
     }
+
+    val entries = itemData.size
+    val ordersTotal = itemData.entries.sumOf { entry -> entry.value.amount }
 
     fun createOrder(order: BazaarOrder) {
         val data = itemData[order.item]!!
@@ -84,7 +87,7 @@ class BazaarTable private constructor(private val itemData: ConcurrentHashMap<Id
     }
 }
 
-class BazaarItemData private constructor(private val orders: BlockingQueue<BazaarOrder>) {
+class BazaarItemData private constructor(val orders: BlockingQueue<BazaarOrder>) {
     companion object {
         fun empty() = BazaarItemData(PriorityBlockingQueue(1) { a, b ->
             a.totalPrice.compareTo(b.totalPrice)
@@ -99,6 +102,8 @@ class BazaarItemData private constructor(private val orders: BlockingQueue<Bazaa
         }
         fun json(json: String) = BazaarItemData(fromJson(json)!!)
     }
+
+    val amount = orders.size
 
     fun json() = toJson(BazaarDataCompound(orders.toList()))
 

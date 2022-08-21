@@ -87,7 +87,7 @@ paths:
               success:
                 type: boolean
             type: object
-        '204':
+        '404':
           description: >-
             Could not get balance of player because they have never joined the
             server before
@@ -140,7 +140,7 @@ paths:
               success:
                 type: boolean
             type: object
-        '204':
+        '404':
           description: >-
             Could not get collection data of player because they have never
             joined the server before
@@ -190,7 +190,7 @@ paths:
               success:
                 type: boolean
             type: object
-        '204':
+        '404':
           description: >-
             Could not get inventory of player because they have never joined the
             server before
@@ -243,7 +243,7 @@ paths:
               success:
                 type: boolean
             type: object
-        '204':
+        '404':
           description: >-
             Could not get skill data of player because they have never joined
             the server before
@@ -299,7 +299,7 @@ paths:
                 description: UUID of the player
                 type: string
             type: object
-        '204':
+        '404':
           description: >-
             Could not get status of player because they have never joined the
             server before

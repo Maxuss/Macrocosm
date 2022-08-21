@@ -25,7 +25,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.bazaar.*
+import space.maxus.macrocosm.bazaar.BazaarDataCompound
+import space.maxus.macrocosm.bazaar.BazaarDataCompoundTypeAdapter
+import space.maxus.macrocosm.bazaar.BazaarOrder
+import space.maxus.macrocosm.bazaar.BazaarOrderTypeAdapter
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.listeners.FallingBlockListener
@@ -80,6 +83,17 @@ typealias Fn = () -> Unit
 typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
+
+fun Iterable<Double>.median(): Double {
+    val sorted = this.sorted()
+    if(sorted.isEmpty())
+        return Double.NaN
+    return if(sorted.size % 2 == 0) {
+        ((sorted[sorted.size / 2] + sorted[sorted.size / 2 - 1]) / 2f)
+    } else {
+        (sorted[sorted.size / 2])
+    }
+}
 
 fun <A> identity(): FnArgRet<A, A> = { a -> a }
 fun nullFn(): FnRet<Unit> = { }

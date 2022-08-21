@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarIntrinsics
@@ -148,7 +149,7 @@ fun essenceCommand() = command("essence") {
 fun apiCommand() = command("api") {
     literal("new") {
         runs {
-            val key = KeyManager.generateRandomKey(player.uniqueId)
+            val key = KeyManager.generateRandomKey(player.uniqueId, listOf(APIPermission.VIEW_BAZAAR_DATA, APIPermission.VIEW_PLAYER_DATA))
             player.sendMessage(text("<green>Your new Macrocosm API Key is <click:copy_to_clipboard:$key><yellow><hover:show_text:'<green>Click to copy to clipboard'>$key</hover></click><green>!"))
         }
     }

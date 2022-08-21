@@ -23,6 +23,9 @@ import org.bukkit.Bukkit
 import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.api.KeyManager.validateKey
+import space.maxus.macrocosm.bazaar.Bazaar
+import space.maxus.macrocosm.bazaar.BazaarBuyOrder
+import space.maxus.macrocosm.bazaar.BazaarSellOrder
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -34,6 +37,8 @@ import space.maxus.macrocosm.util.data.MutableContainer
 import space.maxus.macrocosm.util.general.SuspendConditionalCallback
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
+import space.maxus.macrocosm.util.median
+import space.maxus.macrocosm.util.withAll
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.Duration
@@ -155,14 +160,14 @@ fun Application.module() {
 
         // players
         route("/players") {
-            getWithKey {
+            getWithKey(APIPermission.VIEW_PLAYER_DATA) {
                 call.respondJson(object {
                     val success = true
                     val onlinePlayers = Bukkit.getOnlinePlayers().associate { p -> p.name to p.uniqueId }
                 })
             }
 
-            getWithKey("/{player}/status") {
+            getWithKey("/{player}/status", APIPermission.VIEW_PLAYER_DATA) {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -171,7 +176,7 @@ fun Application.module() {
                     val success = true
                     val foundPlayer = false
                     val message = "Player has never joined the server before!"
-                }, HttpStatusCode.NoContent)
+                }, HttpStatusCode.NotFound)
                 call.respondJson(object {
                     val success = true
                     val foundPlayer = true
@@ -180,7 +185,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player}/inventory") {
+            getWithKey("/{player}/inventory", APIPermission.VIEW_PLAYER_DATA) {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -188,7 +193,7 @@ fun Application.module() {
                 val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NoContent)
+                }, HttpStatusCode.NotFound)
 
                 var inventoryData = "null"
                 val online = player.paper
@@ -226,7 +231,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player}/balance") {
+            getWithKey("/{player}/balance", APIPermission.VIEW_PLAYER_DATA) {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -234,7 +239,7 @@ fun Application.module() {
                 val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NoContent)
+                }, HttpStatusCode.NotFound)
                 call.respondJson(object {
                     val success = true
                     val bank = player.bank
@@ -242,7 +247,7 @@ fun Application.module() {
                 })
             }
 
-            getWithKey("/{player}/skills") {
+            getWithKey("/{player}/skills", APIPermission.VIEW_PLAYER_DATA) {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -250,14 +255,14 @@ fun Application.module() {
                 val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NoContent)
+                }, HttpStatusCode.NotFound)
                 call.respondJson(object {
                     val success = true
                     val skills = player.skills.skillExp
                 })
             }
 
-            getWithKey("/{player}/collections") {
+            getWithKey("/{player}/collections", APIPermission.VIEW_PLAYER_DATA) {
                 val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player not provided!"
@@ -265,10 +270,87 @@ fun Application.module() {
                 val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
                     val success = false
                     val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NoContent)
+                }, HttpStatusCode.NotFound)
                 call.respondJson(object {
                     val success = true
                     val collections = player.collections.colls
+                })
+            }
+        }
+
+        route("/bazaar") {
+            getWithKey(APIPermission.VIEW_BAZAAR_DATA) {
+                call.respondJson(object {
+                    val success = true
+                    val entries = Bazaar.table.entries
+                    val totalOrders = Bazaar.table.ordersTotal
+                })
+            }
+
+            getWithKey("/items", APIPermission.VIEW_BAZAAR_DATA) {
+                call.respondJson(object {
+                    val success = true
+                    val items = Registry.BAZAAR_ELEMENTS.iter().keys.withAll(Registry.BAZAAR_ELEMENTS_REF.iter().keys)
+                })
+            }
+
+            getWithKey("/orders/{item}", APIPermission.VIEW_BAZAAR_DATA) {
+                val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson(object {
+                    val success = false
+                    val error = "Item not provided!"
+                }, HttpStatusCode.BadRequest)
+                val data = Bazaar.table.itemData
+                val id = Identifier.parse(itemParam)
+                if(!data.containsKey(id))
+                    return@getWithKey call.respondJson(object {
+                        val success = false
+                        val error = "Item $id was not found in bazaar storage!"
+                    }, HttpStatusCode.NotFound)
+                val itemData = data[id]!!
+                call.respondJson(object {
+                    val success = true
+                    val orders = itemData.orders.toList()
+                })
+            }
+
+            getWithKey("/summary/{item}", APIPermission.VIEW_BAZAAR_DATA) {
+                val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson(object {
+                    val success = false
+                    val error = "Item not provided!"
+                }, HttpStatusCode.BadRequest)
+                val data = Bazaar.table.itemData
+                val id = Identifier.parse(itemParam)
+                if(!data.containsKey(id))
+                    return@getWithKey call.respondJson(object {
+                        val success = false
+                        val error = "Item $id was not found in bazaar storage!"
+                    }, HttpStatusCode.NotFound)
+                val itemData = data[id]!!
+                val orderList = itemData.orders.toList()
+                val buyOrders = orderList.filterIsInstance<BazaarBuyOrder>()
+                val sellOrders = orderList.filterIsInstance<BazaarSellOrder>()
+                call.respondJson(object {
+                    val success = true
+                    val item = id
+                    val ordersCount = orderList.size
+                    val buyOrders = object {
+                        val amount = buyOrders.size
+                        val highestPrice = buyOrders.maxByOrNull { it.pricePer }?.pricePer ?: .0
+                        val lowestPrice = buyOrders.minByOrNull { it.pricePer }?.pricePer ?: .0
+                        val averagePrice = buyOrders.map { it.pricePer }.average()
+                        val medianPrice = buyOrders.map { it.pricePer }.median()
+                        val cumulativeCoins = buyOrders.sumOf { it.totalPrice }
+                        val cumulativeItems = buyOrders.sumOf { it.qty }
+                    }
+                    val sellOrders = object {
+                        val amount = sellOrders.size
+                        val highestPrice = sellOrders.maxByOrNull { it.pricePer }?.pricePer ?: .0
+                        val lowestPrice = sellOrders.minByOrNull { it.pricePer }?.pricePer ?: .0
+                        val averagePrice = sellOrders.map { it.pricePer }.average()
+                        val medianPrice = sellOrders.map { it.pricePer }.median()
+                        val cumulativeCoins = sellOrders.sumOf { it.totalPrice }
+                        val cumulativeItems = sellOrders.sumOf { it.qty }
+                    }
                 })
             }
         }
@@ -370,10 +452,10 @@ private suspend fun ApplicationCall.respondMacrocosmResource(path: String, base:
 }
 
 @KtorDsl
-private fun Route.getWithKey(body: PipelineInterceptor<Unit, ApplicationCall>) {
+private fun Route.getWithKey(perm: APIPermission, body: PipelineInterceptor<Unit, ApplicationCall>) {
     method(HttpMethod.Get) {
         handle {
-            call.requireKey().then {
+            call.requireKey(perm).then {
                 body(it)
             }.call()
         }
@@ -381,18 +463,30 @@ private fun Route.getWithKey(body: PipelineInterceptor<Unit, ApplicationCall>) {
 }
 
 @KtorDsl
-private fun Route.getWithKey(path: String, body: PipelineInterceptor<Unit, ApplicationCall>) {
+private fun Route.getWithKey(path: String, perm: APIPermission, body: PipelineInterceptor<Unit, ApplicationCall>) {
     route(path, HttpMethod.Get) {
         handle {
-            call.requireKey().then {
+            call.requireKey(perm).then {
                 body(it)
             }.call()
         }
     }
 }
 
-private suspend fun ApplicationCall.requireKey(): SuspendConditionalCallback {
-    when(val result = validateKey()) {
+@KtorDsl
+private fun Route.postWithKey(path: String, perm: APIPermission, body: PipelineInterceptor<Unit, ApplicationCall>) {
+    route(path, HttpMethod.Post) {
+        handle {
+            call.requireKey(perm).then {
+                body(it)
+            }.call()
+        }
+    }
+}
+
+
+private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendConditionalCallback {
+    when(val result = validateKey(perm)) {
         KeyManager.ValidationResult.SUCCESS -> return SuspendConditionalCallback.suspendSuccess()
         KeyManager.ValidationResult.NO_KEY_PROVIDED -> {
             respondJson(object {
@@ -413,6 +507,13 @@ private suspend fun ApplicationCall.requireKey(): SuspendConditionalCallback {
                 val success = false
                 val error = "${result.name}: API key throttle, max amount of requests reached (100)"
             }, HttpStatusCode.TooManyRequests)
+            return SuspendConditionalCallback.suspendFail()
+        }
+        KeyManager.ValidationResult.INSUFFICIENT_PERMISSIONS -> {
+            respondJson(object {
+                val success = false
+                val error = "${result.name}: This endpoint requires your key to have ${perm.name} permission"
+            })
             return SuspendConditionalCallback.suspendFail()
         }
     }

@@ -12,7 +12,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 object KeyManager {
-    private var owned: HashMap<UUID, String> = HashMap()
+    private var owned: MutableList<KeyData> = mutableListOf()
     val requests: ConcurrentHashMap<String, Int> = ConcurrentHashMap()
 
     fun load() {
@@ -27,7 +27,7 @@ object KeyManager {
         Accessor.access("keys.json").writeText(GSON.toJson(owned))
     }
 
-    fun generateRandomKey(belongs: UUID): String {
+    fun generateRandomKey(belongs: UUID, permissions: List<APIPermission>): String {
         val r = ThreadLocalRandom.current()
         val buf = ByteBuffer.allocate(36)
 
@@ -40,18 +40,22 @@ object KeyManager {
         val bytes2 = ByteArray(12)
         r.nextBytes(bytes2)
         buf.put(bytes2)
-        val s = Base64.getUrlEncoder().encodeToString(buf.array()).replace("_", "h").replace("=", "f").replace("AAAA", "")
-        owned[belongs] = s
+        val s = Base64.getUrlEncoder().encodeToString(buf.array()).replace("_", "h").replace("=", "f").replace("-", "b").replace("AAAA", "")
+        owned.removeIf { it.owner == belongs }
+        owned.add(KeyData(belongs, s, permissions))
         return s
     }
 
-    fun ApplicationCall.validateKey(): ValidationResult {
+    fun ApplicationCall.validateKey(requiredPermission: APIPermission): ValidationResult {
         val headers = this.request.headers
         val key = headers["API-Key"] ?: this.request.queryParameters["key"] ?: return ValidationResult.NO_KEY_PROVIDED
-        if(owned.values.contains(key)) {
+        if(owned.any { it.key == key }) {
             if(!this@KeyManager.requests.containsKey(key))
                 this@KeyManager.requests[key] = 0
             if(this@KeyManager.requests[key]!! < 100) {
+                val k = owned.first { it.key == key }
+                if(!k.permissions.contains(requiredPermission))
+                    return ValidationResult.INSUFFICIENT_PERMISSIONS
                 this@KeyManager.requests[key] = this@KeyManager.requests[key]!! + 1
                 return ValidationResult.SUCCESS
             }
@@ -64,7 +68,8 @@ object KeyManager {
         SUCCESS,
         NO_KEY_PROVIDED,
         INVALID_KEY,
-        KEY_THROTTLE
+        KEY_THROTTLE,
+        INSUFFICIENT_PERMISSIONS
         ;
 
         operator fun not(): Boolean {
