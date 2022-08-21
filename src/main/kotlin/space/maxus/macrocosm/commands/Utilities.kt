@@ -4,6 +4,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.builder.ArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.axay.kspigot.commands.*
 import net.axay.kspigot.gui.GUIType
 import net.axay.kspigot.gui.Slots
@@ -19,15 +21,21 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.api.KeyManager
+import space.maxus.macrocosm.bazaar.Bazaar
+import space.maxus.macrocosm.bazaar.BazaarIntrinsics
+import space.maxus.macrocosm.bazaar.ops.BazaarOp
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.events.YearChangeEvent
+import space.maxus.macrocosm.exceptions.MacrocosmThrowable
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.EquipmentHandler
+import space.maxus.macrocosm.players.banking.Transaction
+import space.maxus.macrocosm.players.banking.transact
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.recipeBrowser
 import space.maxus.macrocosm.recipes.recipeViewer
@@ -43,45 +51,72 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.macrocosm
+import space.maxus.macrocosm.util.runCatchingReporting
+import space.maxus.macrocosm.util.withAll
 import java.net.InetAddress
 import kotlin.math.roundToInt
 
 
-fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    title = text("Item Browser")
-    defaultPage = 0
-    val mc = player.macrocosm!!
+fun bazaarOpCommand() = command("bazaarop") {
+    requires { it.hasPermission(4) }
 
-    page(0) {
-        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
-        val compound = createRectCompound<Identifier>(
-            Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
-            iconGenerator = {
-                try {
-                    Registry.ITEM.find(it).build(mc)!!
-                } catch (e: Exception) {
-                    ItemValue.NULL.item.build()!!
+    argument("operation", StringArgumentType.word()) {
+        suggestStrings(BazaarOp.values().map { it.toString() })
+
+        argument("item", ResourceLocationArgument.id()) {
+            val keys = Registry.BAZAAR_ELEMENTS.iter().keys.withAll(Registry.BAZAAR_ELEMENTS_REF.iter().keys)
+            suggestIds(keys)
+
+            argument("quantity", IntegerArgumentType.integer(0)) {
+                runsCatching {
+                    val op = BazaarOp.valueOf(getArgument("operation"))
+                    val item = getArgument<ResourceLocation>("item").macrocosm
+                    val quantity = getArgument<Int>("quantity")
+                    val mc = player.macrocosm!!
+                    when(op) {
+                        BazaarOp.DO_INSTANT_BUY -> {
+                            Bazaar.instantBuy(mc, player, item, quantity)
+                        }
+                        BazaarOp.DO_INSTANT_SELL -> {
+                            if(!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
+                                throw MacrocosmThrowable("NOT_ENOUGH_ITEMS", "You do not have enough items of type $item in your inventory!")
+                            Bazaar.instantSell(mc, player, item, quantity)
+                        }
+                        else -> {
+                            throw MacrocosmThrowable("INVALID_ARGUMENTS", "Invalid arguments provided, expected `pricePer`!")
+                        }
+                    }
                 }
-            },
-            onClick = { e, it ->
-                if (e.bukkitEvent.click.isLeftClick)
-                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!)
-                else
-                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
-                e.bukkitEvent.isCancelled = true
-            }
-        )
-        compound.addContent(Registry.ITEM.iter().keys.toList())
-        compound.sortContentBy { it.path }
-        compoundScroll(
-            Slots.RowOneSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 4
-        )
-        compoundScroll(
-            Slots.RowSixSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
-        )
 
+                argument("pricePer", DoubleArgumentType.doubleArg(0.1)) {
+                    runsCatching {
+                        val op = BazaarOp.valueOf(getArgument("operation"))
+                        val item = getArgument<ResourceLocation>("item").macrocosm
+                        val quantity = getArgument<Int>("quantity")
+                        val pricePer = getArgument<Double>("pricePer")
+                        val mc = player.macrocosm!!
+                        when(op) {
+                            BazaarOp.DO_INSTANT_BUY -> {
+                                Bazaar.instantBuy(mc, player, item, quantity)
+                            }
+                            BazaarOp.DO_INSTANT_SELL -> {
+                                if(!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
+                                    throw MacrocosmThrowable("NOT_ENOUGH_ITEMS", "You do not have enough items of type $item in your inventory!")
+                                Bazaar.instantSell(mc, player, item, quantity)
+                            }
+                            BazaarOp.CREATE_BUY_ORDER -> {
+                                Bazaar.createBuyOrder(mc, player, item, quantity, pricePer)
+                            }
+                            BazaarOp.CREATE_SELL_ORDER -> {
+                                if(!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
+                                    throw MacrocosmThrowable("NOT_ENOUGH_ITEMS", "You do not have enough items of type $item in your inventory!")
+                                Bazaar.createSellOrder(mc, player, item, quantity, pricePer)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -184,16 +219,16 @@ fun setDateCommand() = command("date") {
 fun payCommand() = command("pay") {
     argument("who", EntityArgument.player()) {
         argument("amount", DoubleArgumentType.doubleArg(.0)) {
-            runs {
+            runsCatching {
                 val from = player.macrocosm!!
                 val to = getArgument<EntitySelector>("who").findSinglePlayer(nmsContext.source).bukkitEntity.macrocosm!!
                 val amount = getArgument<Double>("amount")
                 if (from.purse < amount.toBigDecimal()) {
                     from.sendMessage("<red>You don't have enough coins!")
-                    return@runs
+                    return@runsCatching
                 }
-                from.purse -= amount.toBigDecimal()
-                to.purse += amount.toBigDecimal()
+                from.purse -= transact(amount.toBigDecimal(), from.ref, Transaction.Kind.OUTGOING)
+                to.purse += transact(amount.toBigDecimal(), to.ref, Transaction.Kind.INCOMING)
                 from.sendMessage(
                     "<green>You've paid ${
                         to.paper!!.displayName().str()
@@ -513,6 +548,60 @@ fun addSpellCommand() = command("addspell") {
             val sc = scroll.macrocosm!! as SpellScroll
             sc.spell = spell
             player.inventory.setItemInMainHand(sc.build(player.macrocosm!!))
+        }
+    }
+}
+
+fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
+    title = text("Item Browser")
+    defaultPage = 0
+    val mc = player.macrocosm!!
+
+    page(0) {
+        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
+        val compound = createRectCompound<Identifier>(
+            Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
+            iconGenerator = {
+                try {
+                    Registry.ITEM.find(it).build(mc)!!
+                } catch (e: Exception) {
+                    ItemValue.NULL.item.build()!!
+                }
+            },
+            onClick = { e, it ->
+                if (e.bukkitEvent.click.isLeftClick)
+                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!)
+                else
+                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
+                e.bukkitEvent.isCancelled = true
+            }
+        )
+        compound.addContent(Registry.ITEM.iter().keys.toList())
+        compound.sortContentBy { it.path }
+        compoundScroll(
+            Slots.RowOneSlotNine,
+            ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 4
+        )
+        compoundScroll(
+            Slots.RowSixSlotNine,
+            ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
+        )
+
+    }
+}
+
+fun RequiredArgumentBuilder<CommandSourceStack, ResourceLocation>.suggestIds(keys: Iterable<Identifier>) {
+    suggestList { keys.filter { key -> key.path.contains(it.getArgumentOrNull<ResourceLocation>(this.name)?.path ?: "") } }
+}
+
+fun RequiredArgumentBuilder<CommandSourceStack, String>.suggestStrings(keys: Iterable<String>) {
+    suggestList { keys.filter { key -> key.contains(it.getArgumentOrNull<String>(this.name) ?: "") } }
+}
+
+inline fun ArgumentBuilder<CommandSourceStack, *>.runsCatching(crossinline executor: CommandContext.() -> Unit) {
+    runs {
+        runCatchingReporting(player) {
+            executor(this)
         }
     }
 }

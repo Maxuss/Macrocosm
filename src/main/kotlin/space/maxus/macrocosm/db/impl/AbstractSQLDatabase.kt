@@ -1,13 +1,10 @@
 package space.maxus.macrocosm.db.impl
 
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
-import space.maxus.macrocosm.db.DataStorage
-import space.maxus.macrocosm.db.LimitedItemsTable
-import space.maxus.macrocosm.db.PlayersTable
-import space.maxus.macrocosm.db.StatsTable
+import space.maxus.macrocosm.db.*
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.stats.Statistic
 import java.util.*
 
 abstract class AbstractSQLDatabase: DataStorage {
@@ -22,12 +19,7 @@ abstract class AbstractSQLDatabase: DataStorage {
 
         transaction {
             addLogger(StdOutSqlLogger)
-            SchemaUtils.createMissingTablesAndColumns(PlayersTable, LimitedItemsTable, StatsTable)
-        }
-
-        var statQuery = "CREATE TABLE IF NOT EXISTS Stats(UUID VARCHAR PRIMARY KEY"
-        for (stat in Statistic.values()) {
-            statQuery += ", ${stat.name} REAL"
+            SchemaUtils.createMissingTablesAndColumns(PlayersTable, LimitedItemsTable, StatsTable, BazaarDataTable)
         }
     }
 

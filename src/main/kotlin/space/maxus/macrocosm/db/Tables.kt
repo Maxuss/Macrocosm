@@ -13,10 +13,17 @@ import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.spell.essence.EssenceType
-import space.maxus.macrocosm.util.associateWithHash
+import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.ignorant
 import java.math.BigDecimal
+
+object BazaarDataTable: Table("bazaar") {
+    val item = text("item").uniqueIndex()
+    val orders = text("orders")
+
+    override val primaryKey: PrimaryKey = PrimaryKey(item)
+}
 
 object PlayersTable: Table("players") {
     val uuid = uuid("uuid").uniqueIndex()
@@ -87,7 +94,7 @@ class SqlPlayerData(
                 fromJson(res[t.slayers]) ?: hashMapOf(),
                 res[t.activePet],
                 fromJson(res[t.pets]) ?: hashMapOf(),
-                fromJson(res[t.essence]) ?: EssenceType.values().toList().associateWithHash(ignorant(0))
+                fromJson(res[t.essence]) ?: EssenceType.values().toList().associateWithHashed(ignorant(0))
             )
         }
     }

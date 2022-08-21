@@ -42,6 +42,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
+import space.maxus.macrocosm.players.chat.ChatChannel
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -57,7 +58,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.associateWithHash
+import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.ignorant
 import space.maxus.macrocosm.util.toJson
@@ -94,13 +95,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> =
-        SlayerType.values().asIterable().associateWithHash(ignorant(SlayerLevel(0, .0, listOf(), .0)))
+        SlayerType.values().asIterable().associateWithHashed(ignorant(SlayerLevel(0, .0, listOf(), .0)))
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
     var memory: PlayerMemory = PlayerMemory.nullMemory()
     var activeForgeRecipes: MutableList<ActiveForgeRecipe> = mutableListOf()
-    var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHash(ignorant(0))
+    var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignorant(0))
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
@@ -354,6 +355,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         paper?.sendMessage(text(message))
     }
 
+    fun sendMessage(channel: ChatChannel, message: String) {
+        // todo: do channel block check
+        sendMessage("${channel.prefix} $message")
+    }
+
     private fun sendStatBar(myStats: Statistics? = null) {
         val stats = myStats ?: stats()!!
         val activeEffects = paper!!.activePotionEffects.map { it.type }
@@ -527,7 +533,6 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         return specialCache ?: recalculateSpecialStats()
     }
 
-    @Suppress("SqlInsertValues")
     override fun storeSelf(data: DataStorage) {
         val player = paper
         if (player == null) {
@@ -628,6 +633,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     companion object {
         fun readPlayer(id: UUID): MacrocosmPlayer? {
+            if(Macrocosm.loadedPlayers.containsKey(id))
+                return Macrocosm.loadedPlayers[id]
             val sql = database.transact {
                 PlayersTable.select { PlayersTable.uuid eq id }.map { SqlPlayerData.fromRes(it) }.firstOrNull()
             } ?: return null

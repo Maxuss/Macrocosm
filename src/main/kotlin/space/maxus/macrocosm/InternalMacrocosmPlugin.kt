@@ -8,6 +8,8 @@ import net.axay.kspigot.runnables.task
 import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.bazaar.Bazaar
+import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.DataGenerators
@@ -42,6 +44,7 @@ import space.maxus.macrocosm.pets.types.PyroclasticToadPet
 import space.maxus.macrocosm.pets.types.WaspPet
 import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.players.banking.TransactionHistory
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
@@ -76,7 +79,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         lateinit var API_VERSION: String; private set
         lateinit var VERSION: String; private set
-
+        lateinit var TRANSACTION_HISTORY: TransactionHistory
         private data class VersionInfo(val version: String, val apiVersion: String)
     }
 
@@ -85,6 +88,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     val loadedPlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
     val version by lazy { VERSION }
     val apiVersion by lazy { API_VERSION }
+    val transactionHistory by lazy { TRANSACTION_HISTORY }
     var isInDevEnvironment: Boolean = false; private set
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
@@ -114,6 +118,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             playersLazy = DATABASE.readPlayers().toMutableList()
         }
         Threading.runAsyncRaw {
+            TransactionHistory.readSelf()
             Calendar.load()
         }
     }
@@ -154,6 +159,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         ReforgeType.init()
         ItemValue.init()
         Armor.init()
+        BazaarElement.init()
+        Bazaar.init()
 
         Threading.runEachConcurrently(
             Executors.newFixedThreadPool(8),
@@ -221,6 +228,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         testMaddoxMenuCommand()
         openForgeMenuCommand()
         infusionCommand()
+        bazaarOpCommand()
 
         Monitor.exit()
         Monitor.enter("Resource Generation")
@@ -270,8 +278,14 @@ class InternalMacrocosmPlugin : KSpigot() {
                 v.storeSelf(database)
             }
         }
-        Threading.runAsync {
+        Threading.runAsyncRaw {
             Calendar.save()
+        }
+        Threading.runAsyncRaw {
+            TRANSACTION_HISTORY.storeSelf()
+        }
+        Threading.runAsyncRaw {
+            Bazaar.table.storeSelf(database)
         }
         ZombieAbilities.doomCounter.iter { id ->
             worlds[0].getEntity(id)?.remove()

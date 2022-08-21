@@ -25,7 +25,9 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.bazaar.*
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
+import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.listeners.FallingBlockListener
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -35,6 +37,7 @@ import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.util.metrics.report
 import java.io.File
 import java.nio.file.FileSystemAlreadyExistsException
 import java.nio.file.FileSystems
@@ -59,6 +62,8 @@ val GSON: Gson = GsonBuilder()
     .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
+    .registerTypeAdapter(BazaarOrder::class.java, BazaarOrderTypeAdapter)
+    .registerTypeAdapter(BazaarDataCompound::class.java, BazaarDataCompoundTypeAdapter)
     .create()
 val GSON_PRETTY: Gson = GsonBuilder()
     .disableHtmlEscaping()
@@ -66,6 +71,8 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
+    .registerTypeAdapter(BazaarOrder::class.java, BazaarOrderTypeAdapter)
+    .registerTypeAdapter(BazaarDataCompound::class.java, BazaarDataCompoundTypeAdapter)
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
@@ -75,6 +82,51 @@ typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
 
 fun <A> identity(): FnArgRet<A, A> = { a -> a }
+fun nullFn(): FnRet<Unit> = { }
+
+fun <V> Iterable<V>.withAll(other: Iterable<V>): List<V> {
+    val new = mutableListOf<V>()
+    new.addAll(this)
+    new.addAll(other)
+    return new
+}
+
+fun <K, V> ConcurrentHashMap<K, V>.withAll(other: ConcurrentHashMap<K, V>): ConcurrentHashMap<K, V> {
+    @Suppress("UNCHECKED_CAST")
+    val new = ConcurrentHashMap<K, V>()
+    new.putAll(this)
+    new.putAll(other)
+    return new
+}
+
+inline fun <R> runCatchingWithPlayer(player: Player, block: () -> R): Result<R> {
+    val res = runCatching(block)
+    res.fold(
+        onSuccess = { obj ->
+            return Result.success(obj)
+        },
+        onFailure = { err ->
+            val mc = err.macrocosm
+            player.sendMessage(mc.component)
+            return Result.failure(mc)
+        }
+    )
+}
+
+inline fun <R> runCatchingReporting(player: Player? = null, block: () -> R): Result<R> {
+    val res = runCatching(block)
+    res.fold(
+        onSuccess = { obj ->
+            return Result.success(obj)
+        },
+        onFailure = { err ->
+            val mc = err.macrocosm
+            player?.sendMessage(mc.component)
+            report("${mc.code}: ${mc.message}", nullFn())
+            return Result.failure(mc)
+        }
+    )
+}
 
 inline fun <reified T> fromJson(str: String): T? = if(str == "NULL") null else GSON.fromJson<T>(str, typetoken<T>())
 fun <T> toJson(obj: T): String = GSON.toJson(obj)
@@ -87,7 +139,7 @@ fun String.camelToSnakeCase(): String {
     }.lowercase(Locale.getDefault())
 }
 
-inline fun <reified K: Any?, reified V: Any?> Iterable<K>.associateWithHash(producer: FnArgRet<K, V>): HashMap<K, V> {
+inline fun <reified K: Any?, reified V: Any?> Iterable<K>.associateWithHashed(producer: FnArgRet<K, V>): HashMap<K, V> {
     val result = hashMapOf<K, V>()
     return associateWithTo(result, producer)
 }
