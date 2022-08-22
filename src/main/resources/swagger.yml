@@ -1,508 +1,799 @@
 swagger: '2.0'
 info:
-  description: |
-    This is an API used to interact with and access Macrocosm data.
-
-
-    # Authentication
-
-    Authentication requires you to provide an API key in most endpoints.
-
-    The only endpoints that **do not** enforce an API key authentication are the
-    ones in `Resources` tags.
-      
-    <!-- ReDoc-Inject: <security-definitions> -->
-  title: Macrocosm API
-  version: 0.2.0
-  x-logo:
-    altText: Macrocosm Logo
-    url: ./doc/pack.png
+    description: |
+        This is an API used to interact with and access Macrocosm data.
+        
+        
+        # Authentication
+        
+        Authentication requires you to provide an API key in most endpoints.
+        
+        The only endpoints that **do not** enforce an API key authentication are the
+        ones in `Resources` tags.
+        
+        <!-- ReDoc-Inject: <security-definitions> -->
+    title: Macrocosm API
+    version: 0.2.0
+    x-logo:
+        altText: Macrocosm Logo
+        url: ./doc/pack.png
 basePath: /
 paths:
-  /players:
-    get:
-      produces:
-        - application/json
-      parameters: []
-      responses:
-        '200':
-          description: Gets all online players at the moment
-          schema:
-            example:
-              onlinePlayers:
-                - 4adfe27e-63d3-45b9-8238-62b6ed6fdb5e
-                - 534359f7-5407-4b19-ba92-c71c370022a5
-              success: true
-            properties:
-              onlinePlayers:
-                description: All UUIDs of players online at the moment
-                items:
+    /players:
+        get:
+            produces:
+                - application/json
+            parameters: []
+            responses:
+                '200':
+                    description: Gets all online players at the moment
+                    schema:
+                        example:
+                            onlinePlayers:
+                                - 4adfe27e-63d3-45b9-8238-62b6ed6fdb5e
+                                - 534359f7-5407-4b19-ba92-c71c370022a5
+                            success: true
+                        properties:
+                            onlinePlayers:
+                                description: All UUIDs of players online at the moment
+                                items:
+                                    type: string
+                                type: array
+                            success:
+                                type: boolean
+                        type: object
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+            security:
+                - ApiKeyAuth: []
+            tags:
+                - Players
+            summary: Online players
+    '/players/{player}/balance':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: UUID or name of player to access
+                  in: path
+                  name: player
+                  required: true
                   type: string
-                type: array
-              success:
-                type: boolean
-            type: object
-        '403':
-          description: Access is forbidden due to wrong API key or not providing one
-          schema:
-            $ref: '#/definitions/ErrorNoKey'
-        '429':
-          description: Access is forbidden due to key throttle
-          schema:
-            $ref: '#/definitions/ErrorKeyThrottle'
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Players
-      summary: Online players
-  '/players/{player}/balance':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: UUID or name of player to access
-          in: path
-          name: player
-          required: true
-          type: string
-      responses:
-        '200':
-          description: >-
-            Gets balance of the provided player if they have joined the server
-            before
-          schema:
-            example:
-              bank: 0
-              purse: 26443203.1
-              success: true
-            properties:
-              bank:
-                description: Amount of coins in bank
-                format: double
-                type: number
-              purse:
-                description: Amount of coins in purse
-                format: double
-                type: number
-              success:
-                type: boolean
-            type: object
-        '404':
-          description: >-
-            Could not get balance of player because they have never joined the
-            server before
-          schema:
-            $ref: '#/definitions/Error'
-        '400':
-          description: Player argument not provided
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: Access is forbidden due to wrong API key or not providing one
-          schema:
-            $ref: '#/definitions/ErrorNoKey'
-        '429':
-          description: Access is forbidden due to key throttle
-          schema:
-            $ref: '#/definitions/ErrorKeyThrottle'
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Players
-      summary: Player Balance
-  '/players/{player}/collections':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: UUID or name of player to access
-          in: path
-          name: player
-          required: true
-          type: string
-      responses:
-        '200':
-          description: >-
-            Gets collection data of the provided player if they have joined the
-            server before
-          schema:
-            example:
-              collections:
-                NETHER_WART:
-                  exp: 12
-                  lvl: 15
-              success: true
-            properties:
-              collections:
-                description: Collection data of player
-                properties: {}
-                type: object
-              success:
-                type: boolean
-            type: object
-        '404':
-          description: >-
-            Could not get collection data of player because they have never
-            joined the server before
-          schema:
-            $ref: '#/definitions/Error'
-        '400':
-          description: Player argument not provided
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: Access is forbidden due to wrong API key or not providing one
-          schema:
-            $ref: '#/definitions/ErrorNoKey'
-        '429':
-          description: Access is forbidden due to key throttle
-          schema:
-            $ref: '#/definitions/ErrorKeyThrottle'
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Players
-      summary: Player Collections
-  '/players/{player}/inventory':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: UUID or name of player to access
-          in: path
-          name: player
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Gets inventory of provided player if it has played the server before
-          schema:
-            example:
-              inventory: <imagine that there is a long string>
-              success: true
-            properties:
-              inventory:
-                description: >-
-                  Inventory data of player. Base64 encoded Gzip-compressed NBT.
-                  May contain Unicode characters (like emojis)! May be 'null' if
-                  `success` is false
-                type: string
-              success:
-                type: boolean
-            type: object
-        '404':
-          description: >-
-            Could not get inventory of player because they have never joined the
-            server before
-          schema:
-            $ref: '#/definitions/Error'
-        '400':
-          description: Player argument not provided
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: Access is forbidden due to wrong API key or not providing one
-          schema:
-            $ref: '#/definitions/ErrorNoKey'
-        '429':
-          description: Access is forbidden due to key throttle
-          schema:
-            $ref: '#/definitions/ErrorKeyThrottle'
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Players
-      summary: Player Inventory
-  '/players/{player}/skills':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: UUID or name of player to access
-          in: path
-          name: player
-          required: true
-          type: string
-      responses:
-        '200':
-          description: >-
-            Gets skill data of the provided player if they have joined the
-            server before
-          schema:
-            example:
-              skills:
-                COMBAT:
-                  exp: 0
-                  lvl: 10
-              success: true
-            properties:
-              skills:
-                description: Skill data of player
-                properties: {}
-                type: object
-              success:
-                type: boolean
-            type: object
-        '404':
-          description: >-
-            Could not get skill data of player because they have never joined
-            the server before
-          schema:
-            $ref: '#/definitions/Error'
-        '400':
-          description: Player argument not provided
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: Access is forbidden due to wrong API key or not providing one
-          schema:
-            $ref: '#/definitions/ErrorNoKey'
-        '429':
-          description: Access is forbidden due to key throttle
-          schema:
-            $ref: '#/definitions/ErrorKeyThrottle'
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Players
-      summary: Player Skills
-  '/players/{player}/status':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: UUID or name of player to access
-          in: path
-          name: player
-          required: true
-          type: string
-      responses:
-        '200':
-          description: >-
-            Gets status of the provided player if they have joined the server
-            before
-          schema:
-            example:
-              foundPlayer: true
-              isOnline: false
-              success: true
-              uuid: 534359f7-5407-4b19-ba92-c71c370022a5
-            properties:
-              foundPlayer:
-                type: boolean
-              isOnline:
-                description: Whether the player is currently online
-                type: boolean
-              success:
-                type: boolean
-              uuid:
-                description: UUID of the player
-                type: string
-            type: object
-        '404':
-          description: >-
-            Could not get status of player because they have never joined the
-            server before
-          schema:
-            example:
-              foundPlayer: false
-              message: Player has never joined the server before!
-              success: true
-            properties:
-              foundPlayer:
-                type: boolean
-              message:
-                description: Cause as to why could not find player
-                type: string
-              success:
-                type: boolean
-            type: object
-        '400':
-          description: Player argument not provided
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: Access is forbidden due to wrong API key or not providing one
-          schema:
-            $ref: '#/definitions/ErrorNoKey'
-        '429':
-          description: Access is forbidden due to key throttle
-          schema:
-            $ref: '#/definitions/ErrorKeyThrottle'
-      security:
-        - ApiKeyAuth: []
-      tags:
-        - Players
-      summary: Player Status
-  /resources:
-    get:
-      produces:
-        - application/octet-stream
-      parameters: []
-      responses:
-        '200':
-          description: Gets all Resource Registries that can be queried
-          schema:
-            description: All registries that can be queried
-            example:
-              availableRegistries:
-                - item
-                - entity
-              success: true
-            properties:
-              availableRegistries:
-                description: All registries that can be queried
-                items:
+            responses:
+                '200':
+                    description: >-
+                        Gets balance of the provided player if they have joined the server
+                        before
+                    schema:
+                        example:
+                            bank: 0
+                            purse: 26443203.1
+                            success: true
+                        properties:
+                            bank:
+                                description: Amount of coins in bank
+                                format: double
+                                type: number
+                            purse:
+                                description: Amount of coins in purse
+                                format: double
+                                type: number
+                            success:
+                                type: boolean
+                        type: object
+                '404':
+                    description: >-
+                        Could not get balance of player because they have never joined the
+                        server before
+                    schema:
+                        $ref: '#/definitions/Error'
+                '400':
+                    description: Player argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+            security:
+                - ApiKeyAuth: []
+            tags:
+                - Players
+            summary: Player Balance
+    '/players/{player}/collections':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: UUID or name of player to access
+                  in: path
+                  name: player
+                  required: true
                   type: string
-                type: array
-              success:
-                type: boolean
-            type: object
-      tags:
-        - Resources
-      summary: All Registries
-  '/resources/{registry}':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: ID of registry to access
-          in: path
-          name: registry
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Gets contents of a specific registry
-          schema:
-            description: All contents of a specific registry
-            example:
-              registry:
-                'macrocosm:some_item':
-                  abc: 123
-                  boolean: true
-              success: true
-            properties:
-              registry:
-                description: >-
-                  Contents of the registry. Key is an identifier while value
-                  depends on registry type
-                properties: {}
-                type: object
-              success:
-                type: boolean
-            type: object
-        '400':
-          description: >-
-            registry parameter not provided or indicates a registry that can not
-            be queried
-          schema:
-            $ref: '#/definitions/Error'
-        '404':
-          description: registry parameter indicates an invalid registry
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Resources
-      summary: Specific Registry
-  '/resources/{registry}/{element}':
-    get:
-      produces:
-        - application/octet-stream
-      parameters:
-        - description: ID of registry to access
-          in: path
-          name: registry
-          required: true
-          type: string
-        - description: ID of the element to access
-          in: path
-          name: element
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Gets specific element from registry
-          schema:
-            description: A specific element from registry
-            example:
-              element:
-                abc: 123
-                boolean: true
-              success: true
-            properties:
-              element:
-                description: Queried element. Content varies depending on registry type
-                properties: {}
-                type: object
-              success:
-                type: boolean
-            type: object
-        '400':
-          description: >-
-            registry/element parameter not provided or indicates a registry that
-            can not be queried
-          schema:
-            $ref: '#/definitions/Error'
-        '404':
-          description: >-
-            registry parameter indicates an invalid registry or could not find
-            element in registry
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Resources
-      summary: Specific element from registry
+            responses:
+                '200':
+                    description: >-
+                        Gets collection data of the provided player if they have joined the
+                        server before
+                    schema:
+                        example:
+                            collections:
+                                NETHER_WART:
+                                    exp: 12
+                                    lvl: 15
+                            success: true
+                        properties:
+                            collections:
+                                description: Collection data of player
+                                properties: {}
+                                type: object
+                            success:
+                                type: boolean
+                        type: object
+                '404':
+                    description: >-
+                        Could not get collection data of player because they have never
+                        joined the server before
+                    schema:
+                        $ref: '#/definitions/Error'
+                '400':
+                    description: Player argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+            security:
+                - ApiKeyAuth: []
+            tags:
+                - Players
+            summary: Player Collections
+    '/players/{player}/inventory':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: UUID or name of player to access
+                  in: path
+                  name: player
+                  required: true
+                  type: string
+            responses:
+                '200':
+                    description: Gets inventory of provided player if it has played the server before
+                    schema:
+                        example:
+                            inventory: <imagine that there is a long string>
+                            success: true
+                        properties:
+                            inventory:
+                                description: >-
+                                    Inventory data of player. Base64 encoded Gzip-compressed NBT.
+                                    May contain Unicode characters (like emojis)! May be 'null' if
+                                    `success` is false
+                                type: string
+                            success:
+                                type: boolean
+                        type: object
+                '404':
+                    description: >-
+                        Could not get inventory of player because they have never joined the
+                        server before
+                    schema:
+                        $ref: '#/definitions/Error'
+                '400':
+                    description: Player argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+            security:
+                - ApiKeyAuth: []
+            tags:
+                - Players
+            summary: Player Inventory
+    '/players/{player}/skills':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: UUID or name of player to access
+                  in: path
+                  name: player
+                  required: true
+                  type: string
+            responses:
+                '200':
+                    description: >-
+                        Gets skill data of the provided player if they have joined the
+                        server before
+                    schema:
+                        example:
+                            skills:
+                                COMBAT:
+                                    exp: 0
+                                    lvl: 10
+                            success: true
+                        properties:
+                            skills:
+                                description: Skill data of player
+                                properties: {}
+                                type: object
+                            success:
+                                type: boolean
+                        type: object
+                '404':
+                    description: >-
+                        Could not get skill data of player because they have never joined
+                        the server before
+                    schema:
+                        $ref: '#/definitions/Error'
+                '400':
+                    description: Player argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+            security:
+                - ApiKeyAuth: []
+            tags:
+                - Players
+            summary: Player Skills
+    '/players/{player}/status':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: UUID or name of player to access
+                  in: path
+                  name: player
+                  required: true
+                  type: string
+            responses:
+                '200':
+                    description: >-
+                        Gets status of the provided player if they have joined the server
+                        before
+                    schema:
+                        example:
+                            foundPlayer: true
+                            isOnline: false
+                            success: true
+                            uuid: 534359f7-5407-4b19-ba92-c71c370022a5
+                        properties:
+                            foundPlayer:
+                                type: boolean
+                            isOnline:
+                                description: Whether the player is currently online
+                                type: boolean
+                            success:
+                                type: boolean
+                            uuid:
+                                description: UUID of the player
+                                type: string
+                        type: object
+                '404':
+                    description: >-
+                        Could not get status of player because they have never joined the
+                        server before
+                    schema:
+                        example:
+                            foundPlayer: false
+                            message: Player has never joined the server before!
+                            success: true
+                        properties:
+                            foundPlayer:
+                                type: boolean
+                            message:
+                                description: Cause as to why could not find player
+                                type: string
+                            success:
+                                type: boolean
+                        type: object
+                '400':
+                    description: Player argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+            security:
+                - ApiKeyAuth: []
+            tags:
+                - Players
+            summary: Player Status
+    /resources:
+        get:
+            produces:
+                - application/octet-stream
+            parameters: []
+            responses:
+                '200':
+                    description: Gets all Resource Registries that can be queried
+                    schema:
+                        description: All registries that can be queried
+                        example:
+                            availableRegistries:
+                                - item
+                                - entity
+                            success: true
+                        properties:
+                            availableRegistries:
+                                description: All registries that can be queried
+                                items:
+                                    type: string
+                                type: array
+                            success:
+                                type: boolean
+                        type: object
+            tags:
+                - Resources
+            summary: All Registries
+    '/resources/{registry}':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: ID of registry to access
+                  in: path
+                  name: registry
+                  required: true
+                  type: string
+            responses:
+                '200':
+                    description: Gets contents of a specific registry
+                    schema:
+                        description: All contents of a specific registry
+                        example:
+                            registry:
+                                'macrocosm:some_item':
+                                    abc: 123
+                                    boolean: true
+                            success: true
+                        properties:
+                            registry:
+                                description: >-
+                                    Contents of the registry. Key is an identifier while value
+                                    depends on registry type
+                                properties: {}
+                                type: object
+                            success:
+                                type: boolean
+                        type: object
+                '400':
+                    description: >-
+                        registry parameter not provided or indicates a registry that can not
+                        be queried
+                    schema:
+                        $ref: '#/definitions/Error'
+                '404':
+                    description: registry parameter indicates an invalid registry
+                    schema:
+                        $ref: '#/definitions/Error'
+            tags:
+                - Resources
+            summary: Specific Registry
+    '/resources/{registry}/{element}':
+        get:
+            produces:
+                - application/octet-stream
+            parameters:
+                - description: ID of registry to access
+                  in: path
+                  name: registry
+                  required: true
+                  type: string
+                - description: ID of the element to access
+                  in: path
+                  name: element
+                  required: true
+                  type: string
+            responses:
+                '200':
+                    description: Gets specific element from registry
+                    schema:
+                        description: A specific element from registry
+                        example:
+                            element:
+                                abc: 123
+                                boolean: true
+                            success: true
+                        properties:
+                            element:
+                                description: Queried element. Content varies depending on registry type
+                                properties: {}
+                                type: object
+                            success:
+                                type: boolean
+                        type: object
+                '400':
+                    description: >-
+                        registry/element parameter not provided or indicates a registry that
+                        can not be queried
+                    schema:
+                        $ref: '#/definitions/Error'
+                '404':
+                    description: >-
+                        registry parameter indicates an invalid registry or could not find
+                        element in registry
+                    schema:
+                        $ref: '#/definitions/Error'
+            tags:
+                - Resources
+            summary: Specific element from registry
+    '/bazaar':
+        get:
+            tags:
+                - Bazaar
+            summary: Bazaar Status
+            security:
+                - ApiKeyAuth: []
+            responses:
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+                '200':
+                    description: Gets a quick status of bazaar
+                    schema:
+                        properties:
+                            success:
+                                type: boolean
+                            entries:
+                                type: integer
+                                description: Amount of item types in the bazaar
+                            totalOrders:
+                                type: integer
+                                description: Cumulative amount of orders in the bazaar
+                        example:
+                            success: true
+                            entries: 16
+                            totalOrders: 1256
+    '/bazaar/items':
+        get:
+            tags:
+                - Bazaar
+            summary: Items in the bazaar registry
+            security:
+                - ApiKeyAuth: []
+            responses:
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+                '200':
+                    description: Gets all items that can be queried for bazaar
+                    schema:
+                        properties:
+                            success:
+                                type: boolean
+                            items:
+                                type: array
+                                items:
+                                    type: string
+                        example:
+                            success: try
+                            items:
+                                - "macrocosm:enchanted_diamond"
+                                - "macrocosm:searing_bricks"
+                                - "minecraft:diamond"
+                                - "minecraft:iron_ingot"
+                                - "myplugin:my_item"
+    '/bazaar/orders/{item}':
+        get:
+            tags:
+                - Bazaar
+            summary: All Bazaar Orders
+            security:
+                - ApiKeyAuth: []
+            parameters:
+                -   description: ID of the item to access
+                    in: path
+                    name: item
+                    required: true
+                    type: string
+            responses:
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+                '400':
+                    description: `item` argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '404':
+                    description: Could not find provided `item` in the bazaar
+                    schema:
+                        $ref: '#/definitions/Error'
+                '200':
+                    description: Gets all of the orders in the bazaar
+                    schema:
+                        properties:
+                            success:
+                                type: boolean
+                            orders:
+                                type: array
+                                description: All of the orders, for order schema see `BazaarBuyOrder` and `BazaarSellOrder`
+                        example:
+                            success: true
+                            orders: []
+    '/bazaar/summary/{item}':
+        get:
+            tags:
+                - Bazaar
+            summary: Bazaar Item Summary
+            security:
+                -   ApiKeyAuth: [ ]
+            parameters:
+                -   description: ID of the item to access
+                    in: path
+                    name: item
+                    required: true
+                    type: string
+            responses:
+                '403':
+                    description: Access is forbidden due to wrong API key or not providing one
+                    schema:
+                        $ref: '#/definitions/ErrorNoKey'
+                '429':
+                    description: Access is forbidden due to key throttle
+                    schema:
+                        $ref: '#/definitions/ErrorKeyThrottle'
+                '400':
+                    description: `item` argument not provided
+                    schema:
+                        $ref: '#/definitions/Error'
+                '404':
+                    description: Could not find provided `item` in the bazaar
+                    schema:
+                        $ref: '#/definitions/Error'
+                '200':
+                    description: Gets summary of all orders of certain type
+                    schema:
+                        properties:
+                            success:
+                                type: boolean
+                            item:
+                                type: string
+                                description: ID of the item queried
+                            ordersCount:
+                                type: integer
+                                description: Total amount of orders of this type
+                            buyOrders:
+                                description: Summary of buy orders
+                                $ref: "#/definitions/OrderSummary"
+                            sellOrders:
+                                description: Summary of sell orders
+                                $ref: "#/definitions/OrderSummary"
+                        example:
+                            success: true
+                            item: "macrocosm:enchnated_diamond"
+                            ordersCount: 628
+                            buyOrders:
+                                amount: 323
+                                highestPrice: 21.1
+                                lowestPrice: 0.1
+                                averagePrice: 12.3
+                                medianPrice: 11
+                                cumulativeCoins: 245123.3
+                                cumulativeItems: 1325
+                            sellOrders:
+                                amount: 325
+                                highestPrice: 26.1
+                                lowestPrice: 2.6
+                                averagePrice: 16.3
+                                medianPrice: 14
+                                cumulativeCoins: 243223.3
+                                cumulativeItems: 1155
+
 definitions:
-  Error:
-    description: An error response
-    example:
-      error: Provided player is not online!
-      success: false
-    properties:
-      error:
-        description: Error message. Depends on endpoint and usage case
-        type: string
-      success:
-        type: boolean
-    type: object
-  ErrorKeyThrottle:
-    description: Too many requests sent with a single API key
-    example:
-      error: API Key throttle max amount of requests reached (100)
-      success: false
-    properties:
-      error:
-        description: The description of the error
-        type: string
-      success:
-        type: boolean
-    type: object
-  ErrorNoKey:
-    description: API Key was not provided
-    example:
-      error: No API key provided!
-      success: false
-    properties:
-      error:
-        description: The description of the error
-        type: string
-      success:
-        type: boolean
-    type: object
+    OrderSummary:
+        description: Summary of orders of certain type
+        properties:
+            amount:
+                type: integer
+                description: Amount of orders
+            highestPrice:
+                type: number
+                description: Highest per-item price of all orders
+            lowestPrice:
+                type: number
+                description: Lowest per-item price of all orders
+            averagePrice:
+                type: number
+                description: Average per-item price of all orders
+            medianPrice:
+                type: number
+                description: Median per-item price of all orders
+            cumulativeCoins:
+                type: number
+                description: All accumulated coins in orders of this type
+            cumulativeItems:
+                type: integer
+                description: All accumulated items in orders of this type
+        example:
+            amount: 324
+            highestPrice: 23.1
+            lowestPrice: 1.1
+            averagePrice: 14.3
+            medianPrice: 12
+            cumulativeCoins: 245123.3
+            cumulativeItems: 1325
+    BazaarBuyOrder:
+        description: A single bazaar buy order
+        properties:
+            type:
+                type: string
+                enum: ["buy", "sell"]
+                description: Type of the bazaar order, "buy" for this type
+            qty:
+                type: integer
+                description: Quantity of items requested
+            pricePer:
+                type: number
+                description: Price per single item
+            bought:
+                type: integer
+                description: Amount of unclaimed bought items
+            sellers:
+                type: array
+                items:
+                    type: string
+                    description: UUID of a single seller
+                description: UUIDs of sellers to this order
+            item:
+                type: string
+                description: Item being sold
+            by:
+                type: string
+                description: Creator of the order
+            at:
+                type: integer
+                description: Unix epoch timestamp in milliseconds for when the order was created
+        example:
+            type: "buy"
+            qty: 154
+            pricePer: 43.3
+            bought: 0
+            sellers: []
+            item: "macrocosm:enchanted_diamond"
+            by: ad8fefaa8351454bb739a4eaa872173f
+            at: 1661153884
+    BazaarSellOrder:
+        description: A single bazaar sell order
+        properties:
+            type:
+                type: string
+                enum: ["buy", "sell"]
+                description: Type of the bazaar order, "sell" for this type
+            qty:
+                type: integer
+                description: Quantity of items selling
+            pricePer:
+                type: number
+                description: Price per single item
+            sold:
+                type: integer
+                description: Amount of items sold
+            buyers:
+                type: array
+                items:
+                    type: string
+                    description: UUID of a single buyer
+                description: UUIDs of buyers from this order
+            item:
+                type: string
+                description: Item being sold
+            by:
+                type: string
+                description: Creator of the order
+            at:
+                type: integer
+                description: Unix epoch timestamp in milliseconds for when the order was created
+        example:
+            type: "sell"
+            qty: 12421
+            pricePer: 1.1
+            sold: 0
+            buyers: []
+            item: "macrocosm:enchanted_diamond"
+            by: ad8fefaa8351454bb739a4eaa872173f
+            at: 1661153884
+    Error:
+        description: An error response
+        example:
+            error: Provided player is not online!
+            success: false
+        properties:
+            error:
+                description: Error message. Depends on endpoint and usage case
+                type: string
+            success:
+                type: boolean
+        type: object
+    ErrorKeyThrottle:
+        description: Too many requests sent with a single API key
+        example:
+            error: API Key throttle max amount of requests reached (100)
+            success: false
+        properties:
+            error:
+                description: The description of the error
+                type: string
+            success:
+                type: boolean
+        type: object
+    ErrorNoKey:
+        description: API Key was not provided
+        example:
+            error: No API key provided!
+            success: false
+        properties:
+            error:
+                description: The description of the error
+                type: string
+            success:
+                type: boolean
+        type: object
 securityDefinitions:
-  ApiKeyAuth:
-    description: >-
-      Can be obtained by joining the server and executing command '/api new'.
-      The only endpoints that **do not** enforce authentication are `/resources`
-      related ones
-    in: header
-    name: API-Key
-    type: apiKey
+    ApiKeyAuth:
+        description: >-
+            Can be obtained by joining the server and executing command '/api new'.
+            The only endpoints that **do not** enforce authentication are `/resources`
+            related ones
+        in: header
+        name: API-Key
+        type: apiKey
 tags:
-  - description: Access to resource registries
-    name: Resources
-  - description: Most information related to players
-    name: Players
+    - description: Access to resource registries
+      name: Resources
+    - description: Most information related to players
+      name: Players
+    - description: Bazaar related information
+      name: Bazaar
 x-components: {}
 
