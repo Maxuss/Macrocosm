@@ -25,7 +25,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.util.*
 
-private object NullBazaarOrder: BazaarOrder(Identifier.NULL, UUID.randomUUID(), -1, -1L) {
+private object NullBazaarOrder : BazaarOrder(Identifier.NULL, UUID.randomUUID(), -1, -1L) {
     override val totalPrice: BigDecimal = BigDecimal.valueOf(0L)
 }
 
@@ -35,7 +35,10 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
         title = text("Your Orders")
         val orders = Bazaar.getOrdersForPlayer(player.ref)
         if (orders.size > 28) {
-            throw MacrocosmThrowable("TOO_MANY_ORDERS", "You have too many orders active! This should not normally happen!")
+            throw MacrocosmThrowable(
+                "TOO_MANY_ORDERS",
+                "You have too many orders active! This should not normally happen!"
+            )
         }
         orders.padForward(28, NullBazaarOrder)
         val nullOrderGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "")
@@ -44,45 +47,94 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
 
             val cmp = createRectCompound<BazaarOrder>(Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
                 iconGenerator = { order ->
-                    if(order is NullBazaarOrder)
+                    if (order is NullBazaarOrder)
                         return@createRectCompound nullOrderGlass
-                    val resultItem = BazaarElement.idToElement(order.item)?.build() ?: return@createRectCompound nullOrderGlass
+                    val resultItem =
+                        BazaarElement.idToElement(order.item)?.build() ?: return@createRectCompound nullOrderGlass
                     resultItem.meta {
-                        if(order is BazaarBuyOrder) {
-                            displayName(text("<green><bold>BUY</bold> ${Formatting.withCommas(order.originalAmount.toBigDecimal(), true)}x </green> ${displayName()!!.str()}").noitalic())
+                        if (order is BazaarBuyOrder) {
+                            displayName(
+                                text(
+                                    "<green><bold>BUY</bold> ${
+                                        Formatting.withCommas(
+                                            order.originalAmount.toBigDecimal(),
+                                            true
+                                        )
+                                    }x </green> ${displayName()!!.str()}"
+                                ).noitalic()
+                            )
 
                             val intermediaryLore = mutableListOf(
                                 "<dark_gray>Worth ${truncateCoins(order.totalPrice)} coins",
                                 "",
-                                "<gray>Amount left: <green>${if(order.qty > 0) order.qty else "<bold>ORDER FILLED!"}",
+                                "<gray>Amount left: <green>${if (order.qty > 0) order.qty else "<bold>ORDER FILLED!"}",
                                 "<gray>Sellers: ",
-                                )
-                            intermediaryLore.addAll(if(order.sellers.size > 0) {
-                                order.sellers.map { seller -> Bukkit.getOfflinePlayer(seller).let { player -> "<dark_gray> - ${MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")?.str() ?: "Unknown Seller!"}}" } }
+                            )
+                            intermediaryLore.addAll(if (order.sellers.size > 0) {
+                                order.sellers.map { seller ->
+                                    Bukkit.getOfflinePlayer(seller).let { player ->
+                                        "<dark_gray> - ${
+                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")
+                                                ?.str() ?: "Unknown Seller!"
+                                        }}"
+                                    }
+                                }
                             } else {
                                 listOf("<dark_gray> - None")
                             })
                             intermediaryLore.add("")
-                            intermediaryLore.addAll(if(order.bought > 0) listOf("<gray>Available to claim: <green>${order.bought}", "<yellow>Click to claim!") else if(order.qty == 0 && order.bought == 0) listOf("<yellow>Click to clear!") else listOf("<yellow>Click for options"))
+                            intermediaryLore.addAll(
+                                if (order.bought > 0) listOf(
+                                    "<gray>Available to claim: <green>${order.bought}",
+                                    "<yellow>Click to claim!"
+                                ) else if (order.qty == 0 && order.bought == 0) listOf("<yellow>Click to clear!") else listOf(
+                                    "<yellow>Click for options"
+                                )
+                            )
                             lore(intermediaryLore.map { text(it).noitalic() })
-                        } else if(order is BazaarSellOrder) {
-                            displayName(text("<green><bold>SELL</bold> ${Formatting.withCommas(order.originalAmount.toBigDecimal(), true)}x </green> ${displayName()!!.str()}").noitalic())
+                        } else if (order is BazaarSellOrder) {
+                            displayName(
+                                text(
+                                    "<green><bold>SELL</bold> ${
+                                        Formatting.withCommas(
+                                            order.originalAmount.toBigDecimal(),
+                                            true
+                                        )
+                                    }x </green> ${displayName()!!.str()}"
+                                ).noitalic()
+                            )
 
                             val intermediaryLore = mutableListOf(
                                 "<dark_gray>Worth ${truncateCoins(order.totalPrice)}",
                                 "",
-                                "<gray>Amount left: <green>${if(order.qty > 0) order.qty else "<bold>ORDER SOLD!"}",
+                                "<gray>Amount left: <green>${if (order.qty > 0) order.qty else "<bold>ORDER SOLD!"}",
                                 "<gray>Buyers: ",
                             )
-                            intermediaryLore.addAll(if(order.buyers.size > 0) {
-                                order.buyers.map { seller -> Bukkit.getOfflinePlayer(seller).let { player -> "<dark_gray> - ${MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL") ?: "Unknown Buyer!"}}" } }
+                            intermediaryLore.addAll(if (order.buyers.size > 0) {
+                                order.buyers.map { seller ->
+                                    Bukkit.getOfflinePlayer(seller).let { player ->
+                                        "<dark_gray> - ${
+                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL") ?: "Unknown Buyer!"
+                                        }}"
+                                    }
+                                }
                             } else {
                                 listOf("<dark_gray> - None")
                             })
                             intermediaryLore.add("")
-                            intermediaryLore.addAll(if(order.sold > 0) listOf("<gray>Available coins to claim: <green>${Formatting.withCommas((order.pricePer.toBigDecimal() * order.sold.toBigDecimal() * BazaarIntrinsics.INCOMING_TAX_MODIFIER).round(
-                                MathContext(1)
-                            ))}", "<yellow>Click to claim!") else if(order.qty == 0 && order.sold == 0) listOf("<yellow>Click to clear!") else listOf("<yellow>Click for options"))
+                            intermediaryLore.addAll(
+                                if (order.sold > 0) listOf(
+                                    "<gray>Available coins to claim: <green>${
+                                        Formatting.withCommas(
+                                            (order.pricePer.toBigDecimal() * order.sold.toBigDecimal() * BazaarIntrinsics.INCOMING_TAX_MODIFIER).round(
+                                                MathContext(1)
+                                            )
+                                        )
+                                    }", "<yellow>Click to claim!"
+                                ) else if (order.qty == 0 && order.sold == 0) listOf("<yellow>Click to clear!") else listOf(
+                                    "<yellow>Click for options"
+                                )
+                            )
                             lore(intermediaryLore.map { text(it).noitalic() })
                         }
                     }
@@ -90,13 +142,13 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                 },
                 onClick = { e, order ->
                     e.bukkitEvent.isCancelled = true
-                    if(order is BazaarBuyOrder) {
-                        if(order.bought > 0) {
+                    if (order is BazaarBuyOrder) {
+                        if (order.bought > 0) {
                             // claiming items
                             val mc = BazaarElement.idToElement(order.item) ?: return@createRectCompound
                             val item = mc.build(player) ?: return@createRectCompound
                             var amount = order.bought
-                            while(amount > 64) {
+                            while (amount > 64) {
                                 amount -= 64
                                 val clone = item.clone()
                                 clone.amount = 64
@@ -111,7 +163,15 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 playFor(e.player)
                             }
                             order.bought = 0
-                            player.sendMessage(ChatChannel.BAZAAR, "<yellow>Claimed <green>${Formatting.withCommas(amount.toBigDecimal(), true)}x<yellow> of ${mc.name.str()}<yellow>!")
+                            player.sendMessage(
+                                ChatChannel.BAZAAR,
+                                "<yellow>Claimed <green>${
+                                    Formatting.withCommas(
+                                        amount.toBigDecimal(),
+                                        true
+                                    )
+                                }x<yellow> of ${mc.name.str()}<yellow>!"
+                            )
                         } else {
                             // clearing order
                             Bazaar.table.popOrder(order)
@@ -121,8 +181,8 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                             }
                             e.player.openGUI(manageOrders(player))
                         }
-                    } else if(order is BazaarSellOrder) {
-                        if(order.sold > 0) {
+                    } else if (order is BazaarSellOrder) {
+                        if (order.sold > 0) {
                             // claiming coins
                             val mc = BazaarElement.idToElement(order.item) ?: return@createRectCompound
                             player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
@@ -149,7 +209,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                     )
                                 }x<yellow> of ${mc.name.str()}<yellow> to ${order.buyers.size} buyers!"
                             )
-                        } else if(order.qty == 0) {
+                        } else if (order.qty == 0) {
                             // clearing order
                             Bazaar.table.popOrder(order)
                             sound(Sound.UI_BUTTON_CLICK) {
@@ -165,7 +225,10 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
             val allOrders = Bazaar.getOrdersForPlayer(player.ref)
             cmp.addContent(allOrders.padForward(28, NullBazaarOrder))
 
-            button(Slots.RowOneSlotFive, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Bazaar")) { e ->
+            button(
+                Slots.RowOneSlotFive,
+                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Bazaar")
+            ) { e ->
                 e.bukkitEvent.isCancelled = true
                 e.player.openGUI(globalBazaarMenu(player))
             }
@@ -179,7 +242,7 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
 
     page(0) {
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
-        if(order is BazaarBuyOrder) {
+        if (order is BazaarBuyOrder) {
             // delete order
             button(
                 Slots.RowTwoSlotFive,
@@ -202,13 +265,20 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                 }
                 Bazaar.table.popOrder(order)
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
-                val amount = transact(order.totalPrice * .8.toBigDecimal(), e.player.uniqueId, Transaction.Kind.INCOMING)
+                val amount =
+                    transact(order.totalPrice * .8.toBigDecimal(), e.player.uniqueId, Transaction.Kind.INCOMING)
                 player.purse += amount
-                player.sendMessage(ChatChannel.BAZAAR, "<yellow>Refunded <gold>${Formatting.withCommas(amount)} coins<yellow> from deleting a bazaar order.")
+                player.sendMessage(
+                    ChatChannel.BAZAAR,
+                    "<yellow>Refunded <gold>${Formatting.withCommas(amount)} coins<yellow> from deleting a bazaar order."
+                )
                 e.player.openGUI(manageOrders(player))
             }
 
-            button(Slots.RowOneSlotFive, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Your Orders")) { e ->
+            button(
+                Slots.RowOneSlotFive,
+                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Your Orders")
+            ) { e ->
                 e.bukkitEvent.isCancelled = true
                 e.player.openGUI(manageOrders(player))
             }
@@ -217,13 +287,13 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
 }
 
 private fun truncateCoins(amount: BigDecimal): String {
-    return if(amount > 1_000_000_000.toBigDecimal()) {
+    return if (amount > 1_000_000_000.toBigDecimal()) {
         // > 1B
         "${Formatting.stats((amount % 1_000_000_000.toBigDecimal()).round(MathContext(1)))}B"
-    } else if(amount > 1_000_000.toBigDecimal()) {
+    } else if (amount > 1_000_000.toBigDecimal()) {
         // > 1M
         "${Formatting.stats((amount % 1_000_000.toBigDecimal()).round(MathContext(1)))}M"
-    } else if(amount > 1_000.toBigDecimal()) {
+    } else if (amount > 1_000.toBigDecimal()) {
         // > 1k
         "${Formatting.stats((amount % 1_000.toBigDecimal()).round(MathContext(1)))}k"
     } else {

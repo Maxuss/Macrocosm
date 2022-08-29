@@ -81,6 +81,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var API_VERSION: String; private set
         lateinit var VERSION: String; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
+
         private data class VersionInfo(val version: String, val apiVersion: String)
     }
 
@@ -102,7 +103,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         UNSAFE = Unsafe(Random.nextInt())
         MONITOR = Monitor()
         Accessor.init()
-        val versionInfo: VersionInfo = fromJson(Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes())).toString())!!
+        val versionInfo: VersionInfo = fromJson(
+            Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes()))
+                .toString()
+        )!!
         API_VERSION = versionInfo.apiVersion
         VERSION = versionInfo.version
         KeyManager.load()
@@ -287,7 +291,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         storageExecutor.execute {
             TRANSACTION_HISTORY.storeSelf()
         }
-        storageExecutor.execute  {
+        storageExecutor.execute {
             Bazaar.table.storeSelf(database)
         }
         storageExecutor.execute { KeyManager.store() }

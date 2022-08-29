@@ -57,9 +57,9 @@ object ShieldOfDeadAbility : AbilityBase(
 
                 p.eyeLocation.direction.multiply(2f).relativeLocation(p.eyeLocation)
                     .getNearbyLivingEntities(4.0) { it !is Player && it !is ArmorStand }.forEach { entity ->
-                    entity.macrocosm?.damage(amount / 2f)
-                    DamageHandlers.summonDamageIndicator(entity.location, amount / 2f)
-                }
+                        entity.macrocosm?.damage(amount / 2f)
+                        DamageHandlers.summonDamageIndicator(entity.location, amount / 2f)
+                    }
             }
         }
     }

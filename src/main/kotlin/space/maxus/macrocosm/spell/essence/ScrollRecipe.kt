@@ -17,7 +17,7 @@ data class ScrollRecipe(val requirements: HashMap<EssenceType, Int>, val result:
 
                 walkDataResources("data", "scrolls") { file ->
                     val data = GSON.fromJson(file.readText(), JsonObject::class.java)
-                    for((key, obj) in data.entrySet()) {
+                    for ((key, obj) in data.entrySet()) {
                         pool.execute {
                             Registry.SCROLL_RECIPE.register(Identifier.parse(key), parseSingle(obj.asJsonObject))
                         }
@@ -33,7 +33,7 @@ data class ScrollRecipe(val requirements: HashMap<EssenceType, Int>, val result:
             val level = jo["level"].asInt
             val requirements = hashMapOf<EssenceType, Int>()
             jo["requirements"].asJsonArray.forEach { ele ->
-                if(ele.isJsonObject) {
+                if (ele.isJsonObject) {
                     val obj = ele.asJsonObject
                     requirements[EssenceType.valueOf(obj["type"].asString.uppercase())] = obj["amount"].asInt
                 } else {

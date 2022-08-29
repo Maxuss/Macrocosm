@@ -10,6 +10,7 @@ import java.math.BigDecimal
 object BazaarIntrinsics {
     @JvmStatic
     val OUTGOING_TAX_MODIFIER: BigDecimal = BigDecimal.valueOf(1.0125)
+
     @JvmStatic
     val INCOMING_TAX_MODIFIER: BigDecimal = BigDecimal.valueOf(0.9875)
 

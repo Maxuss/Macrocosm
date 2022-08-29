@@ -94,7 +94,11 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
             delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit = { _, _ -> }
         ) = register(name, ImmutableRegistry(name, delegate, expose)) as Registry<V>
 
-        private fun <V> makeDelegated(name: Identifier, expose: Boolean = true, delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit) =
+        private fun <V> makeDelegated(
+            name: Identifier,
+            expose: Boolean = true,
+            delegate: DelegatedRegistry<V>.(Identifier, V) -> Unit
+        ) =
             register(name, DelegatedRegistry(name, delegate, expose)) as Registry<V>
 
         val ITEM = makeImmutable<MacrocosmItem>(id("item"))

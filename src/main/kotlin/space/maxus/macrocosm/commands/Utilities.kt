@@ -74,17 +74,23 @@ fun bazaarOpCommand() = command("bazaarop") {
                     val item = getArgument<ResourceLocation>("item").macrocosm
                     val quantity = getArgument<Int>("quantity")
                     val mc = player.macrocosm!!
-                    when(op) {
+                    when (op) {
                         BazaarOp.DO_INSTANT_BUY -> {
                             Bazaar.instantBuy(mc, player, item, quantity)
                         }
                         BazaarOp.DO_INSTANT_SELL -> {
-                            if(!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
-                                throw MacrocosmThrowable("NOT_ENOUGH_ITEMS", "You do not have enough items of type $item in your inventory!")
+                            if (!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
+                                throw MacrocosmThrowable(
+                                    "NOT_ENOUGH_ITEMS",
+                                    "You do not have enough items of type $item in your inventory!"
+                                )
                             Bazaar.instantSell(mc, player, item, quantity)
                         }
                         else -> {
-                            throw MacrocosmThrowable("INVALID_ARGUMENTS", "Invalid arguments provided, expected `pricePer`!")
+                            throw MacrocosmThrowable(
+                                "INVALID_ARGUMENTS",
+                                "Invalid arguments provided, expected `pricePer`!"
+                            )
                         }
                     }
                 }
@@ -96,21 +102,27 @@ fun bazaarOpCommand() = command("bazaarop") {
                         val quantity = getArgument<Int>("quantity")
                         val pricePer = getArgument<Double>("pricePer")
                         val mc = player.macrocosm!!
-                        when(op) {
+                        when (op) {
                             BazaarOp.DO_INSTANT_BUY -> {
                                 Bazaar.instantBuy(mc, player, item, quantity)
                             }
                             BazaarOp.DO_INSTANT_SELL -> {
-                                if(!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
-                                    throw MacrocosmThrowable("NOT_ENOUGH_ITEMS", "You do not have enough items of type $item in your inventory!")
+                                if (!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
+                                    throw MacrocosmThrowable(
+                                        "NOT_ENOUGH_ITEMS",
+                                        "You do not have enough items of type $item in your inventory!"
+                                    )
                                 Bazaar.instantSell(mc, player, item, quantity)
                             }
                             BazaarOp.CREATE_BUY_ORDER -> {
                                 Bazaar.createBuyOrder(mc, player, item, quantity, pricePer)
                             }
                             BazaarOp.CREATE_SELL_ORDER -> {
-                                if(!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
-                                    throw MacrocosmThrowable("NOT_ENOUGH_ITEMS", "You do not have enough items of type $item in your inventory!")
+                                if (!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
+                                    throw MacrocosmThrowable(
+                                        "NOT_ENOUGH_ITEMS",
+                                        "You do not have enough items of type $item in your inventory!"
+                                    )
                                 Bazaar.createSellOrder(mc, player, item, quantity, pricePer)
                             }
                         }
@@ -125,7 +137,7 @@ fun infusionCommand() = command("infuse") {
     runs {
         try {
             player.openGUI(displayInfusionTable(player.macrocosm!!))
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -135,12 +147,18 @@ fun essenceCommand() = command("essence") {
     argument("essence", StringArgumentType.word()) {
         suggestList { ctx ->
             EssenceType.values()
-                .filter { it.name.contains(ctx.getArgumentOrNull<String>("essence")?.uppercase() ?: "") }.map { it.name }
+                .filter { it.name.contains(ctx.getArgumentOrNull<String>("essence")?.uppercase() ?: "") }
+                .map { it.name }
         }
 
         argument("amount", IntegerArgumentType.integer()) {
             runs {
-                player.macrocosm!!.availableEssence[EssenceType.valueOf(StringArgumentType.getString(nmsContext, "essence"))] = getArgument("amount")
+                player.macrocosm!!.availableEssence[EssenceType.valueOf(
+                    StringArgumentType.getString(
+                        nmsContext,
+                        "essence"
+                    )
+                )] = getArgument("amount")
             }
         }
     }
@@ -149,7 +167,10 @@ fun essenceCommand() = command("essence") {
 fun apiCommand() = command("api") {
     literal("new") {
         runs {
-            val key = KeyManager.generateRandomKey(player.uniqueId, listOf(APIPermission.VIEW_BAZAAR_DATA, APIPermission.VIEW_PLAYER_DATA))
+            val key = KeyManager.generateRandomKey(
+                player.uniqueId,
+                listOf(APIPermission.VIEW_BAZAAR_DATA, APIPermission.VIEW_PLAYER_DATA)
+            )
             player.sendMessage(text("<green>Your new Macrocosm API Key is <click:copy_to_clipboard:$key><yellow><hover:show_text:'<green>Click to copy to clipboard'>$key</hover></click><green>!"))
         }
     }
@@ -592,7 +613,13 @@ fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
 }
 
 fun RequiredArgumentBuilder<CommandSourceStack, ResourceLocation>.suggestIds(keys: Iterable<Identifier>) {
-    suggestList { keys.filter { key -> key.path.contains(it.getArgumentOrNull<ResourceLocation>(this.name)?.path ?: "") } }
+    suggestList {
+        keys.filter { key ->
+            key.path.contains(
+                it.getArgumentOrNull<ResourceLocation>(this.name)?.path ?: ""
+            )
+        }
+    }
 }
 
 fun RequiredArgumentBuilder<CommandSourceStack, String>.suggestStrings(keys: Iterable<String>) {

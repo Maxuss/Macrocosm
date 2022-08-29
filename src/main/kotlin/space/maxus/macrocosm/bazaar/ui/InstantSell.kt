@@ -21,42 +21,83 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.stripTags
 
-fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
-    val element = BazaarElement.idToElement(item)!!
-    val elementName = element.name.color(null).str()
-    val builtItem = element.build(player)!!
-    val p = player.paper!!
+fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInventoryFourByNine> =
+    kSpigotGUI(GUIType.FOUR_BY_NINE) {
+        val element = BazaarElement.idToElement(item)!!
+        val elementName = element.name.color(null).str()
+        val builtItem = element.build(player)!!
+        val p = player.paper!!
 
-    title = text("${elementName.stripTags()} ▶ Instant Sell")
-    defaultPage = 0
+        title = text("${elementName.stripTags()} ▶ Instant Sell")
+        defaultPage = 0
 
-    page(0) {
+        page(0) {
             placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
-            button(Slots.RowThreeSlotTwo, modifyStackGenerateAmountButtonSell(player, elementName, "<green>Sell only <yellow>one<green>!", 1, item, builtItem.clone())) { e ->
+            button(
+                Slots.RowThreeSlotTwo,
+                modifyStackGenerateAmountButtonSell(
+                    player,
+                    elementName,
+                    "<green>Sell only <yellow>one<green>!",
+                    1,
+                    item,
+                    builtItem.clone()
+                )
+            ) { e ->
                 e.bukkitEvent.isCancelled = true
                 Bazaar.instantSell(player, e.player, item, 1)
                 e.guiInstance.reloadCurrentPage()
             }
 
-            button(Slots.RowThreeSlotFour, modifyStackGenerateAmountButtonSell(player, elementName, "<green>Sell a stack!", 64, item, builtItem.clone()).apply { amount = 64 }) { e ->
+            button(
+                Slots.RowThreeSlotFour,
+                modifyStackGenerateAmountButtonSell(
+                    player,
+                    elementName,
+                    "<green>Sell a stack!",
+                    64,
+                    item,
+                    builtItem.clone()
+                ).apply { amount = 64 }) { e ->
                 e.bukkitEvent.isCancelled = true
                 Bazaar.instantSell(player, e.player, item, 64)
                 e.guiInstance.reloadCurrentPage()
             }
 
-            val amountInInventory = p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }
+            val amountInInventory =
+                p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }
 
-            button(Slots.RowThreeSlotSix, modifyStackGenerateAmountButtonSell(player, elementName, "<green>Sell all in inventory!", amountInInventory, item, ItemStack(Material.CHEST))) { e ->
+            button(
+                Slots.RowThreeSlotSix,
+                modifyStackGenerateAmountButtonSell(
+                    player,
+                    elementName,
+                    "<green>Sell all in inventory!",
+                    amountInInventory,
+                    item,
+                    ItemStack(Material.CHEST)
+                )
+            ) { e ->
                 e.bukkitEvent.isCancelled = true
                 Bazaar.instantSell(player, e.player, item, amountInInventory)
                 e.guiInstance.reloadCurrentPage()
             }
 
-            button(Slots.RowThreeSlotEight, ItemValue.placeholderDescripted(Material.OAK_SIGN, "<green>Custom Amount", "<dark_gray>$elementName", "", "Sell up to <green>${Formatting.withCommas((Bazaar.table.itemData[item]!!.buy
-                .sumOf { it.qty }).toBigDecimal(), true)}x")) { e ->
+            button(Slots.RowThreeSlotEight,
+                ItemValue.placeholderDescripted(Material.OAK_SIGN,
+                    "<green>Custom Amount",
+                    "<dark_gray>$elementName",
+                    "",
+                    "Sell up to <green>${
+                        Formatting.withCommas((Bazaar.table.itemData[item]!!.buy
+                            .sumOf { it.qty }).toBigDecimal(), true
+                        )
+                    }x"
+                )
+            ) { e ->
                 e.bukkitEvent.isCancelled = true
-                val inputAmountToSell = object: ValidatingPrompt() {
+                val inputAmountToSell = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
                         return ChatColor.YELLOW.toString() + "Input amount to sell:"
                     }
@@ -65,7 +106,7 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                         return try {
                             Integer.parseInt(input)
                             true
-                        } catch(e: NumberFormatException) {
+                        } catch (e: NumberFormatException) {
                             false
                         }
                     }
@@ -77,31 +118,54 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                     }
                 }
                 e.player.closeInventory()
-                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputAmountToSell).buildConversation(e.player)
+                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputAmountToSell)
+                    .buildConversation(e.player)
                 conv.begin()
             }
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To $elementName")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(openSpecificItemManagementMenu(player, item))
+            button(
+                Slots.RowOneSlotFive,
+                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To $elementName")
+            ) { e ->
+                e.bukkitEvent.isCancelled = true
+                e.player.openGUI(openSpecificItemManagementMenu(player, item))
+            }
         }
     }
-}
 
-private fun confirmInstantSell(player: MacrocosmPlayer, item: Identifier, elementName: String, builtItem: ItemStack, amount: Int): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
+private fun confirmInstantSell(
+    player: MacrocosmPlayer,
+    item: Identifier,
+    elementName: String,
+    builtItem: ItemStack,
+    amount: Int
+): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
     title = text("Confirm Instant Sell")
     defaultPage = 0
 
     page(0) {
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
-        button(Slots.RowThreeSlotFive, modifyStackGenerateAmountButtonSell(player, elementName, "<green>Sell Custom Amount", amount, item, builtItem.clone())) { e ->
+        button(
+            Slots.RowThreeSlotFive,
+            modifyStackGenerateAmountButtonSell(
+                player,
+                elementName,
+                "<green>Sell Custom Amount",
+                amount,
+                item,
+                builtItem.clone()
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             Bazaar.instantSell(player, player.paper!!, item, amount)
             e.guiInstance.reloadCurrentPage()
         }
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To $elementName > Instant Buy")) { e ->
+        button(
+            Slots.RowOneSlotFive,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To $elementName > Instant Buy")
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(sellInstantlyScreen(player, item))
         }
@@ -109,16 +173,29 @@ private fun confirmInstantSell(player: MacrocosmPlayer, item: Identifier, elemen
 }
 
 
-internal fun modifyStackGenerateAmountButtonSell(player: MacrocosmPlayer, elementName: String, name: String, amount: Int, item: Identifier, stack: ItemStack, checkZero: Boolean = true): ItemStack {
+internal fun modifyStackGenerateAmountButtonSell(
+    player: MacrocosmPlayer,
+    elementName: String,
+    name: String,
+    amount: Int,
+    item: Identifier,
+    stack: ItemStack,
+    checkZero: Boolean = true
+): ItemStack {
     stack.meta {
         displayName(text(name).noitalic())
 
         val res = Bazaar.tryDoInstantSell(item, amount, false).get()
-        val perUnit = res.totalProfit / res.amountSold.let { if(it <= 0) 1 else it }.toBigDecimal()
+        val perUnit = res.totalProfit / res.amountSold.let { if (it <= 0) 1 else it }.toBigDecimal()
 
-        val loreCompound = mutableListOf("<dark_gray>$elementName", "",  "<gray>Amount: <green>${Formatting.withCommas(amount.toBigDecimal(), true)}<gray>x", "")
+        val loreCompound = mutableListOf(
+            "<dark_gray>$elementName",
+            "",
+            "<gray>Amount: <green>${Formatting.withCommas(amount.toBigDecimal(), true)}<gray>x",
+            ""
+        )
 
-        if(checkZero && res.amountSold == 0) {
+        if (checkZero && res.amountSold == 0) {
             loreCompound.add("<red>Could not find any orders!")
         } else {
             if (amount > 1) {

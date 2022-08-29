@@ -26,29 +26,64 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
     page(0) {
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
-        button(Slots.RowThreeSlotTwo, ItemValue.placeholderDescripted(Material.CHEST, "<green>Instant Buy", "Instantly buy items at possibly", "higher cost than <green>regular<gray> buy orders.")) { e ->
+        button(
+            Slots.RowThreeSlotTwo,
+            ItemValue.placeholderDescripted(
+                Material.CHEST,
+                "<green>Instant Buy",
+                "Instantly buy items at possibly",
+                "higher cost than <green>regular<gray> buy orders."
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(buyInstantlyScreen(e.player.macrocosm!!, item))
         }
 
-        button(Slots.RowThreeSlotThree, ItemValue.placeholderDescripted(Material.CHEST, "<green>Instant Sell", "Instantly sell items at possibly", "lower profit than <green>regular<gray> sell orders.")) { e ->
+        button(
+            Slots.RowThreeSlotThree,
+            ItemValue.placeholderDescripted(
+                Material.CHEST,
+                "<green>Instant Sell",
+                "Instantly sell items at possibly",
+                "lower profit than <green>regular<gray> sell orders."
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(sellInstantlyScreen(e.player.macrocosm!!, item))
         }
 
         placeholder(Slots.RowThreeSlotFive, builtItem)
 
-        button(Slots.RowThreeSlotSeven, ItemValue.placeholderDescripted(Material.HOPPER, "<green>Create Buy Order", "Create a buy order with own price", "per item and amount.")) { e ->
+        button(
+            Slots.RowThreeSlotSeven,
+            ItemValue.placeholderDescripted(
+                Material.HOPPER,
+                "<green>Create Buy Order",
+                "Create a buy order with own price",
+                "per item and amount."
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(createBuyOrder(e.player.macrocosm!!, item))
         }
 
-        button(Slots.RowThreeSlotEight, ItemValue.placeholderDescripted(Material.HOPPER, "<green>Create Sell Order", "Create a sell order with own price", "per item and amount.")) { e ->
+        button(
+            Slots.RowThreeSlotEight,
+            ItemValue.placeholderDescripted(
+                Material.HOPPER,
+                "<green>Create Sell Order",
+                "Create a sell order with own price",
+                "per item and amount."
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(createSellOrder(e.player.macrocosm!!, item))
         }
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Bazaar")) { e ->
+        button(
+            Slots.RowOneSlotFive,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Bazaar")
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(globalBazaarMenu(player))
         }

@@ -109,20 +109,28 @@ fun Application.module() {
             get {
                 call.respondJson(object {
                     val success = true
-                    val availableRegistries = Registry.iter().filter { reg -> reg.value.shouldBeExposed }.keys.map { k -> k.path }
+                    val availableRegistries =
+                        Registry.iter().filter { reg -> reg.value.shouldBeExposed }.keys.map { k -> k.path }
                 })
             }
 
             route("{registry}") {
                 get {
-                    val reg = Registry.findOrNull(Identifier.parse(call.parameters["registry"] ?: return@get call.respondJson(object {
-                        val success = false
-                        val error = "Registry not specified!"
-                    }, HttpStatusCode.BadRequest))) ?: return@get call.respondJson(object {
+                    val reg = Registry.findOrNull(
+                        Identifier.parse(
+                            call.parameters["registry"] ?: return@get call.respondJson(
+                                object {
+                                    val success = false
+                                    val error = "Registry not specified!"
+                                },
+                                HttpStatusCode.BadRequest
+                            )
+                        )
+                    ) ?: return@get call.respondJson(object {
                         val success = false
                         val error = "Could not find registry '${call.parameters["registry"]}'!"
                     }, HttpStatusCode.NotFound)
-                    if(!reg.shouldBeExposed)
+                    if (!reg.shouldBeExposed)
                         return@get call.respondJson(object {
                             val success = false
                             val error = "This registry can not be queried!"
@@ -141,7 +149,7 @@ fun Application.module() {
                         val success = false
                         val error = "Could not find registry '$regParam'!"
                     }, HttpStatusCode.NotFound)
-                    if(!reg.shouldBeExposed)
+                    if (!reg.shouldBeExposed)
                         return@get call.respondJson(object {
                             val success = false
                             val error = "This registry can not be queried!"
@@ -201,7 +209,7 @@ fun Application.module() {
 
                 var inventoryData = "null"
                 val online = player.paper
-                if(online == null) {
+                if (online == null) {
                     offlineInventoryCompoundCache.take(player.ref) {
                         inventoryData = it
                     }.otherwise {
@@ -305,7 +313,7 @@ fun Application.module() {
                 }, HttpStatusCode.BadRequest)
                 val data = Bazaar.table.itemData
                 val id = Identifier.parse(itemParam)
-                if(!data.containsKey(id))
+                if (!data.containsKey(id))
                     return@getWithKey call.respondJson(object {
                         val success = false
                         val error = "Item $id was not found in bazaar storage!"
@@ -325,7 +333,7 @@ fun Application.module() {
                 }, HttpStatusCode.BadRequest)
                 val data = Bazaar.table.itemData
                 val id = Identifier.parse(itemParam)
-                if(!data.containsKey(id))
+                if (!data.containsKey(id))
                     return@getWithKey call.respondJson(object {
                         val success = false
                         val error = "Item $id was not found in bazaar storage!"
@@ -400,7 +408,7 @@ private fun cacheInventory(player: UUID, inventory: ListTag): String {
             displayCmp.getList("Lore", StringTag.TAG_STRING.toInt()).forEach { ele ->
                 val str = ele.asString
                 val component = PaperAdventure.asAdventure(Component.Serializer.fromJson(str))
-                if(component != net.kyori.adventure.text.Component.empty())
+                if (component != net.kyori.adventure.text.Component.empty())
                     loreList.add(StringTag.valueOf(component.str()))
             }
             resultCompound.put("Lore", loreList)
@@ -420,20 +428,20 @@ private fun cacheInventory(player: UUID, inventory: ListTag): String {
 private fun tryRetrievePlayer(param: String): MacrocosmPlayer? {
     val online = try {
         val id = UUID.fromString(param)
-        if(Macrocosm.loadedPlayers.containsKey(id))
+        if (Macrocosm.loadedPlayers.containsKey(id))
             return Macrocosm.loadedPlayers[id]
         else Bukkit.getPlayer(id)
-    } catch(e: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
         Bukkit.getPlayer(param)
     } ?: run {
         val offline = try {
             Bukkit.getOfflinePlayer(UUID.fromString(param))
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             Bukkit.getOfflinePlayer(param)
         }
-        if(Macrocosm.loadedPlayers.containsKey(offline.uniqueId))
+        if (Macrocosm.loadedPlayers.containsKey(offline.uniqueId))
             return Macrocosm.loadedPlayers[offline.uniqueId]
-        if(!Macrocosm.playersLazy.contains(offline.uniqueId)) {
+        if (!Macrocosm.playersLazy.contains(offline.uniqueId)) {
             return null
         }
         val loaded = MacrocosmPlayer.loadPlayer(offline.uniqueId) ?: return null
@@ -453,7 +461,7 @@ private suspend fun ApplicationCall.respondJson(obj: Any?, code: HttpStatusCode 
 
 private suspend fun ApplicationCall.respondMacrocosmResource(path: String, base: String) {
     val res = resolveResource(path, classLoader = Macrocosm.javaClass.classLoader, resourcePackage = base)
-    if(res != null) {
+    if (res != null) {
         respond(res)
     }
 }
@@ -493,7 +501,7 @@ private fun Route.postWithKey(path: String, perm: APIPermission, body: PipelineI
 
 
 private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendConditionalCallback {
-    when(val result = validateKey(perm)) {
+    when (val result = validateKey(perm)) {
         KeyManager.ValidationResult.SUCCESS -> return SuspendConditionalCallback.suspendSuccess()
         KeyManager.ValidationResult.NO_KEY_PROVIDED -> {
             respondJson(object {

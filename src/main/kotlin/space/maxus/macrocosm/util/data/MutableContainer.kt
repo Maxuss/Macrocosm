@@ -117,15 +117,17 @@ open class MutableContainer<V> protected constructor(var values: ConcurrentHashM
     }
 }
 
-class ExpiringContainer<V> private constructor(val expirationMillis: Long, values: ConcurrentHashMap<UUID, V>): MutableContainer<V>(values) {
+class ExpiringContainer<V> private constructor(val expirationMillis: Long, values: ConcurrentHashMap<UUID, V>) :
+    MutableContainer<V>(values) {
     companion object {
         fun <V> empty(expiry: Long) = ExpiringContainer<V>(expiry, ConcurrentHashMap())
     }
+
     @JvmSynthetic
     var lastModification = -1L
 
     inline fun trySetExpiring(key: UUID, operator: () -> V): ConditionalCallback {
-        return if(System.currentTimeMillis() > lastModification + expirationMillis) {
+        return if (System.currentTimeMillis() > lastModification + expirationMillis) {
             this[key] = operator()
             lastModification = System.currentTimeMillis()
             ConditionalCallback.success()

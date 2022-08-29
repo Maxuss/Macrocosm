@@ -17,7 +17,7 @@ import kotlin.io.path.writeText
 /**
  * Represents current API state
  */
-val currentApiState by lazy { if(Macrocosm.isInDevEnvironment) APIState.INDEV else APIState.PROD }
+val currentApiState by lazy { if (Macrocosm.isInDevEnvironment) APIState.INDEV else APIState.PROD }
 
 /**
  * A global key manage for operations with API Keys
@@ -35,8 +35,11 @@ object KeyManager {
      */
     fun load() {
         try {
-            owned = GSON.fromJson(Accessor.access("keys.json").readText(), object: TypeToken<HashMap<UUID, String>>() { }.type)
-        } catch(ignored: Exception) {
+            owned = GSON.fromJson(
+                Accessor.access("keys.json").readText(),
+                object : TypeToken<HashMap<UUID, String>>() {}.type
+            )
+        } catch (ignored: Exception) {
             // first time access, don't care
         }
     }
@@ -87,7 +90,7 @@ object KeyManager {
             val permissions = aggregate(buf.get().toInt()) { APIPermission.values()[buf.get().toInt()] }
             val mostSignificantBits = buf.long
             InlinedKeyData(format, createdAt, uniqueIdentifier, permissions, mostSignificantBits)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             // invalid/legacy key format
             null
         }
@@ -102,14 +105,14 @@ object KeyManager {
     fun ApplicationCall.validateKey(requiredPermission: APIPermission): ValidationResult {
         val headers = this.request.headers
         val key = headers["API-Key"] ?: this.request.queryParameters["key"] ?: return ValidationResult.NO_KEY_PROVIDED
-        if(owned.any { it.key == key }) {
-            if(!this@KeyManager.requests.containsKey(key))
+        if (owned.any { it.key == key }) {
+            if (!this@KeyManager.requests.containsKey(key))
                 this@KeyManager.requests[key] = 0
-            if(this@KeyManager.requests[key]!! < 100) {
+            if (this@KeyManager.requests[key]!! < 100) {
                 val k = owned.first { it.key == key }
-                if(!k.data.permissions.contains(requiredPermission))
+                if (!k.data.permissions.contains(requiredPermission))
                     return ValidationResult.INSUFFICIENT_PERMISSIONS
-                else if(k.data.format != currentApiState) {
+                else if (k.data.format != currentApiState) {
                     return ValidationResult.INVALID_FORMAT
                 }
                 this@KeyManager.requests[key] = this@KeyManager.requests[key]!! + 1

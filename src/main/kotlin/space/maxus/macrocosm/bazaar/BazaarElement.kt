@@ -281,26 +281,38 @@ enum class BazaarElement(val item: MacrocosmItem? = null, val vanilla: Boolean =
     ;
 
     companion object {
-        val allKeys by lazy { Registry.BAZAAR_ELEMENTS_REF.iter().keys.withAll(Registry.BAZAAR_ELEMENTS.iter().keys.withAll(Registry.BAZAAR_ELEMENTS_VANILLA.iter().keys)) }
+        val allKeys by lazy {
+            Registry.BAZAAR_ELEMENTS_REF.iter().keys.withAll(
+                Registry.BAZAAR_ELEMENTS.iter().keys.withAll(
+                    Registry.BAZAAR_ELEMENTS_VANILLA.iter().keys
+                )
+            )
+        }
 
         fun idToCollection(id: Identifier): BazaarCollection? {
             return BazaarCollection.values().firstOrNull { coll -> coll.items.contains(id) }
         }
+
         fun idToElement(id: Identifier): MacrocosmItem? {
-            return Registry.BAZAAR_ELEMENTS.findOrNull(id) ?: Registry.ITEM.findOrNull(Registry.BAZAAR_ELEMENTS_REF.findOrNull(id) ?: return VanillaItem(Material.valueOf(id.path.uppercase())))
+            return Registry.BAZAAR_ELEMENTS.findOrNull(id) ?: Registry.ITEM.findOrNull(
+                Registry.BAZAAR_ELEMENTS_REF.findOrNull(id) ?: return VanillaItem(Material.valueOf(id.path.uppercase()))
+            )
         }
 
         fun init() {
             Threading.runAsyncRaw {
                 val pool = Threading.newFixedPool(12)
 
-                for(value in values()) {
+                for (value in values()) {
                     pool.execute {
                         val id = id(value.name.lowercase())
-                        if(!value.vanilla && value.item != null) {
+                        if (!value.vanilla && value.item != null) {
                             Registry.BAZAAR_ELEMENTS.register(id, value.item)
-                        } else if(value.vanilla) {
-                            Registry.BAZAAR_ELEMENTS_VANILLA.register(Identifier("minecraft", value.name.lowercase()), Material.valueOf(value.name))
+                        } else if (value.vanilla) {
+                            Registry.BAZAAR_ELEMENTS_VANILLA.register(
+                                Identifier("minecraft", value.name.lowercase()),
+                                Material.valueOf(value.name)
+                            )
                         } else {
                             Registry.BAZAAR_ELEMENTS_REF.register(id, id)
                         }

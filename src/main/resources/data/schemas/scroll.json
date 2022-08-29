@@ -7,7 +7,11 @@
         "$ref": "shared/identifier.json"
     },
     "additionalProperties": {
-        "required": ["result", "level", "requirements"],
+        "required": [
+            "result",
+            "level",
+            "requirements"
+        ],
         "properties": {
             "result": {
                 "$ref": "shared/identifier.json",
@@ -51,7 +55,15 @@
             "type": "string",
             "title": "Essence Type",
             "description": "Type of essence to be used",
-            "enum": ["fire", "frost", "water", "shade", "life", "death", "connection"]
+            "enum": [
+                "fire",
+                "frost",
+                "water",
+                "shade",
+                "life",
+                "death",
+                "connection"
+            ]
         }
     }
 }

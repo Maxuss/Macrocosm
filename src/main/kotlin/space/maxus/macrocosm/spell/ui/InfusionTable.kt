@@ -20,7 +20,12 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.metrics.report
 import java.util.concurrent.atomic.AtomicReference
 
-fun displaySelectEssence(p: MacrocosmPlayer, scroll: AtomicReference<Boolean>, selectedEssence: HashMap<InventorySlot, EssenceType>, currentlySelectedSlot: SingleInventorySlot<out ForInventory>): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+fun displaySelectEssence(
+    p: MacrocosmPlayer,
+    scroll: AtomicReference<Boolean>,
+    selectedEssence: HashMap<InventorySlot, EssenceType>,
+    currentlySelectedSlot: SingleInventorySlot<out ForInventory>
+): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     // essence selection
     title = text("Select Essence")
     defaultPage = 0
@@ -106,17 +111,33 @@ fun displayInfusionTable(
     defaultPage = 0
     title = text("Infusion Table")
 
-    val essenceEmpty = ItemValue.placeholderDescripted(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Essence Slot", "<dark_gray> > <gray>No Essence", " ", "<yellow>Click to add essence!")
-    val infuse = ItemValue.placeholderDescripted(Material.GREEN_TERRACOTTA, "<green>Infuse", "Place essence in the essence", "slots and an empty spell", "scroll in the slot above to", "infuse it!")
+    val essenceEmpty = ItemValue.placeholderDescripted(
+        Material.LIGHT_GRAY_STAINED_GLASS_PANE,
+        "<gray>Essence Slot",
+        "<dark_gray> > <gray>No Essence",
+        " ",
+        "<yellow>Click to add essence!"
+    )
+    val infuse = ItemValue.placeholderDescripted(
+        Material.GREEN_TERRACOTTA,
+        "<green>Infuse",
+        "Place essence in the essence",
+        "slots and an empty spell",
+        "scroll in the slot above to",
+        "infuse it!"
+    )
     page(0) {
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
         slots.forEach { slot ->
             val ty = selectedEssence[slot.inventorySlot]
-            val item = if(ty == null) essenceEmpty else ItemValue.placeholder(ty.displayItem, "${ty.display} Essence")
+            val item = if (ty == null) essenceEmpty else ItemValue.placeholder(ty.displayItem, "${ty.display} Essence")
             button(slot, item) { e ->
                 e.bukkitEvent.isCancelled = true
-                if(selectedEssence[slot.inventorySlot] != null) {
-                    e.bukkitEvent.inventory.setItem(slot.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!, essenceEmpty)
+                if (selectedEssence[slot.inventorySlot] != null) {
+                    e.bukkitEvent.inventory.setItem(
+                        slot.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!,
+                        essenceEmpty
+                    )
                     sound(Sound.ITEM_BOTTLE_EMPTY) {
                         volume = 2f
                         playFor(e.player)
@@ -131,11 +152,11 @@ fun displayInfusionTable(
             val realSlot = Slots.RowThreeSlotFive.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!
             val curs = e.bukkitEvent.inventory.getItem(realSlot)
             scroll.set(false)
-            if(curs.isAirOrNull() || curs?.macrocosm !is SpellScroll) {
+            if (curs.isAirOrNull() || curs?.macrocosm !is SpellScroll) {
                 return@button
             } else {
                 val mc = curs.macrocosm!! as SpellScroll
-                if(mc.spell != null)
+                if (mc.spell != null)
                     return@button
                 val playerLvl = p.skills.level(SkillType.MYSTICISM)
                 val providedEssence = selectedEssence.values
@@ -149,8 +170,12 @@ fun displayInfusionTable(
                     p.sendMessage("<red>Unknown recipe")
                     return@button
                 }
-                val resultSpell = Registry.SPELL.findOrNull(recipe.result) ?: report("Invalid spell identifier in scroll recipe: ${recipe.result}!") { return@button }
-                e.bukkitEvent.inventory.setItem(realSlot, SpellScroll().apply { spell = resultSpell }.build(p) ?: report("Got null as build result for spell scroll!") { return@button })
+                val resultSpell = Registry.SPELL.findOrNull(recipe.result)
+                    ?: report("Invalid spell identifier in scroll recipe: ${recipe.result}!") { return@button }
+                e.bukkitEvent.inventory.setItem(
+                    realSlot,
+                    SpellScroll().apply { spell = resultSpell }.build(p)
+                        ?: report("Got null as build result for spell scroll!") { return@button })
                 selectedEssence.forEach { (eSlot, eTy) ->
                     p.availableEssence[eTy] = p.availableEssence[eTy]!! - 1
                     e.bukkitEvent.inventory.setItem(eSlot.realSlotIn(InventoryDimensions(9, 6))!!, essenceEmpty)

@@ -541,9 +541,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         }
         val p = this
         data.transact {
-            if(PlayersTable.update({ PlayersTable.uuid eq p.ref }) {
-                dump(it, p, false)
-            } <= 0) {
+            if (PlayersTable.update({ PlayersTable.uuid eq p.ref }) {
+                    dump(it, p, false)
+                } <= 0) {
                 PlayersTable.insert {
                     dump(it, p, true)
                 }
@@ -603,7 +603,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     private fun dump(it: UpdateBuilder<*>, p: MacrocosmPlayer, id: Boolean) {
         val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
-        if(id)
+        if (id)
             it[PlayersTable.uuid] = p.ref
         it[PlayersTable.rank] = p.rank.id()
         it[PlayersTable.firstJoin] = p.firstJoin
@@ -616,10 +616,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         it[PlayersTable.collections] = p.collections.json()
         it[PlayersTable.skills] = p.skills.json()
         it[PlayersTable.recipes] = toJson(p.unlockedRecipes)
-        it[PlayersTable.necklace] = if(p.equipment.necklace == null) "NULL" else toJson(p.equipment.necklace)
-        it[PlayersTable.cloak] = if(p.equipment.cloak == null) "NULL" else toJson(p.equipment.cloak)
-        it[PlayersTable.belt] = if(p.equipment.belt == null) "NULL" else toJson(p.equipment.belt)
-        it[PlayersTable.gloves] = if(p.equipment.gloves == null) "NULL" else toJson(p.equipment.gloves)
+        it[PlayersTable.necklace] = if (p.equipment.necklace == null) "NULL" else toJson(p.equipment.necklace)
+        it[PlayersTable.cloak] = if (p.equipment.cloak == null) "NULL" else toJson(p.equipment.cloak)
+        it[PlayersTable.belt] = if (p.equipment.belt == null) "NULL" else toJson(p.equipment.belt)
+        it[PlayersTable.gloves] = if (p.equipment.gloves == null) "NULL" else toJson(p.equipment.gloves)
         it[PlayersTable.slayers] = toJson(p.slayers)
         it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
         it[PlayersTable.pets] = toJson(p.ownedPets)
@@ -633,7 +633,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     companion object {
         fun loadPlayer(id: UUID): MacrocosmPlayer? {
-            if(Macrocosm.loadedPlayers.containsKey(id))
+            if (Macrocosm.loadedPlayers.containsKey(id))
                 return Macrocosm.loadedPlayers[id]
             val sql = database.transact {
                 PlayersTable.select { PlayersTable.uuid eq id }.map { SqlPlayerData.fromRes(it) }.firstOrNull()

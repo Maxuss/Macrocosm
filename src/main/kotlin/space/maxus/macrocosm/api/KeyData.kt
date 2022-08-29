@@ -16,7 +16,13 @@ data class KeyData(val key: String, val data: InlinedKeyData)
  * @property permissions Permissions allowed for this key
  * @property ownerMostBits Most significant bits of owner's UUID
  */
-data class InlinedKeyData(val format: APIState, val createdAt: Long, val keyIdentifierUnique: Int, val permissions: List<APIPermission>, val ownerMostBits: Long)
+data class InlinedKeyData(
+    val format: APIState,
+    val createdAt: Long,
+    val keyIdentifierUnique: Int,
+    val permissions: List<APIPermission>,
+    val ownerMostBits: Long
+)
 
 /**
  * Type of api state

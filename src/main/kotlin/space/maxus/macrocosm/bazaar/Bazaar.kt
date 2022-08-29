@@ -40,7 +40,10 @@ object Bazaar {
     }
 
     fun getOrdersForPlayer(player: UUID): List<BazaarOrder> {
-        return table.itemData.values.map { entry -> entry.buy.filter { order -> order.createdBy == player }.withAll(entry.sell.filter { order -> order.createdBy == player }) }.unwrapInner()
+        return table.itemData.values.map { entry ->
+            entry.buy.filter { order -> order.createdBy == player }
+                .withAll(entry.sell.filter { order -> order.createdBy == player })
+        }.unwrapInner()
     }
 
     private fun concatPlayers(prefix: String, players: List<UUID>): String {
@@ -62,11 +65,18 @@ object Bazaar {
                     player.sendMessage(ChatChannel.BAZAAR, "<red>Could not find offers to sell items to!")
                     return@execute
                 } else if (result.amountSold < qty) {
-                    player.sendMessage(ChatChannel.BAZAAR, "<red>Could not sell all items, only sold ${result.amountSold} out of $qty possible!")
+                    player.sendMessage(
+                        ChatChannel.BAZAAR,
+                        "<red>Could not sell all items, only sold ${result.amountSold} out of $qty possible!"
+                    )
                 }
 
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
-                player.purse += transact(result.totalProfit * BazaarIntrinsics.INCOMING_TAX_MODIFIER, player.ref, Transaction.Kind.INCOMING)
+                player.purse += transact(
+                    result.totalProfit * BazaarIntrinsics.INCOMING_TAX_MODIFIER,
+                    player.ref,
+                    Transaction.Kind.INCOMING
+                )
 
 //                    val itemBuilt = BazaarElement.idToElement(item)!!.build(player)!!
 //                    var amount = result.amountSold
@@ -82,7 +92,7 @@ object Bazaar {
 
                 task(sync = true, delay = 0L) {
                     // drifting to sync thread
-                    if(DemandQtyItemsQuery(item, result.amountSold).demand(player, paper) !is Result) {
+                    if (DemandQtyItemsQuery(item, result.amountSold).demand(player, paper) !is Result) {
                         bazaarOpPool.execute {
                             player.sendMessage(
                                 ChatChannel.BAZAAR,
@@ -123,18 +133,25 @@ object Bazaar {
                     player.sendMessage(ChatChannel.BAZAAR, "<red>Could not find offers to buy from!")
                     return@execute
                 } else if (preResult.amountBought < qty)
-                    player.sendMessage(ChatChannel.BAZAAR, "<red>Could not find enough offers to buy from, only bought ${preResult.amountBought} out of $qty required!")
+                    player.sendMessage(
+                        ChatChannel.BAZAAR,
+                        "<red>Could not find enough offers to buy from, only bought ${preResult.amountBought} out of $qty required!"
+                    )
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
 
                 val transacted = preResult.coinsSpent
-                if(!BazaarIntrinsics.ensurePlayerHasEnoughCoins(player, transacted)) {
+                if (!BazaarIntrinsics.ensurePlayerHasEnoughCoins(player, transacted)) {
                     player.sendMessage("<red>Failed to process transaction, not enough coins!")
                     return@execute
                 }
 
                 tryDoInstantBuy(player, item, qty).get()
 
-                player.purse -= transact(transacted * BazaarIntrinsics.OUTGOING_TAX_MODIFIER, player.ref, Transaction.Kind.OUTGOING)
+                player.purse -= transact(
+                    transacted * BazaarIntrinsics.OUTGOING_TAX_MODIFIER,
+                    player.ref,
+                    Transaction.Kind.OUTGOING
+                )
 
                 sound(Sound.ENTITY_PLAYER_LEVELUP) {
                     pitch = 2f
@@ -184,7 +201,7 @@ object Bazaar {
             runCatchingReporting(paper) {
                 player.sendMessage("<gray>Processing transaction...")
                 val transacted = amount.toBigDecimal() * pricePer.toBigDecimal()
-                if(!BazaarIntrinsics.ensurePlayerHasEnoughCoins(player, transacted)) {
+                if (!BazaarIntrinsics.ensurePlayerHasEnoughCoins(player, transacted)) {
                     player.sendMessage("<red>Failed to process transaction, not enough coins!")
                     return@execute
                 }
@@ -198,7 +215,7 @@ object Bazaar {
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Setting up Buy Order...")
                 try {
                     table.createOrder(BazaarBuyOrder(item, amount, pricePer, 0, mutableListOf(), player.ref, amount))
-                } catch(e: Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
                 val name = BazaarElement.idToElement(item)!!
@@ -235,9 +252,19 @@ object Bazaar {
                 player.sendMessage("<gray>Processing transaction...")
                 task(sync = true, delay = 0L) {
                     // drifting to synchronous environment
-                    if(DemandQtyItemsQuery(item, amount).demand(player, paper) !is Result) {
+                    if (DemandQtyItemsQuery(item, amount).demand(player, paper) !is Result) {
                         player.sendMessage(ChatChannel.BAZAAR, "<gray>Setting up Sell Order...")
-                        table.createOrder(BazaarSellOrder(item, amount, pricePer, 0, mutableListOf(), player.ref, amount))
+                        table.createOrder(
+                            BazaarSellOrder(
+                                item,
+                                amount,
+                                pricePer,
+                                0,
+                                mutableListOf(),
+                                player.ref,
+                                amount
+                            )
+                        )
                         val name = BazaarElement.idToElement(item)!!
                         player.sendMessage(
                             ChatChannel.BAZAAR,
@@ -254,7 +281,12 @@ object Bazaar {
         }
     }
 
-    fun tryDoInstantBuy(player: MacrocosmPlayer, element: Identifier, amount: Int, mutate: Boolean = true): CompletableFuture<InstantBuyResult> {
+    fun tryDoInstantBuy(
+        player: MacrocosmPlayer,
+        element: Identifier,
+        amount: Int,
+        mutate: Boolean = true
+    ): CompletableFuture<InstantBuyResult> {
         var satisfiedAmount = 0
         var currentPrice = BigDecimal(0)
         var affectedOffers = 0
@@ -274,12 +306,12 @@ object Bazaar {
 
                 // checking if order quantity exceeds needed
                 if (order.qty + satisfiedAmount > amount) {
-                    if(mutate) {
+                    if (mutate) {
                         order.sold += (amount - satisfiedAmount)
                         order.qty -= (amount - satisfiedAmount)
                         order.buyers.add(player.ref)
                     }
-                    if(!sellers.contains(order.createdBy))
+                    if (!sellers.contains(order.createdBy))
                         sellers.add(order.createdBy)
                     // adding coins
                     val toAdd = (amount - satisfiedAmount).toBigDecimal() * order.pricePer.toBigDecimal()
@@ -294,12 +326,12 @@ object Bazaar {
                 // otherwise just adding possible amount and price
                 satisfiedAmount += order.qty
                 currentPrice += order.totalPrice
-                if(mutate) {
+                if (mutate) {
                     order.sold += order.qty
                     order.qty = 0
                     order.buyers.add(player.ref)
                 }
-                if(!sellers.contains(order.createdBy))
+                if (!sellers.contains(order.createdBy))
                     sellers.add(order.createdBy)
                 if (player.purse < currentPrice) {
                     return@iterateThroughOrdersSell true
@@ -311,7 +343,11 @@ object Bazaar {
         }
     }
 
-    fun tryDoInstantSell(element: Identifier, amount: Int, mutate: Boolean = true): CompletableFuture<InstantSellResult> {
+    fun tryDoInstantSell(
+        element: Identifier,
+        amount: Int,
+        mutate: Boolean = true
+    ): CompletableFuture<InstantSellResult> {
         var leftToSell = amount
         var currentProfit = BigDecimal(0)
         var affectedOffers = 0
@@ -327,23 +363,23 @@ object Bazaar {
                 // checking if there are more than enough items to sell to order
                 if (order.qty > leftToSell) {
                     currentProfit += order.pricePer.toBigDecimal() * leftToSell.toBigDecimal()
-                    if(mutate) {
+                    if (mutate) {
                         order.qty -= leftToSell
                         order.bought += leftToSell
                     }
                     leftToSell = 0
-                    if(!sellers.contains(order.createdBy))
+                    if (!sellers.contains(order.createdBy))
                         sellers.add(order.createdBy)
                     return@iterateThroughOrdersBuy true
                 }
                 currentProfit += order.totalPrice
                 val diff = order.qty
                 leftToSell -= order.qty
-                if(mutate) {
+                if (mutate) {
                     order.qty = 0
                     order.bought += diff
                 }
-                if(!sellers.contains(order.createdBy))
+                if (!sellers.contains(order.createdBy))
                     sellers.add(order.createdBy)
                 return@iterateThroughOrdersBuy false
             }
@@ -353,17 +389,20 @@ object Bazaar {
     }
 
 
-    class BazaarError(currentQuery: Query, parent: Throwable?, orMessage: String? = null): MacrocosmThrowable("BAZAAR_ERROR", """Unhandled error in bazaar operation "${currentQuery.id}": ${parent?.message ?: orMessage}""")
+    class BazaarError(currentQuery: Query, parent: Throwable?, orMessage: String? = null) : MacrocosmThrowable(
+        "BAZAAR_ERROR",
+        """Unhandled error in bazaar operation "${currentQuery.id}": ${parent?.message ?: orMessage}"""
+    )
 
     interface Query {
         val id: String
         fun demand(player: MacrocosmPlayer, paper: Player): Any
     }
 
-    class DemandCoinsQuery(val coins: BigDecimal): Query {
+    class DemandCoinsQuery(val coins: BigDecimal) : Query {
         override val id = "QUERY_DEMAND_COINS"
         override fun demand(player: MacrocosmPlayer, paper: Player): Any {
-            if(player.purse >= coins) {
+            if (player.purse >= coins) {
                 player.purse -= transact(coins, player.ref, Transaction.Kind.OUTGOING)
                 return 1
             }
@@ -371,36 +410,52 @@ object Bazaar {
         }
     }
 
-    class DemandAllItemsQuery(val element: Identifier): Query {
+    class DemandAllItemsQuery(val element: Identifier) : Query {
         override val id = "QUERY_DEMAND_ITEMS_ALL"
 
         override fun demand(player: MacrocosmPlayer, paper: Player): Any {
-            val item = BazaarElement.idToElement(element) ?: throw BazaarError(this, null, "Could not find item $element in any registry")
-            val built = item.build(player) ?: throw BazaarError(this, null, "Failed to build macrocosm item, returned null (item: $element)!")
-            if(!paper.inventory.containsAtLeast(built, 1)) {
+            val item = BazaarElement.idToElement(element) ?: throw BazaarError(
+                this,
+                null,
+                "Could not find item $element in any registry"
+            )
+            val built = item.build(player) ?: throw BazaarError(
+                this,
+                null,
+                "Failed to build macrocosm item, returned null (item: $element)!"
+            )
+            if (!paper.inventory.containsAtLeast(built, 1)) {
                 return Result.failure("Not enough items, expected at least 1 item.")
             }
-            val amount = paper.inventory.sumOf { if(it.isSimilar(built)) it.amount else 0 }
+            val amount = paper.inventory.sumOf { if (it.isSimilar(built)) it.amount else 0 }
             var removed = paper.inventory.removeItemAnySlot(built)
-            while(removed.isEmpty()) {
+            while (removed.isEmpty()) {
                 removed = paper.inventory.removeItemAnySlot(built)
             }
             return amount
         }
     }
 
-    class DemandQtyItemsQuery(val element: Identifier, val amount: Int): Query {
+    class DemandQtyItemsQuery(val element: Identifier, val amount: Int) : Query {
         override val id = "QUERY_DEMAND_ITEMS_QUANTITY"
 
         override fun demand(player: MacrocosmPlayer, paper: Player): Any {
-            val item = BazaarElement.idToElement(element) ?: throw BazaarError(this, null, "Could not find item $element in any registry")
-            val built = item.build(player) ?: throw BazaarError(this, null, "Failed to build macrocosm item, returned null (item: $element)!")
-            if(!paper.inventory.containsAtLeast(built, amount)) {
+            val item = BazaarElement.idToElement(element) ?: throw BazaarError(
+                this,
+                null,
+                "Could not find item $element in any registry"
+            )
+            val built = item.build(player) ?: throw BazaarError(
+                this,
+                null,
+                "Failed to build macrocosm item, returned null (item: $element)!"
+            )
+            if (!paper.inventory.containsAtLeast(built, amount)) {
                 player.sendMessage(ChatChannel.BAZAAR, "<red>Not enough items, expected $amount!")
                 return Result.failure("Not enough items, expected $amount.")
             }
             var count = amount
-            while(count > 64) {
+            while (count > 64) {
                 built.amount = 64
                 paper.inventory.removeItemAnySlot(built)
                 count -= 64

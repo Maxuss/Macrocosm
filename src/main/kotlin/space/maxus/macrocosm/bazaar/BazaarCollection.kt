@@ -41,8 +41,38 @@ enum class BazaarCollection(val displayName: String, val displayItem: ItemStack,
     PHANTOM_MEMBRANE("<light_purple>Phantom Membrane", ItemStack(Material.PHANTOM_MEMBRANE), "phantom_membrane"),
     SLIMES("<green>Slimes", ItemStack(Material.SLIME_BALL), "slime_ball", "slime_block", "magma_cream", "magma_block"),
     BLAZE_ROD("<gold>Blaze Rod", ItemStack(Material.BLAZE_ROD), "blaze_rod", "blaze_powder"),
-    REVENANT_HORROR("<red>Revenant Horror", ItemStack(Material.ROTTEN_FLESH).apply { meta { addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); flags(*org.bukkit.inventory.ItemFlag.values()) } }, "revenant_flesh", "foul_flesh", "rancid_flesh", "revenant_viscera", "revenant_innards"),
-    CINDERFLAME_SPIRIT("<gold>Cinderflame Spirit", ItemStack(Material.CHARCOAL).apply { meta { addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); flags(*org.bukkit.inventory.ItemFlag.values()) } }, "flaming_ashes", "bloody_cinder", "blazing_alloy"),
+    REVENANT_HORROR(
+        "<red>Revenant Horror",
+        ItemStack(Material.ROTTEN_FLESH).apply {
+            meta {
+                addEnchant(
+                    org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL,
+                    1,
+                    true
+                ); flags(*org.bukkit.inventory.ItemFlag.values())
+            }
+        },
+        "revenant_flesh",
+        "foul_flesh",
+        "rancid_flesh",
+        "revenant_viscera",
+        "revenant_innards"
+    ),
+    CINDERFLAME_SPIRIT(
+        "<gold>Cinderflame Spirit",
+        ItemStack(Material.CHARCOAL).apply {
+            meta {
+                addEnchant(
+                    org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL,
+                    1,
+                    true
+                ); flags(*org.bukkit.inventory.ItemFlag.values())
+            }
+        },
+        "flaming_ashes",
+        "bloody_cinder",
+        "blazing_alloy"
+    ),
 
     // foraging
     OAK("<yellow>Oak", ItemStack(Material.OAK_LOG), "(?<!dark_)oak"),
@@ -85,6 +115,9 @@ enum class BazaarCollection(val displayName: String, val displayItem: ItemStack,
     ;
 
     val items by lazy {
-        containing.map { part -> val u = part.uppercase(); BazaarElement.values().filter { it.name.contains(u.toRegex()) } }.unwrapInner().map { ele -> if(ele.vanilla) id("minecraft", ele.name.lowercase()) else id(ele.name.lowercase()) }
+        containing.map { part ->
+            val u = part.uppercase(); BazaarElement.values().filter { it.name.contains(u.toRegex()) }
+        }.unwrapInner()
+            .map { ele -> if (ele.vanilla) id("minecraft", ele.name.lowercase()) else id(ele.name.lowercase()) }
     }
 }

@@ -76,7 +76,7 @@ typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
 
-inline fun <reified T: Enum<T>> ClosedRange<T>.toList(values: FnRet<Array<out T>>): List<T> {
+inline fun <reified T : Enum<T>> ClosedRange<T>.toList(values: FnRet<Array<out T>>): List<T> {
     val intRange = this.start.ordinal..this.endInclusive.ordinal
     return values().toList().slice(intRange)
 }
@@ -86,7 +86,7 @@ operator fun <E> List<E>.get(intRange: IntRange): List<E> {
 }
 
 inline fun <reified T> Collection<T>.insertWithin(dummy: T, demand: Int): Collection<T> {
-    if(size >= demand || demand <= 0)
+    if (size >= demand || demand <= 0)
         return this
 
     val list = mutableListOf<T>()
@@ -100,19 +100,20 @@ inline fun <reified T> Collection<T>.insertWithin(dummy: T, demand: Int): Collec
     // breakSize = (12 / 2) = 6
     forEachIndexed { i, e ->
         list.add(e)
-        if(i != lastIndex)
+        if (i != lastIndex)
             list.addAll(repeated)
     }
     return list
 }
 
-val Inventory.emptySlots: Int get() {
-    return this.storageContents!!.count { stack -> stack.isAirOrNull() }
-}
+val Inventory.emptySlots: Int
+    get() {
+        return this.storageContents!!.count { stack -> stack.isAirOrNull() }
+    }
 
-fun <V, C: Iterable<V>> Iterable<C>.unwrapInner(): List<V> {
+fun <V, C : Iterable<V>> Iterable<C>.unwrapInner(): List<V> {
     val out = mutableListOf<V>()
-    for(part in this) {
+    for (part in this) {
         out.addAll(part)
     }
     return out
@@ -120,9 +121,9 @@ fun <V, C: Iterable<V>> Iterable<C>.unwrapInner(): List<V> {
 
 fun Iterable<Double>.median(): Double {
     val sorted = this.sorted()
-    if(sorted.isEmpty())
+    if (sorted.isEmpty())
         return Double.NaN
-    return if(sorted.size % 2 == 0) {
+    return if (sorted.size % 2 == 0) {
         ((sorted[sorted.size / 2] + sorted[sorted.size / 2 - 1]) / 2f)
     } else {
         (sorted[sorted.size / 2])
@@ -180,9 +181,9 @@ inline fun <R> runCatchingReporting(player: Player? = null, block: () -> R): Res
     )
 }
 
-inline fun <reified T> fromJson(str: String): T? = if(str == "NULL") null else GSON.fromJson<T>(str, typetoken<T>())
+inline fun <reified T> fromJson(str: String): T? = if (str == "NULL") null else GSON.fromJson<T>(str, typetoken<T>())
 fun <T> toJson(obj: T): String = GSON.toJson(obj)
-inline fun <reified T> typetoken(): java.lang.reflect.Type = object: TypeToken<T>() { }.type
+inline fun <reified T> typetoken(): java.lang.reflect.Type = object : TypeToken<T>() {}.type
 
 val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
 fun String.camelToSnakeCase(): String {
@@ -191,16 +192,16 @@ fun String.camelToSnakeCase(): String {
     }.lowercase(Locale.getDefault())
 }
 
-inline fun <reified K: Any?, reified V: Any?> Iterable<K>.associateWithHashed(producer: FnArgRet<K, V>): HashMap<K, V> {
+inline fun <reified K : Any?, reified V : Any?> Iterable<K>.associateWithHashed(producer: FnArgRet<K, V>): HashMap<K, V> {
     val result = hashMapOf<K, V>()
     return associateWithTo(result, producer)
 }
 
-inline fun <reified T: Any?> ignoring(ele: T): FnArgRet<Any?, T> = { ele }
-inline fun <reified T: Any?> producer(ele: T): FnRet<T> = { ele }
-inline fun <reified T: Any?> ignoringProducer(crossinline producer: FnRet<T>): FnArgRet<Any?, T> = { producer() }
+inline fun <reified T : Any?> ignoring(ele: T): FnArgRet<Any?, T> = { ele }
+inline fun <reified T : Any?> producer(ele: T): FnRet<T> = { ele }
+inline fun <reified T : Any?> ignoringProducer(crossinline producer: FnRet<T>): FnArgRet<Any?, T> = { producer() }
 
-inline fun <reified T: Any?> T.repeated(n: Int): Array<T> = Array(n) { this }
+inline fun <reified T : Any?> T.repeated(n: Int): Array<T> = Array(n) { this }
 
 @OptIn(ExperimentalContracts::class)
 inline fun walkDataResources(vararg path: String, block: (Path) -> Unit) {
@@ -216,7 +217,7 @@ inline fun walkDataResources(vararg path: String, block: (Path) -> Unit) {
     }
     val mut = path.toMutableList()
     val first = mut.removeFirstOrNull() ?: return
-    for(file in PackProvider.enumerateEntries(fs.getPath(first, *mut.toTypedArray()))) {
+    for (file in PackProvider.enumerateEntries(fs.getPath(first, *mut.toTypedArray()))) {
         block(file)
     }
 }

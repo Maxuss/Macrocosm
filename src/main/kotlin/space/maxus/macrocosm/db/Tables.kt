@@ -18,14 +18,14 @@ import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.ignoring
 import java.math.BigDecimal
 
-object BazaarDataTable: Table("bazaar") {
+object BazaarDataTable : Table("bazaar") {
     val item = text("item").uniqueIndex()
     val orders = text("orders")
 
     override val primaryKey: PrimaryKey = PrimaryKey(item)
 }
 
-object PlayersTable: Table("players") {
+object PlayersTable : Table("players") {
     val uuid = uuid("uuid").uniqueIndex()
     val rank = integer("rank")
     val firstJoin = long("first_join")
@@ -67,7 +67,7 @@ class SqlPlayerData(
     val activePet: String,
     val pets: HashMap<String, StoredPet>,
     val essence: HashMap<EssenceType, Int>
-    ) {
+) {
 
     companion object {
         @Suppress("ReplaceWithEnumMap")
@@ -100,14 +100,14 @@ class SqlPlayerData(
     }
 }
 
-object LimitedItemsTable: Table("limited") {
+object LimitedItemsTable : Table("limited") {
     val item = text("item").uniqueIndex()
     val amountObtained = integer("amount")
 
     override val primaryKey: PrimaryKey = PrimaryKey(item)
 }
 
-object StatsTable: Table("stats") {
+object StatsTable : Table("stats") {
     val uuid = uuid("uuid").uniqueIndex()
     val data = text("stats")
 

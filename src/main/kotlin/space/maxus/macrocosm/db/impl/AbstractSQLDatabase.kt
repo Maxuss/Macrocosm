@@ -7,13 +7,13 @@ import space.maxus.macrocosm.db.*
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
-abstract class AbstractSQLDatabase: DataStorage {
+abstract class AbstractSQLDatabase : DataStorage {
     private lateinit var connection: Database
 
     protected abstract fun obtainConnection(): Database
 
     override fun connect() {
-        if(::connection.isInitialized)
+        if (::connection.isInitialized)
             return
         connection = obtainConnection()
 
@@ -38,5 +38,5 @@ abstract class AbstractSQLDatabase: DataStorage {
         return amount
     }
 
-    override fun <T> transact(transact: Transaction.() -> T): T  = transaction(connection, transact)
+    override fun <T> transact(transact: Transaction.() -> T): T = transaction(connection, transact)
 }

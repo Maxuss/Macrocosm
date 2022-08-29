@@ -23,7 +23,7 @@ paths:
         get:
             produces:
                 - application/json
-            parameters: []
+            parameters: [ ]
             responses:
                 '200':
                     description: Gets all online players at the moment
@@ -51,7 +51,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             tags:
                 - Players
             summary: Online players
@@ -60,11 +60,11 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: UUID or name of player to access
-                  in: path
-                  name: player
-                  required: true
-                  type: string
+                -   description: UUID or name of player to access
+                    in: path
+                    name: player
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: >-
@@ -106,7 +106,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             tags:
                 - Players
             summary: Player Balance
@@ -115,11 +115,11 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: UUID or name of player to access
-                  in: path
-                  name: player
-                  required: true
-                  type: string
+                -   description: UUID or name of player to access
+                    in: path
+                    name: player
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: >-
@@ -135,7 +135,7 @@ paths:
                         properties:
                             collections:
                                 description: Collection data of player
-                                properties: {}
+                                properties: { }
                                 type: object
                             success:
                                 type: boolean
@@ -159,7 +159,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             tags:
                 - Players
             summary: Player Collections
@@ -168,11 +168,11 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: UUID or name of player to access
-                  in: path
-                  name: player
-                  required: true
-                  type: string
+                -   description: UUID or name of player to access
+                    in: path
+                    name: player
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: Gets inventory of provided player if it has played the server before
@@ -209,7 +209,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             tags:
                 - Players
             summary: Player Inventory
@@ -218,11 +218,11 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: UUID or name of player to access
-                  in: path
-                  name: player
-                  required: true
-                  type: string
+                -   description: UUID or name of player to access
+                    in: path
+                    name: player
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: >-
@@ -238,7 +238,7 @@ paths:
                         properties:
                             skills:
                                 description: Skill data of player
-                                properties: {}
+                                properties: { }
                                 type: object
                             success:
                                 type: boolean
@@ -262,7 +262,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             tags:
                 - Players
             summary: Player Skills
@@ -271,11 +271,11 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: UUID or name of player to access
-                  in: path
-                  name: player
-                  required: true
-                  type: string
+                -   description: UUID or name of player to access
+                    in: path
+                    name: player
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: >-
@@ -330,7 +330,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             tags:
                 - Players
             summary: Player Status
@@ -338,7 +338,7 @@ paths:
         get:
             produces:
                 - application/octet-stream
-            parameters: []
+            parameters: [ ]
             responses:
                 '200':
                     description: Gets all Resource Registries that can be queried
@@ -366,11 +366,11 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: ID of registry to access
-                  in: path
-                  name: registry
-                  required: true
-                  type: string
+                -   description: ID of registry to access
+                    in: path
+                    name: registry
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: Gets contents of a specific registry
@@ -387,7 +387,7 @@ paths:
                                 description: >-
                                     Contents of the registry. Key is an identifier while value
                                     depends on registry type
-                                properties: {}
+                                properties: { }
                                 type: object
                             success:
                                 type: boolean
@@ -410,16 +410,16 @@ paths:
             produces:
                 - application/octet-stream
             parameters:
-                - description: ID of registry to access
-                  in: path
-                  name: registry
-                  required: true
-                  type: string
-                - description: ID of the element to access
-                  in: path
-                  name: element
-                  required: true
-                  type: string
+                -   description: ID of registry to access
+                    in: path
+                    name: registry
+                    required: true
+                    type: string
+                -   description: ID of the element to access
+                    in: path
+                    name: element
+                    required: true
+                    type: string
             responses:
                 '200':
                     description: Gets specific element from registry
@@ -433,7 +433,7 @@ paths:
                         properties:
                             element:
                                 description: Queried element. Content varies depending on registry type
-                                properties: {}
+                                properties: { }
                                 type: object
                             success:
                                 type: boolean
@@ -459,7 +459,7 @@ paths:
                 - Bazaar
             summary: Bazaar Status
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             responses:
                 '403':
                     description: Access is forbidden due to wrong API key or not providing one
@@ -491,7 +491,7 @@ paths:
                 - Bazaar
             summary: Items in the bazaar registry
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             responses:
                 '403':
                     description: Access is forbidden due to wrong API key or not providing one
@@ -525,7 +525,7 @@ paths:
                 - Bazaar
             summary: All Bazaar Orders
             security:
-                - ApiKeyAuth: []
+                -   ApiKeyAuth: [ ]
             parameters:
                 -   description: ID of the item to access
                     in: path
@@ -560,7 +560,7 @@ paths:
                                 description: All of the orders, for order schema see `BazaarBuyOrder` and `BazaarSellOrder`
                         example:
                             success: true
-                            orders: []
+                            orders: [ ]
     '/bazaar/summary/{item}':
         get:
             tags:
@@ -668,7 +668,7 @@ definitions:
         properties:
             type:
                 type: string
-                enum: ["buy", "sell"]
+                enum: [ "buy", "sell" ]
                 description: Type of the bazaar order, "buy" for this type
             qty:
                 type: integer
@@ -699,7 +699,7 @@ definitions:
             qty: 154
             pricePer: 43.3
             bought: 0
-            sellers: []
+            sellers: [ ]
             item: "macrocosm:enchanted_diamond"
             by: ad8fefaa8351454bb739a4eaa872173f
             at: 1661153884
@@ -708,7 +708,7 @@ definitions:
         properties:
             type:
                 type: string
-                enum: ["buy", "sell"]
+                enum: [ "buy", "sell" ]
                 description: Type of the bazaar order, "sell" for this type
             qty:
                 type: integer
@@ -739,7 +739,7 @@ definitions:
             qty: 12421
             pricePer: 1.1
             sold: 0
-            buyers: []
+            buyers: [ ]
             item: "macrocosm:enchanted_diamond"
             by: ad8fefaa8351454bb739a4eaa872173f
             at: 1661153884
@@ -789,11 +789,11 @@ securityDefinitions:
         name: API-Key
         type: apiKey
 tags:
-    - description: Access to resource registries
-      name: Resources
-    - description: Most information related to players
-      name: Players
-    - description: Bazaar related information
-      name: Bazaar
-x-components: {}
+    -   description: Access to resource registries
+        name: Resources
+    -   description: Most information related to players
+        name: Players
+    -   description: Bazaar related information
+        name: Bazaar
+x-components: { }
 

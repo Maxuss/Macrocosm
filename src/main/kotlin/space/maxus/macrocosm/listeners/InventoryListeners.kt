@@ -9,14 +9,17 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.giveOrDrop
 
-object InventoryListeners: Listener {
+object InventoryListeners : Listener {
     @EventHandler
     fun onClose(e: InventoryCloseEvent) {
-        if(e.view.title().str().contains("Infusion Table")) {
-            (e.player as Player).giveOrDrop(e.inventory.getItem(
-                Slots.RowThreeSlotFive.inventorySlot.realSlotIn(
-                    InventoryDimensions(9, 6)
-                )!!) ?: return)
+        if (e.view.title().str().contains("Infusion Table")) {
+            (e.player as Player).giveOrDrop(
+                e.inventory.getItem(
+                    Slots.RowThreeSlotFive.inventorySlot.realSlotIn(
+                        InventoryDimensions(9, 6)
+                    )!!
+                ) ?: return
+            )
         }
     }
 }

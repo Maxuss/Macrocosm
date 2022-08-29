@@ -12,6 +12,7 @@ import space.maxus.macrocosm.api.AsyncLauncherKotlin;
 public class AsyncLauncher {
     /**
      * Launch a single imitated kotlin coroutine scope from java
+     *
      * @param coroutine kotlin coroutine lambda to be called
      */
     public static void launchCoroutine(Function2<? super CoroutineScope, ? super Continuation<? super kotlin.Unit>, ? super Object> coroutine) {

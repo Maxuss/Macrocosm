@@ -12,12 +12,12 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
-class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>): DatabaseStore {
+class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : DatabaseStore {
     companion object {
         fun new() =
             BazaarTable(
                 ConcurrentHashMap(
-                        BazaarElement.allKeys.associateWithHashed { BazaarItemData.empty() }
+                    BazaarElement.allKeys.associateWithHashed { BazaarItemData.empty() }
                 )
             )
 
@@ -30,7 +30,7 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
                 }
             }
             BazaarElement.allKeys.forEach {
-                if(!outMap.containsKey(it)) {
+                if (!outMap.containsKey(it)) {
                     outMap[it] = BazaarItemData.empty()
                 }
             }
@@ -86,20 +86,20 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
 class BazaarItemData private constructor(
     val buy: BlockingQueue<BazaarBuyOrder>,
     val sell: BlockingQueue<BazaarSellOrder>
-    ) {
+) {
     companion object {
         fun empty() = BazaarItemData(
             PriorityBlockingQueue(1) { a, b -> a.pricePer.compareTo(b.pricePer) },
             PriorityBlockingQueue(1) { a, b -> a.pricePer.compareTo(b.pricePer) },
-            )
+        )
 
         fun json(json: String): BazaarItemData {
             val cmp: BazaarOrderCompound = fromJson(json)!!
             val empty = empty()
-            for(buy in cmp.buy.parallelStream()) {
+            for (buy in cmp.buy.parallelStream()) {
                 empty.buy.put(buy)
             }
-            for(sell in cmp.sell.parallelStream()) {
+            for (sell in cmp.sell.parallelStream()) {
                 empty.sell.put(sell)
             }
             return empty
@@ -111,9 +111,9 @@ class BazaarItemData private constructor(
     fun json() = toJson(BazaarOrderCompound(buy.toList(), sell.toList()))
 
     fun pushOrder(order: BazaarOrder) {
-        if(order is BazaarBuyOrder)
+        if (order is BazaarBuyOrder)
             this.buy.offer(order)
-        else if(order is BazaarSellOrder)
+        else if (order is BazaarSellOrder)
             this.sell.offer(order)
     }
 
@@ -127,24 +127,24 @@ class BazaarItemData private constructor(
 
     fun popOrder(specific: BazaarOrder) {
         runCatchingReporting {
-            if(specific is BazaarBuyOrder)
+            if (specific is BazaarBuyOrder)
                 this.buy.remove(specific)
-            else if(specific is BazaarSellOrder)
+            else if (specific is BazaarSellOrder)
                 this.sell.remove(specific)
             NULL
         }
     }
 
     fun iterateBuy(iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
-        for(order in this.buy) {
-            if(iterator(order))
+        for (order in this.buy) {
+            if (iterator(order))
                 return
         }
     }
 
     fun iterateSell(iterator: FnArgRet<BazaarSellOrder, Boolean>) {
-        for(order in this.sell) {
-            if(iterator(order))
+        for (order in this.sell) {
+            if (iterator(order))
                 return
         }
     }

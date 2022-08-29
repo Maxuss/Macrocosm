@@ -4,7 +4,13 @@ import org.bukkit.Material
 import space.maxus.macrocosm.util.general.varargs
 import space.maxus.macrocosm.util.toList
 
-enum class BazaarCategory(val displayName: String, val description: String, val outline: Material, val displayItem: Material, vararg items: BazaarCollection) {
+enum class BazaarCategory(
+    val displayName: String,
+    val description: String,
+    val outline: Material,
+    val displayItem: Material,
+    vararg items: BazaarCollection
+) {
     // todo: add collections
     MINING(
         "<aqua>Mining",
@@ -41,7 +47,12 @@ enum class BazaarCategory(val displayName: String, val description: String, val 
         Material.IRON_HOE,
         *(BazaarCollection.WHEAT..BazaarCollection.HONEY).toArray(),
     ),
-    ODDITIES("<light_purple>Oddities", "Contains all kinds of interesting items and resources.", Material.PINK_STAINED_GLASS_PANE, Material.ENCHANTING_TABLE),
+    ODDITIES(
+        "<light_purple>Oddities",
+        "Contains all kinds of interesting items and resources.",
+        Material.PINK_STAINED_GLASS_PANE,
+        Material.ENCHANTING_TABLE
+    ),
 
     ;
 
