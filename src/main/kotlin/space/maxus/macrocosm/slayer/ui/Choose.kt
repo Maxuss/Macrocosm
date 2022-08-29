@@ -10,7 +10,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.pad
+import space.maxus.macrocosm.util.padForward
 
 data class LinearInventorySlots<T : ForInventory>(val slots: List<InventorySlot>) : InventorySlotCompound<T> {
     override fun withInvType(invType: GUIType<T>): Collection<InventorySlot> {
@@ -70,7 +70,7 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
                 e.player.openGUI(specificSlayerMenu(player, ty))
             }
         })
-        cmp.addContent(SlayerType.values().map { it.ordinal }.pad(5, -1))
+        cmp.addContent(SlayerType.values().map { it.ordinal }.padForward(5, -1))
 
         button(Slots.RowTwoSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close"), onClick = {
             it.bukkitEvent.isCancelled = true

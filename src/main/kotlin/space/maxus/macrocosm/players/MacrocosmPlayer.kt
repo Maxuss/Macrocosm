@@ -60,7 +60,7 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.fromJson
-import space.maxus.macrocosm.util.ignorant
+import space.maxus.macrocosm.util.ignoring
 import space.maxus.macrocosm.util.toJson
 import java.math.BigDecimal
 import java.time.Instant
@@ -95,13 +95,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> =
-        SlayerType.values().asIterable().associateWithHashed(ignorant(SlayerLevel(0, .0, listOf(), .0)))
+        SlayerType.values().asIterable().associateWithHashed(ignoring(SlayerLevel(0, .0, listOf(), .0)))
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
     var memory: PlayerMemory = PlayerMemory.nullMemory()
     var activeForgeRecipes: MutableList<ActiveForgeRecipe> = mutableListOf()
-    var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignorant(0))
+    var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
@@ -632,7 +632,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     companion object {
-        fun readPlayer(id: UUID): MacrocosmPlayer? {
+        fun loadPlayer(id: UUID): MacrocosmPlayer? {
             if(Macrocosm.loadedPlayers.containsKey(id))
                 return Macrocosm.loadedPlayers[id]
             val sql = database.transact {

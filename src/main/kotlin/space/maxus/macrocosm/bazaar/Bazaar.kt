@@ -22,6 +22,8 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.general.Result
 import space.maxus.macrocosm.util.giveOrDrop
 import space.maxus.macrocosm.util.runCatchingReporting
+import space.maxus.macrocosm.util.unwrapInner
+import space.maxus.macrocosm.util.withAll
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -37,11 +39,15 @@ object Bazaar {
         }
     }
 
+    fun getOrdersForPlayer(player: UUID): List<BazaarOrder> {
+        return table.itemData.values.map { entry -> entry.buy.filter { order -> order.createdBy == player }.withAll(entry.sell.filter { order -> order.createdBy == player }) }.unwrapInner()
+    }
+
     private fun concatPlayers(prefix: String, players: List<UUID>): String {
         return "<gray>${prefix}s: <br>${
             players.joinToString(separator = "<br>") { seller ->
                 if (Macrocosm.playersLazy.contains(seller))
-                    MacrocosmPlayer.readPlayer(seller)?.rank?.playerName(Bukkit.getOfflinePlayer(seller).name ?: "NULL")
+                    MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(Bukkit.getOfflinePlayer(seller).name ?: "NULL")
                         ?.str() ?: "<dark_gray>Unknown $prefix ($seller)" else "<dark_gray>Unknown $prefix ($seller)"
             }
         }"
@@ -76,7 +82,7 @@ object Bazaar {
 
                 task(sync = true, delay = 0L) {
                     // drifting to sync thread
-                    if(DemandQtyItemsQuery(item, qty).demand(player, paper) !is Result) {
+                    if(DemandQtyItemsQuery(item, result.amountSold).demand(player, paper) !is Result) {
                         bazaarOpPool.execute {
                             player.sendMessage(
                                 ChatChannel.BAZAAR,
@@ -191,7 +197,7 @@ object Bazaar {
 
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Setting up Buy Order...")
                 try {
-                    table.createOrder(BazaarBuyOrder(item, amount, pricePer, 0, mutableListOf(), player.ref))
+                    table.createOrder(BazaarBuyOrder(item, amount, pricePer, 0, mutableListOf(), player.ref, amount))
                 } catch(e: Exception) {
                     e.printStackTrace()
                 }
@@ -231,7 +237,7 @@ object Bazaar {
                     // drifting to synchronous environment
                     if(DemandQtyItemsQuery(item, amount).demand(player, paper) !is Result) {
                         player.sendMessage(ChatChannel.BAZAAR, "<gray>Setting up Sell Order...")
-                        table.createOrder(BazaarSellOrder(item, amount, pricePer, 0, mutableListOf(), player.ref))
+                        table.createOrder(BazaarSellOrder(item, amount, pricePer, 0, mutableListOf(), player.ref, amount))
                         val name = BazaarElement.idToElement(item)!!
                         player.sendMessage(
                             ChatChannel.BAZAAR,
@@ -254,15 +260,14 @@ object Bazaar {
         var affectedOffers = 0
         val sellers = mutableListOf<UUID>()
         return CompletableFuture.supplyAsync {
-            table.iterateThroughOrders(element) { order ->
-                // checking that because we need sell orders only
-                if (order !is BazaarSellOrder || order.qty == 0)
-                    return@iterateThroughOrders false
+            table.iterateThroughOrdersSell(element) { order ->
+                if (order.qty == 0)
+                    return@iterateThroughOrdersSell false
                 if (satisfiedAmount >= amount) {
-                    return@iterateThroughOrders true
+                    return@iterateThroughOrdersSell true
                 }
                 if (player.purse < currentPrice) {
-                    return@iterateThroughOrders true
+                    return@iterateThroughOrdersSell true
                 }
 
                 affectedOffers++
@@ -279,12 +284,12 @@ object Bazaar {
                     // adding coins
                     val toAdd = (amount - satisfiedAmount).toBigDecimal() * order.pricePer.toBigDecimal()
                     if (player.purse < currentPrice + toAdd) {
-                        return@iterateThroughOrders true
+                        return@iterateThroughOrdersSell true
                     }
                     // adding amount
                     satisfiedAmount = amount
                     currentPrice += toAdd
-                    return@iterateThroughOrders true
+                    return@iterateThroughOrdersSell true
                 }
                 // otherwise just adding possible amount and price
                 satisfiedAmount += order.qty
@@ -297,9 +302,9 @@ object Bazaar {
                 if(!sellers.contains(order.createdBy))
                     sellers.add(order.createdBy)
                 if (player.purse < currentPrice) {
-                    return@iterateThroughOrders true
+                    return@iterateThroughOrdersSell true
                 }
-                return@iterateThroughOrders false
+                return@iterateThroughOrdersSell false
             }
 
             return@supplyAsync InstantBuyResult(satisfiedAmount, currentPrice, affectedOffers, sellers)
@@ -312,12 +317,11 @@ object Bazaar {
         var affectedOffers = 0
         val sellers = mutableListOf<UUID>()
         return CompletableFuture.supplyAsync {
-            table.iterateThroughOrders(element) { order ->
-                // ensuring that this is buy order
-                if (order !is BazaarBuyOrder || order.qty == 0)
-                    return@iterateThroughOrders false
+            table.iterateThroughOrdersBuy(element) { order ->
+                if (order.qty == 0)
+                    return@iterateThroughOrdersBuy false
                 if (leftToSell <= 0) {
-                    return@iterateThroughOrders true
+                    return@iterateThroughOrdersBuy true
                 }
                 affectedOffers++
                 // checking if there are more than enough items to sell to order
@@ -330,10 +334,10 @@ object Bazaar {
                     leftToSell = 0
                     if(!sellers.contains(order.createdBy))
                         sellers.add(order.createdBy)
-                    return@iterateThroughOrders true
+                    return@iterateThroughOrdersBuy true
                 }
                 currentProfit += order.totalPrice
-                val diff = leftToSell
+                val diff = order.qty
                 leftToSell -= order.qty
                 if(mutate) {
                     order.qty = 0
@@ -341,7 +345,7 @@ object Bazaar {
                 }
                 if(!sellers.contains(order.createdBy))
                     sellers.add(order.createdBy)
-                return@iterateThroughOrders false
+                return@iterateThroughOrdersBuy false
             }
 
             return@supplyAsync InstantSellResult(amount - leftToSell, currentProfit, affectedOffers, sellers)

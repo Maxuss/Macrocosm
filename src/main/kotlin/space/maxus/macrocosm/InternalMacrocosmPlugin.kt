@@ -66,6 +66,7 @@ import space.maxus.macrocosm.zone.ZoneType
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -105,6 +106,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         API_VERSION = versionInfo.apiVersion
         VERSION = versionInfo.version
         KeyManager.load()
+        BazaarElement.init()
         Threading.runAsync {
             info("Starting REST API Server")
             Monitor.enter("REST API Server Thread")
@@ -159,7 +161,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         ReforgeType.init()
         ItemValue.init()
         Armor.init()
-        BazaarElement.init()
         Bazaar.init()
 
         Threading.runEachConcurrently(
@@ -229,6 +230,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         openForgeMenuCommand()
         infusionCommand()
         bazaarOpCommand()
+        openBazaarMenuCommand()
 
         Monitor.exit()
         Monitor.enter("Resource Generation")
@@ -272,25 +274,32 @@ class InternalMacrocosmPlugin : KSpigot() {
     private val dumpTestData: Boolean = false
 
     override fun shutdown() {
-        Threading.runAsync {
-            for ((id, v) in loadedPlayers) {
-                println("Saving data for player $id...")
+        val storageExecutor = Threading.newFixedPool(8)
+
+        storageExecutor.execute {
+            for ((_, v) in loadedPlayers) {
                 v.storeSelf(database)
             }
         }
-        Threading.runAsyncRaw {
+        storageExecutor.execute {
             Calendar.save()
         }
-        Threading.runAsyncRaw {
+        storageExecutor.execute {
             TRANSACTION_HISTORY.storeSelf()
         }
-        Threading.runAsyncRaw {
+        storageExecutor.execute  {
             Bazaar.table.storeSelf(database)
         }
+        storageExecutor.execute { KeyManager.store() }
+
+        storageExecutor.shutdown()
+
         ZombieAbilities.doomCounter.iter { id ->
             worlds[0].getEntity(id)?.remove()
         }
-        KeyManager.store()
+
+        storageExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+
         ServerShutdownEvent().callEvent()
     }
 }

@@ -24,8 +24,7 @@ import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.api.KeyManager.validateKey
 import space.maxus.macrocosm.bazaar.Bazaar
-import space.maxus.macrocosm.bazaar.BazaarBuyOrder
-import space.maxus.macrocosm.bazaar.BazaarSellOrder
+import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -38,12 +37,14 @@ import space.maxus.macrocosm.util.general.SuspendConditionalCallback
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
 import space.maxus.macrocosm.util.median
-import space.maxus.macrocosm.util.withAll
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.Duration
 import java.util.*
 
+/**
+ * Spins up the macrocosm Rest API, basically wrapping [serverSpin] in coroutine scope
+ */
 @Suppress("DeferredResultUnused")
 suspend fun spinApi() {
     coroutineScope {
@@ -56,6 +57,9 @@ suspend fun spinApi() {
 private val offlineInventoryCompoundCache = MutableContainer.empty<String>()
 private val onlineInventoryCompoundCache = ExpiringContainer.empty<String>(Duration.ofMinutes(5).toMillis())
 
+/**
+ * The main configuration of the Macrocosm API, to find more detailed endpoint information view the swagger spec
+ */
 fun Application.module() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
@@ -68,13 +72,13 @@ fun Application.module() {
         status(HttpStatusCode.NotFound) { call, status ->
             call.respondJson(object {
                 val success = false
-                val error = "Not Found"
+                val error = "Endpoint Not Found"
             }, status)
         }
     }
 
     routing {
-        route("/") {
+        route("/doc") {
             get {
                 call.respondMacrocosmResource("index.html", "doc")
             }
@@ -290,7 +294,7 @@ fun Application.module() {
             getWithKey("/items", APIPermission.VIEW_BAZAAR_DATA) {
                 call.respondJson(object {
                     val success = true
-                    val items = Registry.BAZAAR_ELEMENTS.iter().keys.withAll(Registry.BAZAAR_ELEMENTS_REF.iter().keys)
+                    val items = BazaarElement.allKeys
                 })
             }
 
@@ -309,7 +313,8 @@ fun Application.module() {
                 val itemData = data[id]!!
                 call.respondJson(object {
                     val success = true
-                    val orders = itemData.orders.toList()
+                    val buy = itemData.buy.toList()
+                    val sell = itemData.sell.toList()
                 })
             }
 
@@ -326,13 +331,12 @@ fun Application.module() {
                         val error = "Item $id was not found in bazaar storage!"
                     }, HttpStatusCode.NotFound)
                 val itemData = data[id]!!
-                val orderList = itemData.orders.toList()
-                val buyOrders = orderList.filterIsInstance<BazaarBuyOrder>()
-                val sellOrders = orderList.filterIsInstance<BazaarSellOrder>()
+                val buyOrders = itemData.buy.toList()
+                val sellOrders = itemData.sell.toList()
                 call.respondJson(object {
                     val success = true
                     val item = id
-                    val ordersCount = orderList.size
+                    val ordersCount = itemData.amount
                     val buyOrders = object {
                         val amount = buyOrders.size
                         val highestPrice = buyOrders.maxByOrNull { it.pricePer }?.pricePer ?: .0
@@ -357,6 +361,9 @@ fun Application.module() {
     }
 }
 
+/**
+ * Builds up the embedded macrocosm Rest API server using the Netty ktor backend
+ */
 fun serverSpin() {
     embeddedServer(Netty, applicationEngineEnvironment {
         log = Macrocosm.slF4JLogger
@@ -429,7 +436,7 @@ private fun tryRetrievePlayer(param: String): MacrocosmPlayer? {
         if(!Macrocosm.playersLazy.contains(offline.uniqueId)) {
             return null
         }
-        val loaded = MacrocosmPlayer.readPlayer(offline.uniqueId) ?: return null
+        val loaded = MacrocosmPlayer.loadPlayer(offline.uniqueId) ?: return null
         Macrocosm.loadedPlayers[offline.uniqueId] = loaded
         return loaded
     }
@@ -513,6 +520,13 @@ private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendCond
             respondJson(object {
                 val success = false
                 val error = "${result.name}: This endpoint requires your key to have ${perm.name} permission"
+            })
+            return SuspendConditionalCallback.suspendFail()
+        }
+        KeyManager.ValidationResult.INVALID_FORMAT -> {
+            respondJson(object {
+                val success = false
+                val error = "${result.name}: Invalid key format used (probably legacy)"
             })
             return SuspendConditionalCallback.suspendFail()
         }

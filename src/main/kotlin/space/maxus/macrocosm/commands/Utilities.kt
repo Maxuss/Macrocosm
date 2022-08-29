@@ -23,6 +23,7 @@ import org.bukkit.entity.Player
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.bazaar.Bazaar
+import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.bazaar.BazaarIntrinsics
 import space.maxus.macrocosm.bazaar.ops.BazaarOp
 import space.maxus.macrocosm.chat.Formatting
@@ -53,7 +54,6 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
-import space.maxus.macrocosm.util.withAll
 import java.net.InetAddress
 import kotlin.math.roundToInt
 
@@ -65,7 +65,7 @@ fun bazaarOpCommand() = command("bazaarop") {
         suggestStrings(BazaarOp.values().map { it.toString() })
 
         argument("item", ResourceLocationArgument.id()) {
-            val keys = Registry.BAZAAR_ELEMENTS.iter().keys.withAll(Registry.BAZAAR_ELEMENTS_REF.iter().keys)
+            val keys = BazaarElement.allKeys
             suggestIds(keys)
 
             argument("quantity", IntegerArgumentType.integer(0)) {

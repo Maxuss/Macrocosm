@@ -20,7 +20,7 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.allNull
-import space.maxus.macrocosm.util.pad
+import space.maxus.macrocosm.util.padForward
 
 fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
     val glass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
@@ -100,6 +100,6 @@ fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             })
 
         compound.addContent(stats.iter().entries.filter { (k, v) -> v != 0f && !k.hidden && !k.hiddenFancy }
-            .map { (k, v) -> Pair(k, v) }.pad(28, Pair(Statistic.DAMAGE, -1f)))
+            .map { (k, v) -> Pair(k, v) }.padForward(28, Pair(Statistic.DAMAGE, -1f)))
     }
 }

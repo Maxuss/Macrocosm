@@ -15,7 +15,7 @@ object DataListener {
     fun joinLeave() {
         listen<PlayerJoinEvent> { e ->
             if (Macrocosm.playersLazy.contains(e.player.uniqueId)) {
-                val player = MacrocosmPlayer.readPlayer(e.player.uniqueId)
+                val player = MacrocosmPlayer.loadPlayer(e.player.uniqueId)
                     ?: throw DatabaseException("Expected to find player with UUID ${e.player.uniqueId}!")
                 Macrocosm.loadedPlayers[e.player.uniqueId] = player
             } else {

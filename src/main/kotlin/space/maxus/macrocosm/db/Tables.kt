@@ -15,7 +15,7 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.spell.essence.EssenceType
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.fromJson
-import space.maxus.macrocosm.util.ignorant
+import space.maxus.macrocosm.util.ignoring
 import java.math.BigDecimal
 
 object BazaarDataTable: Table("bazaar") {
@@ -94,7 +94,7 @@ class SqlPlayerData(
                 fromJson(res[t.slayers]) ?: hashMapOf(),
                 res[t.activePet],
                 fromJson(res[t.pets]) ?: hashMapOf(),
-                fromJson(res[t.essence]) ?: EssenceType.values().toList().associateWithHashed(ignorant(0))
+                fromJson(res[t.essence]) ?: EssenceType.values().toList().associateWithHashed(ignoring(0))
             )
         }
     }

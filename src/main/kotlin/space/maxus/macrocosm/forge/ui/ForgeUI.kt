@@ -15,7 +15,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.giveOrDrop
-import space.maxus.macrocosm.util.pad
+import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.toFancyString
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -92,7 +92,7 @@ fun displayForge(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
                 }
             }
         )
-        furnaceCompound.addContent(activeRecipes.pad(5, ActiveForgeRecipe(Identifier.NULL, -1)))
+        furnaceCompound.addContent(activeRecipes.padForward(5, ActiveForgeRecipe(Identifier.NULL, -1)))
 
         progressBarSlots.forEachIndexed { index, (from, to) ->
             val recipe = activeRecipes.getOrNull(index)

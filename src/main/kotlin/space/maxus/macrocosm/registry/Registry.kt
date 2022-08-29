@@ -3,6 +3,7 @@
 package space.maxus.macrocosm.registry
 
 import net.axay.kspigot.extensions.pluginManager
+import org.bukkit.Material
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
@@ -53,7 +54,6 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         crossinline delegate: (Identifier, T) -> Unit = { _, _ -> }
     ) {
         Threading.runAsync("$name Delegate #${delegates.incrementAndGet()}") {
-            this.info("Starting '$name' registry Delegate ${delegates.get()}")
             val pool = Threading.newFixedPool(8)
 
             for ((id, value) in values) {
@@ -64,14 +64,13 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
             }
 
             pool.shutdown()
-            this.info("Successfully registered ${values.size} elements in $name delegate.")
             delegates.decrementAndGet()
         }
     }
 
     open fun dumpToFile(file: Path) {
         file.deleteIfExists()
-        logger.info("Saving data on registry '$name'...")
+        logger.debug("Saving data on registry '$name'...")
         file.writeText(GSON_PRETTY.toJson(iter()))
     }
 
@@ -151,7 +150,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val SCROLL_RECIPE = makeDefaulted<ScrollRecipe>(id("scroll_recipe"))
         val BAZAAR_ELEMENTS = makeImmutable<MacrocosmItem>(id("bazaar_elements"), false)
         val BAZAAR_ELEMENTS_REF = makeDefaulted<Identifier>(id("bazaar_elements_ref"), false)
-
+        val BAZAAR_ELEMENTS_VANILLA = makeDefaulted<Material>(id("bazaar_elements_vanilla"), false)
         override fun dumpToFile(file: Path) {
 
         }

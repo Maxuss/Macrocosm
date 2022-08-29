@@ -15,6 +15,8 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scoreboard.DisplaySlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.Ticker
@@ -156,6 +158,15 @@ object SidebarRenderer : Listener {
             e.player,
             RenderComponent.dynamic(Calendar::renderDate) { listOf(calculateDayTime()) },
             RenderPriority.HIGHEST
+        )
+
+        enqueue(
+            e.player,
+            RenderComponent.dynamic({
+                val mc = e.player.macrocosm ?: return@dynamic text("<red><bold>ERROR!")
+                text("<gold>Purse: ${Formatting.withCommas(mc.purse)} coins")
+            }) { listOf() },
+            RenderPriority.HIGH
         )
     }
 

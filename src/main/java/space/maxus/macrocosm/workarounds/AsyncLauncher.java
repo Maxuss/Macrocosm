@@ -6,7 +6,14 @@ import kotlin.jvm.functions.Function2;
 import kotlinx.coroutines.*;
 import space.maxus.macrocosm.api.AsyncLauncherKotlin;
 
+/**
+ * An asynchronous coroutine scope launcher
+ */
 public class AsyncLauncher {
+    /**
+     * Launch a single imitated kotlin coroutine scope from java
+     * @param coroutine kotlin coroutine lambda to be called
+     */
     public static void launchCoroutine(Function2<? super CoroutineScope, ? super Continuation<? super kotlin.Unit>, ? super Object> coroutine) {
         BuildersKt.launch(
             GlobalScope.INSTANCE,
@@ -16,6 +23,9 @@ public class AsyncLauncher {
         );
     }
 
+    /**
+     * Launches Macrocosm API Spin
+     */
     public static void launchApi() {
         launchCoroutine(((coroutineScope, continuation) -> AsyncLauncherKotlin.loadApi(continuation)));
     }

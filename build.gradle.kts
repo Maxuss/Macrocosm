@@ -21,15 +21,14 @@ val exposedVersion: String by project
 dependencies {
     paperDevBundle("1.19-R0.1-SNAPSHOT")
     implementation("net.axay:kspigot:1.19.0")
-    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
-    implementation("io.ktor:ktor-server-core-jvm:2.0.3")
-    implementation("io.ktor:ktor-server-netty-jvm:2.0.3")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.0.3")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.0.3")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.0")
+    implementation("io.ktor:ktor-server-netty-jvm:2.1.0")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.1.0")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.0")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")

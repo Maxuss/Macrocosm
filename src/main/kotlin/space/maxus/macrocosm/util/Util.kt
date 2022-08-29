@@ -21,19 +21,17 @@ import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.bazaar.BazaarDataCompound
-import space.maxus.macrocosm.bazaar.BazaarDataCompoundTypeAdapter
-import space.maxus.macrocosm.bazaar.BazaarOrder
-import space.maxus.macrocosm.bazaar.BazaarOrderTypeAdapter
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.listeners.FallingBlockListener
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.players.isAirOrNull
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.IdentifierTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
@@ -55,9 +53,7 @@ import kotlin.contracts.contract
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
-import kotlin.math.ceil
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 import kotlin.random.Random
 
 val GSON: Gson = GsonBuilder()
@@ -65,8 +61,6 @@ val GSON: Gson = GsonBuilder()
     .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
-    .registerTypeAdapter(BazaarOrder::class.java, BazaarOrderTypeAdapter)
-    .registerTypeAdapter(BazaarDataCompound::class.java, BazaarDataCompoundTypeAdapter)
     .create()
 val GSON_PRETTY: Gson = GsonBuilder()
     .disableHtmlEscaping()
@@ -74,8 +68,6 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
-    .registerTypeAdapter(BazaarOrder::class.java, BazaarOrderTypeAdapter)
-    .registerTypeAdapter(BazaarDataCompound::class.java, BazaarDataCompoundTypeAdapter)
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
@@ -83,6 +75,48 @@ typealias Fn = () -> Unit
 typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
+
+inline fun <reified T: Enum<T>> ClosedRange<T>.toList(values: FnRet<Array<out T>>): List<T> {
+    val intRange = this.start.ordinal..this.endInclusive.ordinal
+    return values().toList().slice(intRange)
+}
+
+operator fun <E> List<E>.get(intRange: IntRange): List<E> {
+    return slice(intRange)
+}
+
+inline fun <reified T> Collection<T>.insertWithin(dummy: T, demand: Int): Collection<T> {
+    if(size >= demand || demand <= 0)
+        return this
+
+    val list = mutableListOf<T>()
+    val breaks = demand - size
+    val breakSize = (breaks / max((size - 2), 2))
+    val lastIndex = size - 1
+    val repeated = dummy.repeated(breakSize)
+    // demand = 14
+    // size = 2
+    // breaks = 12
+    // breakSize = (12 / 2) = 6
+    forEachIndexed { i, e ->
+        list.add(e)
+        if(i != lastIndex)
+            list.addAll(repeated)
+    }
+    return list
+}
+
+val Inventory.emptySlots: Int get() {
+    return this.storageContents!!.count { stack -> stack.isAirOrNull() }
+}
+
+fun <V, C: Iterable<V>> Iterable<C>.unwrapInner(): List<V> {
+    val out = mutableListOf<V>()
+    for(part in this) {
+        out.addAll(part)
+    }
+    return out
+}
 
 fun Iterable<Double>.median(): Double {
     val sorted = this.sorted()
@@ -97,6 +131,10 @@ fun Iterable<Double>.median(): Double {
 
 fun <A> identity(): FnArgRet<A, A> = { a -> a }
 fun nullFn(): FnRet<Unit> = { }
+
+inline fun <reified V> aggregate(times: Int, crossinline generator: FnRet<V>): List<V> {
+    return List(times, ignoringProducer(generator))
+}
 
 fun <V> Iterable<V>.withAll(other: Iterable<V>): List<V> {
     val new = mutableListOf<V>()
@@ -158,8 +196,9 @@ inline fun <reified K: Any?, reified V: Any?> Iterable<K>.associateWithHashed(pr
     return associateWithTo(result, producer)
 }
 
-inline fun <reified T: Any?> ignorant(ele: T): FnArgRet<Any?, T> = { ele }
-inline fun <reified T: Any?> produce(ele: T): FnRet<T> = { ele }
+inline fun <reified T: Any?> ignoring(ele: T): FnArgRet<Any?, T> = { ele }
+inline fun <reified T: Any?> producer(ele: T): FnRet<T> = { ele }
+inline fun <reified T: Any?> ignoringProducer(crossinline producer: FnRet<T>): FnArgRet<Any?, T> = { producer() }
 
 inline fun <reified T: Any?> T.repeated(n: Int): Array<T> = Array(n) { this }
 
@@ -300,14 +339,14 @@ fun ticksToTime(ticks: Long): String {
 }
 
 fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, value: V): Int {
-    if (this.containsKey(key)) {
+    return if (this.containsKey(key)) {
         val v = this[key]!!
         v.add(value)
         this[key] = v
-        return v.indexOf(value)
+        v.indexOf(value)
     } else {
         this[key] = ConcurrentLinkedQueue<V>().apply { add(value) }
-        return 0
+        0
     }
 }
 
@@ -387,7 +426,18 @@ fun threadNoinline(
     return thread
 }
 
-inline fun <reified T> Collection<T>.padNulls(demand: Int): MutableCollection<T?> {
+inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollection<T> {
+    val neededToPad = demand - size
+    val eachSide = floor(neededToPad / 2f).roundToInt()
+    val list = mutableListOf<T>()
+    val repeated = value.repeated(eachSide)
+    list.addAll(repeated)
+    list.addAll(this)
+    list.addAll(repeated)
+    return list
+}
+
+inline fun <reified T> Collection<T>.padNullsForward(demand: Int): MutableCollection<T?> {
     if (size >= demand) {
         val new = mutableListOf<T?>()
         new.addAll(this)
@@ -400,7 +450,7 @@ inline fun <reified T> Collection<T>.padNulls(demand: Int): MutableCollection<T?
     return new
 }
 
-inline fun <reified T> Collection<T>.pad(demand: Int, value: T): MutableCollection<T> {
+inline fun <reified T> Collection<T>.padForward(demand: Int, value: T): MutableCollection<T> {
     if (size >= demand) {
         val new = mutableListOf<T>()
         new.addAll(this)

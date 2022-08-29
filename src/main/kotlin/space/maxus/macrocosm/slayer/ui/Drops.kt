@@ -17,7 +17,7 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.colorFromTier
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
-import space.maxus.macrocosm.util.pad
+import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.stripTags
 
 private fun formatChance(chance: Float): String {
@@ -80,7 +80,7 @@ fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE
         })
 
         compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotEight, cmp)
-        val drops = slayer.drops.pad(21, NullDrop)
+        val drops = slayer.drops.padForward(21, NullDrop)
         cmp.addContent(drops)
         cmp.sortContentBy { it.requiredLevel }
         cmp.sortContentBy { it.minTier }
