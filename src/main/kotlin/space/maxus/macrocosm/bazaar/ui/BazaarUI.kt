@@ -7,10 +7,7 @@ import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarCategory
 import space.maxus.macrocosm.bazaar.BazaarCollection
 import space.maxus.macrocosm.bazaar.BazaarElement
-import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
-import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.chat.*
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -40,24 +37,24 @@ fun globalBazaarMenu(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpi
                     else {
                         val collection = coll.get()
                         val stack = collection.displayItem.clone()
+                        val averageBuy = collection.items.map { Bazaar.table.nextBuyOrder(it)?.pricePer ?: .0 }.average()
+                        val averageSell = collection.items.map { Bazaar.table.nextSellOrder(it)?.pricePer ?: .0 }.average()
                         stack.meta {
                             displayName(text(collection.displayName).noitalic())
 
                             val lore = mutableListOf<String>()
-                            lore.add("<gray>Elements: <green>${collection.items.size}")
+                            lore.add("<dark_gray>${collection.items.size} products")
                             lore.add("")
                             lore.add(
-                                "<gray>Sell Orders: <green>${
-                                    Formatting.withCommas(collection.items.sumOf { id -> Bazaar.table.itemData[id]?.sell?.size ?: 0 }
-                                        .toBigDecimal())
-                                }"
+                                "Instant Buy Price: <gold>${Formatting.withFullCommas(averageSell.toBigDecimal())} coins",
                             )
                             lore.add(
-                                "<gray>Buy Orders: <green>${
-                                    Formatting.withCommas(collection.items.sumOf { id -> Bazaar.table.itemData[id]?.buy?.size ?: 0 }
-                                        .toBigDecimal())
-                                }"
+                                "Instant Sell Price: <gold>${Formatting.withFullCommas(averageBuy.toBigDecimal())} coins",
                             )
+                            lore.add(
+                                ""
+                            )
+                            lore.add("<yellow>Click to view products!")
 
                             lore(lore.map { text("<gray>$it").noitalic() })
                         }
@@ -93,34 +90,33 @@ private fun specificCollectionMenu(player: MacrocosmPlayer, collection: BazaarCo
                     if (id.isNull())
                         ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
                     else {
-                        val stack = BazaarElement.idToElement(id)!!.build(player)!!
+                        val product = BazaarElement.idToElement(id)!!
+                        val stack = product.build(player)!!
                         val data = Bazaar.table.itemData[id]!!
                         stack.meta {
                             val lore = mutableListOf(
-                                "<gray>Total Items: <green>${
-                                    Formatting.withCommas(data.sell.sumOf { order -> order.qty }.toBigDecimal())
-                                }",
-                                "<gray>Buy Orders: <green>${Formatting.withCommas(data.buy.size.toBigDecimal())}",
-                                "<gray>Sell Orders: <green>${Formatting.withCommas(data.sell.size.toBigDecimal())}",
+                                "<dark_gray>${product.rarity.name.capitalized()} commodity",
                                 "",
                                 "<gray>Instant Buy Price: ${
                                     data.nextSellOrder()?.pricePer?.let {
                                         "<gold>${
-                                            Formatting.withCommas(
+                                            Formatting.withFullCommas(
                                                 it.toBigDecimal()
                                             )
-                                        }"
+                                        } coins"
                                     } ?: "<red>No Sell Orders!"
                                 }",
                                 "<gray>Instant Sell Price: ${
                                     data.nextBuyOrder()?.pricePer?.let {
                                         "<gold>${
-                                            Formatting.withCommas(
+                                            Formatting.withFullCommas(
                                                 it.toBigDecimal()
                                             )
-                                        }"
+                                        } coins"
                                     } ?: "<red>No Buy Orders!"
-                                }"
+                                }",
+                                "",
+                                "<yellow>Click to view details!"
                             )
                             lore(lore.map { text(it).noitalic() })
                         }

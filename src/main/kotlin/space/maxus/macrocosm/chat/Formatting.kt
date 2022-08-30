@@ -31,4 +31,15 @@ object Formatting {
         val format = if (isInteger || num.toDouble() % 1 == 0.0) DecimalFormat("#,###") else DecimalFormat("#,##0.0")
         return format.format(num.setScale(1, RoundingMode.DOWN).toDouble())
     }
+
+    /**
+     * Formats a [BigDecimal] to string without doing integer check
+     *
+     * @param num Number to be formatted
+     * @return Formatted number string
+     * @see Formatting.withCommas
+     */
+    fun withFullCommas(num: BigDecimal): String {
+        return DecimalFormat("#,##0.0").format(num.setScale(1, RoundingMode.DOWN).toDouble())
+    }
 }

@@ -79,18 +79,21 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
             ) { e ->
                 e.bukkitEvent.isCancelled = true
                 Bazaar.instantBuy(player, e.player, item, emptySlots)
+                e.guiInstance.reloadCurrentPage()
             }
 
             button(Slots.RowThreeSlotEight,
                 ItemValue.placeholderDescripted(Material.OAK_SIGN,
                     "<green>Custom Amount",
-                    "<dark_gray>$elementName",
+                    "<dark_gray>Buy Order Quantity",
                     "",
-                    "Order up to <green>${
+                    "Buy up to <green>${
                         Formatting.withCommas((Bazaar.table.itemData[item]!!.sell
                             .sumOf { it.qty }).toBigDecimal(), true
                         )
-                    }x"
+                    }x",
+                    "",
+                    "<yellow>Click to specify!"
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
@@ -148,7 +151,7 @@ private fun confirmInstantBuy(
             modifyStackGenerateAmountButtonBuy(
                 player,
                 elementName,
-                "<green>Buy Custom Amount",
+                "<green>Custom Amount",
                 amount,
                 item,
                 builtItem.clone()
@@ -175,6 +178,9 @@ internal fun modifyStackGenerateAmountButtonBuy(
     item: Identifier,
     stack: ItemStack
 ): ItemStack {
+    if(amount in 1..64) {
+        stack.amount = amount
+    }
     stack.meta {
         displayName(text(name).noitalic())
 

@@ -35,27 +35,11 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
             placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
             button(
-                Slots.RowThreeSlotTwo,
+                Slots.RowThreeSlotThree,
                 modifyStackGenerateAmountButtonSell(
                     player,
                     elementName,
-                    "<green>Sell only <yellow>one<green>!",
-                    1,
-                    item,
-                    builtItem.clone()
-                )
-            ) { e ->
-                e.bukkitEvent.isCancelled = true
-                Bazaar.instantSell(player, e.player, item, 1)
-                e.guiInstance.reloadCurrentPage()
-            }
-
-            button(
-                Slots.RowThreeSlotFour,
-                modifyStackGenerateAmountButtonSell(
-                    player,
-                    elementName,
-                    "<green>Sell a stack!",
+                    "<gold>Sell a stack!",
                     64,
                     item,
                     builtItem.clone()
@@ -69,11 +53,27 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                 p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }
 
             button(
-                Slots.RowThreeSlotSix,
+                Slots.RowThreeSlotFive,
                 modifyStackGenerateAmountButtonSell(
                     player,
                     elementName,
-                    "<green>Sell all in inventory!",
+                    "<gold>Sell half your inventory!",
+                    amountInInventory / 2,
+                    item,
+                    ItemStack(Material.CHEST)
+                )
+            ) { e ->
+                e.bukkitEvent.isCancelled = true
+                Bazaar.instantSell(player, e.player, item, amountInInventory / 2)
+                e.guiInstance.reloadCurrentPage()
+            }
+
+            button(
+                Slots.RowThreeSlotSeven,
+                modifyStackGenerateAmountButtonSell(
+                    player,
+                    elementName,
+                    "<gold>Sell whole inventory!",
                     amountInInventory,
                     item,
                     ItemStack(Material.CHEST)
@@ -182,6 +182,9 @@ internal fun modifyStackGenerateAmountButtonSell(
     stack: ItemStack,
     checkZero: Boolean = true
 ): ItemStack {
+    if(amount in 1..64)
+        stack.amount = amount
+
     stack.meta {
         displayName(text(name).noitalic())
 
