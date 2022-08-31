@@ -173,13 +173,12 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 }x<yellow> of ${mc.name.str()}<yellow>!"
                             )
                         } else {
-                            // clearing order
-                            Bazaar.table.popOrder(order)
+                            // managing order
                             sound(Sound.UI_BUTTON_CLICK) {
                                 volume = 2f
                                 playFor(e.player)
                             }
-                            e.player.openGUI(manageOrders(player))
+                            e.player.openGUI(manageSingleOrder(player, order))
                         }
                     } else if (order is BazaarSellOrder) {
                         if (order.sold > 0) {
@@ -211,12 +210,11 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                             )
                         } else if (order.qty == 0) {
                             // clearing order
-                            Bazaar.table.popOrder(order)
                             sound(Sound.UI_BUTTON_CLICK) {
                                 volume = 2f
                                 playFor(e.player)
                             }
-                            e.player.openGUI(manageOrders(player))
+                            e.player.openGUI(manageSingleOrder(player, order))
                         }
                     }
                 }
