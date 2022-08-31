@@ -11,7 +11,6 @@ enum class BazaarCategory(
     val displayItem: Material,
     vararg items: BazaarCollection
 ) {
-    // todo: add collections
     MINING(
         "<aqua>Mining",
         "Contains all mining related ores and resources.",
