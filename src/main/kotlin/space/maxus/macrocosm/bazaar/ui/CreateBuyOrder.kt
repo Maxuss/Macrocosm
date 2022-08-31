@@ -349,7 +349,7 @@ internal fun modifyStackGenerateAmountButtonBuyOrder(
     amount: Int,
     stack: ItemStack
 ): ItemStack {
-    if(amount in 1..64) {
+    if (amount in 1..64) {
         stack.amount = amount
     }
     stack.meta {

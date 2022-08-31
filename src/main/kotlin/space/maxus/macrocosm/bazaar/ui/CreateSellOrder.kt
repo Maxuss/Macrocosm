@@ -51,7 +51,7 @@ internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): GUI<For
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
-                if(amountInInventory > 0)
+                if (amountInInventory > 0)
                     e.player.openGUI(createSellOrderManagePrice(player, item, amountInInventory))
             }
 
@@ -326,7 +326,7 @@ internal fun modifyStackGenerateAmountButtonSellOrder(
     amount: Int,
     stack: ItemStack
 ): ItemStack {
-    if(amount in 1..64) {
+    if (amount in 1..64) {
         stack.amount = amount
     }
     stack.meta {

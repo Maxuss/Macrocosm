@@ -37,8 +37,13 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "<dark_gray>$elementName",
                 "",
                 "Price per unit: <gold>${
-                    Formatting.withFullCommas((Bazaar.table.nextSellOrder(item)?.pricePer ?: .0).toBigDecimal())} coins",
-                "Stack price: <gold>${Formatting.withFullCommas(Bazaar.tryDoInstantBuy(player, item, 64, false).get().coinsSpent)}",
+                    Formatting.withFullCommas((Bazaar.table.nextSellOrder(item)?.pricePer ?: .0).toBigDecimal())
+                } coins",
+                "Stack price: <gold>${
+                    Formatting.withFullCommas(
+                        Bazaar.tryDoInstantBuy(player, item, 64, false).get().coinsSpent
+                    )
+                }",
                 "",
                 "<yellow>Click to pick amount!"
             )
@@ -47,7 +52,9 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
             e.player.openGUI(buyInstantlyScreen(e.player.macrocosm!!, item))
         }
 
-        val invAmount = p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }.toBigDecimal()
+        val invAmount =
+            p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }
+                .toBigDecimal()
         button(
             Slots.RowThreeSlotThree,
             ItemValue.placeholderDescripted(
@@ -75,7 +82,11 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "",
                 "<green>Top Orders:",
                 *Bazaar.table.itemData[item]!!.buy.take(5).map { order ->
-                    "<dark_gray>- <gold>${Formatting.withFullCommas(order.pricePer.toBigDecimal())} coins<gray> each | <green>${Formatting.withCommas(order.qty.toBigDecimal())}<gray>x"
+                    "<dark_gray>- <gold>${Formatting.withFullCommas(order.pricePer.toBigDecimal())} coins<gray> each | <green>${
+                        Formatting.withCommas(
+                            order.qty.toBigDecimal()
+                        )
+                    }<gray>x"
                 }.toTypedArray(),
                 "",
                 "<yellow>Click to setup buy order!"
@@ -94,7 +105,11 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "",
                 "<gold>Top Offers:",
                 *Bazaar.table.itemData[item]!!.sell.take(7).map { order ->
-                    "<dark_gray>- <gold>${Formatting.withFullCommas(order.pricePer.toBigDecimal())} coins<gray> each | <green>${Formatting.withCommas(order.qty.toBigDecimal())}<gray>x"
+                    "<dark_gray>- <gold>${Formatting.withFullCommas(order.pricePer.toBigDecimal())} coins<gray> each | <green>${
+                        Formatting.withCommas(
+                            order.qty.toBigDecimal()
+                        )
+                    }<gray>x"
                 }.toTypedArray(),
                 "",
                 "Inventory: <green>${Formatting.withCommas(invAmount)} items",

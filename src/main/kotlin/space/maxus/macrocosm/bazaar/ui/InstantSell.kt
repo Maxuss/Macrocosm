@@ -64,7 +64,7 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
-                if(amountInInventory / 2 > 0)
+                if (amountInInventory / 2 > 0)
                     Bazaar.instantSell(player, e.player, item, amountInInventory / 2)
                 e.guiInstance.reloadCurrentPage()
             }
@@ -81,19 +81,22 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
-                if(amountInInventory > 0)
+                if (amountInInventory > 0)
                     Bazaar.instantSell(player, e.player, item, amountInInventory)
                 e.guiInstance.reloadCurrentPage()
             }
 
-            button(Slots.RowThreeSlotEight,
-                ItemValue.placeholderDescripted(Material.OAK_SIGN,
+            button(
+                Slots.RowThreeSlotEight,
+                ItemValue.placeholderDescripted(
+                    Material.OAK_SIGN,
                     "<green>Custom Amount",
                     "<dark_gray>$elementName",
                     "",
                     "Sell up to <green>${
-                        Formatting.withCommas((Bazaar.table.itemData[item]!!.buy
-                            .sumOf { it.qty }).toBigDecimal(), true
+                        Formatting.withCommas(
+                            (Bazaar.table.itemData[item]!!.buy
+                                .sumOf { it.qty }).toBigDecimal(), true
                         )
                     }x"
                 )
@@ -183,7 +186,7 @@ internal fun modifyStackGenerateAmountButtonSell(
     stack: ItemStack,
     checkZero: Boolean = true
 ): ItemStack {
-    if(amount in 1..64)
+    if (amount in 1..64)
         stack.amount = amount
 
     stack.meta {

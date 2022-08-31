@@ -74,7 +74,8 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 order.sellers.map { seller ->
                                     Bukkit.getOfflinePlayer(seller).let { player ->
                                         "<dark_gray> - ${
-                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")?.str() ?: "Unknown Seller!"
+                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")
+                                                ?.str() ?: "Unknown Seller!"
                                         }}"
                                     }
                                 }
@@ -113,7 +114,8 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 order.buyers.map { seller ->
                                     Bukkit.getOfflinePlayer(seller).let { player ->
                                         "<dark_gray> - ${
-                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")?.str() ?: "Unknown Buyer!"
+                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")
+                                                ?.str() ?: "Unknown Buyer!"
                                         }}"
                                     }
                                 }
@@ -171,7 +173,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 }x<yellow> of ${mc.name.str()}<yellow>!"
                             )
                             order.bought = 0
-                            if(order.qty == 0) {
+                            if (order.qty == 0) {
                                 Bazaar.table.popOrder(order)
                                 e.guiInstance.reloadCurrentPage()
                             }
@@ -211,7 +213,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                     )
                                 }x<yellow> of ${mc.name.str()}<yellow> to ${order.buyers.size} buyers!"
                             )
-                            if(order.qty == 0) {
+                            if (order.qty == 0) {
                                 Bazaar.table.popOrder(order)
                                 e.guiInstance.reloadCurrentPage()
                             }
@@ -286,7 +288,7 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                 )
                 e.player.openGUI(manageOrders(player))
             }
-        } else if(order is BazaarSellOrder) {
+        } else if (order is BazaarSellOrder) {
             button(
                 Slots.RowTwoSlotFive,
                 ItemValue.placeholderDescripted(
@@ -297,7 +299,7 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                     "",
                     "<yellow>I'm sure, delete this order"
                 )
-            ) {  e ->
+            ) { e ->
                 e.bukkitEvent.isCancelled = true
                 sound(Sound.ENTITY_BLAZE_DEATH) {
                     pitch = 2f
@@ -308,7 +310,7 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
                 var itemsToRefund = order.qty
                 val item = BazaarElement.idToElement(order.item)!!.build(player)!!
-                while(itemsToRefund > 64) {
+                while (itemsToRefund > 64) {
                     itemsToRefund -= 64
                     val c = item.clone()
                     c.amount = 64
@@ -318,7 +320,12 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                 e.player.giveOrDrop(item)
                 player.sendMessage(
                     ChatChannel.BAZAAR,
-                    "<yellow>Refunded <green>${Formatting.withCommas(itemsToRefund.toBigDecimal(), true)}x<yellow> items from deleting a bazaar order."
+                    "<yellow>Refunded <green>${
+                        Formatting.withCommas(
+                            itemsToRefund.toBigDecimal(),
+                            true
+                        )
+                    }x<yellow> items from deleting a bazaar order."
                 )
                 e.player.openGUI(manageOrders(player))
             }

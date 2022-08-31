@@ -82,14 +82,17 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
                 e.guiInstance.reloadCurrentPage()
             }
 
-            button(Slots.RowThreeSlotEight,
-                ItemValue.placeholderDescripted(Material.OAK_SIGN,
+            button(
+                Slots.RowThreeSlotEight,
+                ItemValue.placeholderDescripted(
+                    Material.OAK_SIGN,
                     "<green>Custom Amount",
                     "<dark_gray>Buy Order Quantity",
                     "",
                     "Buy up to <green>${
-                        Formatting.withCommas((Bazaar.table.itemData[item]!!.sell
-                            .sumOf { it.qty }).toBigDecimal(), true
+                        Formatting.withCommas(
+                            (Bazaar.table.itemData[item]!!.sell
+                                .sumOf { it.qty }).toBigDecimal(), true
                         )
                     }x",
                     "",
@@ -178,7 +181,7 @@ internal fun modifyStackGenerateAmountButtonBuy(
     item: Identifier,
     stack: ItemStack
 ): ItemStack {
-    if(amount in 1..64) {
+    if (amount in 1..64) {
         stack.amount = amount
     }
     stack.meta {

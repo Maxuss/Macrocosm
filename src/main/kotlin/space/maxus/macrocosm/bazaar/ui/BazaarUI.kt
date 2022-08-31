@@ -37,8 +37,10 @@ fun globalBazaarMenu(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpi
                     else {
                         val collection = coll.get()
                         val stack = collection.displayItem.clone()
-                        val averageBuy = collection.items.map { Bazaar.table.nextBuyOrder(it)?.pricePer ?: .0 }.average()
-                        val averageSell = collection.items.map { Bazaar.table.nextSellOrder(it)?.pricePer ?: .0 }.average()
+                        val averageBuy =
+                            collection.items.map { Bazaar.table.nextBuyOrder(it)?.pricePer ?: .0 }.average()
+                        val averageSell =
+                            collection.items.map { Bazaar.table.nextSellOrder(it)?.pricePer ?: .0 }.average()
                         stack.meta {
                             displayName(text(collection.displayName).noitalic())
 
