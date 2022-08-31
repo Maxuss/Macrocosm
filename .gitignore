@@ -1,6 +1,5 @@
 # User-specific stuff
 .idea/
-
 *.iml
 *.ipr
 *.iws
@@ -122,3 +121,4 @@ build
 /*.jar
 
 src/main/resources/doc/
+versions/
