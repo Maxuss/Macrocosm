@@ -60,7 +60,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                             order.originalAmount.toBigDecimal(),
                                             true
                                         )
-                                    }x </green> ${displayName()!!.str()}"
+                                    }x </green>${displayName()!!.str()}"
                                 ).noitalic()
                             )
 
@@ -74,8 +74,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 order.sellers.map { seller ->
                                     Bukkit.getOfflinePlayer(seller).let { player ->
                                         "<dark_gray> - ${
-                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")
-                                                ?.str() ?: "Unknown Seller!"
+                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")?.str() ?: "Unknown Seller!"
                                         }}"
                                     }
                                 }
@@ -114,7 +113,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 order.buyers.map { seller ->
                                     Bukkit.getOfflinePlayer(seller).let { player ->
                                         "<dark_gray> - ${
-                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL") ?: "Unknown Buyer!"
+                                            MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")?.str() ?: "Unknown Buyer!"
                                         }}"
                                     }
                                 }
@@ -162,16 +161,20 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                 volume = 2f
                                 playFor(e.player)
                             }
-                            order.bought = 0
                             player.sendMessage(
                                 ChatChannel.BAZAAR,
                                 "<yellow>Claimed <green>${
                                     Formatting.withCommas(
-                                        amount.toBigDecimal(),
+                                        order.bought.toBigDecimal(),
                                         true
                                     )
                                 }x<yellow> of ${mc.name.str()}<yellow>!"
                             )
+                            order.bought = 0
+                            if(order.qty == 0) {
+                                Bazaar.table.popOrder(order)
+                                e.guiInstance.reloadCurrentPage()
+                            }
                         } else {
                             // managing order
                             sound(Sound.UI_BUTTON_CLICK) {
@@ -208,7 +211,11 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                     )
                                 }x<yellow> of ${mc.name.str()}<yellow> to ${order.buyers.size} buyers!"
                             )
-                        } else if (order.qty == 0) {
+                            if(order.qty == 0) {
+                                Bazaar.table.popOrder(order)
+                                e.guiInstance.reloadCurrentPage()
+                            }
+                        } else {
                             // clearing order
                             sound(Sound.UI_BUTTON_CLICK) {
                                 volume = 2f
@@ -240,6 +247,13 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
 
     page(0) {
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        button(
+            Slots.RowOneSlotFive,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Your Orders")
+        ) { e ->
+            e.bukkitEvent.isCancelled = true
+            e.player.openGUI(manageOrders(player))
+        }
         if (order is BazaarBuyOrder) {
             // delete order
             button(
@@ -272,12 +286,40 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                 )
                 e.player.openGUI(manageOrders(player))
             }
-
+        } else if(order is BazaarSellOrder) {
             button(
-                Slots.RowOneSlotFive,
-                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Your Orders")
-            ) { e ->
+                Slots.RowTwoSlotFive,
+                ItemValue.placeholderDescripted(
+                    Material.BARRIER,
+                    "<red>Delete Order",
+                    "Completely deletes this order",
+                    "and returns items contained in it.",
+                    "",
+                    "<yellow>I'm sure, delete this order"
+                )
+            ) {  e ->
                 e.bukkitEvent.isCancelled = true
+                sound(Sound.ENTITY_BLAZE_DEATH) {
+                    pitch = 2f
+                    volume = 2f
+                    playFor(e.player)
+                }
+                Bazaar.table.popOrder(order)
+                player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
+                var itemsToRefund = order.qty
+                val item = BazaarElement.idToElement(order.item)!!.build(player)!!
+                while(itemsToRefund > 64) {
+                    itemsToRefund -= 64
+                    val c = item.clone()
+                    c.amount = 64
+                    e.player.giveOrDrop(c)
+                }
+                item.amount = itemsToRefund
+                e.player.giveOrDrop(item)
+                player.sendMessage(
+                    ChatChannel.BAZAAR,
+                    "<yellow>Refunded <green>${Formatting.withCommas(itemsToRefund.toBigDecimal(), true)}x<yellow> items from deleting a bazaar order."
+                )
                 e.player.openGUI(manageOrders(player))
             }
         }
@@ -287,15 +329,15 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
 private fun truncateCoins(amount: BigDecimal): String {
     return if (amount > 1_000_000_000.toBigDecimal()) {
         // > 1B
-        "${Formatting.stats((amount % 1_000_000_000.toBigDecimal()).round(MathContext(1)))}B"
+        "${Formatting.stats((amount / 1_000_000_000.toBigDecimal()).round(MathContext(3)))}B"
     } else if (amount > 1_000_000.toBigDecimal()) {
         // > 1M
-        "${Formatting.stats((amount % 1_000_000.toBigDecimal()).round(MathContext(1)))}M"
+        "${Formatting.stats((amount / 1_000_000.toBigDecimal()).round(MathContext(3)))}M"
     } else if (amount > 1_000.toBigDecimal()) {
         // > 1k
-        "${Formatting.stats((amount % 1_000.toBigDecimal()).round(MathContext(1)))}k"
+        "${Formatting.stats((amount / 1_000.toBigDecimal()).round(MathContext(3)))}k"
     } else {
         // default
-        Formatting.stats(amount.round(MathContext(1)))
+        Formatting.stats(amount.round(MathContext(3)))
     }
 }

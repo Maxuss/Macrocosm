@@ -93,7 +93,7 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "<dark_gray>$elementName",
                 "",
                 "<gold>Top Offers:",
-                *Bazaar.table.itemData[item]!!.buy.take(7).map { order ->
+                *Bazaar.table.itemData[item]!!.sell.take(7).map { order ->
                     "<dark_gray>- <gold>${Formatting.withFullCommas(order.pricePer.toBigDecimal())} coins<gray> each | <green>${Formatting.withCommas(order.qty.toBigDecimal())}<gray>x"
                 }.toTypedArray(),
                 "",

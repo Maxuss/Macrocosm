@@ -39,12 +39,9 @@ internal fun createBuyOrder(player: MacrocosmPlayer, item: Identifier): GUI<ForI
 
             button(
                 Slots.RowThreeSlotTwo,
-                modifyStackGenerateAmountButtonBuy(
-                    player,
-                    elementName,
+                modifyStackGenerateAmountButtonBuyOrder(
                     "<green>Order a <yellow>stack<green>!",
                     64,
-                    item,
                     builtItem.clone()
                 )
             ) { e ->
@@ -54,12 +51,9 @@ internal fun createBuyOrder(player: MacrocosmPlayer, item: Identifier): GUI<ForI
 
             button(
                 Slots.RowThreeSlotFour,
-                modifyStackGenerateAmountButtonBuy(
-                    player,
-                    elementName,
+                modifyStackGenerateAmountButtonBuyOrder(
                     "<green>Order a Big Stack!",
                     160,
-                    item,
                     builtItem.clone()
                 ).apply { amount = 64 }) { e ->
                 e.bukkitEvent.isCancelled = true
@@ -68,12 +62,9 @@ internal fun createBuyOrder(player: MacrocosmPlayer, item: Identifier): GUI<ForI
 
             button(
                 Slots.RowThreeSlotSix,
-                modifyStackGenerateAmountButtonBuy(
-                    player,
-                    elementName,
+                modifyStackGenerateAmountButtonBuyOrder(
                     "<green>A thousand!",
                     1024,
-                    item,
                     ItemStack(Material.CHEST)
                 )
             ) { e ->
@@ -99,8 +90,7 @@ internal fun createBuyOrder(player: MacrocosmPlayer, item: Identifier): GUI<ForI
 
                     override fun isInputValid(context: ConversationContext, input: String): Boolean {
                         return try {
-                            Integer.parseInt(input)
-                            true
+                            Integer.parseInt(input) > 0
                         } catch (e: NumberFormatException) {
                             false
                         }
@@ -166,10 +156,10 @@ private fun createBuyOrderManagePrice(
         button(
             Slots.RowThreeSlotFour,
             constructPriceButton(
-                ItemStack(Material.NAME_TAG),
+                ItemStack(Material.GOLD_NUGGET),
                 topOrder?.let { order -> order + 0.1 },
                 arrayOf("<red>Could not find a buy order", "<red>of the same type to get the top", "<red>price!"),
-                "<gold>Top Order plus 0.1",
+                "<gold>Top Order +0.1",
                 "Create a Buy Order with the",
                 "price <gold>0.1<gray> higher than the",
                 "current top order"
@@ -232,8 +222,7 @@ private fun createBuyOrderManagePrice(
 
                 override fun isInputValid(context: ConversationContext, input: String): Boolean {
                     return try {
-                        java.lang.Double.parseDouble(input)
-                        true
+                        java.lang.Double.parseDouble(input) > 0
                     } catch (e: NumberFormatException) {
                         false
                     }
@@ -353,4 +342,28 @@ internal fun constructPriceButton(
         lore(lore.map { text("<gray>$it").noitalic() })
     }
     return c
+}
+
+internal fun modifyStackGenerateAmountButtonBuyOrder(
+    name: String,
+    amount: Int,
+    stack: ItemStack
+): ItemStack {
+    if(amount in 1..64) {
+        stack.amount = amount
+    }
+    stack.meta {
+        displayName(text(name).noitalic())
+
+        val loreCompound = mutableListOf(
+            "<dark_gray>Buy Order Setup",
+            "",
+            "<gray>Amount: <green>${Formatting.withCommas(amount.toBigDecimal(), true)}<gray>x",
+            "",
+            "<yellow>Click to proceed!"
+        )
+
+        lore(loreCompound.map { text(it).noitalic() })
+    }
+    return stack
 }

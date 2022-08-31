@@ -64,7 +64,8 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
-                Bazaar.instantSell(player, e.player, item, amountInInventory / 2)
+                if(amountInInventory / 2 > 0)
+                    Bazaar.instantSell(player, e.player, item, amountInInventory / 2)
                 e.guiInstance.reloadCurrentPage()
             }
 
@@ -80,7 +81,8 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
-                Bazaar.instantSell(player, e.player, item, amountInInventory)
+                if(amountInInventory > 0)
+                    Bazaar.instantSell(player, e.player, item, amountInInventory)
                 e.guiInstance.reloadCurrentPage()
             }
 
@@ -104,8 +106,7 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInven
 
                     override fun isInputValid(context: ConversationContext, input: String): Boolean {
                         return try {
-                            Integer.parseInt(input)
-                            true
+                            Integer.parseInt(input) > 0
                         } catch (e: NumberFormatException) {
                             false
                         }

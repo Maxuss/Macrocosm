@@ -44,17 +44,15 @@ internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): GUI<For
 
             button(
                 Slots.RowThreeSlotTwo,
-                modifyStackGenerateAmountButtonSell(
-                    player,
-                    elementName,
+                modifyStackGenerateAmountButtonSellOrder(
                     "<green>Sell inventory!",
                     amountInInventory,
-                    item,
                     ItemStack(Material.CHEST)
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
-                e.player.openGUI(createSellOrderManagePrice(player, item, amountInInventory))
+                if(amountInInventory > 0)
+                    e.player.openGUI(createSellOrderManagePrice(player, item, amountInInventory))
             }
 
             button(
@@ -75,8 +73,7 @@ internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): GUI<For
 
                     override fun isInputValid(context: ConversationContext, input: String): Boolean {
                         return try {
-                            Integer.parseInt(input)
-                            true
+                            Integer.parseInt(input) > 0
                         } catch (e: NumberFormatException) {
                             false
                         }
@@ -154,10 +151,10 @@ private fun createSellOrderManagePrice(
         button(
             Slots.RowThreeSlotFour,
             constructPriceButton(
-                ItemStack(Material.NAME_TAG),
-                topOrder?.let { order -> order - 0.1 },
+                ItemStack(Material.GOLD_NUGGET),
+                topSellOrder?.let { order -> order - 0.1 },
                 arrayOf("<red>Could not find a sell order", "<red>of the same type to get the top", "<red>price!"),
-                "<gold>Top Order minus 0.1",
+                "<gold>Top Order -0.1",
                 "Create a Buy Order with the",
                 "price <gold>0.1<gray> lower than the",
                 "current top order"
@@ -222,8 +219,7 @@ private fun createSellOrderManagePrice(
 
                 override fun isInputValid(context: ConversationContext, input: String): Boolean {
                     return try {
-                        java.lang.Double.parseDouble(input)
-                        true
+                        java.lang.Double.parseDouble(input) > 0
                     } catch (e: NumberFormatException) {
                         false
                     }
@@ -323,4 +319,28 @@ private fun confirmSellOrder(
             e.player.openGUI(openSpecificItemManagementMenu(player, item))
         }
     }
+}
+
+internal fun modifyStackGenerateAmountButtonSellOrder(
+    name: String,
+    amount: Int,
+    stack: ItemStack
+): ItemStack {
+    if(amount in 1..64) {
+        stack.amount = amount
+    }
+    stack.meta {
+        displayName(text(name).noitalic())
+
+        val loreCompound = mutableListOf(
+            "<dark_gray>Sell Order Setup",
+            "",
+            "<gray>Amount: <green>${Formatting.withCommas(amount.toBigDecimal(), true)}<gray>x",
+            "",
+            "<yellow>Click to proceed!"
+        )
+
+        lore(loreCompound.map { text(it).noitalic() })
+    }
+    return stack
 }

@@ -141,7 +141,7 @@ object Bazaar {
 
                 val transacted = preResult.coinsSpent
                 if (!BazaarIntrinsics.ensurePlayerHasEnoughCoins(player, transacted)) {
-                    player.sendMessage("<red>Failed to process transaction, not enough coins!")
+                    player.sendMessage(ChatChannel.BAZAAR, "<red>Failed to process transaction, not enough coins!")
                     return@execute
                 }
 
@@ -160,7 +160,7 @@ object Bazaar {
                 task(sync = true, delay = 0L) {
                     // drifting to sync thread
                     val itemResult = BazaarElement.idToElement(item)!!
-                    var amount = qty
+                    var amount = preResult.amountBought
                     val built = itemResult.build(player)
                     while (amount > 64) {
                         amount -= 64
@@ -199,10 +199,10 @@ object Bazaar {
     fun createBuyOrder(player: MacrocosmPlayer, paper: Player, item: Identifier, amount: Int, pricePer: Double) {
         bazaarOpPool.execute {
             runCatchingReporting(paper) {
-                player.sendMessage("<gray>Processing transaction...")
+                player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
                 val transacted = amount.toBigDecimal() * pricePer.toBigDecimal()
                 if (!BazaarIntrinsics.ensurePlayerHasEnoughCoins(player, transacted)) {
-                    player.sendMessage("<red>Failed to process transaction, not enough coins!")
+                    player.sendMessage(ChatChannel.BAZAAR, "<red>Failed to process transaction, not enough coins!")
                     return@execute
                 }
 
@@ -249,7 +249,7 @@ object Bazaar {
     fun createSellOrder(player: MacrocosmPlayer, paper: Player, item: Identifier, amount: Int, pricePer: Double) {
         bazaarOpPool.execute {
             runCatchingReporting(paper) {
-                player.sendMessage("<gray>Processing transaction...")
+                player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
                 task(sync = true, delay = 0L) {
                     // drifting to synchronous environment
                     if (DemandQtyItemsQuery(item, amount).demand(player, paper) !is Result) {
@@ -275,6 +275,20 @@ object Bazaar {
                                 )
                             }<yellow> of ${name.name.str()}<yellow> for <gold>${Formatting.withCommas(pricePer.toBigDecimal())} coins<yellow> each setup!"
                         )
+                    }
+                }
+
+                sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
+                    pitch = 1.7f
+                    volume = 2f
+                    playFor(paper)
+                }
+
+                taskRunLater(5L, sync = false) {
+                    sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
+                        pitch = 1.4f
+                        volume = 2f
+                        playFor(paper)
                     }
                 }
             }
