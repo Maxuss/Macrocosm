@@ -89,6 +89,12 @@ fun Application.module() {
             }
         }
 
+        route("/resx") {
+            get("/webhook_icon.png") {
+                call.respondMacrocosmResource("pack.png", "pack")
+            }
+        }
+
         get("/status") {
             call.respondJson(object {
                 val success = true

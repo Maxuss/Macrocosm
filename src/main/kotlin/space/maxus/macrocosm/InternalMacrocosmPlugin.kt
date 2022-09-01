@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
+import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
@@ -17,6 +18,7 @@ import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.db.DataStorage
 import space.maxus.macrocosm.db.impl.local.SqliteDatabaseImpl
 import space.maxus.macrocosm.db.impl.postgres.PostgresDatabaseImpl
+import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
 import space.maxus.macrocosm.entity.EntityValue
@@ -63,10 +65,13 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.workarounds.AsyncLauncher
 import space.maxus.macrocosm.zone.ZoneType
+import java.net.URL
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.HttpsURLConnection
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -81,6 +86,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var API_VERSION: String; private set
         lateinit var VERSION: String; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
+        lateinit var CURRENT_IP: String; private set
+        var DISCORD_BOT_TOKEN: String? = null; private set
 
         private data class VersionInfo(val version: String, val apiVersion: String)
     }
@@ -92,10 +99,20 @@ class InternalMacrocosmPlugin : KSpigot() {
     val apiVersion by lazy { API_VERSION }
     val transactionHistory by lazy { TRANSACTION_HISTORY }
     var isInDevEnvironment: Boolean = false; private set
+    val random: java.util.Random = java.util.Random(ThreadLocalRandom.current().nextLong())
+    val macrocosmColor: TextColor = TextColor.color(0x4A26BB)
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
+        try {
+            val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
+            CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
+            conn.disconnect()
+        } catch(e: Exception) {
+            // we are probably offline, set the current ip to localhost
+            CURRENT_IP = "127.0.0.1"
+        }
         isInDevEnvironment = java.lang.Boolean.getBoolean("macrocosm.dev")
         integratedServer =
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
@@ -124,8 +141,9 @@ class InternalMacrocosmPlugin : KSpigot() {
             playersLazy = DATABASE.readPlayers().toMutableList()
         }
         Threading.runAsyncRaw {
+            Discord.readSelf()
             TransactionHistory.readSelf()
-            Calendar.load()
+            Calendar.readSelf()
         }
     }
 
@@ -265,6 +283,13 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         config.load(cfgFile)
 
+        DISCORD_BOT_TOKEN = config.getString("connections.discord-bot-token")
+        if(DISCORD_BOT_TOKEN != null && DISCORD_BOT_TOKEN != "NULL") {
+            connectDiscordCommand()
+        }
+
+        Threading.runAsyncRaw(runnable = Discord::setupBot)
+
         Calendar.init()
         SidebarRenderer.init()
 
@@ -295,6 +320,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             Bazaar.table.storeSelf(database)
         }
         storageExecutor.execute { KeyManager.store() }
+        storageExecutor.execute { Discord.storeSelf() }
 
         storageExecutor.shutdown()
 
@@ -313,6 +339,8 @@ val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
 val database by lazy { InternalMacrocosmPlugin.DATABASE }
 val monitor by lazy { InternalMacrocosmPlugin.MONITOR }
 val logger by lazy { Macrocosm.logger }
+val currentIp by lazy { InternalMacrocosmPlugin.CURRENT_IP }
+val discordBotToken by lazy { InternalMacrocosmPlugin.DISCORD_BOT_TOKEN }
 
 @UnsafeFeature
 val unsafe by lazy { InternalMacrocosmPlugin.UNSAFE }

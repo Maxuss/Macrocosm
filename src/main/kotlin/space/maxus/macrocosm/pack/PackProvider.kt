@@ -6,13 +6,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.currentIp
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.recreateFile
 import java.io.*
 import java.math.BigInteger
-import java.net.InetAddress
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.security.MessageDigest
@@ -23,7 +23,7 @@ import kotlin.io.path.*
 
 object PackProvider : Listener {
     private val RESOURCE_PACK_LINK: String =
-        if (Macrocosm.isInDevEnvironment) "http://127.0.0.1:6060/pack" else "http://${InetAddress.getLocalHost().hostAddress}:6060/pack"
+        if (Macrocosm.isInDevEnvironment) "http://127.0.0.1:6060/pack" else "http://$currentIp:6060/pack"
     private var RESOURCE_PACK_HASH: String = "null"
 
     const val PACK_NAME = "§5§lMacrocosm §d§lPack.zip"

@@ -108,6 +108,7 @@ inline fun <reified T> Collection<T>.insertWithin(dummy: T, demand: Int): Collec
 
 val Inventory.emptySlots: Int
     get() {
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         return this.storageContents!!.count { stack -> stack.isAirOrNull() }
     }
 
@@ -470,6 +471,8 @@ fun Random.nextSignedDouble(): Double {
 
 inline fun <reified K, reified V> multimap(): Multimap<K, V> = ArrayListMultimap.create()
 
+fun allOf(vararg conditions: Boolean): Boolean = conditions.all { it }
+fun anyOf(vararg conditions: Boolean): Boolean = conditions.any { it }
 inline fun <reified T> anyNull(vararg nullables: T?): Boolean = nullables.any { it == null }
 inline fun <reified T> allNull(vararg nullables: T?): Boolean = nullables.all { it == null }
 

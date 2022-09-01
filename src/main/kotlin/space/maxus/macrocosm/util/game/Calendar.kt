@@ -147,7 +147,7 @@ object Calendar : Listener {
         NbtIo.writeCompressed(data, stream)
     }
 
-    fun load() {
+    fun readSelf() {
         val file = Path(System.getProperty("user.dir"), "macrocosm", "calendar.dat")
         if (!file.exists())
             return

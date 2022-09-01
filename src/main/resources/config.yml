@@ -1,5 +1,2 @@
-pack:
-    access-token: ''
-    refresh-token: ''
-    app-key: ''
-    app-secret: ''
+connection:
+    discord-bot-token: 'NULL'

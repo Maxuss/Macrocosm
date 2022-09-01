@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -31,6 +32,7 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.events.YearChangeEvent
 import space.maxus.macrocosm.exceptions.MacrocosmThrowable
 import space.maxus.macrocosm.item.*
@@ -55,8 +57,29 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
 import java.net.InetAddress
+import java.util.*
 import kotlin.math.roundToInt
 
+fun connectDiscordCommand() = command("discordauth") {
+    argument("username", StringArgumentType.greedyString()) {
+        runsCatching {
+            val id = player.uniqueId
+            Discord.hasBegunAuth(id).then { key ->
+                player.sendMessage(text("<green>You have already begun the authentication process! Run <yellow><click:copy_to_clipboard:'/auth key:$key'><hover:show_text:'<yellow>Click to copy!'>/auth key:$key</hover></click> in the discord bot!"))
+            }.otherwise {
+                if(Discord.hasAuthenticated(id))
+                    player.sendMessage("<green>You have already authenticated!")
+                else {
+                    val buf = ByteArray(16)
+                    Macrocosm.random.nextBytes(buf)
+                    val key = Base64.getUrlEncoder().encodeToString(buf)
+                    player.sendMessage(text("<green>You have begun the authentication process! Run <yellow><click:copy_to_clipboard:'/auth key:$key'><hover:show_text:'<yellow>Click to copy!'>/auth key:$key</hover></click> in the discord bot to link your accounts!"))
+                    Discord.step1Auth(player.uniqueId, getArgument("username"), key)
+                }
+            }.call()
+        }
+    }
+}
 
 fun bazaarOpCommand() = command("bazaarop") {
     requires { it.hasPermission(4) }

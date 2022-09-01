@@ -32,6 +32,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("net.dv8tion:JDA:5.0.0-alpha.18") {
+        exclude(module = "opus-java")
+    }
 }
 
 tasks {

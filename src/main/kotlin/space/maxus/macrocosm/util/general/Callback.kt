@@ -19,6 +19,35 @@ value class Callback(val chain: () -> Unit) {
     fun exec() = chain()
 }
 
+data class ConditionalValueCallback<V>(val producer: () -> V?) {
+    companion object {
+        fun <V> success(value: V) = ConditionalValueCallback { value }
+        fun <V> fail() = ConditionalValueCallback<V> { null }
+    }
+
+    inline fun then(crossinline runnable: (V) -> Unit): ConditionalValueCallback<V> {
+        return ConditionalValueCallback {
+            val value = producer()
+            if(value != null)
+                runnable(value)
+            value
+        }
+    }
+
+    inline fun otherwise(crossinline runnable: () -> Unit): ConditionalValueCallback<V> {
+        return ConditionalValueCallback {
+            val value = producer()
+            if(value == null)
+                runnable()
+            value
+        }
+    }
+
+    fun call(): V? {
+        return producer()
+    }
+}
+
 data class ConditionalCallback(val condition: () -> Boolean) {
     companion object {
         fun success() = ConditionalCallback { true }
