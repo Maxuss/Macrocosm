@@ -123,7 +123,7 @@ fun <V, C : Iterable<V>> Iterable<C>.unwrapInner(): List<V> {
 fun Iterable<Double>.median(): Double {
     val sorted = this.sorted()
     if (sorted.isEmpty())
-        return Double.NaN
+        return .0
     return if (sorted.size % 2 == 0) {
         ((sorted[sorted.size / 2] + sorted[sorted.size / 2 - 1]) / 2f)
     } else {
@@ -146,7 +146,6 @@ fun <V> Iterable<V>.withAll(other: Iterable<V>): List<V> {
 }
 
 fun <K, V> ConcurrentHashMap<K, V>.withAll(other: ConcurrentHashMap<K, V>): ConcurrentHashMap<K, V> {
-    @Suppress("UNCHECKED_CAST")
     val new = ConcurrentHashMap<K, V>()
     new.putAll(this)
     new.putAll(other)
@@ -238,6 +237,12 @@ inline fun <K, V, O> HashMap<K, V>.mapPaired(fn: (Pair<K, V>) -> O): MutableList
         aggregator.add(fn(entry.toPair()))
     }
     return aggregator
+}
+
+infix fun Double.insteadOfNaN(other: Double): Double {
+    return if(this.isNaN())
+        other
+    else this
 }
 
 fun Duration.toFancyString(): String {

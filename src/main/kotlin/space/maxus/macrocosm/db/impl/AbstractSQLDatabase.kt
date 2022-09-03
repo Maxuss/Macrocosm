@@ -8,7 +8,7 @@ import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
 abstract class AbstractSQLDatabase : DataStorage {
-    private lateinit var connection: Database
+    lateinit var connection: Database
 
     protected abstract fun obtainConnection(): Database
 

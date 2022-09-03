@@ -36,7 +36,6 @@ import space.maxus.macrocosm.util.data.MutableContainer
 import space.maxus.macrocosm.util.general.SuspendConditionalCallback
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
-import space.maxus.macrocosm.util.median
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.Duration
@@ -344,32 +343,7 @@ fun Application.module() {
                         val success = false
                         val error = "Item $id was not found in bazaar storage!"
                     }, HttpStatusCode.NotFound)
-                val itemData = data[id]!!
-                val buyOrders = itemData.buy.toList()
-                val sellOrders = itemData.sell.toList()
-                call.respondJson(object {
-                    val success = true
-                    val item = id
-                    val ordersCount = itemData.amount
-                    val buyOrders = object {
-                        val amount = buyOrders.size
-                        val highestPrice = buyOrders.maxByOrNull { it.pricePer }?.pricePer ?: .0
-                        val lowestPrice = buyOrders.minByOrNull { it.pricePer }?.pricePer ?: .0
-                        val averagePrice = buyOrders.map { it.pricePer }.average()
-                        val medianPrice = buyOrders.map { it.pricePer }.median()
-                        val cumulativeCoins = buyOrders.sumOf { it.totalPrice }
-                        val cumulativeItems = buyOrders.sumOf { it.qty }
-                    }
-                    val sellOrders = object {
-                        val amount = sellOrders.size
-                        val highestPrice = sellOrders.maxByOrNull { it.pricePer }?.pricePer ?: .0
-                        val lowestPrice = sellOrders.minByOrNull { it.pricePer }?.pricePer ?: .0
-                        val averagePrice = sellOrders.map { it.pricePer }.average()
-                        val medianPrice = sellOrders.map { it.pricePer }.median()
-                        val cumulativeCoins = sellOrders.sumOf { it.totalPrice }
-                        val cumulativeItems = sellOrders.sumOf { it.qty }
-                    }
-                })
+                call.respondJson(Bazaar.table.summary(id))
             }
         }
     }

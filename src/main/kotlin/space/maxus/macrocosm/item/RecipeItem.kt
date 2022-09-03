@@ -35,7 +35,7 @@ class RecipeItem(
     override val base: Material,
     override var rarity: Rarity,
     private val baseName: String,
-    private val headSkin: String? = null,
+    val headSkin: String? = null,
     private val description: String? = null,
     private val glow: Boolean = false
 ) : MacrocosmItem {

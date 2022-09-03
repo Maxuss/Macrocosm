@@ -172,6 +172,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)

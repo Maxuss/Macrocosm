@@ -68,7 +68,7 @@ fun connectDiscordCommand() = command("discordauth") {
                 player.sendMessage(text("<green>You have already begun the authentication process! Run <yellow><click:copy_to_clipboard:'/auth key:$key'><hover:show_text:'<yellow>Click to copy!'>/auth key:$key</hover></click> in the discord bot!"))
             }.otherwise {
                 if(Discord.hasAuthenticated(id))
-                    player.sendMessage("<green>You have already authenticated!")
+                    player.sendMessage(text("<green>You have already authenticated!"))
                 else {
                     val buf = ByteArray(16)
                     Macrocosm.random.nextBytes(buf)

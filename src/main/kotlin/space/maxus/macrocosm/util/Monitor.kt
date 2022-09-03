@@ -51,7 +51,7 @@ class Monitor {
 
     fun exitSingle(forThread: Thread) {
         synchronized(this.currentScopes) {
-            val last = currentScopes[forThread.name].last()
+            val last = currentScopes[forThread.name].lastOrNull() ?: return
             currentScopes.remove(forThread.name, last)
         }
     }

@@ -6,7 +6,7 @@ import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.text.text
 
 @Suppress("unused")
-enum class Rank(private val format: Component, val color: TextColor) {
+enum class Rank(val format: Component, val color: TextColor) {
     NONE(text("<gray>"), NamedTextColor.GRAY),
     VIP(text("<green>[VIP] "), NamedTextColor.GREEN),
     MVP(text("<aqua>[MVP] "), NamedTextColor.AQUA),
