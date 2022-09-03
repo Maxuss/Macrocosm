@@ -44,10 +44,12 @@ private fun skillExpFromBlock(block: Block): Pair<Int, SkillType>? {
             25,
             SkillType.MINING
         )
+
         Material.GOLD_ORE, Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_REDSTONE_ORE -> return Pair(
             35,
             SkillType.MINING
         )
+
         Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.DEEPSLATE_GOLD_ORE -> return Pair(50, SkillType.MINING)
         Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> return Pair(80, SkillType.MINING)
         Material.OBSIDIAN -> return Pair(95, SkillType.MINING)
@@ -81,14 +83,17 @@ private fun skillExpFromBlock(block: Block): Pair<Int, SkillType>? {
                     exp,
                     SkillType.MINING
                 )
+
                 Material.GOLD_ORE, Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_REDSTONE_ORE -> return Pair(
                     exp,
                     SkillType.MINING
                 )
+
                 Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.DEEPSLATE_GOLD_ORE -> return Pair(
                     exp,
                     SkillType.MINING
                 )
+
                 Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> return Pair(exp, SkillType.MINING)
                 Material.OBSIDIAN -> return Pair(exp, SkillType.MINING)
                 Material.ANCIENT_DEBRIS -> return Pair(exp, SkillType.MINING)
@@ -104,6 +109,7 @@ private fun skillExpFromBlock(block: Block): Pair<Int, SkillType>? {
                     exp,
                     SkillType.FARMING
                 )
+
                 Material.MELON -> return Pair(exp, SkillType.FARMING)
                 Material.PUMPKIN -> return Pair(exp, SkillType.FARMING)
                 Material.NETHER_WART -> return Pair(exp, SkillType.FARMING)

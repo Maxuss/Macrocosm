@@ -140,6 +140,7 @@ object EquipmentHandler : Listener {
                 e.whoClicked.closeInventory()
                 return
             }
+
             50 -> {
                 player.paper?.openGUI(statBreakdown(player))
             }

@@ -240,7 +240,7 @@ inline fun <K, V, O> HashMap<K, V>.mapPaired(fn: (Pair<K, V>) -> O): MutableList
 }
 
 infix fun Double.insteadOfNaN(other: Double): Double {
-    return if(this.isNaN())
+    return if (this.isNaN())
         other
     else this
 }

@@ -549,6 +549,7 @@ object DamageHandlers : Listener {
                 }
                 text("<white>✧</white>").append(display).append(text("<white>✧</white>"))
             }
+
             DamageType.SUPER_CRITICAL -> {
                 var display = Component.empty()
                 var digitIndex = 0
@@ -571,19 +572,24 @@ object DamageHandlers : Listener {
                 }
                 text("<gold>☠</gold>").append(display).append(text("<gold>☠</gold>"))
             }
+
             DamageType.FIRE -> {
                 text("<gold>\uD83D\uDD25 <yellow>$damageDisplay<gold> \uD83D\uDD25")
             }
+
             DamageType.FROST -> {
                 text("<white>❄ <aqua>$damageDisplay<white> ❄")
             }
+
             DamageType.ELECTRIC -> {
                 text("<white>⚡ <yellow>$damageDisplay<white> ⚡")
             }
+
             @Suppress("DEPRECATION")
             DamageType.MAGIC -> {
                 text("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
             }
+
             else -> {
                 damageDisplay.toComponent().color(NamedTextColor.GRAY)
             }

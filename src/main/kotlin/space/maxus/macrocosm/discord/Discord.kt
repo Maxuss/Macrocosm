@@ -59,13 +59,16 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 
 @Suppress("UNUSED_PARAMETER")
-object Discord: ListenerAdapter() {
-    object ConnectionLoop: ListenerAdapter(), Listener {
+object Discord : ListenerAdapter() {
+    object ConnectionLoop : ListenerAdapter(), Listener {
         private val connectionPool: ExecutorService = Threading.newFixedPool(16)
         private var client: JDAWebhookClient? = null
 
         fun init() {
-            client = WebhookClientBuilder(webhookLink!!).setThreadFactory(ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).setNameFormat("Webhook Thread").setDaemon(true).build()).setWait(true).buildJDA()
+            client = WebhookClientBuilder(webhookLink!!).setThreadFactory(
+                ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler)
+                    .setNameFormat("Webhook Thread").setDaemon(true).build()
+            ).setWait(true).buildJDA()
             Macrocosm.logger.info("Webhook connection initialized!")
         }
 
@@ -74,10 +77,12 @@ object Discord: ListenerAdapter() {
             if (authenticated.containsKey(player.uniqueId)) {
                 val userId = authenticated[player.uniqueId]!!
                 val user = bot.getUserById(userId) ?: bot.retrieveUserById(userId).submit().get()
-                builder.setUsername(user.name).setAvatarUrl(user.avatarUrl).setAllowedMentions(AllowedMentions().withParseUsers(true).withParseRoles(true))
+                builder.setUsername(user.name).setAvatarUrl(user.avatarUrl)
+                    .setAllowedMentions(AllowedMentions().withParseUsers(true).withParseRoles(true))
             } else {
                 builder.setUsername(player.name)
-                    .setAvatarUrl("https://crafatar.com/avatars/${player.uniqueId}?overlay=true").setAllowedMentions(AllowedMentions.none())
+                    .setAvatarUrl("https://crafatar.com/avatars/${player.uniqueId}?overlay=true")
+                    .setAllowedMentions(AllowedMentions.none())
             }
             val built = builder.setContent(msgStr).build()
             client?.send(built)
@@ -86,7 +91,7 @@ object Discord: ListenerAdapter() {
 
         @EventHandler(priority = EventPriority.LOWEST)
         fun onMessage(e: AsyncChatEvent) {
-            if(communicationChannel != 0L && client != null && ::bot.isInitialized) {
+            if (communicationChannel != 0L && client != null && ::bot.isInitialized) {
                 connectionPool.execute {
                     val msgStr = e.originalMessage().str().stripTags()
                     trySendMessage(msgStr, e.player)
@@ -96,34 +101,62 @@ object Discord: ListenerAdapter() {
 
         override fun onMessageReceived(event: MessageReceivedEvent) {
             if (event.channel.idLong == communicationChannel) {
-                if(event.message.author.idLong == 1014930457353265255) {
+                if (event.message.author.idLong == 1014930457353265255) {
                     // ignore our own fake-user webhook messages
                     return
                 }
                 connectionPool.execute {
-                    server.broadcast(if (!event.author.isBot) {
-                        val id = authenticated.entries.firstOrNull { (_, userId) -> userId == event.author.idLong }?.key
-                        val player = if (id != null) MacrocosmPlayer.loadPlayer(id) else null
-                        if (id != null && player != null) {
-                            val offline = Bukkit.getOfflinePlayer(id)
-                            player.rank.format(offline.name ?: event.author.name, event.message.contentStripped)
-                        } else
-                            text("<gray>${event.author.name}: <white>${event.message.contentStripped}")
-                    } else {
-                        text("<blue>[BOT] ${event.author.name}<gray>: <white>${event.message.contentStripped} ${event.message.embeds.joinToString(separator = "") { flattenEmbed(it) }}")
-                    })
+                    server.broadcast(
+                        if (!event.author.isBot) {
+                            val id =
+                                authenticated.entries.firstOrNull { (_, userId) -> userId == event.author.idLong }?.key
+                            val player = if (id != null) MacrocosmPlayer.loadPlayer(id) else null
+                            if (id != null && player != null) {
+                                val offline = Bukkit.getOfflinePlayer(id)
+                                player.rank.format(offline.name ?: event.author.name, event.message.contentStripped)
+                            } else
+                                text("<gray>${event.author.name}: <white>${event.message.contentStripped}")
+                        } else {
+                            text(
+                                "<blue>[BOT] ${event.author.name}<gray>: <white>${event.message.contentStripped} ${
+                                    event.message.embeds.joinToString(
+                                        separator = ""
+                                    ) { flattenEmbed(it) }
+                                }"
+                            )
+                        }
+                    )
                 }
             }
         }
 
         private fun flattenEmbed(embed: MessageEmbed): String {
             val color = TextColor.color(embed.colorRaw).asHexString()
-            return "<br><bold><$color>||<white> ${embed.title}</bold>${embed.fields.joinToString(separator = "<br><$color><bold>||</bold></$color> ") { "<br><$color><bold>||</bold></$color><white> ${it.name}<br><$color><bold>||</bold></$color> <white>${it.value?.reduceToList(35)?.joinToString(separator = "<br><$color><bold>||</bold></$color><white> ")}" }}"
+            return "<br><bold><$color>||<white> ${embed.title}</bold>${
+                embed.fields.joinToString(separator = "<br><$color><bold>||</bold></$color> ") {
+                    "<br><$color><bold>||</bold></$color><white> ${it.name}<br><$color><bold>||</bold></$color> <white>${
+                        it.value?.reduceToList(
+                            35
+                        )?.joinToString(separator = "<br><$color><bold>||</bold></$color><white> ")
+                    }"
+                }
+            }"
         }
     }
 
     private val authenticationBridge: HashMap<UUID, Pair<String, String>> = hashMapOf()
     private val authenticated: HashMap<UUID, Long> = hashMapOf()
+
+    private val commandPool: ExecutorService = Threading.newFixedPool(8)
+    lateinit var bot: JDA
+    private var communicationChannel: Long? = null
+    private var webhookLink: String? = null
+    private val bazaarSellCache: Cache<Identifier, ListIterator<BazaarSellOrder>> =
+        CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
+    private val bazaarBuyCache: Cache<Identifier, ListIterator<BazaarBuyOrder>> =
+        CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
+    private val bazaarUserCache: Cache<UUID, ListIterator<BazaarOrder>> =
+        CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
 
     const val COLOR_RED = 0xBF0000
     const val COLOR_MACROCOSM = 0x4A26BB
@@ -132,16 +165,21 @@ object Discord: ListenerAdapter() {
         setColor(COLOR_RED)
         setTitle("**Not Authenticated**")
         addField("**Authentication Required**", "This command requires authentication to work!", false)
-        addField("**How to Authenticate**", "**1.** Run `/discordauth <discord username>` on the server to begin authentication process and get *auth token*.\n**2.** Run `/auth <token>` in the bot to link your accounts", false)
+        addField(
+            "**How to Authenticate**",
+            "**1.** Run `/discordauth <discord username>` on the server to begin authentication process and get *auth token*.\n**2.** Run `/auth <token>` in the bot to link your accounts",
+            false
+        )
     }
 
     fun hasBegunAuth(id: UUID): ConditionalValueCallback<String> {
-        return if(authenticationBridge.containsKey(id)) {
+        return if (authenticationBridge.containsKey(id)) {
             ConditionalValueCallback.success(authenticationBridge[id]!!.second)
         } else {
             ConditionalValueCallback.fail()
         }
     }
+
     fun hasAuthenticated(id: UUID) = authenticated.containsKey(id)
 
     fun step1Auth(id: UUID, user: String, key: String) {
@@ -160,20 +198,14 @@ object Discord: ListenerAdapter() {
         bot.shutdown()
     }
 
-    private val commandPool: ExecutorService = Threading.newFixedPool(8)
-    lateinit var bot: JDA
-    private var communicationChannel: Long? = null
-    private var webhookLink: String? = null
-    private val bazaarSellCache: Cache<Identifier, ListIterator<BazaarSellOrder>> = CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
-    private val bazaarBuyCache: Cache<Identifier, ListIterator<BazaarBuyOrder>> = CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
-    private val bazaarUserCache: Cache<UUID, ListIterator<BazaarOrder>> = CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
-
     fun setupBot() {
         Threading.runAsyncRaw {
-            var botBuilder = JDABuilder.create(discordBotToken, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES).addEventListeners(this)
+            var botBuilder =
+                JDABuilder.create(discordBotToken, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
+                    .addEventListeners(this)
             communicationChannel = Macrocosm.config.getLong("connections.discord.communication-channel")
             webhookLink = Macrocosm.config.getString("connections.discord.communication-webhook")
-            if(communicationChannel != 0L && allOf(webhookLink != null, webhookLink != "NULL")) {
+            if (communicationChannel != 0L && allOf(webhookLink != null, webhookLink != "NULL")) {
                 Macrocosm.logger.info("Bot entering connection loop at $communicationChannel")
                 botBuilder = botBuilder.addEventListeners(ConnectionLoop)
                 ConnectionLoop.init()
@@ -199,43 +231,64 @@ object Discord: ListenerAdapter() {
     }
 
     override fun onButtonInteraction(e: ButtonInteractionEvent) {
-        when(e.componentId) {
+        when (e.componentId) {
             else -> {
-                if(e.componentId.contains("next_order_buy")) {
+                if (e.componentId.contains("next_order_buy")) {
                     val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5).let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
-                    val order = (if(queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true).queue())
+                    val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
+                        .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
+                    val order =
+                        (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
+                            .queue())
                     val embed = generateBuyOrderEmbed(item, order)
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
-                } else if(e.componentId.contains("next_order_sell")) {
+                } else if (e.componentId.contains("next_order_sell")) {
                     val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5).let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
-                    val order = (if(queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true).queue())
+                    val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5)
+                        .let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
+                    val order =
+                        (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
+                            .queue())
                     val embed = generateSellOrderEmbed(item, order)
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
-                } else if(e.componentId.contains("prev_order_buy")) {
+                } else if (e.componentId.contains("prev_order_buy")) {
                     val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5).let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
-                    val order = (if(queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!").setEphemeral(true).queue())
+                    val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
+                        .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
+                    val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
+                        .setEphemeral(true).queue())
                     val embed = generateBuyOrderEmbed(item, order)
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
-                } else if(e.componentId.contains("prev_order_sell")) {
+                } else if (e.componentId.contains("prev_order_sell")) {
                     val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5).let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
-                    val order = (if(queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!").setEphemeral(true).queue())
+                    val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5)
+                        .let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
+                    val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
+                        .setEphemeral(true).queue())
                     val embed = generateSellOrderEmbed(item, order)
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
-                } else if(e.componentId.contains("prev_order_user")) {
+                } else if (e.componentId.contains("prev_order_user")) {
                     val user = UUID.fromString(e.componentId.split("$").last())
-                    val queue = bazaarUserCache.getIfPresent(user) ?: Bazaar.getOrdersForPlayer(user).listIterator().let { bazaarUserCache.put(user, it); it }
-                    val order = (if(queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!").setEphemeral(true).queue())
-                    val embed = if(order is BazaarBuyOrder) generateBuyOrderEmbed(order.item, order) else if(order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
+                    val queue = bazaarUserCache.getIfPresent(user) ?: Bazaar.getOrdersForPlayer(user).listIterator()
+                        .let { bazaarUserCache.put(user, it); it }
+                    val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
+                        .setEphemeral(true).queue())
+                    val embed = if (order is BazaarBuyOrder) generateBuyOrderEmbed(
+                        order.item,
+                        order
+                    ) else if (order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
-                } else if(e.componentId.contains("next_order_user")) {
+                } else if (e.componentId.contains("next_order_user")) {
                     val user = UUID.fromString(e.componentId.split("$").last())
-                    val queue = bazaarUserCache.getIfPresent(user) ?: Bazaar.getOrdersForPlayer(user).listIterator().let { bazaarUserCache.put(user, it); it }
-                    val order = (if(queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true).queue())
-                    val embed = if(order is BazaarBuyOrder) generateBuyOrderEmbed(order.item, order) else if(order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
+                    val queue = bazaarUserCache.getIfPresent(user) ?: Bazaar.getOrdersForPlayer(user).listIterator()
+                        .let { bazaarUserCache.put(user, it); it }
+                    val order =
+                        (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
+                            .queue())
+                    val embed = if (order is BazaarBuyOrder) generateBuyOrderEmbed(
+                        order.item,
+                        order
+                    ) else if (order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
                 }
             }
@@ -250,7 +303,11 @@ object Discord: ListenerAdapter() {
             setColor(COLOR_MACROCOSM)
             setTitle("**Bazaar Sell Order**")
             setFooter("Cached Bazaar Data")
-            setAuthor("Bazaar | Sell Order by ${mc?.rank?.format?.str()?.stripTags() ?: ""} ${op.name}", null, "https://crafatar.com/avatars/${order.createdBy}?overlay=true")
+            setAuthor(
+                "Bazaar | Sell Order by ${mc?.rank?.format?.str()?.stripTags() ?: ""} ${op.name}",
+                null,
+                "https://crafatar.com/avatars/${order.createdBy}?overlay=true"
+            )
 
             val ele = BazaarElement.idToElement(item)!!
             setThumbnail(bazaarItemThumbnail(ele))
@@ -263,11 +320,15 @@ object Discord: ListenerAdapter() {
             addField("Price Per:", "**${Formatting.withCommas(order.pricePer.toBigDecimal())}** coins", true)
             addField("Original Amount:", "${Formatting.withCommas(order.originalAmount.toBigDecimal())}x", true)
             addBlankField(false)
-            addField("**Buyers:**", "```yml\n${if(order.buyers.isEmpty()) "- None" else order.buyers.joinToString(separator = "\n") {
-                val mcSeller = MacrocosmPlayer.loadPlayer(order.createdBy)
-                val opSeller = Bukkit.getOfflinePlayer(order.createdBy)
-                "${mcSeller?.rank?.format?.str()?.stripTags() ?: ""} ${opSeller.name}"
-            }}\n```", false)
+            addField(
+                "**Buyers:**", "```yml\n${
+                    if (order.buyers.isEmpty()) "- None" else order.buyers.joinToString(separator = "\n") {
+                        val mcSeller = MacrocosmPlayer.loadPlayer(order.createdBy)
+                        val opSeller = Bukkit.getOfflinePlayer(order.createdBy)
+                        "${mcSeller?.rank?.format?.str()?.stripTags() ?: ""} ${opSeller.name}"
+                    }
+                }\n```", false
+            )
 
             addBlankField(false)
 
@@ -284,7 +345,11 @@ object Discord: ListenerAdapter() {
             setColor(COLOR_MACROCOSM)
             setTitle("**Bazaar Buy Order**")
             setFooter("Cached Bazaar Data")
-            setAuthor("Bazaar | Buy Order by ${mc?.rank?.format?.str()?.stripTags() ?: ""} ${op.name}", null, "https://crafatar.com/avatars/${order.createdBy}?overlay=true")
+            setAuthor(
+                "Bazaar | Buy Order by ${mc?.rank?.format?.str()?.stripTags() ?: ""} ${op.name}",
+                null,
+                "https://crafatar.com/avatars/${order.createdBy}?overlay=true"
+            )
 
             val ele = BazaarElement.idToElement(item)!!
             setThumbnail(bazaarItemThumbnail(ele))
@@ -297,11 +362,15 @@ object Discord: ListenerAdapter() {
             addField("Price Per:", "**${Formatting.withCommas(order.pricePer.toBigDecimal())}** coins", true)
             addField("Original Amount:", "${Formatting.withCommas(order.originalAmount.toBigDecimal())}x", true)
             addBlankField(false)
-            addField("**Sellers:**", "```yml\n${if(order.sellers.isEmpty()) "- None" else order.sellers.joinToString(separator = "\n") {
-                val mcSeller = MacrocosmPlayer.loadPlayer(order.createdBy)
-                val opSeller = Bukkit.getOfflinePlayer(order.createdBy)
-                "${mcSeller?.rank?.format?.str()?.stripTags() ?: ""} ${opSeller.name}"
-            }}\n```", false)
+            addField(
+                "**Sellers:**", "```yml\n${
+                    if (order.sellers.isEmpty()) "- None" else order.sellers.joinToString(separator = "\n") {
+                        val mcSeller = MacrocosmPlayer.loadPlayer(order.createdBy)
+                        val opSeller = Bukkit.getOfflinePlayer(order.createdBy)
+                        "${mcSeller?.rank?.format?.str()?.stripTags() ?: ""} ${opSeller.name}"
+                    }
+                }\n```", false
+            )
 
             addBlankField(false)
 
@@ -311,11 +380,20 @@ object Discord: ListenerAdapter() {
     }
 
     override fun onCommandAutoCompleteInteraction(e: CommandAutoCompleteInteractionEvent) {
-        when(e.name) {
-            "info" -> e.replyChoiceStrings(arrayOf("server", "bot").filter { it.startsWith(e.focusedOption.value) }).queue()
-            "bazaar" -> when(e.focusedOption.name) {
-                "type" -> e.replyChoiceStrings(arrayOf("buy_orders", "sell_orders", "summary").filter { it.startsWith(e.focusedOption.value) }).queue()
-                "product" -> e.replyChoiceStrings(BazaarElement.allKeys.filter { it.path.contains(e.focusedOption.value) }.map { it.toString() }.take(25)).queue()
+        when (e.name) {
+            "info" -> e.replyChoiceStrings(arrayOf("server", "bot").filter { it.startsWith(e.focusedOption.value) })
+                .queue()
+
+            "bazaar" -> when (e.focusedOption.name) {
+                "type" -> e.replyChoiceStrings(
+                    arrayOf(
+                        "buy_orders",
+                        "sell_orders",
+                        "summary"
+                    ).filter { it.startsWith(e.focusedOption.value) }).queue()
+
+                "product" -> e.replyChoiceStrings(BazaarElement.allKeys.filter { it.path.contains(e.focusedOption.value) }
+                    .map { it.toString() }.take(25)).queue()
             }
         }
     }
@@ -338,8 +416,9 @@ object Discord: ListenerAdapter() {
     }
 
     private fun bazaarCommand(e: SlashCommandInteractionEvent, op: OfflinePlayer) {
-        val type = e.getOption("type")?.asString ?: return e.reply("Action Type not provided!").setEphemeral(true).queue()
-        when(type) {
+        val type =
+            e.getOption("type")?.asString ?: return e.reply("Action Type not provided!").setEphemeral(true).queue()
+        when (type) {
             "summary" -> {
                 // require strictly item
                 val msg = e.reply("Calculating bazaar summary, please wait...").submit().get()
@@ -350,7 +429,14 @@ object Discord: ListenerAdapter() {
                     return
                 })
                 val summary = Bazaar.table.summary(product) ?: run {
-                    msg.editOriginal(MessageEditData.fromEmbeds(genericErrorEmbed("Not Found", "Could not find item of type `$product` in the bazaar!").build())).queue()
+                    msg.editOriginal(
+                        MessageEditData.fromEmbeds(
+                            genericErrorEmbed(
+                                "Not Found",
+                                "Could not find item of type `$product` in the bazaar!"
+                            ).build()
+                        )
+                    ).queue()
                     return
                 }
                 val embed = embed {
@@ -393,27 +479,41 @@ object Discord: ListenerAdapter() {
 
                 msg.editOriginal(MessageEditBuilder().setContent("").setEmbeds(embed).build()).queue()
             }
+
             else -> {
                 val username = e.getOption("user")?.asString
                 val product = e.getOption("product")?.asString
 
-                if(username == null && product != null) {
+                if (username == null && product != null) {
                     // querying product data
-                    when(type) {
+                    when (type) {
                         "buy_orders" -> {
                             val item = Identifier.parse(product)
-                            val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5).let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
-                            val order = (if(queue.hasNext()) queue.next() else return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find any buy orders for this product!").build()).setEphemeral(true).queue())
+                            val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
+                                .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
+                            val order = (if (queue.hasNext()) queue.next() else return e.replyEmbeds(
+                                genericErrorEmbed(
+                                    "Not Found",
+                                    "Could not find any buy orders for this product!"
+                                ).build()
+                            ).setEphemeral(true).queue())
                             val embed = generateBuyOrderEmbed(item, order)
                             e.replyEmbeds(embed).addActionRow(
                                 Button.primary("prev_order_buy$$item", "Previous Order"),
                                 Button.primary("next_order_buy$$item", "Next Order")
                             ).queue()
                         }
+
                         "sell_orders" -> {
                             val item = Identifier.parse(product)
-                            val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5).let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
-                            val order = (if(queue.hasNext()) queue.next() else return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find any sell orders for this product!").build()).setEphemeral(true).queue())
+                            val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5)
+                                .let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
+                            val order = (if (queue.hasNext()) queue.next() else return e.replyEmbeds(
+                                genericErrorEmbed(
+                                    "Not Found",
+                                    "Could not find any sell orders for this product!"
+                                ).build()
+                            ).setEphemeral(true).queue())
                             val embed = generateSellOrderEmbed(item, order)
                             e.replyEmbeds(embed).addActionRow(
                                 Button.primary("prev_order_sell$$item", "Previous Order"),
@@ -421,59 +521,98 @@ object Discord: ListenerAdapter() {
                             ).queue()
                         }
                     }
-                } else if(product == null && username != null) {
+                } else if (product == null && username != null) {
                     // queueing data for a player
-                    val uuid = try { UUID.fromString(username) } catch (e: Exception) { Bukkit.getOfflinePlayer(username).uniqueId }
-                    val orders = bazaarUserCache.getIfPresent(uuid) ?: Bazaar.getOrdersForPlayer(uuid).take(10).listIterator().let { bazaarUserCache.put(uuid, it); it }
-                    val order = (if(orders.hasNext()) orders.next() else return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find any orders for this user!").build()).setEphemeral(true).queue())
-                    val embed = if(order is BazaarBuyOrder) generateBuyOrderEmbed(order.item, order) else if(order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
+                    val uuid = try {
+                        UUID.fromString(username)
+                    } catch (e: Exception) {
+                        Bukkit.getOfflinePlayer(username).uniqueId
+                    }
+                    val orders =
+                        bazaarUserCache.getIfPresent(uuid) ?: Bazaar.getOrdersForPlayer(uuid).take(10).listIterator()
+                            .let { bazaarUserCache.put(uuid, it); it }
+                    val order = (if (orders.hasNext()) orders.next() else return e.replyEmbeds(
+                        genericErrorEmbed(
+                            "Not Found",
+                            "Could not find any orders for this user!"
+                        ).build()
+                    ).setEphemeral(true).queue())
+                    val embed = if (order is BazaarBuyOrder) generateBuyOrderEmbed(
+                        order.item,
+                        order
+                    ) else if (order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
                     e.replyEmbeds(embed).addActionRow(
                         Button.primary("prev_order_user$$uuid", "Previous Order"),
                         Button.primary("next_order_user$$uuid", "Next Order")
                     ).queue()
                 } else {
                     // invalid arguments provided
-                    e.replyEmbeds(genericErrorEmbed("Invalid Arguments", "Invalid arguments provided for this command!").build()).setEphemeral(true).queue()
+                    e.replyEmbeds(
+                        genericErrorEmbed(
+                            "Invalid Arguments",
+                            "Invalid arguments provided for this command!"
+                        ).build()
+                    ).setEphemeral(true).queue()
                 }
             }
         }
     }
 
-    private fun displayBuyOrders(e: SlashCommandInteractionEvent, product: Identifier) {
-
-    }
-
     private fun authCommand(e: SlashCommandInteractionEvent) {
         val key = e.getOption("key")?.asString ?: return e.reply("Key not provided!").setEphemeral(true).queue()
         val fitting = authenticationBridge.entries.firstOrNull { (_, p) -> p.second == key }
-        if(fitting == null) {
-            return e.replyEmbeds(genericErrorEmbed("Not Found", "You have not begun authentication process yet! Run `/discordauth <discord username>` to start!").build()).setEphemeral(true).queue()
-        } else if(authenticated.containsValue(e.idLong)) {
-            return e.replyEmbeds(genericErrorEmbed("Already Authenticated", "You have already authenticated!").build()).setEphemeral(true).queue()
+        if (fitting == null) {
+            return e.replyEmbeds(
+                genericErrorEmbed(
+                    "Not Found",
+                    "You have not begun authentication process yet! Run `/discordauth <discord username>` to start!"
+                ).build()
+            ).setEphemeral(true).queue()
+        } else if (authenticated.containsValue(e.idLong)) {
+            return e.replyEmbeds(genericErrorEmbed("Already Authenticated", "You have already authenticated!").build())
+                .setEphemeral(true).queue()
         } else {
             val (username, _) = fitting.value
             val currentUserName = "${e.user.name}#${e.user.discriminator}"
-            if(username != currentUserName) {
-                return e.replyEmbeds(genericErrorEmbed("Invalid User", "This authentication process was started by a different user!").build()).setEphemeral(true).queue()
+            if (username != currentUserName) {
+                return e.replyEmbeds(
+                    genericErrorEmbed(
+                        "Invalid User",
+                        "This authentication process was started by a different user!"
+                    ).build()
+                ).setEphemeral(true).queue()
             }
             authenticationBridge.remove(fitting.key)
             authenticated[fitting.key] = e.user.idLong
-            e.replyEmbeds(genericSuccessEmbed("Authentication Successful!", "Account `${Bukkit.getOfflinePlayer(fitting.key).name}` was linked with Discord account ${e.user.asMention}!").build()).setEphemeral(true).queue()
+            e.replyEmbeds(
+                genericSuccessEmbed(
+                    "Authentication Successful!",
+                    "Account `${Bukkit.getOfflinePlayer(fitting.key).name}` was linked with Discord account ${e.user.asMention}!"
+                ).build()
+            ).setEphemeral(true).queue()
         }
     }
 
     private fun infoCommand(e: SlashCommandInteractionEvent) {
-        val category = e.getOption("category")?.asString ?: return e.reply("Category missing!").setEphemeral(true).queue()
-        when(category) {
-            "server" -> e.replyEmbeds(EmbedBuilder().addField("Test a", "A", true).setColor(NamedTextColor.LIGHT_PURPLE.value()).build()).queue()
-            "bot" -> e.replyEmbeds(EmbedBuilder().addField("Test b", "B", false).setColor(NamedTextColor.DARK_PURPLE.value()).build()).queue()
+        val category =
+            e.getOption("category")?.asString ?: return e.reply("Category missing!").setEphemeral(true).queue()
+        when (category) {
+            "server" -> e.replyEmbeds(
+                EmbedBuilder().addField("Test a", "A", true).setColor(NamedTextColor.LIGHT_PURPLE.value()).build()
+            ).queue()
+
+            "bot" -> e.replyEmbeds(
+                EmbedBuilder().addField("Test b", "B", false).setColor(NamedTextColor.DARK_PURPLE.value()).build()
+            ).queue()
+
             else -> e.reply("Invalid category!").setEphemeral(true).queue()
         }
     }
 
     private fun pingCommand(e: SlashCommandInteractionEvent) {
         val now = System.currentTimeMillis()
-        e.reply("Pong!").setEphemeral(true).flatMap { e.hook.editOriginal("Bot Ping: **${System.currentTimeMillis() - now}ms**") }.queue()
+        e.reply("Pong!").setEphemeral(true)
+            .flatMap { e.hook.editOriginal("Bot Ping: **${System.currentTimeMillis() - now}ms**") }.queue()
     }
 
     private fun genericErrorEmbed(error: String, message: String): EmbedBuilder {
@@ -492,7 +631,7 @@ object Discord: ListenerAdapter() {
             },
             onFailure = { err ->
                 val mc = err.macrocosm
-                if(!ctx.isAcknowledged) {
+                if (!ctx.isAcknowledged) {
                     // sending message to player directly
                     ctx.replyEmbeds(mc.embed).setEphemeral(true).addActionRow(
                         Button.link(mc.reportUrl, "Report This")
@@ -508,16 +647,21 @@ object Discord: ListenerAdapter() {
         )
     }
 
-    private fun authOnly(e: SlashCommandInteractionEvent, command: (SlashCommandInteractionEvent, OfflinePlayer) -> Unit) {
+    private fun authOnly(
+        e: SlashCommandInteractionEvent,
+        command: (SlashCommandInteractionEvent, OfflinePlayer) -> Unit
+    ) {
         val eId = e.user.idLong
-        val uuid = authenticated.entries.firstOrNull { (_, id) -> id == eId }?.key ?: return e.replyEmbeds(EMBED_AUTH_REQUIRED).setEphemeral(true).queue()
+        val uuid =
+            authenticated.entries.firstOrNull { (_, id) -> id == eId }?.key ?: return e.replyEmbeds(EMBED_AUTH_REQUIRED)
+                .setEphemeral(true).queue()
         command(e, Bukkit.getOfflinePlayer(uuid))
     }
 
     private fun bazaarItemThumbnail(item: MacrocosmItem): String {
         val id = item.base.name.lowercase()
-        if(id == "player_head") {
-            val skin = when(item) {
+        if (id == "player_head") {
+            val skin = when (item) {
                 is SkullAbilityItem -> item.skullOwner
                 is RecipeItem -> item.headSkin
                 else -> unreachable() // we should not reach this
@@ -526,16 +670,20 @@ object Discord: ListenerAdapter() {
                 val jo = GSON.fromJson(Base64.getDecoder().decode(skin).decodeToString(), JsonObject::class.java)
                 val textureHash = jo["textures"].asJsonObject["SKIN"].asJsonObject["url"].asString.split("/").last()
                 "https://mc-heads.net/head/$textureHash/150.png"
-            } catch(e: IllegalArgumentException) {
+            } catch (e: IllegalArgumentException) {
                 // it seems that a player's name was provided instead of a base64 object, use normal name instead
                 "https://mc-heads.net/head/$skin/150.png"
             }
         }
-        return if(item.base.isBlock) "https://mcapi.marveldc.me/item/$id?version=1.19&width=250&height=250&fuzzySearch=false" else "https://raw.githubusercontent.com/Maxuss/Macrocosm-Data/master/items/generated/${id}.png"
+        return if (item.base.isBlock) "https://mcapi.marveldc.me/item/$id?version=1.19&width=250&height=250&fuzzySearch=false" else "https://raw.githubusercontent.com/Maxuss/Macrocosm-Data/master/items/generated/${id}.png"
     }
 
     inline fun embed(builder: EmbedBuilder.() -> Unit): MessageEmbed {
-        return EmbedBuilder().setFooter("Macrocosm",  "https://cdn.discordapp.com/attachments/846281911332896818/1014934635618258984/pack.png").setTimestamp(
-            Instant.now()).apply(builder).build()
+        return EmbedBuilder().setFooter(
+            "Macrocosm",
+            "https://cdn.discordapp.com/attachments/846281911332896818/1014934635618258984/pack.png"
+        ).setTimestamp(
+            Instant.now()
+        ).apply(builder).build()
     }
 }

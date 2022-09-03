@@ -490,6 +490,7 @@ private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendCond
             }, HttpStatusCode.Forbidden)
             return SuspendConditionalCallback.suspendFail()
         }
+
         KeyManager.ValidationResult.INVALID_KEY -> {
             respondJson(object {
                 val success = false
@@ -497,6 +498,7 @@ private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendCond
             }, HttpStatusCode.Forbidden)
             return SuspendConditionalCallback.suspendFail()
         }
+
         KeyManager.ValidationResult.KEY_THROTTLE -> {
             respondJson(object {
                 val success = false
@@ -504,6 +506,7 @@ private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendCond
             }, HttpStatusCode.TooManyRequests)
             return SuspendConditionalCallback.suspendFail()
         }
+
         KeyManager.ValidationResult.INSUFFICIENT_PERMISSIONS -> {
             respondJson(object {
                 val success = false
@@ -511,6 +514,7 @@ private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendCond
             })
             return SuspendConditionalCallback.suspendFail()
         }
+
         KeyManager.ValidationResult.INVALID_FORMAT -> {
             respondJson(object {
                 val success = false

@@ -14,6 +14,7 @@ class Ticker(val range: IntRange) {
                     direction = Direction.BACKWARDS
                 c
             }
+
             Direction.BACKWARDS -> {
                 val c = cursor.decrementAndGet()
                 if (c <= range.first)

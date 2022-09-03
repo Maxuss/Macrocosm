@@ -77,50 +77,60 @@ private fun statsFromMaterial(mat: Material) = stats {
             damage = 5f
             miningSpeed = 35f
         }
+
         Material.STONE_SHOVEL -> damage = 5f
         Material.STONE_HOE, Material.STONE_PICKAXE -> {
             damage = 5f
             miningSpeed = 60f
         }
+
         Material.WOODEN_SWORD, Material.WOODEN_AXE -> damage = 10f
         Material.IRON_PICKAXE, Material.IRON_HOE, Material.IRON_SHOVEL -> {
             damage = 10f
             miningSpeed = 110f
         }
+
         Material.STONE_SWORD, Material.STONE_AXE -> {
             damage = 20f
             miningSpeed = 150f
         }
+
         Material.IRON_SWORD -> damage = 20f
         Material.IRON_AXE, Material.DIAMOND_HOE, Material.DIAMOND_PICKAXE -> {
             damage = 20f
             miningSpeed = 180f
         }
+
         Material.DIAMOND_SWORD -> damage = 40f
         Material.DIAMOND_AXE -> {
             damage = 40f
             miningSpeed = 180f
         }
+
         Material.NETHERITE_PICKAXE -> {
             damage = 50f
             miningSpeed = 350f
             miningFortune = 45f
         }
+
         Material.NETHERITE_HOE -> {
             damage = 50f
             miningSpeed = 350f
             farmingFortune = 30f
         }
+
         Material.NETHERITE_SHOVEL -> {
             damage = 50f
             miningSpeed = 350f
             excavatingFortune = 40f
         }
+
         Material.NETHERITE_SWORD -> {
             damage = 100f
             strength = 25f
             ferocity = 10f
         }
+
         Material.NETHERITE_AXE -> {
             damage = 100f
             miningSpeed = 350f
@@ -132,10 +142,12 @@ private fun statsFromMaterial(mat: Material) = stats {
             magicFind = 5f
             miningSpeed = 300f
         }
+
         Material.GOLDEN_SWORD -> {
             damage = 20f
             magicFind = 8f
         }
+
         Material.GOLDEN_AXE -> {
             damage = 20f
             magicFind = 8f
@@ -155,30 +167,36 @@ private fun statsFromMaterial(mat: Material) = stats {
         Material.CHAINMAIL_BOOTS, Material.CHAINMAIL_HELMET, Material.LEATHER_LEGGINGS -> defense = 15f
         Material.CHAINMAIL_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.GOLDEN_BOOTS, Material.GOLDEN_LEGGINGS, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_HELMET -> defense =
             20f
+
         Material.CHAINMAIL_CHESTPLATE, Material.IRON_BOOTS, Material.IRON_HELMET -> defense = 25f
         Material.IRON_LEGGINGS, Material.IRON_CHESTPLATE -> defense = 30f
         Material.DIAMOND_BOOTS, Material.DIAMOND_HELMET -> {
             defense = 40f
             health = 10f
         }
+
         Material.DIAMOND_LEGGINGS -> {
             defense = 45f
             health = 15f
         }
+
         Material.DIAMOND_CHESTPLATE -> {
             defense = 50f
             health = 25f
         }
+
         Material.NETHERITE_BOOTS, Material.NETHERITE_HELMET -> {
             defense = 75f
             trueDefense = 1f
             strength = 5f
         }
+
         Material.NETHERITE_LEGGINGS, Material.NETHERITE_CHESTPLATE -> {
             defense = 100f
             trueDefense = 2f
             strength = 10f
         }
+
         Material.CARVED_PUMPKIN -> defense = 5f
         Material.ELYTRA -> {
             magicFind = 25f
@@ -249,6 +267,7 @@ private fun getRunesForItem(item: Material): List<RuneSlot> {
             RuneSlot.COMBAT,
             RuneSlot.UTILITY
         )
+
         else -> {}
     }
 

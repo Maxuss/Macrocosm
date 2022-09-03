@@ -16,7 +16,7 @@ object Accessor {
     }
 
     fun readIfOpen(relative: String): ConditionalValueCallback<String> {
-        return ConditionalValueCallback { access(relative).let { if(it.exists()) it.toFile().readText() else null } }
+        return ConditionalValueCallback { access(relative).let { if (it.exists()) it.toFile().readText() else null } }
     }
 
     fun overwrite(relative: String, value: String) {

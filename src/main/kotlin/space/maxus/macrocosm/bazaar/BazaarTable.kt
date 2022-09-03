@@ -28,7 +28,14 @@ data class BazaarOrderSummary(
     val cumulativeCoins: BigDecimal,
     val cumulativeItems: Int
 )
-data class BazaarItemSummary(val success: Boolean, val item: Identifier, val ordersCount: Int, val buyOrders: BazaarOrderSummary, val sellOrders: BazaarOrderSummary)
+
+data class BazaarItemSummary(
+    val success: Boolean,
+    val item: Identifier,
+    val ordersCount: Int,
+    val buyOrders: BazaarOrderSummary,
+    val sellOrders: BazaarOrderSummary
+)
 
 class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : DatabaseStore {
     companion object {
@@ -58,7 +65,8 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
 
     val entries = itemData.size
     val ordersTotal = itemData.values.sumOf { entry -> entry.buy.size + entry.sell.size }
-    private val summaryCache: Cache<Identifier, BazaarItemSummary> = CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
+    private val summaryCache: Cache<Identifier, BazaarItemSummary> =
+        CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
 
     fun topBuyOrders(item: Identifier, amount: Int): Collection<BazaarBuyOrder> {
         return this.itemData[item]!!.buy.take(amount)
@@ -71,7 +79,7 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
     fun summary(item: Identifier): BazaarItemSummary? {
         val itemData = itemData[item] ?: return null
         val present = summaryCache.getIfPresent(item)
-        if(present != null)
+        if (present != null)
             return present
         val buyOrders = itemData.buy.toList()
         val sellOrders = itemData.sell.toList()

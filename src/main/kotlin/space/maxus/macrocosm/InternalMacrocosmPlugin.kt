@@ -109,7 +109,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
             CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
             conn.disconnect()
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             // we are probably offline, set the current ip to localhost
             CURRENT_IP = "127.0.0.1"
         }
@@ -285,7 +285,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         config.load(cfgFile)
 
         DISCORD_BOT_TOKEN = config.getString("connections.discord-bot-token")
-        if(DISCORD_BOT_TOKEN != null && DISCORD_BOT_TOKEN != "NULL") {
+        if (DISCORD_BOT_TOKEN != null && DISCORD_BOT_TOKEN != "NULL") {
             connectDiscordCommand()
         }
 

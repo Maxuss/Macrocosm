@@ -59,6 +59,7 @@ object MasterNecromancerBonus : TieredSetBonus(
                     NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_YOUNGLING.entity)
                     baby[e.player.uniqueId] = entity.uuid
                 }
+
                 3 -> {
                     // golden ghoul
                     sanitizeRemove(player, baby)
@@ -71,6 +72,7 @@ object MasterNecromancerBonus : TieredSetBonus(
                     NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_GOLDEN.entity)
                     golden[e.player.uniqueId] = entity.uuid
                 }
+
                 4 -> {
                     // giant
                     sanitizeRemove(player, baby)

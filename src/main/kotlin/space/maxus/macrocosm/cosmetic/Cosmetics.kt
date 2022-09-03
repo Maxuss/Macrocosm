@@ -39,6 +39,7 @@ enum class Cosmetics(val inner: Cosmetic) {
                     is Dye -> {
                         Registry.ITEM.register(id, DyeItem(cosmetic))
                     }
+
                     is SkullSkin -> {
                         Registry.ITEM.register(id, SkullSkinItem(cosmetic))
                     }

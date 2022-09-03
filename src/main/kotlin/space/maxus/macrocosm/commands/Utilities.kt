@@ -67,7 +67,7 @@ fun connectDiscordCommand() = command("discordauth") {
             Discord.hasBegunAuth(id).then { key ->
                 player.sendMessage(text("<green>You have already begun the authentication process! Run <yellow><click:copy_to_clipboard:'/auth key:$key'><hover:show_text:'<yellow>Click to copy!'>/auth key:$key</hover></click> in the discord bot!"))
             }.otherwise {
-                if(Discord.hasAuthenticated(id))
+                if (Discord.hasAuthenticated(id))
                     player.sendMessage(text("<green>You have already authenticated!"))
                 else {
                     val buf = ByteArray(16)
@@ -101,6 +101,7 @@ fun bazaarOpCommand() = command("bazaarop") {
                         BazaarOp.DO_INSTANT_BUY -> {
                             Bazaar.instantBuy(mc, player, item, quantity)
                         }
+
                         BazaarOp.DO_INSTANT_SELL -> {
                             if (!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
                                 throw MacrocosmThrowable(
@@ -109,6 +110,7 @@ fun bazaarOpCommand() = command("bazaarop") {
                                 )
                             Bazaar.instantSell(mc, player, item, quantity)
                         }
+
                         else -> {
                             throw MacrocosmThrowable(
                                 "INVALID_ARGUMENTS",
@@ -129,6 +131,7 @@ fun bazaarOpCommand() = command("bazaarop") {
                             BazaarOp.DO_INSTANT_BUY -> {
                                 Bazaar.instantBuy(mc, player, item, quantity)
                             }
+
                             BazaarOp.DO_INSTANT_SELL -> {
                                 if (!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
                                     throw MacrocosmThrowable(
@@ -137,9 +140,11 @@ fun bazaarOpCommand() = command("bazaarop") {
                                     )
                                 Bazaar.instantSell(mc, player, item, quantity)
                             }
+
                             BazaarOp.CREATE_BUY_ORDER -> {
                                 Bazaar.createBuyOrder(mc, player, item, quantity, pricePer)
                             }
+
                             BazaarOp.CREATE_SELL_ORDER -> {
                                 if (!BazaarIntrinsics.ensurePlayerHasEnoughItems(mc, player, item, quantity))
                                     throw MacrocosmThrowable(

@@ -223,6 +223,7 @@ object ZombieSlayer : Slayer(
                 ZombieAbilities.MEAT_SKEWER,
                 ZombieAbilities.EXANIMATED_REPEL
             )
+
             else -> listOf()
         }
     }
@@ -240,6 +241,7 @@ object ZombieSlayer : Slayer(
                 1,
                 85.0
             )
+
             2 -> RevenantHorror(
                 stats {
                     health = 25000f
@@ -251,6 +253,7 @@ object ZombieSlayer : Slayer(
                 2,
                 200.0
             )
+
             3 -> RevenantHorror(
                 stats {
                     health = 150_000f
@@ -263,6 +266,7 @@ object ZombieSlayer : Slayer(
                 3,
                 560.0
             )
+
             4 -> RevenantHorror(
                 stats {
                     health = 1_200_000f
@@ -275,6 +279,7 @@ object ZombieSlayer : Slayer(
                 4,
                 1200.0
             )
+
             5 -> AtonedHorror
             6 -> EntombedReaper
             else -> unreachable()

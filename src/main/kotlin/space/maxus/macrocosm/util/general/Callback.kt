@@ -28,7 +28,7 @@ data class ConditionalValueCallback<V>(val producer: () -> V?) {
     inline fun then(crossinline runnable: (V) -> Unit): ConditionalValueCallback<V> {
         return ConditionalValueCallback {
             val value = producer()
-            if(value != null)
+            if (value != null)
                 runnable(value)
             value
         }
@@ -37,7 +37,7 @@ data class ConditionalValueCallback<V>(val producer: () -> V?) {
     inline fun otherwise(crossinline runnable: () -> Unit): ConditionalValueCallback<V> {
         return ConditionalValueCallback {
             val value = producer()
-            if(value == null)
+            if (value == null)
                 runnable()
             value
         }

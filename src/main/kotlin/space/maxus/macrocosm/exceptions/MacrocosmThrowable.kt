@@ -9,6 +9,7 @@ import java.net.URLEncoder
 open class MacrocosmThrowable(val code: String, message: String = "Internal error.") : Throwable(message) {
     val component =
         text("<gray>($code): <red>${message.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }} ").noitalic()
+
     // we usually don't need an embed, so delegate to lazy evaluation
     val embed by lazy {
         Discord.embed {
@@ -19,7 +20,12 @@ open class MacrocosmThrowable(val code: String, message: String = "Internal erro
     }
 
     val reportUrl =
-        "https://gitlab.com/Maxuss/Macrocosm/-/issues/new?issue[description]=${URLEncoder.encode("Unknown Error occurs: $message", Charsets.UTF_8)}&issue[title]=${URLEncoder.encode("Unexpected Error '$code'", Charsets.UTF_8)}"
+        "https://gitlab.com/Maxuss/Macrocosm/-/issues/new?issue[description]=${
+            URLEncoder.encode(
+                "Unknown Error occurs: $message",
+                Charsets.UTF_8
+            )
+        }&issue[title]=${URLEncoder.encode("Unexpected Error '$code'", Charsets.UTF_8)}"
 
 }
 
