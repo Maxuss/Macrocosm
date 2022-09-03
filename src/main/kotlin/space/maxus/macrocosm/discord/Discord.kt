@@ -417,7 +417,7 @@ object Discord : ListenerAdapter() {
 
     private fun bazaarCommand(e: SlashCommandInteractionEvent, op: OfflinePlayer) {
         val type =
-            e.getOption("type")?.asString ?: return e.reply("Action Type not provided!").setEphemeral(true).queue()
+            e.getOption("type")?.asString
         when (type) {
             "summary" -> {
                 // require strictly item
