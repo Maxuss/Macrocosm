@@ -39,7 +39,10 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.metrics.report
+import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.ObjectOutputStream
 import java.nio.file.FileSystemAlreadyExistsException
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -75,6 +78,15 @@ typealias Fn = () -> Unit
 typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
+
+inline fun <reified T> serializeBytes(data: T): String {
+    val s = ByteArrayOutputStream()
+    val stream = ObjectOutputStream(BufferedOutputStream(s))
+    stream.writeObject(data)
+    stream.flush()
+    stream.close()
+    return Base64.getEncoder().encodeToString(s.toByteArray())
+}
 
 inline fun <reified T : Enum<T>> ClosedRange<T>.toList(values: FnRet<Array<out T>>): List<T> {
     val intRange = this.start.ordinal..this.endInclusive.ordinal

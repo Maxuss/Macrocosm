@@ -633,7 +633,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
     companion object {
         fun deserializeFromBytes(bytes: String): MacrocosmItem? {
-            return ItemStack.deserializeBytes(Base64.getDecoder().decode(bytes)).macrocosm
+            return if(bytes == "NULL")
+                null
+            else ItemStack.deserializeBytes(Base64.getDecoder().decode(bytes)).macrocosm
         }
     }
 }

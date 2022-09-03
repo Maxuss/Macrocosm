@@ -4,6 +4,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import space.maxus.macrocosm.collections.Collections
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
+import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.PlayerEquipment
 import space.maxus.macrocosm.players.PlayerMemory
@@ -86,10 +87,10 @@ class SqlPlayerData(
                 Skills.fromJson(res[t.skills]),
                 fromJson(res[t.recipes]) ?: listOf(),
                 PlayerEquipment().apply {
-                    necklace = fromJson(res[t.necklace])
-                    cloak = fromJson(res[t.cloak])
-                    belt = fromJson(res[t.belt])
-                    gloves = fromJson(res[t.gloves])
+                    necklace = MacrocosmItem.deserializeFromBytes(res[t.necklace])
+                    cloak = MacrocosmItem.deserializeFromBytes(res[t.cloak])
+                    belt = MacrocosmItem.deserializeFromBytes(res[t.belt])
+                    gloves = MacrocosmItem.deserializeFromBytes(res[t.gloves])
                 },
                 fromJson(res[t.slayers]) ?: hashMapOf(),
                 res[t.activePet],

@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.players
 
 import net.axay.kspigot.extensions.broadcast
+import net.axay.kspigot.runnables.async
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
@@ -71,7 +72,7 @@ import kotlin.math.roundToInt
 
 val Player.macrocosm get() = Macrocosm.loadedPlayers[uniqueId]
 
-@Suppress("unused", "ReplaceWithEnumMap")
+@Suppress("unused")
 class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     val paper: Player? get() = Bukkit.getServer().getPlayer(ref)
 
@@ -536,7 +537,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     override fun storeSelf(data: DataStorage) {
         val player = paper
         if (player == null) {
-            println("Tried to store offline player $ref")
+            Macrocosm.logger.warning("Tried to store offline player $ref")
             return
         }
         val p = this
@@ -616,10 +617,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         it[PlayersTable.collections] = p.collections.json()
         it[PlayersTable.skills] = p.skills.json()
         it[PlayersTable.recipes] = toJson(p.unlockedRecipes)
-        it[PlayersTable.necklace] = if (p.equipment.necklace == null) "NULL" else toJson(p.equipment.necklace)
-        it[PlayersTable.cloak] = if (p.equipment.cloak == null) "NULL" else toJson(p.equipment.cloak)
-        it[PlayersTable.belt] = if (p.equipment.belt == null) "NULL" else toJson(p.equipment.belt)
-        it[PlayersTable.gloves] = if (p.equipment.gloves == null) "NULL" else toJson(p.equipment.gloves)
+        it[PlayersTable.necklace] = if (p.equipment.necklace == null) "NULL" else p.equipment.necklace!!.serializeToBytes(this)
+        it[PlayersTable.cloak] = if (p.equipment.cloak == null) "NULL" else p.equipment.cloak!!.serializeToBytes(this)
+        it[PlayersTable.belt] = if (p.equipment.belt == null) "NULL" else p.equipment.belt!!.serializeToBytes(this)
+        it[PlayersTable.gloves] = if (p.equipment.gloves == null) "NULL" else p.equipment.gloves!!.serializeToBytes(this)
         it[PlayersTable.slayers] = toJson(p.slayers)
         it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
         it[PlayersTable.pets] = toJson(p.ownedPets)
@@ -632,6 +633,19 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     }
 
     companion object {
+        fun loadOrInit(id: UUID): MacrocosmPlayer {
+            val loaded = loadPlayer(id)
+            if(loaded != null)
+                return loaded
+            val player = MacrocosmPlayer(id)
+            Macrocosm.playersLazy.add(id)
+            Macrocosm.loadedPlayers[id] = player
+            async {
+                player.storeSelf(database)
+            }
+            return player
+        }
+
         fun loadPlayer(id: UUID): MacrocosmPlayer? {
             if (Macrocosm.loadedPlayers.containsKey(id))
                 return Macrocosm.loadedPlayers[id]

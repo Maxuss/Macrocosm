@@ -18,11 +18,13 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.components.buttons.Button
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
@@ -34,10 +36,12 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.*
 import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.discordBotToken
@@ -45,8 +49,11 @@ import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.RecipeItem
 import space.maxus.macrocosm.item.SkullAbilityItem
+import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.players.PlayerEquipment
+import space.maxus.macrocosm.players.isAirOrNull
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
@@ -224,7 +231,9 @@ object Discord : ListenerAdapter() {
                 Commands.slash("bazaar", "Gets specific bazaar information")
                     .addOption(OptionType.STRING, "type", "Type of bazaar action", true, true)
                     .addOption(OptionType.STRING, "product", "Type of bazaar product, an identifier", false, true)
-                    .addOption(OptionType.STRING, "user", "Username of user which bazaar to check", false, false)
+                    .addOption(OptionType.STRING, "user", "Username/UUID of user which bazaar to check", false, false),
+                Commands.slash("profile", "Gets data on specific player")
+                    .addOption(OptionType.USER, "user", "User which profile to check", false)
             ).queue()
 
         }
@@ -406,6 +415,7 @@ object Discord : ListenerAdapter() {
                     "info" -> infoCommand(e)
                     "auth" -> authCommand(e)
                     "bazaar" -> authOnly(e, ::bazaarCommand)
+                    "profile" -> authOnly(e, ::profileCommand)
                     else -> {
                         logger.warning("Invalid command used: ${e.name}")
                         // invalid command
@@ -413,6 +423,160 @@ object Discord : ListenerAdapter() {
                 }
             }
         }
+    }
+
+    override fun onSelectMenuInteraction(e: SelectMenuInteractionEvent) {
+        if(e.componentId.contains("player_menu")) {
+            val id = UUID.fromString(e.componentId.split("$").last())
+
+            when(e.values[0]) {
+                "general" -> {
+                    e.editMessage(MessageEditData.fromEmbeds(profileGeneralEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                }
+                "statistics" -> {
+                    e.editMessage(MessageEditData.fromEmbeds(profileStatisticsEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                }
+                "equipment" -> {
+                    e.editMessage(MessageEditData.fromEmbeds(profileEquipmentEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                }
+                "skills" -> {
+                    e.editMessage(MessageEditData.fromEmbeds(profileSkillsEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                }
+            }
+        }
+    }
+
+    private fun profileEquipmentEmbed(player: MacrocosmPlayer, op: OfflinePlayer): MessageEmbed {
+        return embed {
+            setTitle("**Player Equipment**")
+            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setColor(COLOR_MACROCOSM)
+
+            val equipment = player.equipment
+            equipment.enumerate().withIndex().associateBy { PlayerEquipment.typesOrdered[it.index] }.forEach { (type, indexed) ->
+                val (_, stack) = indexed
+                if(stack == null) {
+                    addField("**Item in ${type.name.replace("_", " ").capitalized()} Slot**", "`None`", false)
+                } else {
+                    addField("**Item in ${type.name.replace("_", " ").capitalized()} Slot**", "`${stack.buildName().str().stripTags()}`", false)
+                }
+            }
+
+            val activePet = player.activePet
+            addField("**Pet**", if(activePet == null) "`None`" else "`${activePet.rarity(player).name.replace("_", " ").capitalized()} ${activePet.prototype.name.stripTags()} [Lv ${activePet.level(player)}]`", false)
+
+            if(op.isOnline) {
+                val online = op.player!!
+                EquipmentSlot.values().forEach { slot ->
+                    val item = online.inventory.getItem(slot)
+                    val name = when (slot) {
+                        EquipmentSlot.HAND -> "Main Hand"
+                        EquipmentSlot.OFF_HAND -> "Off Hand"
+                        EquipmentSlot.FEET -> "Boots"
+                        EquipmentSlot.LEGS -> "Leggings"
+                        EquipmentSlot.CHEST -> "Chestplate"
+                        EquipmentSlot.HEAD -> "Helmet"
+                    }
+                    if (item.isAirOrNull()) {
+                        addField("**Item in $name:**", "`None`", true)
+                    } else {
+                        addField("**Item in $name:**", "`${item.macrocosm?.buildName()?.str()?.stripTags() ?: "None"}`", true)
+                    }
+                }
+            } else {
+                addField("**Player not online!**", "Can not get inventory data while player is not online!", false)
+            }
+        }
+    }
+
+    private fun profileSkillsEmbed(player: MacrocosmPlayer, op: OfflinePlayer): MessageEmbed {
+        val skills = player.skills.skillExp
+
+        return embed {
+            setTitle("**Player Skills**")
+            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setColor(COLOR_MACROCOSM)
+
+            skills.entries.chunked(3).forEach { chunk ->
+                chunk.forEach { (skill, value) ->
+                    val totalExperience = (if(value.lvl == 1) .0 else skill.inst.table.totalExpForLevel(value.lvl)) + value.overflow
+                    addField("${skill.emoji} ${skill.inst.name}", "${Formatting.withCommas(totalExperience.toBigDecimal(), false)} EXP (${value.lvl} LVL)", true)
+                }
+            }
+        }
+    }
+
+    private fun profileStatisticsEmbed(player: MacrocosmPlayer, op: OfflinePlayer): MessageEmbed {
+        val ogStats = player.stats()
+        val originalStats = ogStats == null
+        val stats = ogStats ?: player.baseStats
+        return embed {
+            setTitle("**Player Statistics**")
+            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setColor(COLOR_MACROCOSM)
+
+            addField("**Raw Stats?**", if(originalStats) "These are stats **not** including equipment stats" else "These are stats **including** equipment stats", false)
+
+            stats.iter().entries.chunked(3).forEach { chunk ->
+                chunk.forEach { (stat, amount) ->
+                    addField("**${stat.display.stripTags()}**", Formatting.withCommas(amount.toBigDecimal()), true)
+                    stat.display
+                }
+            }
+        }
+    }
+
+    private fun profileGeneralEmbed(player: MacrocosmPlayer, op: OfflinePlayer): MessageEmbed {
+        return embed {
+            setThumbnail("https://crafatar.com/renders/body/${player.ref}?overlay=true")
+            setTitle("**General Player Information**")
+            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setColor(COLOR_MACROCOSM)
+
+            addField("**Username: **", op.name ?: "null", true)
+            addField("**UUID: **", op.uniqueId.toString(), true)
+
+            addBlankField(false)
+
+            addField("**Rank: **", player.rank.name, true)
+            addField("**Purse: **", "${Formatting.withFullCommas(player.purse)} coins", true)
+            addField("**Bank: **", "${Formatting.withFullCommas(player.bank)} coins", true)
+
+            addBlankField(false)
+
+            addField("**Playtime: **", Duration.ofMillis(player.playtimeMillis()).toFancyString(), true)
+            addField("**Joined: **", "<t:${Instant.ofEpochMilli(player.firstJoin).epochSecond}:R>", true)
+            addField("**Last Seen: **", "<t:${Instant.ofEpochMilli(player.lastJoin).epochSecond}>", true)
+
+            addBlankField(false)
+
+            addField("**Online?**", op.isOnline.toString(), true)
+            val authenticated = authenticated.containsKey(op.uniqueId)
+            addField("**Have Authenticated?**", authenticated.toString(), true)
+            if(authenticated) {
+                val user = bot.retrieveUserById(this@Discord.authenticated[op.uniqueId]!!).submit().get()
+                addField("**Discord Account:**", "`${user.asTag}`", true)
+            }
+        }
+    }
+
+    private fun profileCommand(e: SlashCommandInteractionEvent, op: OfflinePlayer) {
+        val user = e.getOption("user")?.asUser ?: e.user
+        val uuid = authenticated.entries.firstOrNull { (_, id) -> id == user.idLong }?.key ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find profile for user ${user.asTag}!\n*The `profile` command only works with authenticated users*").build()).setEphemeral(true).queue()
+
+        e.replyEmbeds(embed {
+            setTitle("**Select Information Category**")
+            setColor(COLOR_MACROCOSM)
+
+            addField("**Select Category**", "Select category of which you would like to get information on this player.", false)
+        }).addActionRow(
+            SelectMenu.create("player_menu$$uuid")
+                .addOption("General Information", "general", "General information about this player")
+                .addOption("Statistics", "statistics", "Gets in-game stats of this player")
+                .addOption("Equipment", "equipment", "Gets some of player's in-game equipment")
+                .addOption("Skills", "skills", "Gets in-game skills of this player")
+                .build()
+        ).queue()
     }
 
     private fun bazaarCommand(e: SlashCommandInteractionEvent, op: OfflinePlayer) {

@@ -19,6 +19,10 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.metrics.report
 
 class PlayerEquipment {
+    companion object {
+        val typesOrdered = arrayOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES)
+    }
+
     var necklace: MacrocosmItem? = null
     var cloak: MacrocosmItem? = null
     var belt: MacrocosmItem? = null

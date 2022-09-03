@@ -7,10 +7,10 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -20,10 +20,10 @@ open class SkullAbilityItem(
     rarity: Rarity,
     val skullOwner: String,
     stats: Statistics,
-    abilities: MutableList<MacrocosmAbility> = mutableListOf(),
+    abilities: MutableList<Identifier> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
-    runeTypes: List<RuneSlot> = listOf(),
+    runeTypes: List<Identifier> = listOf(),
     description: String? = null,
     id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", "")),
 ) : AbilityItem(
@@ -32,13 +32,15 @@ open class SkullAbilityItem(
     rarity,
     Material.PLAYER_HEAD,
     stats,
-    abilities,
+    abilities.map { Registry.ABILITY.find(it) }.toMutableList(),
     specialStats,
     breakingPower,
-    runeTypes,
+    runeTypes.map { RuneSlot.fromId(it) },
     description,
     id = id
 ) {
+
+
     override fun addExtraNbt(cmp: CompoundTag) {
         cmp.putByte("BlockClicks", 1)
     }
@@ -58,7 +60,7 @@ open class SkullAbilityItem(
             rarity,
             skullOwner,
             stats.clone(),
-            abilities,
+            abilities.map { Registry.ABILITY.byValue(it)!! }.toMutableList(),
             specialStats.clone(),
             description = description,
             id = id

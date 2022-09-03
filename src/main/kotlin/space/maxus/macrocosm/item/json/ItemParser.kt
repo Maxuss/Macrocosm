@@ -72,15 +72,13 @@ object ItemParser {
             // parsing ability item
             val stats = if (obj.has("stats")) parseStats(obj.get("stats").asJsonObject) else Statistics.zero()
             val abils =
-                obj["abilities"].asJsonArray.mapNotNull { ele -> Registry.ABILITY.findOrNull(Identifier.parse(ele.asString)) }
+                obj["abilities"].asJsonArray.mapNotNull { ele -> Identifier.parse(ele.asString) }
                     .toMutableList()
             val specialStats =
                 if (obj.has("special_stats")) parseSpecialStats(obj.get("special_stats").asJsonObject) else SpecialStatistics()
             val bp = if (obj.has("breaking_power")) obj["breaking_power"].asInt else 0
             val runes = if (obj.has("runes")) obj["runes"].asJsonArray.map { ele ->
-                if (ele.isJsonObject) RuneSlot.fromId(Identifier.parse(ele.asJsonObject["specific"].asString)) else RuneSlot.fromId(
-                    Identifier.parse(ele.asString)
-                )
+                if (ele.isJsonObject) Identifier.parse(ele.asJsonObject["specific"].asString) else Identifier.parse(ele.asString)
             } else listOf()
             if (headSkin != null)
                 SkullAbilityItem(
@@ -103,10 +101,10 @@ object ItemParser {
                     rarity,
                     type,
                     stats,
-                    abils,
+                    abils.map { Registry.ABILITY.find(it) }.toMutableList(),
                     specialStats,
                     bp,
-                    runes,
+                    runes.map { RuneSlot.fromId(it) },
                     desc,
                     id = id
                 )
