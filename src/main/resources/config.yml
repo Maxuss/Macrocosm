@@ -3,3 +3,4 @@ connection:
     discord:
         communication-channel: 0
         communication-webhook: 'NULL'
+        guild-id: 0

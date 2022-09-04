@@ -128,19 +128,19 @@ class InternalMacrocosmPlugin : KSpigot() {
         VERSION = versionInfo.version
         KeyManager.load()
         BazaarElement.init()
-        Threading.runAsync {
+        Threading.contextBoundedRunAsync {
             info("Starting REST API Server")
             Monitor.enter("REST API Server Thread")
             AsyncLauncher.launchApi()
             Monitor.exit()
         }
-        Threading.runAsyncRaw {
+        Threading.runAsync {
             DATABASE =
                 if (isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
             DATABASE.connect()
             playersLazy = DATABASE.readPlayers().toMutableList()
         }
-        Threading.runAsyncRaw {
+        Threading.runAsync {
             Discord.readSelf()
             TransactionHistory.readSelf()
             Calendar.readSelf()
@@ -182,6 +182,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         // required to be sync
         ReforgeType.init()
+        StatRune.init()
         ItemValue.init()
         Armor.init()
         Bazaar.init()
@@ -189,7 +190,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         Threading.runEachConcurrently(
             Executors.newFixedThreadPool(8),
             ScrollRecipe::init,
-            StatRune::init,
             Enchant::init,
             RecipeValue::init,
             Buffs::init,
@@ -240,6 +240,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         apiCommand()
         essenceCommand()
 
+        doTestEmitPost()
         giveRecipeCommand()
         testStatsCommand()
         testLevelUp()
@@ -267,7 +268,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Monitor.exit()
 
         if (dumpTestData) {
-            Threading.runAsyncRaw(isDaemon = true) {
+            Threading.runAsync(isDaemon = true) {
                 Monitor.enter("Data generation")
                 DataGenerators.registries()
                 Monitor.exit()
@@ -289,7 +290,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             connectDiscordCommand()
         }
 
-        Threading.runAsyncRaw(runnable = Discord::setupBot)
+        Threading.runAsync(runnable = Discord::setupBot)
 
         Calendar.init()
         SidebarRenderer.init()

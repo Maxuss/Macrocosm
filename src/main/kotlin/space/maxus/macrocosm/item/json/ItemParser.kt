@@ -22,7 +22,7 @@ import kotlin.io.path.readText
 
 object ItemParser {
     fun init() {
-        Threading.runAsync(name = "Item Parser") {
+        Threading.contextBoundedRunAsync(name = "Item Parser") {
             val pool = Threading.newFixedPool(5)
             info("Starting recipe parser...")
 
@@ -101,7 +101,7 @@ object ItemParser {
                     rarity,
                     type,
                     stats,
-                    abils.map { Registry.ABILITY.find(it) }.toMutableList(),
+                    abils.mapNotNull { Registry.ABILITY.findOrNull(it) }.toMutableList(),
                     specialStats,
                     bp,
                     runes.map { RuneSlot.fromId(it) },

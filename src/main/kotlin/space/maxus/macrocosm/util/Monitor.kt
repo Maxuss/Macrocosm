@@ -52,7 +52,9 @@ class Monitor {
     fun exitSingle(forThread: Thread) {
         synchronized(this.currentScopes) {
             val last = currentScopes[forThread.name].lastOrNull() ?: return
-            currentScopes.remove(forThread.name, last)
+            try {
+                currentScopes.remove(forThread.name, last)
+            } catch(ignored: Exception) { /* no-op */ }
         }
     }
 

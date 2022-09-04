@@ -34,7 +34,7 @@ object Bazaar {
     lateinit var table: BazaarTable; private set
 
     fun init() {
-        Threading.runAsyncRaw {
+        Threading.runAsync {
             table = BazaarTable.readSelf(database)
         }
     }

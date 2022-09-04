@@ -22,13 +22,13 @@ object Threading {
      * Runs provided task on another thread, with ThreadContext.
      * This should not be used if called lots of times, e.g. in a loop, because
      * creating of numerous [ThreadContext]s might cause a memory leak, in that case
-     * it is recommended to use [runAsyncRaw], which is more lightweight
+     * it is recommended to use [runAsync], which is more lightweight
      *
      * @param name Name of the new thread
      * @param isDaemon Whether the thread should be a daemon
      * @param runnable The task to be executed
      */
-    inline fun runAsync(
+    inline fun contextBoundedRunAsync(
         name: String = "Worker Thread #${activeThreads.get()}",
         isDaemon: Boolean = false,
         crossinline runnable: ThreadContext.() -> Unit
@@ -49,9 +49,9 @@ object Threading {
      * provides better performance.
      *
      * @param isDaemon Whether the thread is a daemon
-     * @param runnable The code to be ran
+     * @param runnable The code to be run
      */
-    inline fun runAsyncRaw(
+    inline fun runAsync(
         isDaemon: Boolean = false,
         crossinline runnable: () -> Unit
     ) {
@@ -86,7 +86,7 @@ object Threading {
     )
 
     fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
-        runAsyncRaw {
+        runAsync {
             Monitor.enter("runEachConcurrently")
             for (fn in executors) {
                 service.execute(fn)

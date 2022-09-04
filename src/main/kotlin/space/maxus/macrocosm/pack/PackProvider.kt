@@ -43,7 +43,7 @@ object PackProvider : Listener {
 
     fun init() {
         // running upload asynchronously
-        Threading.runAsyncRaw {
+        Threading.runAsync {
             // compiling
             compile()
 

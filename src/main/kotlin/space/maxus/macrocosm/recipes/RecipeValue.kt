@@ -27,11 +27,11 @@ enum class RecipeValue(private val recipe: MacrocosmRecipe) {
         }
 
         fun init() {
-            Threading.runAsync("Basic Recipe Registry", true) {
+            Threading.contextBoundedRunAsync("Basic Recipe Registry", true) {
                 info("Starting Basic Recipe daemon...")
                 initBasic()
             }
-            Threading.runAsync("Enchanted Recipe Registry", true) {
+            Threading.contextBoundedRunAsync("Enchanted Recipe Registry", true) {
                 info("Starting Enchanted Recipe daemon...")
                 initEnchanted()
             }

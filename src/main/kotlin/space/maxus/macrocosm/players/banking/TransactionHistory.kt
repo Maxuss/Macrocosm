@@ -24,7 +24,7 @@ class TransactionHistory(val transactions: ConcurrentLinkedDeque<Transaction>) {
     }
 
     fun storeSelf() {
-        Threading.runAsyncRaw {
+        Threading.runAsync {
             runCatchingReporting {
                 val file = Accessor.access("transactions.dat")
                 file.recreateFile()
@@ -48,7 +48,7 @@ class TransactionHistory(val transactions: ConcurrentLinkedDeque<Transaction>) {
 
     companion object {
         fun readSelf() {
-            Threading.runAsyncRaw {
+            Threading.runAsync {
                 val pool = Threading.newFixedPool(16)
                 runCatchingReporting {
                     val file = Accessor.access("transactions.dat")

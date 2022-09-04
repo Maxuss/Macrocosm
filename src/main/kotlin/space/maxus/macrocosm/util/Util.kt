@@ -340,6 +340,13 @@ fun renderBar(
     )
 }
 
+private val VOWEL_REGEX = Regex("[aeuioyAEUIOY]")
+fun String.addAnIfNeeded(): String {
+    if(VOWEL_REGEX.matches(this.first().toString()))
+        return "an $this"
+    return "a $this"
+}
+
 fun ticksToTime(ticks: Long): String {
     var hours = (ticks / 1000) + 6
     var minutes = (ticks % 1000) / (1000 / 60)

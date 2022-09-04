@@ -300,7 +300,7 @@ enum class BazaarElement(val item: MacrocosmItem? = null, val vanilla: Boolean =
         }
 
         fun init() {
-            Threading.runAsyncRaw {
+            Threading.runAsync {
                 val pool = Threading.newFixedPool(12)
 
                 for (value in values()) {

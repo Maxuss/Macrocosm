@@ -53,7 +53,7 @@ class LootPool private constructor(val drops: List<Drop>) {
                 }
                 val item = ItemStack(mat, amount)
                 if (player?.paper != null) {
-                    it.rarity.announceEntityDrop(player.paper!!, item.macrocosm ?: return@map null)
+                    it.rarity.announceEntityDrop(player.paper!!, item.macrocosm ?: return@map null, it)
                 }
                 item.macrocosm?.build(player) ?: return@map null
             } else if (it.item.path.contains("pet")) {
@@ -64,7 +64,7 @@ class LootPool private constructor(val drops: List<Drop>) {
                 basePet.stored = StoredPet(newId, rar, 1, .0)
                 basePet.rarity = rar
                 if (player?.paper != null) {
-                    it.rarity.announceEntityDrop(player.paper!!, basePet)
+                    it.rarity.announceEntityDrop(player.paper!!, basePet, it)
                 }
                 basePet.build(player)
             } else {
@@ -89,7 +89,7 @@ class LootPool private constructor(val drops: List<Drop>) {
                     amount = Mth.floor((amount * (boost + fortune / 100f)))
                 }
                 if (player?.paper != null) {
-                    it.rarity.announceEntityDrop(player.paper!!, item)
+                    it.rarity.announceEntityDrop(player.paper!!, item, it)
                 }
                 (item.build(player) ?: return@map null).apply { this.amount = amount }
             }

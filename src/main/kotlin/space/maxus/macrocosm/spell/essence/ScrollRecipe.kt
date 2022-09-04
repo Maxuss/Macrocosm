@@ -11,7 +11,7 @@ import kotlin.io.path.readText
 data class ScrollRecipe(val requirements: HashMap<EssenceType, Int>, val result: Identifier, val level: Int) {
     companion object {
         fun init() {
-            Threading.runAsync("ScrollParser") {
+            Threading.contextBoundedRunAsync("ScrollParser") {
                 val pool = Threading.newFixedPool(5)
                 info("Starting scroll recipe parser...")
 

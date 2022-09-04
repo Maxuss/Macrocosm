@@ -26,7 +26,7 @@ abstract class Drop(val rarity: DropRarity, override val chance: Double, val ite
             val amount = this.amount.random()
             val item = ItemStack(mat, amount)
             if (player.paper != null) {
-                this.rarity.announceEntityDrop(player.paper!!, item.macrocosm!!, true)
+                this.rarity.announceEntityDrop(player.paper!!, item.macrocosm!!,  this, true)
             }
             item.macrocosm?.build(player)!!
         } else if (this.item.path.contains("pet")) {
@@ -37,14 +37,14 @@ abstract class Drop(val rarity: DropRarity, override val chance: Double, val ite
             basePet.stored = StoredPet(newId, rar, 1, .0)
             basePet.rarity = rar
             if (player.paper != null) {
-                this.rarity.announceEntityDrop(player.paper!!, basePet, true)
+                this.rarity.announceEntityDrop(player.paper!!, basePet, this, true)
             }
             basePet.build(player)!!
         } else {
             val item = Registry.ITEM.find(this.item)
             val amount = this.amount.random()
             if (player.paper != null) {
-                this.rarity.announceEntityDrop(player.paper!!, item, true)
+                this.rarity.announceEntityDrop(player.paper!!, item, this, true)
             }
             item.build(player)!!.apply { this.amount = amount }
         }

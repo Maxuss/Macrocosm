@@ -12,7 +12,7 @@ import kotlin.io.path.readText
 
 object RecipeParser {
     fun init() {
-        Threading.runAsync(name = "RecipeParser") {
+        Threading.contextBoundedRunAsync(name = "RecipeParser") {
             val pool = Threading.newFixedPool(8)
             info("Starting recipe parser...")
 

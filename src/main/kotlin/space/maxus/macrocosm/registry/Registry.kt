@@ -1,4 +1,4 @@
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "RemoveExplicitTypeArguments")
 
 package space.maxus.macrocosm.registry
 
@@ -10,6 +10,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.cosmetic.Cosmetic
+import space.maxus.macrocosm.discord.DiscordEmitter
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.EntityBase
 import space.maxus.macrocosm.entity.EntitySoundBank
@@ -49,11 +50,15 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
     open fun findOrNull(id: Identifier): T? = iter()[id]
     open fun has(id: Identifier): Boolean = iter().containsKey(id)
 
+    open fun tryUse(id: Identifier, executor: (T) -> Unit) {
+        this.findOrNull(id)?.let(executor)
+    }
+
     inline fun delegateRegistration(
         values: List<Pair<Identifier, T>>,
         crossinline delegate: (Identifier, T) -> Unit = { _, _ -> }
     ) {
-        Threading.runAsync("$name Delegate #${delegates.incrementAndGet()}") {
+        Threading.contextBoundedRunAsync("$name Delegate #${delegates.incrementAndGet()}") {
             val pool = Threading.newFixedPool(8)
 
             for ((id, value) in values) {
@@ -155,6 +160,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val BAZAAR_ELEMENTS = makeImmutable<MacrocosmItem>(id("bazaar_elements"), false)
         val BAZAAR_ELEMENTS_REF = makeDefaulted<Identifier>(id("bazaar_elements_ref"), false)
         val BAZAAR_ELEMENTS_VANILLA = makeDefaulted<Material>(id("bazaar_elements_vanilla"), false)
+        val DISCORD_EMITTERS = makeDefaulted<DiscordEmitter<*>>(id("discord_emitters"), false)
         override fun dumpToFile(file: Path) {
 
         }

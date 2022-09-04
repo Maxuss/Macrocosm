@@ -414,17 +414,17 @@ enum class ItemValue(
         fun init() {
             Ability.init()
 
-            Threading.runAsync("Enchanted Item Generator", true) {
+            Threading.contextBoundedRunAsync("Enchanted Item Generator", true) {
                 info("Initializing enchanted items...")
                 initEnchanted()
             }
 
-            Threading.runAsync("Rune Generator", true) {
+            Threading.contextBoundedRunAsync("Rune Generator", true) {
                 info("Initializing runes...")
                 initRunes()
             }
 
-            Threading.runAsync("macrocosm:item Delegate", true) {
+            Threading.contextBoundedRunAsync("macrocosm:item Delegate", true) {
                 this.info("Starting macrocosm:item registry Delegate")
                 val pool = Threading.newFixedPool(8)
 

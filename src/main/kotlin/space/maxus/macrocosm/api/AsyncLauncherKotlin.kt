@@ -9,7 +9,7 @@ import kotlinx.coroutines.coroutineScope
 object AsyncLauncherKotlin {
     /**
      * I have no idea why everything breaks if I don't add an extra coroutine scope
-     * wrapping API thread, even though it is already wrapped in [space.maxus.macrocosm.async.Threading.runAsyncRaw]
+     * wrapping API thread, even though it is already wrapped in [space.maxus.macrocosm.async.Threading.runAsync]
      * and another coroutine scope
      *
      * Don't even ask

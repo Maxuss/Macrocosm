@@ -319,7 +319,7 @@ object Armor {
     }
 
     fun init() {
-        Threading.runAsync("Armor Registry", true) {
+        Threading.contextBoundedRunAsync("Armor Registry", true) {
             info("Initializing Armor Registry daemon...")
 
             val pool = Threading.newFixedPool(8)

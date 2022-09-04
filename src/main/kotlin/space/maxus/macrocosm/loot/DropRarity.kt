@@ -7,10 +7,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.title.TitlePart
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.discord.emitters.RareDropEmitter
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.util.general.id
 import kotlin.math.roundToInt
 
 open class DropRarity(
@@ -33,7 +37,7 @@ open class DropRarity(
     data class Pet(val inner: DropRarity) :
         DropRarity(inner.broadcast, inner.rarity, inner.greet, "<gold>PET", inner.odds)
 
-    fun announceEntityDrop(player: Player, item: MacrocosmItem, artificial: Boolean = false) {
+    fun announceEntityDrop(player: Player, item: MacrocosmItem, drop: Drop, artificial: Boolean = false) {
         if (!broadcast)
             return
         val mf = player.macrocosm!!.stats()!!.magicFind
@@ -68,6 +72,16 @@ open class DropRarity(
                     pitch = 1.4f
                     volume = 2f
                     playFor(player)
+                }
+            }
+
+            if(!artificial) {
+                Threading.runAsync {
+                    // if we should broadcast in discord, then do
+                    Registry.DISCORD_EMITTERS.tryUse(id("rare_drop")) { emitter ->
+                        val rde = emitter as RareDropEmitter
+                        rde.post(RareDropEmitter.Context(player.macrocosm!!, player, drop, item))
+                    }
                 }
             }
         }

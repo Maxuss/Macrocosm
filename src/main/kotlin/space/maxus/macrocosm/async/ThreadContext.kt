@@ -4,7 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
- * Context for runnables created using [Threading.runAsync]
+ * Context for runnables created using [Threading.contextBoundedRunAsync]
  *
  * @param threadName Name of the thread used for logger
  */

@@ -38,7 +38,7 @@ class ForgeRecipe(
         }
 
         fun initRecipes() {
-            Threading.runAsync(name = "ForgeRecipeParser") {
+            Threading.contextBoundedRunAsync(name = "ForgeRecipeParser") {
                 info("Starting forge recipe parser")
                 val pool = Threading.newFixedPool(5)
 

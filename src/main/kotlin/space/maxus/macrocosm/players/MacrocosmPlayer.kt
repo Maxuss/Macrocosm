@@ -23,12 +23,14 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.update
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.collections.Collections
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.database
 import space.maxus.macrocosm.db.*
+import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.roman
@@ -61,6 +63,7 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.fromJson
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
 import space.maxus.macrocosm.util.toJson
 import java.math.BigDecimal
@@ -291,7 +294,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     fun sendSkillLevelUp(skill: SkillType) {
         // extra check just in case
-        // we shouldnt be here tho
+        // we shouldn't be here tho
         if (skills.level(skill) >= 50)
             return
         val newLevel = skills.level(skill)
@@ -309,6 +312,15 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         paper?.sendMessage(message)
         sound(Sound.ENTITY_PLAYER_LEVELUP) {
             playFor(paper!!)
+        }
+
+        if(newLevel > 45) {
+            Threading.runAsync {
+                // trying to emit the macrocosm:high_skill event
+                Registry.DISCORD_EMITTERS.tryUse(id("high_skill")) { emitter ->
+                    (emitter as HighSkillEmitter).post(HighSkillEmitter.Context(skill, newLevel, this))
+                }
+            }
         }
     }
 

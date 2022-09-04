@@ -260,7 +260,7 @@ enum class EntityValue(val entity: MacrocosmEntity) {
     companion object {
 
         fun init() {
-            Threading.runAsync("Entity Registry Daemon") {
+            Threading.contextBoundedRunAsync("Entity Registry Daemon") {
                 info("Starting Entity Registry daemon...")
 
                 val pool = Threading.newCachedPool()

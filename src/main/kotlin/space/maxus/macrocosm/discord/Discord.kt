@@ -10,13 +10,17 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.gson.JsonObject
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.axay.kspigot.extensions.server
+import net.axay.kspigot.runnables.taskRunLater
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -38,27 +42,33 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.api.APIPermission
+import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.*
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
+import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.db.Accessor
+import space.maxus.macrocosm.discord.emitters.BossInfoEmitter
+import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
+import space.maxus.macrocosm.discord.emitters.MacrocosmLevelEmitter
+import space.maxus.macrocosm.discord.emitters.RareDropEmitter
 import space.maxus.macrocosm.discordBotToken
 import space.maxus.macrocosm.exceptions.macrocosm
-import space.maxus.macrocosm.item.MacrocosmItem
-import space.maxus.macrocosm.item.RecipeItem
-import space.maxus.macrocosm.item.SkullAbilityItem
-import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.PlayerEquipment
 import space.maxus.macrocosm.players.isAirOrNull
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.*
 import space.maxus.macrocosm.util.general.ConditionalValueCallback
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.metrics.report
 import java.time.Duration
 import java.time.Instant
@@ -108,8 +118,8 @@ object Discord : ListenerAdapter() {
 
         override fun onMessageReceived(event: MessageReceivedEvent) {
             if (event.channel.idLong == communicationChannel) {
-                if (event.message.author.idLong == 1014930457353265255) {
-                    // ignore our own fake-user webhook messages
+                if (event.message.author.idLong == 1014930457353265255 || event.message.author.idLong == 1014935882853257306) {
+                    // ignore the bot itself
                     return
                 }
                 connectionPool.execute {
@@ -206,7 +216,7 @@ object Discord : ListenerAdapter() {
     }
 
     fun setupBot() {
-        Threading.runAsyncRaw {
+        Threading.runAsync {
             var botBuilder =
                 JDABuilder.create(discordBotToken, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
                     .addEventListeners(this)
@@ -233,9 +243,73 @@ object Discord : ListenerAdapter() {
                     .addOption(OptionType.STRING, "product", "Type of bazaar product, an identifier", false, true)
                     .addOption(OptionType.STRING, "user", "Username/UUID of user which bazaar to check", false, false),
                 Commands.slash("profile", "Gets data on specific player")
-                    .addOption(OptionType.USER, "user", "User which profile to check", false)
+                    .addOption(OptionType.USER, "user", "User which profile to check", false),
+                Commands.slash("api", "Regenerates your Macrocosm API Key"),
+                Commands.user("Macrocosm profile data")
             ).queue()
 
+
+            taskRunLater(3 * 20L, sync = false) {
+                val ch = communicationChannel
+                if (ch != null) {
+                    bot.updateCommands().addCommands(
+                        Commands.slash("subscribe", "Subscribes you to the provided event announcements")
+                            .addOption(OptionType.STRING, "event", "Event ID to subscribe you to", true, true),
+                        Commands.slash("unsubscribe", "Unsubscribes you from the provided event announcements")
+                            .addOption(OptionType.STRING, "event", "Event ID to unsubscribe you from", true, true)
+                    ).queue()
+
+                    val guild = bot.getGuildById(Macrocosm.config.getLong("connections.discord.guild-id"))!!
+                    val channel = guild.getTextChannelById(ch)!!
+
+                    // important roles
+                    guild.getRolesByName("Macrocosm Boss Info", false).firstOrNull()?.apply {
+                        Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(this, channel))
+                    } ?: run {
+                        guild.createRole()
+                            .setMentionable(true).setName("Macrocosm Boss Info").submit().thenAccept { role ->
+                            Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(role, channel))
+                        }
+                    }
+                    guild.getRolesByName("Macrocosm Rare Drop", false).firstOrNull()?.apply {
+                        Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(this, channel))
+                    } ?: run {
+                        guild.createRole()
+                            .setMentionable(true).setName("Macrocosm Rare Drop").submit().thenAccept { role ->
+                            Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(role, channel))
+                        }
+                    }
+                    guild.getRolesByName("Macrocosm High Skill", false).firstOrNull()?.apply {
+                        Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(this, channel))
+                    } ?: run {
+                        guild.createRole()
+                            .setMentionable(true).setName("Macrocosm High Skill").submit().thenAccept { role ->
+                            Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(role, channel))
+                        }
+                    }
+                    guild.getRolesByName("Macrocosm Level Up", false).firstOrNull()?.apply {
+                        Registry.DISCORD_EMITTERS.register(id("macrocosm_lvl_up"), MacrocosmLevelEmitter(this, channel))
+                    } ?: run {
+                        guild.createRole()
+                            .setMentionable(true).setName("Macrocosm Level Up").submit().thenAccept { role ->
+                            Registry.DISCORD_EMITTERS.register(
+                                id("macrocosm_lvl_up"),
+                                MacrocosmLevelEmitter(role, channel)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onUserContextInteraction(e: UserContextInteractionEvent) {
+        when(e.name) {
+            "Macrocosm profile data" -> {
+                authOnly(e) { ctx, _ ->
+                    profileCommand0(ctx, ctx.user, true)
+                }
+            }
         }
     }
 
@@ -282,10 +356,15 @@ object Discord : ListenerAdapter() {
                         .let { bazaarUserCache.put(user, it); it }
                     val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
                         .setEphemeral(true).queue())
-                    val embed = if (order is BazaarBuyOrder) generateBuyOrderEmbed(
-                        order.item,
-                        order
-                    ) else if (order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
+                    val embed = when (order) {
+                        is BazaarBuyOrder -> generateBuyOrderEmbed(
+                            order.item,
+                            order
+                        )
+
+                        is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
+                        else -> unreachable()
+                    }
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
                 } else if (e.componentId.contains("next_order_user")) {
                     val user = UUID.fromString(e.componentId.split("$").last())
@@ -319,7 +398,7 @@ object Discord : ListenerAdapter() {
             )
 
             val ele = BazaarElement.idToElement(item)!!
-            setThumbnail(bazaarItemThumbnail(ele))
+            setThumbnail(itemImage(ele))
 
             addField("**Product:**", ele.name.str().stripTags(), true)
             addField("**Seller:**", "${mc?.rank?.format?.str()?.stripTags() ?: ""} ${op.name}", true)
@@ -361,7 +440,7 @@ object Discord : ListenerAdapter() {
             )
 
             val ele = BazaarElement.idToElement(item)!!
-            setThumbnail(bazaarItemThumbnail(ele))
+            setThumbnail(itemImage(ele))
 
             addField("**Product:**", ele.name.str().stripTags(), true)
             addField("**Buyer:**", "${mc?.rank?.format?.str()?.stripTags() ?: ""} ${op.name}", true)
@@ -404,6 +483,8 @@ object Discord : ListenerAdapter() {
                 "product" -> e.replyChoiceStrings(BazaarElement.allKeys.filter { it.path.contains(e.focusedOption.value) }
                     .map { it.toString() }.take(25)).queue()
             }
+
+            "subscribe", "unsubscribe" -> e.replyChoiceStrings(Registry.DISCORD_EMITTERS.iter().keys.filter { it.path.contains(e.focusedOption.value) }.take(25).map { it.toString() }).queue()
         }
     }
 
@@ -414,8 +495,11 @@ object Discord : ListenerAdapter() {
                     "ping" -> pingCommand(e)
                     "info" -> infoCommand(e)
                     "auth" -> authCommand(e)
+                    "subscribe" -> subscribeCommand(e)
+                    "unsubscribe" -> unsubscribeCommand(e)
                     "bazaar" -> authOnly(e, ::bazaarCommand)
                     "profile" -> authOnly(e, ::profileCommand)
+                    "api" -> authOnly(e, ::apiCommand)
                     else -> {
                         logger.warning("Invalid command used: ${e.name}")
                         // invalid command
@@ -444,6 +528,33 @@ object Discord : ListenerAdapter() {
                 }
             }
         }
+    }
+
+    private fun unsubscribeCommand(e: GenericCommandInteractionEvent) {
+        val member = e.member ?: return
+        val emitterId = Identifier.parse(e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue())
+        val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find event of id `$emitterId` to subscribe you!").build()).setEphemeral(true).queue()
+        emitter.unsubscribe(member)
+        e.replyEmbeds(genericSuccessEmbed("Unsubscription Successful", "Unsubscribed you from the *${emitter.name}* event announcements!").build()).setEphemeral(true).queue()
+    }
+
+    private fun subscribeCommand(e: GenericCommandInteractionEvent) {
+        val member = e.member ?: return
+        val emitterId = Identifier.parse(e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue())
+        val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find event of id `$emitterId` to subscribe you!").build()).setEphemeral(true).queue()
+        emitter.subscribe(member)
+        e.replyEmbeds(genericSuccessEmbed("Subscription Successful", "Subscribed you to the *${emitter.name}* event announcements!").build()).setEphemeral(true).queue()
+    }
+
+    private fun apiCommand(e: GenericCommandInteractionEvent, op: OfflinePlayer) {
+        val regeneratedKey = KeyManager.generateRandomKey(op.uniqueId, listOf(APIPermission.VIEW_BAZAAR_DATA, APIPermission.VIEW_PLAYER_DATA))
+        e.replyEmbeds(embed {
+            setTitle("**API Key regeneration**")
+            setColor(COLOR_MACROCOSM)
+
+            addField("**New API Key**", "`$regeneratedKey`", false)
+            addField("**Usage**", "Use this key to access the Macrocosm API. More info on the /doc endpoint of API or in the swagger spec.", false)
+        }).setEphemeral(true).queue()
     }
 
     private fun profileEquipmentEmbed(player: MacrocosmPlayer, op: OfflinePlayer): MessageEmbed {
@@ -560,8 +671,11 @@ object Discord : ListenerAdapter() {
         }
     }
 
-    private fun profileCommand(e: SlashCommandInteractionEvent, op: OfflinePlayer) {
-        val user = e.getOption("user")?.asUser ?: e.user
+    private fun profileCommand(e: GenericCommandInteractionEvent, op: OfflinePlayer) {
+        profileCommand0(e, e.getOption("user")?.asUser ?: e.user, false)
+    }
+
+    private fun profileCommand0(e: GenericCommandInteractionEvent, user: User, ephemeral: Boolean) {
         val uuid = authenticated.entries.firstOrNull { (_, id) -> id == user.idLong }?.key ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find profile for user ${user.asTag}!\n*The `profile` command only works with authenticated users*").build()).setEphemeral(true).queue()
 
         e.replyEmbeds(embed {
@@ -576,10 +690,11 @@ object Discord : ListenerAdapter() {
                 .addOption("Equipment", "equipment", "Gets some of player's in-game equipment")
                 .addOption("Skills", "skills", "Gets in-game skills of this player")
                 .build()
-        ).queue()
+        ).setEphemeral(ephemeral).queue()
+
     }
 
-    private fun bazaarCommand(e: SlashCommandInteractionEvent, op: OfflinePlayer) {
+    private fun bazaarCommand(e: GenericCommandInteractionEvent, op: OfflinePlayer) {
         val type =
             e.getOption("type")?.asString
         when (type) {
@@ -610,7 +725,7 @@ object Discord : ListenerAdapter() {
                     setAuthor("Macrocosm Bazaar")
 
                     val ele = BazaarElement.idToElement(product)!!
-                    setThumbnail(bazaarItemThumbnail(ele))
+                    setThumbnail(itemImage(ele))
 
                     addField("**Item:**", ele.name.str().stripTags(), true)
                     addField("**Total Orders:**", Formatting.withCommas(summary.ordersCount.toBigDecimal(), true), true)
@@ -722,7 +837,7 @@ object Discord : ListenerAdapter() {
         }
     }
 
-    private fun authCommand(e: SlashCommandInteractionEvent) {
+    private fun authCommand(e: GenericCommandInteractionEvent) {
         val key = e.getOption("key")?.asString ?: return e.reply("Key not provided!").setEphemeral(true).queue()
         val fitting = authenticationBridge.entries.firstOrNull { (_, p) -> p.second == key }
         if (fitting == null) {
@@ -757,7 +872,7 @@ object Discord : ListenerAdapter() {
         }
     }
 
-    private fun infoCommand(e: SlashCommandInteractionEvent) {
+    private fun infoCommand(e: GenericCommandInteractionEvent) {
         val category =
             e.getOption("category")?.asString ?: return e.reply("Category missing!").setEphemeral(true).queue()
         when (category) {
@@ -773,7 +888,7 @@ object Discord : ListenerAdapter() {
         }
     }
 
-    private fun pingCommand(e: SlashCommandInteractionEvent) {
+    private fun pingCommand(e: GenericCommandInteractionEvent) {
         val now = System.currentTimeMillis()
         e.reply("Pong!").setEphemeral(true)
             .flatMap { e.hook.editOriginal("Bot Ping: **${System.currentTimeMillis() - now}ms**") }.queue()
@@ -785,6 +900,14 @@ object Discord : ListenerAdapter() {
 
     private fun genericSuccessEmbed(title: String, message: String): EmbedBuilder {
         return EmbedBuilder().setTitle("**Success**").addField("**$title**", message, false).setColor(COLOR_MACROCOSM)
+    }
+
+    private fun argMissingEmbed(arg: String): MessageEmbed {
+        return embed {
+            setColor(COLOR_RED)
+            setTitle("**Error**")
+            addField("**Missing Argument**", "This command requires `$arg` argument to be present!", false)
+        }
     }
 
     private inline fun <R> runCatchingReporting(ctx: SlashCommandInteractionEvent, executor: () -> R): Result<R> {
@@ -812,8 +935,8 @@ object Discord : ListenerAdapter() {
     }
 
     private fun authOnly(
-        e: SlashCommandInteractionEvent,
-        command: (SlashCommandInteractionEvent, OfflinePlayer) -> Unit
+        e: GenericCommandInteractionEvent,
+        command: (GenericCommandInteractionEvent, OfflinePlayer) -> Unit
     ) {
         val eId = e.user.idLong
         val uuid =
@@ -822,12 +945,18 @@ object Discord : ListenerAdapter() {
         command(e, Bukkit.getOfflinePlayer(uuid))
     }
 
-    private fun bazaarItemThumbnail(item: MacrocosmItem): String {
+    fun itemImage(item: MacrocosmItem): String {
         val id = item.base.name.lowercase()
         if (id == "player_head") {
             val skin = when (item) {
-                is SkullAbilityItem -> item.skullOwner
-                is RecipeItem -> item.headSkin
+                is SkullAbilityItem -> item.skin?.skin ?: item.skullOwner
+                is RecipeItem -> item.skin?.skin ?: item.headSkin
+                is PetItem -> {
+                    val pet = item.stored ?: return "null"
+                    if(pet.skin != null) {
+                        (Registry.COSMETIC.find(pet.skin) as SkullSkin).skin
+                    } else Registry.PET.find(pet.id).headSkin
+                }
                 else -> unreachable() // we should not reach this
             }
             return try {
@@ -840,6 +969,14 @@ object Discord : ListenerAdapter() {
             }
         }
         return if (item.base.isBlock) "https://mcapi.marveldc.me/item/$id?version=1.19&width=250&height=250&fuzzySearch=false" else "https://raw.githubusercontent.com/Maxuss/Macrocosm-Data/master/items/generated/${id}.png"
+    }
+
+    fun playerAvatar(player: MacrocosmPlayer): String {
+        return "https://crafatar.com/avatars/${player.ref}?overlay=true"
+    }
+
+    fun getAuthenticatedOrNull(player: MacrocosmPlayer): User? {
+        return bot.retrieveUserById(authenticated[player.ref] ?: return null).submit().get()
     }
 
     inline fun embed(builder: EmbedBuilder.() -> Unit): MessageEmbed {
