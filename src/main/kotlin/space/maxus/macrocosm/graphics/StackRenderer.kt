@@ -39,9 +39,6 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
 
         private const val NAME_LORE_DIVIDER_SIZE = FONT_SIZE / 2
 
-        private const val UNDERLINE_STRIKETHROUGH_LINE_HEIGHT = (FONT_SIZE * 0.05).toInt()
-        private const val UNDERLINE_STRIKETHROUGH_LINE_HEIGHT_BOLD = UNDERLINE_STRIKETHROUGH_LINE_HEIGHT * 2
-
         private val FALLBACK_FONT = Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE)
     }
 
@@ -55,7 +52,7 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
 
     fun render(): BufferedImage {
         beginRenderProcess()
-        renderBackside()
+        renderBackground()
         renderText()
         graphics.dispose()
         return img
@@ -92,7 +89,7 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
         graphics.fillRect(0, 0, width, height)
     }
 
-    private fun renderBackside() {
+    private fun renderBackground() {
         graphics.color = Color(22, 8, 24)
         graphics.fillRect(
             BACKGROUND_OFFSET,
