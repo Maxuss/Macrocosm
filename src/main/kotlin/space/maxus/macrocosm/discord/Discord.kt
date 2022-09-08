@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent
@@ -30,6 +31,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.FileUpload
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import net.kyori.adventure.text.format.NamedTextColor
@@ -41,6 +44,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.inventory.EquipmentSlot
+import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
@@ -57,6 +61,8 @@ import space.maxus.macrocosm.discord.emitters.MacrocosmLevelEmitter
 import space.maxus.macrocosm.discord.emitters.RareDropEmitter
 import space.maxus.macrocosm.discordBotToken
 import space.maxus.macrocosm.exceptions.macrocosm
+import space.maxus.macrocosm.graphics.ItemRenderBuffer
+import space.maxus.macrocosm.graphics.StackRenderer
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -73,6 +79,9 @@ import space.maxus.macrocosm.util.metrics.report
 import java.time.Duration
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutorService
 
 @Suppress("UNUSED_PARAMETER")
@@ -166,6 +175,9 @@ object Discord : ListenerAdapter() {
 
     private val commandPool: ExecutorService = Threading.newFixedPool(8)
     lateinit var bot: JDA
+    var commTextChannel: TextChannel? = null
+    var mediaTextChannel: TextChannel? = null
+    val enabled: Boolean get() { return Macrocosm.isOnline && ::bot.isInitialized }
     private var communicationChannel: Long? = null
     private var webhookLink: String? = null
     private val bazaarSellCache: Cache<Identifier, ListIterator<BazaarSellOrder>> =
@@ -260,43 +272,49 @@ object Discord : ListenerAdapter() {
                     ).queue()
 
                     val guild = bot.getGuildById(Macrocosm.config.getLong("connections.discord.guild-id"))!!
-                    val channel = guild.getTextChannelById(ch)!!
+                    val c = guild.getTextChannelById(ch)!!
+                    commTextChannel = c
 
                     // important roles
                     guild.getRolesByName("Macrocosm Boss Info", false).firstOrNull()?.apply {
-                        Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(this, channel))
+                        Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Boss Info").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(role, channel))
+                            Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(role, c))
                         }
                     }
                     guild.getRolesByName("Macrocosm Rare Drop", false).firstOrNull()?.apply {
-                        Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(this, channel))
+                        Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Rare Drop").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(role, channel))
+                            Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(role, c))
                         }
                     }
                     guild.getRolesByName("Macrocosm High Skill", false).firstOrNull()?.apply {
-                        Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(this, channel))
+                        Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm High Skill").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(role, channel))
+                            Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(role, c))
                         }
                     }
                     guild.getRolesByName("Macrocosm Level Up", false).firstOrNull()?.apply {
-                        Registry.DISCORD_EMITTERS.register(id("macrocosm_lvl_up"), MacrocosmLevelEmitter(this, channel))
+                        Registry.DISCORD_EMITTERS.register(id("macrocosm_lvl_up"), MacrocosmLevelEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Level Up").submit().thenAccept { role ->
                             Registry.DISCORD_EMITTERS.register(
                                 id("macrocosm_lvl_up"),
-                                MacrocosmLevelEmitter(role, channel)
+                                MacrocosmLevelEmitter(role, c)
                             )
                         }
+                    }
+                }
+                Macrocosm.config.getLong("connections.discord.media-channel").let { channel ->
+                    if(channel != 0L) {
+                        mediaTextChannel = bot.getTextChannelById(channel)!!
                     }
                 }
             }
@@ -969,6 +987,48 @@ object Discord : ListenerAdapter() {
             }
         }
         return if (item.base.isBlock) "https://mcapi.marveldc.me/item/$id?version=1.19&width=250&height=250&fuzzySearch=false" else "https://raw.githubusercontent.com/Maxuss/Macrocosm-Data/master/items/generated/${id}.png"
+    }
+
+    fun sendItemDiffs(diffs: List<Identifier>) {
+        val mediaUrls = ConcurrentHashMap<Identifier, String>()
+        val futures = ConcurrentLinkedQueue<CompletableFuture<Void>>()
+        val futures0 = diffs.parallelStream().map {
+            val item = Registry.ITEM.find(it).build(null) ?: return@map null
+            // sending image to buffer channel
+            StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile("item_renders/${it.path}.png").thenAccept { _ ->
+                futures.add(mediaTextChannel?.sendMessage(MessageCreateData.fromFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))))?.submit()!!.thenAccept { message ->
+                    val mediaUrl = message.attachments.first().url
+                    mediaUrls[it] = mediaUrl
+                })
+            }
+        }.toList().filterNotNull()
+
+        taskRunLater(1 * 20L, sync = false) {
+            // we need to wait just in case all items have not yet rendered
+            CompletableFuture.allOf(*futures0.toTypedArray()).thenAccept {
+                CompletableFuture.allOf(*futures.toTypedArray()).thenAccept {
+                    mediaUrls.entries.parallelStream().forEach { (itemId, imgUrl) ->
+                        commTextChannel?.sendMessageEmbeds(embed {
+                            setColor(COLOR_MACROCOSM)
+                            setTitle("**New Items!**")
+                            val mc = Registry.ITEM.find(itemId)
+                            addField(
+                                "**${mc.buildName().str().stripTags()}**",
+                                "New item of **${
+                                    mc.rarity.name.replace(
+                                        "_",
+                                        " "
+                                    )
+                                }** commodity!\nItem ID: `$itemId`\nMore info on the `/items` API Endpoint!",
+                                false
+                            )
+                            setThumbnail(itemImage(mc))
+                            setImage(imgUrl)
+                        })?.queue()
+                    }
+                }
+            }
+        }
     }
 
     fun playerAvatar(player: MacrocosmPlayer): String {

@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager
 import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
+import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.api.KeyManager
@@ -31,6 +32,7 @@ import space.maxus.macrocosm.generators.CMDGenerator
 import space.maxus.macrocosm.generators.MetaGenerator
 import space.maxus.macrocosm.generators.TexturedModelGenerator
 import space.maxus.macrocosm.generators.generate
+import space.maxus.macrocosm.item.AbilityItem
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
@@ -63,8 +65,10 @@ import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
+import space.maxus.macrocosm.util.walkDataResources
 import space.maxus.macrocosm.workarounds.AsyncLauncher
 import space.maxus.macrocosm.zone.ZoneType
+import java.awt.Font
 import java.net.URL
 import java.nio.ByteBuffer
 import java.util.*
@@ -72,6 +76,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
+import kotlin.io.path.copyTo
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -87,6 +95,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var VERSION: String; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
         lateinit var CURRENT_IP: String; private set
+        lateinit var FONT_MINECRAFT: Font; private set
+        lateinit var FONT_MINECRAFT_BOLD: Font; private set
+        lateinit var FONT_MINECRAFT_ITALIC: Font; private set
+        var OFFLINE_MODE: Boolean = false
         var DISCORD_BOT_TOKEN: String? = null; private set
 
         private data class VersionInfo(val version: String, val apiVersion: String)
@@ -101,6 +113,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     var isInDevEnvironment: Boolean = false; private set
     val random: java.util.Random = java.util.Random(ThreadLocalRandom.current().nextLong())
     val macrocosmColor: TextColor = TextColor.color(0x4A26BB)
+    val isOnline by lazy { !OFFLINE_MODE }
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
@@ -113,6 +126,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             // we are probably offline, set the current ip to localhost
             CURRENT_IP = "127.0.0.1"
         }
+        OFFLINE_MODE = !server.onlineMode
         isInDevEnvironment = java.lang.Boolean.getBoolean("macrocosm.dev")
         integratedServer =
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
@@ -139,6 +153,27 @@ class InternalMacrocosmPlugin : KSpigot() {
                 if (isInDevEnvironment) SqliteDatabaseImpl else PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
             DATABASE.connect()
             playersLazy = DATABASE.readPlayers().toMutableList()
+        }
+        Threading.runAsync {
+            val rendersDir = Accessor.access("item_renders")
+            if(!rendersDir.exists())
+                rendersDir.createDirectories()
+            // Setting up fonts
+            walkDataResources("fonts") { path ->
+                val out = Accessor.access("fonts")
+                if(!out.exists())
+                    out.createDirectories()
+                val filePath = out.resolve(path.name)
+                path.copyTo(filePath, true)
+                if(path.name.contains("Regular"))
+                    FONT_MINECRAFT = Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
+                else if(path.name.contains("Bold") && !path.name.contains("Italic"))
+                    FONT_MINECRAFT_BOLD = Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
+                else if(path.name.contains("Italic") && !path.name.contains("Bold"))
+                    FONT_MINECRAFT_ITALIC = Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
+                else
+                    Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
+            }
         }
         Threading.runAsync {
             Discord.readSelf()
@@ -186,6 +221,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         ItemValue.init()
         Armor.init()
         Bazaar.init()
+        Registry.ITEM.register(id("placeholder_item_ignore_something"), AbilityItem.PLACEHOLDER_ITEM)
 
         Threading.runEachConcurrently(
             Executors.newFixedThreadPool(8),
@@ -300,13 +336,23 @@ class InternalMacrocosmPlugin : KSpigot() {
         task(period = 60 * 10L, sync = false) {
             KeyManager.requests.clear()
         }
+
+        taskRunLater(5 * 20L, sync = false) {
+            // detect item registry changes
+            if(Macrocosm.isOnline) {
+                Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
+            }
+        }
     }
 
     private val dumpTestData: Boolean = false
 
     override fun shutdown() {
-        val storageExecutor = Threading.newFixedPool(8)
+        val storageExecutor = Threading.newFixedPool(16)
 
+        storageExecutor.execute {
+            Registry.ITEM.makeSnapshot()
+        }
         storageExecutor.execute {
             for ((_, v) in loadedPlayers) {
                 v.storeSelf(database)

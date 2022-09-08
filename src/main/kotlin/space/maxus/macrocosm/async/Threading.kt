@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.async
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
+import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.util.Fn
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.threadNoinline
@@ -63,6 +64,22 @@ object Threading {
             Monitor.exit(this)
             interrupt()
         }
+    }
+
+    /**
+     * Executes the code on separate thread if [Thread.currentThread] is
+     * the current Minecraft Server thread ([MinecraftServer.serverThread]),
+     * otherwise the code is run on current thread
+     *
+     * @param runnable The code to be run
+     */
+    inline fun driftFromMain(
+        crossinline runnable: () -> Unit
+    ) {
+        if(Thread.currentThread() == MinecraftServer.getServer().serverThread)
+            runAsync(runnable = runnable)
+        else
+            runnable()
     }
 
     /**

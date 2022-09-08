@@ -10,6 +10,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.cosmetic.Cosmetic
+import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.discord.DiscordEmitter
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.EntityBase
@@ -21,6 +22,8 @@ import space.maxus.macrocosm.fishing.TrophyFish
 import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.readIdentifier
+import space.maxus.macrocosm.item.writeIdentifier
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
@@ -30,11 +33,16 @@ import space.maxus.macrocosm.spell.Spell
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.general.id
+import space.maxus.macrocosm.util.ignoringProducer
 import space.maxus.macrocosm.zone.Zone
+import java.io.BufferedInputStream
+import java.io.DataInputStream
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.writeText
 
 abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = true) {
@@ -52,6 +60,26 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
 
     open fun tryUse(id: Identifier, executor: (T) -> Unit) {
         this.findOrNull(id)?.let(executor)
+    }
+
+    open fun makeSnapshot() {
+        Accessor.overwrite("snapshots/${name.path}.REG_SNAPSHOT") { os ->
+            val keys = iter().keys
+            os.writeInt(keys.size)
+            iter().keys.forEach { ele ->
+                os.writeIdentifier(ele)
+            }
+        }
+    }
+
+    open fun compareToSnapshot(): List<Identifier> {
+        val snapshot = Accessor.access("snapshots/${name.path}.REG_SNAPSHOT")
+        if(!snapshot.exists())
+            return emptyList()
+        val stream = DataInputStream(BufferedInputStream(snapshot.inputStream()))
+        val iter = iter().keys
+        val snapshotList = List(stream.readInt(), ignoringProducer(stream::readIdentifier))
+        return iter.filter { !snapshotList.contains(it) }
     }
 
     inline fun delegateRegistration(
@@ -166,3 +194,4 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         }
     }
 }
+

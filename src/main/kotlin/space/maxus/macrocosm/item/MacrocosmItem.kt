@@ -54,8 +54,8 @@ import space.maxus.macrocosm.util.annotations.PreviewFeature
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
 import space.maxus.macrocosm.util.unreachable
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.util.*
 import kotlin.math.min
 
@@ -184,7 +184,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         base.multiply(1 + (stars * .02f))
 
         val e = ItemCalculateStatsEvent(player, this, base)
-        e.callEvent()
+        if(player != null) {
+            e.callEvent()
+        }
         return e.stats
     }
 
@@ -481,7 +483,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                     tmp.addAll(ability.addLore(this@MacrocosmItem))
                 }
                 val event = CostCompileEvent(player, this@MacrocosmItem, ability.cost?.copy())
-                event.callEvent()
+                if(player != null) {
+                    // ignore accidental NPEs
+                    event.callEvent()
+                }
                 lore.addAll(tmp)
                 event.cost?.buildLore(lore)
                 lore.add("".toComponent())
@@ -640,47 +645,17 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     }
 }
 
-fun InputStream.readIdentifier(): Identifier {
-    val len = readVarInt()
+fun DataInputStream.readIdentifier(): Identifier {
+    val len = readInt()
     val buffer = ByteArray(len)
     read(buffer)
     return Identifier.parse(buffer.toString(Charsets.UTF_8))
 }
 
-fun Identifier.writeToBytes(s: OutputStream) {
-    val bytes = toString().encodeToByteArray()
-    s.write(bytes.size.toVarIntBytes())
-    s.write(bytes)
-}
-
-fun InputStream.readVarInt(): Int {
-    var i = 0
-    var j = 0
-
-    var b0: Byte
-
-    var index = 0
-
-    do {
-        b0 = this.read().toByte()
-        i = i or (b0.toInt() and 127 shl j++) * 7
-        if (j > 5) {
-            throw RuntimeException("VarInt too big")
-        }
-        index++
-    } while (b0.toInt() and 128 == 128)
-
-    return i
-}
-
-fun Int.toVarIntBytes(): ByteArray {
-    val buffer = mutableListOf<Byte>()
-    var self = this
-    while (self and -128 != 0) {
-        buffer.add((self and 127 or 128).toByte())
-        self = self ushr 7
-    }
-    return buffer.toByteArray()
+fun DataOutputStream.writeIdentifier(id: Identifier) {
+    val bytes = id.toString().encodeToByteArray()
+    writeInt(bytes.size)
+    write(bytes)
 }
 
 inline fun <reified V : MacrocosmItem> macrocosmItem(id: Identifier, builder: V.() -> Unit = { }): V {

@@ -4,11 +4,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.item.toVarIntBytes
 import space.maxus.macrocosm.util.general.Callback
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
-import java.io.OutputStream
+import java.io.DataOutputStream
 import java.util.concurrent.ExecutorService
 
 interface Metrics {
@@ -40,7 +39,7 @@ inline fun <R> report(message: String, callback: () -> R): R {
 
 fun constructReportBytes(message: String, type: MetricType): ByteArray {
     val baos = ByteArrayOutputStream()
-    val buffered = BufferedOutputStream(baos)
+    val buffered = DataOutputStream(BufferedOutputStream(baos))
 
     buffered.write(type.ordinal) // index
     writeBasicHeader(buffered)
@@ -50,15 +49,15 @@ fun constructReportBytes(message: String, type: MetricType): ByteArray {
     return baos.toByteArray()
 }
 
-private fun writeBasicHeader(output: OutputStream) {
+private fun writeBasicHeader(output: DataOutputStream) {
     str(Macrocosm.description.name, output)
     str(Macrocosm.description.version, output)
-    output.write(Metrics.VERSION.toVarIntBytes())
+    output.writeInt(Metrics.VERSION)
 }
 
-private fun str(string: String, os: OutputStream) {
+private fun str(string: String, os: DataOutputStream) {
     val slice = string.encodeToByteArray()
-    val size = slice.size.toVarIntBytes()
-    os.write(size)
+
+    os.writeInt(slice.size)
     os.write(slice)
 }

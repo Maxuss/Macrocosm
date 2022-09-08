@@ -18,6 +18,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.PreviewFeature
 import space.maxus.macrocosm.util.multimap
@@ -36,6 +37,9 @@ open class AbilityItem(
     id: Identifier? = null,
     protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
+    @Suppress("ClassName")
+    object PLACEHOLDER_ITEM: AbilityItem(ItemType.OTHER, "Placeholder Item", Rarity.UNOBTAINABLE, Material.DIAMOND_HORSE_ARMOR, stats { health = -1f }, mutableListOf(), SpecialStatistics(), 3, listOf())
+
     override var amount: Int = 1
     override var stars: Int = 0
         set(value) {
