@@ -10,6 +10,7 @@ import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.ItemValue
@@ -584,7 +585,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override val type: EntityType
         get() = paper?.type ?: EntityType.UNKNOWN
 
-    override fun damage(amount: Float, damager: Entity?) {
+    override fun damage(amount: Float, damager: Entity?, kind: DamageKind) {
         if (paper == null || paper!!.isDead)
             return
 

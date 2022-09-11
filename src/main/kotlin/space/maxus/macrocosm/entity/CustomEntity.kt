@@ -7,6 +7,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.world.entity.OwnableEntity
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
 import org.bukkit.entity.*
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.events.EntityDropItemsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.MACROCOSM_TAG
@@ -115,7 +116,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
         return Registry.LOOT_POOL.findOrNull(lootPool) ?: LootPool.of()
     }
 
-    override fun damage(amount: Float, damager: Entity?) {
+    override fun damage(amount: Float, damager: Entity?, kind: DamageKind) {
         if (paper == null || paper!!.isDead)
             return
 

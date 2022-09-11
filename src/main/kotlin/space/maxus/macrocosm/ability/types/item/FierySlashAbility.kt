@@ -16,6 +16,7 @@ import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
@@ -127,7 +128,7 @@ object FierySlashAbility : AbilityBase(
         // dissipating the arc
         ref.set(true)
 
-        val event = PlayerDealDamageEvent(player, entity, damage, crit, false)
+        val event = PlayerDealDamageEvent(player, entity, damage, crit, DamageKind.ARTIFICIAL)
         event.callEvent()
 
         if (event.isCancelled) {

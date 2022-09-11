@@ -1,11 +1,7 @@
 package space.maxus.macrocosm.item
 
-import com.destroystokyo.paper.profile.ProfileProperty
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.inventory.meta.SkullMeta
-import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Registry
@@ -27,8 +23,13 @@ open class ArmorItem(
     protected val bootMeta: (ItemMeta) -> Unit = { },
     protected val commonMeta: (ItemMeta) -> Unit = { },
     protected val runes: List<RuneSlot> = listOf(),
-    protected val headSkin: String? = null
-) {
+    protected val headSkin: String? = null,
+    protected val bootsName: String = "$baseName Boots",
+    protected val legsName: String = "$baseName Leggings",
+    protected val chestName: String = "$baseName Chestplate",
+    protected val headName: String = "$baseName Helmet",
+
+    ) {
     companion object {
         const val HELMET_MODIFIER = .6f
         const val CHESTPLATE_MODIFIER = 1f
@@ -48,21 +49,30 @@ open class ArmorItem(
         specClone.multiply(HELMET_MODIFIER)
         specClone.round()
 
-        val item = AbilityItem(
+        val item = if(headSkin == null) AbilityItem(
             ItemType.HELMET,
-            "$baseName Helmet",
+            headName,
             baseRarity,
-            if (headSkin == null) Material.valueOf("${baseMaterial}_HELMET") else Material.PLAYER_HEAD,
+            Material.valueOf("${baseMaterial}_HELMET"),
             statClone,
             abilities.toMutableList(),
             specClone,
             runeTypes = runes,
+            id = id("${baseId}_helmet")
         ) {
-            if (it is SkullMeta) {
-                val profile = Bukkit.createProfile(Macrocosm.constantProfileId)
-                profile.setProperty(ProfileProperty("textures", headSkin!!))
-                it.playerProfile = profile
-            }
+            headMeta(it)
+            commonMeta(it)
+        } else SkullAbilityItem(
+            ItemType.HELMET,
+            headName,
+            baseRarity,
+            headSkin,
+            statClone,
+            abilities.mapNotNull { Registry.ABILITY.byValue(it) }.toMutableList(),
+            specClone,
+            runeTypes = runes.map { it.id },
+            id = id("${baseId}_helmet")
+        ) {
             headMeta(it)
             commonMeta(it)
         }
@@ -82,13 +92,14 @@ open class ArmorItem(
         specClone.round()
         return AbilityItem(
             ItemType.CHESTPLATE,
-            "$baseName Chestplate",
+            chestName,
             baseRarity,
             Material.valueOf("${baseMaterial}_CHESTPLATE"),
             statClone,
             abilities.toMutableList(),
             specClone,
-            runeTypes = runes
+            runeTypes = runes,
+            id = id("${baseId}_chestplate")
         ) {
             chestMeta(it)
             commonMeta(it)
@@ -108,13 +119,14 @@ open class ArmorItem(
         specClone.round()
         return AbilityItem(
             ItemType.LEGGINGS,
-            "$baseName Leggings",
+            legsName,
             baseRarity,
             Material.valueOf("${baseMaterial}_LEGGINGS"),
             statClone,
             abilities.toMutableList(),
             specClone,
-            runeTypes = runes
+            runeTypes = runes,
+            id = id("${baseId}_leggings")
         ) {
             legsMeta(it)
             commonMeta(it)
@@ -134,13 +146,14 @@ open class ArmorItem(
         specClone.round()
         return AbilityItem(
             ItemType.BOOTS,
-            "$baseName Boots",
+            bootsName,
             baseRarity,
             Material.valueOf("${baseMaterial}_BOOTS"),
             statClone,
             abilities.toMutableList(),
             specClone,
-            runeTypes = runes
+            runeTypes = runes,
+            id = id("${baseId}_boots")
         ) {
             bootMeta(it)
             commonMeta(it)

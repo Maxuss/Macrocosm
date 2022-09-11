@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -51,7 +52,7 @@ open class EntityBase(
         return pool
     }
 
-    override fun damage(amount: Float, damager: Entity?) {
+    override fun damage(amount: Float, damager: Entity?, kind: DamageKind) {
         // we cant damage entity template, continue
     }
 

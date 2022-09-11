@@ -28,6 +28,7 @@ import org.bukkit.util.Vector
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.exceptions.macrocosm
+import space.maxus.macrocosm.item.macrocosmTag
 import space.maxus.macrocosm.listeners.FallingBlockListener
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -38,6 +39,7 @@ import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.StatisticTypeAdapter
 import space.maxus.macrocosm.stats.Statistics
+import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.metrics.report
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
@@ -78,6 +80,10 @@ typealias Fn = () -> Unit
 typealias FnArg<A> = (A) -> Unit
 typealias FnRet<B> = () -> B
 typealias FnArgRet<A, B> = (A) -> B
+
+fun Player.getArmorIds(): List<Identifier> {
+    return equipment.armorContents.filter { !it.isAirOrNull() }.map { it.macrocosmTag().getId("ID") }
+}
 
 inline fun <reified T> serializeBytes(data: T): String {
     val s = ByteArrayOutputStream()

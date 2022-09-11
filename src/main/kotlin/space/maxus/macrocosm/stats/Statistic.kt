@@ -169,6 +169,14 @@ enum class Statistic(
             add("<gray>Magic Damage: <aqua>+${damageIncrease.roundToInt()}%")
         }
     ),
+    VIGOR(
+        StatisticType.DEFENSIVE,
+        TextColor.color(0x27C38B),
+        "♫",
+        0f,
+        displayItem = Material.ENCHANTING_TABLE,
+        description = "Vigor increases your base Mana Regeneration."
+    ),
 
     MINING_SPEED(
         StatisticType.DEFENSIVE,

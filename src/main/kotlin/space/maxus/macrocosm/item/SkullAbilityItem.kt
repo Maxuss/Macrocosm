@@ -26,6 +26,7 @@ open class SkullAbilityItem(
     runeTypes: List<Identifier> = listOf(),
     description: String? = null,
     id: Identifier = Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", "")),
+    metaModifier: (ItemMeta) -> Unit = { }
 ) : AbilityItem(
     type,
     itemName,
@@ -37,7 +38,8 @@ open class SkullAbilityItem(
     breakingPower,
     runeTypes.map { RuneSlot.fromId(it) },
     description,
-    id = id
+    id = id,
+    metaModifier
 ) {
 
 

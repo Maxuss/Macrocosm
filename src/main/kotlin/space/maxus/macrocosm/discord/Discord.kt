@@ -44,8 +44,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.inventory.EquipmentSlot
-import space.maxus.macrocosm.InternalMacrocosmPlugin
-import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.*
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
@@ -59,12 +58,10 @@ import space.maxus.macrocosm.discord.emitters.BossInfoEmitter
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.discord.emitters.MacrocosmLevelEmitter
 import space.maxus.macrocosm.discord.emitters.RareDropEmitter
-import space.maxus.macrocosm.discordBotToken
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.graphics.ItemRenderBuffer
 import space.maxus.macrocosm.graphics.StackRenderer
 import space.maxus.macrocosm.item.*
-import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.PlayerEquipment
 import space.maxus.macrocosm.players.isAirOrNull
@@ -79,10 +76,8 @@ import space.maxus.macrocosm.util.metrics.report
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutorService
+import kotlin.io.path.deleteIfExists
 
 @Suppress("UNUSED_PARAMETER")
 object Discord : ListenerAdapter() {
@@ -958,8 +953,13 @@ object Discord : ListenerAdapter() {
     ) {
         val eId = e.user.idLong
         val uuid =
-            authenticated.entries.firstOrNull { (_, id) -> id == eId }?.key ?: return e.replyEmbeds(EMBED_AUTH_REQUIRED)
-                .setEphemeral(true).queue()
+            authenticated.entries.firstOrNull { (_, id) -> id == eId }?.key ?:
+            if(Macrocosm.isInDevEnvironment) {
+                // we can ignore stuff in dev environment
+                command(e, Bukkit.getOfflinePlayer("m_xus"))
+                return
+            } else
+                return e.replyEmbeds(EMBED_AUTH_REQUIRED).setEphemeral(true).queue()
         command(e, Bukkit.getOfflinePlayer(uuid))
     }
 
@@ -978,7 +978,8 @@ object Discord : ListenerAdapter() {
                 else -> unreachable() // we should not reach this
             }
             return try {
-                val jo = GSON.fromJson(Base64.getDecoder().decode(skin).decodeToString(), JsonObject::class.java)
+                val decoded = Base64.getDecoder().decode(skin).decodeToString()
+                val jo = GSON.fromJson(decoded, JsonObject::class.java)
                 val textureHash = jo["textures"].asJsonObject["SKIN"].asJsonObject["url"].asString.split("/").last()
                 "https://mc-heads.net/head/$textureHash/150.png"
             } catch (e: IllegalArgumentException) {
@@ -990,42 +991,37 @@ object Discord : ListenerAdapter() {
     }
 
     fun sendItemDiffs(diffs: List<Identifier>) {
-        val mediaUrls = ConcurrentHashMap<Identifier, String>()
-        val futures = ConcurrentLinkedQueue<CompletableFuture<Void>>()
-        val futures0 = diffs.parallelStream().map {
-            val item = Registry.ITEM.find(it).build(null) ?: return@map null
+        diffs.parallelStream().forEach {
+            val mc = Registry.ITEM.find(it)
+            val item = mc.build(null) ?: return@forEach
             // sending image to buffer channel
             StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile("item_renders/${it.path}.png").thenAccept { _ ->
-                futures.add(mediaTextChannel?.sendMessage(MessageCreateData.fromFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))))?.submit()!!.thenAccept { message ->
+                mediaTextChannel?.sendMessage(MessageCreateData.fromFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))))?.submit()!!.thenAccept { message ->
+                    // meanwhile delete the original render
+                    Threading.runAsync(isDaemon = true) { Accessor.access("item_renders/${it.path}.png").deleteIfExists() }
                     val mediaUrl = message.attachments.first().url
-                    mediaUrls[it] = mediaUrl
-                })
-            }
-        }.toList().filterNotNull()
-
-        taskRunLater(1 * 20L, sync = false) {
-            // we need to wait just in case all items have not yet rendered
-            CompletableFuture.allOf(*futures0.toTypedArray()).thenAccept {
-                CompletableFuture.allOf(*futures.toTypedArray()).thenAccept {
-                    mediaUrls.entries.parallelStream().forEach { (itemId, imgUrl) ->
-                        commTextChannel?.sendMessageEmbeds(embed {
-                            setColor(COLOR_MACROCOSM)
-                            setTitle("**New Items!**")
-                            val mc = Registry.ITEM.find(itemId)
-                            addField(
-                                "**${mc.buildName().str().stripTags()}**",
-                                "New item of **${
-                                    mc.rarity.name.replace(
-                                        "_",
-                                        " "
-                                    )
-                                }** commodity!\nItem ID: `$itemId`\nMore info on the `/items` API Endpoint!",
-                                false
-                            )
-                            setThumbnail(itemImage(mc))
-                            setImage(imgUrl)
-                        })?.queue()
-                    }
+                    commTextChannel?.sendMessageEmbeds(embed {
+                        setColor(COLOR_MACROCOSM)
+                        setTitle("**New Items!**")
+                        addField(
+                            "**${mc.buildName().str().stripTags()}**",
+                            "New item of **${
+                                mc.rarity.name.replace(
+                                    "_",
+                                    " "
+                                )
+                            }** commodity!\nItem ID: `$it`\nMore info in the API (or in game)!",
+                            false
+                        )
+                        addField(
+                            "**API Endpoint URL**",
+                            "`https://${if(Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/resources/item/${it}`",
+                            false
+                        )
+                        val thumbnailUrl = itemImage(mc)
+                        setThumbnail(thumbnailUrl)
+                        setImage(mediaUrl)
+                    })?.queue()
                 }
             }
         }

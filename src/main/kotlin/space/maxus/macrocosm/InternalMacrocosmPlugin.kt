@@ -32,7 +32,6 @@ import space.maxus.macrocosm.generators.CMDGenerator
 import space.maxus.macrocosm.generators.MetaGenerator
 import space.maxus.macrocosm.generators.TexturedModelGenerator
 import space.maxus.macrocosm.generators.generate
-import space.maxus.macrocosm.item.AbilityItem
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
@@ -62,6 +61,7 @@ import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
+import space.maxus.macrocosm.util.data.redirect
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
@@ -80,6 +80,7 @@ import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.name
+import kotlin.properties.Delegates
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -91,15 +92,20 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var MONITOR: Monitor; private set
         lateinit var DATABASE: DataStorage; private set
 
-        lateinit var API_VERSION: String; private set
-        lateinit var VERSION: String; private set
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
+        val API_VERSION by Delegates.redirect(MacrocosmConstants::API_VERSION)
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
+        val VERSION by Delegates.redirect(MacrocosmConstants::VERSION)
         lateinit var TRANSACTION_HISTORY: TransactionHistory
-        lateinit var CURRENT_IP: String; private set
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.CURRENT_IP"))
+        val CURRENT_IP by Delegates.redirect(MacrocosmConstants::CURRENT_IP)
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
         lateinit var FONT_MINECRAFT_ITALIC: Font; private set
-        var OFFLINE_MODE: Boolean = false
-        var DISCORD_BOT_TOKEN: String? = null; private set
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
+        val OFFLINE_MODE by Delegates.redirect(MacrocosmConstants::OFFLINE_MODE)
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
+        val DISCORD_BOT_TOKEN by Delegates.redirect(MacrocosmConstants::DISCORD_BOT_TOKEN)
 
         private data class VersionInfo(val version: String, val apiVersion: String)
     }
@@ -107,26 +113,27 @@ class InternalMacrocosmPlugin : KSpigot() {
     val constantProfileId: UUID = UUID.fromString("13e76730-de52-4197-909a-6d50e0a2203b")
     val id: String = "macrocosm"
     val loadedPlayers: HashMap<UUID, MacrocosmPlayer> = hashMapOf()
-    val version by lazy { VERSION }
-    val apiVersion by lazy { API_VERSION }
+    val version by lazy { MacrocosmConstants.VERSION }
+    val apiVersion by lazy { MacrocosmConstants.API_VERSION }
     val transactionHistory by lazy { TRANSACTION_HISTORY }
+    var isSandbox: Boolean = false; private set
     var isInDevEnvironment: Boolean = false; private set
-    val random: java.util.Random = java.util.Random(ThreadLocalRandom.current().nextLong())
+    val random: Random = Random(ThreadLocalRandom.current().nextLong())
     val macrocosmColor: TextColor = TextColor.color(0x4A26BB)
-    val isOnline by lazy { !OFFLINE_MODE }
+    val isOnline by lazy { !MacrocosmConstants.OFFLINE_MODE }
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
-            CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
+            MacrocosmConstants.CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
             conn.disconnect()
         } catch (e: Exception) {
             // we are probably offline, set the current ip to localhost
-            CURRENT_IP = "127.0.0.1"
+            MacrocosmConstants.CURRENT_IP = "127.0.0.1"
         }
-        OFFLINE_MODE = !server.onlineMode
+        MacrocosmConstants.OFFLINE_MODE = !server.onlineMode
         isInDevEnvironment = java.lang.Boolean.getBoolean("macrocosm.dev")
         integratedServer =
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
@@ -138,8 +145,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes()))
                 .toString()
         )!!
-        API_VERSION = versionInfo.apiVersion
-        VERSION = versionInfo.version
+        MacrocosmConstants.API_VERSION = versionInfo.apiVersion
+        MacrocosmConstants.VERSION = versionInfo.version
         KeyManager.load()
         BazaarElement.init()
         Threading.contextBoundedRunAsync {
@@ -221,7 +228,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         ItemValue.init()
         Armor.init()
         Bazaar.init()
-        Registry.ITEM.register(id("placeholder_item_ignore_something"), AbilityItem.PLACEHOLDER_ITEM)
 
         Threading.runEachConcurrently(
             Executors.newFixedThreadPool(8),
@@ -321,8 +327,10 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         config.load(cfgFile)
 
-        DISCORD_BOT_TOKEN = config.getString("connections.discord-bot-token")
-        if (DISCORD_BOT_TOKEN != null && DISCORD_BOT_TOKEN != "NULL") {
+        isSandbox = config.getBoolean("game.sandbox")
+
+        MacrocosmConstants.DISCORD_BOT_TOKEN = config.getString("connections.discord-bot-token")
+        if (MacrocosmConstants.DISCORD_BOT_TOKEN != null && MacrocosmConstants.DISCORD_BOT_TOKEN != "NULL") {
             connectDiscordCommand()
         }
 
@@ -387,8 +395,8 @@ val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
 val database by lazy { InternalMacrocosmPlugin.DATABASE }
 val monitor by lazy { InternalMacrocosmPlugin.MONITOR }
 val logger by lazy { Macrocosm.logger }
-val currentIp by lazy { InternalMacrocosmPlugin.CURRENT_IP }
-val discordBotToken by lazy { InternalMacrocosmPlugin.DISCORD_BOT_TOKEN }
+val currentIp by lazy { MacrocosmConstants.CURRENT_IP }
+val discordBotToken by lazy { MacrocosmConstants.DISCORD_BOT_TOKEN }
 
 @UnsafeFeature
 val unsafe by lazy { InternalMacrocosmPlugin.UNSAFE }

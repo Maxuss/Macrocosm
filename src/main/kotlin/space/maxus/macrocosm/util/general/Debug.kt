@@ -4,6 +4,9 @@ import net.kyori.adventure.text.Component
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.util.annotations.DevelopmentOnly
 import java.util.logging.Level
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @DevelopmentOnly
 object Debug {
@@ -65,5 +68,17 @@ object Debug {
             return
 
         Macrocosm.logger.log(Level.INFO, any.toString())
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    inline fun debugScope(execution: () -> Unit) {
+        contract {
+            callsInPlace(execution, InvocationKind.AT_MOST_ONCE)
+        }
+
+        if(!Macrocosm.isInDevEnvironment)
+            return
+
+        execution()
     }
 }

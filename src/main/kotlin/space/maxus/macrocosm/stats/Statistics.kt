@@ -173,6 +173,12 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
             self[Statistic.INTELLIGENCE] = value
         }
 
+    var vigor: Float
+        get() = self[Statistic.VIGOR]!!
+        set(value) {
+            self[Statistic.VIGOR] = value
+        }
+
     var petLuck: Float
         get() = self[Statistic.PET_LUCK]!!
         set(value) {

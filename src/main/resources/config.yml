@@ -5,3 +5,5 @@ connection:
         communication-webhook: 'NULL'
         media-channel: 0
         guild-id: 0
+game:
+    sandbox: false

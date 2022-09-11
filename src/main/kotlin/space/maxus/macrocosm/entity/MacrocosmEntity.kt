@@ -19,6 +19,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.damage.healthColor
 import space.maxus.macrocosm.damage.truncateBigNumber
 import space.maxus.macrocosm.events.EntityCalculateStatsEvent
@@ -135,7 +136,7 @@ interface MacrocosmEntity : Listener {
             .noitalic()
     }
 
-    fun damage(amount: Float, damager: Entity? = null)
+    fun damage(amount: Float, damager: Entity? = null, kind: DamageKind = DamageKind.ARTIFICIAL)
     fun kill(damager: Entity? = null)
     fun isDamageFatal(damage: Float): Boolean {
         return currentHealth <= damage

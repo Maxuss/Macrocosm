@@ -4,18 +4,13 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.players.MacrocosmPlayer
 
-class PlayerDealDamageEvent(
+class PlayerDealMagicDamageEvent(
     val player: MacrocosmPlayer,
     val damaged: LivingEntity,
     var damage: Float,
-    var crit: Boolean,
-    val kind: DamageKind,
-    var isSuperCrit: Boolean = false
 ) : Event(), Cancellable {
-    val isContact get() = kind == DamageKind.MELEE
     private var eventCancelled = false
 
     companion object {

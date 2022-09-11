@@ -84,7 +84,8 @@ class SpellScroll : MacrocosmItem {
             lore.addAll(tmp)
             lore.add(text("<dark_gray>Spell Level: <dark_purple>${sp.requiredKnowledge}").noitalic())
             val event = CostCompileEvent(player, this, sp.cost.copy())
-            event.callEvent()
+            if(player != null)
+                event.callEvent()
             event.cost?.buildLore(lore)
             lore.add("".toComponent())
         }

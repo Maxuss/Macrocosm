@@ -236,8 +236,28 @@ enum class Ability(val ability: MacrocosmAbility) {
     TALISMAN_OF_MANA_ABILITY(TalismanOfManaAbility),
     MANA_ORB_ABILITY(ManaOrbAbility),
     WIZARDS_WELL_1(WizardsWellAbility1),
-    WIZARDS_WELL_2(WizardsWellAbility2)
+    WIZARDS_WELL_2(WizardsWellAbility2),
 
+    // elements
+    BLESSED_POLARITIES(BlessedPolaritiesAbility),
+    CURSED_POLARITIES(CursedPolaritiesAbility),
+    FORBIDDEN_POLARITIES(ForbiddenPolaritiesAbility),
+    POLARITY_ORIGINS(PolarityOriginsAbility),
+    ENVOY_OF_POLARITIES(EnvoyOfPolarities),
+
+    ORDER_POLARITY(OrderSetAbility),
+    EARTH_POLARITY(EarthPolaritySetBonus),
+    FIRE_POLARITY(FirePolaritySetBonus),
+
+    WATER_POLARITY(WaterPolaritySetBonus),
+    AIR_POLARITY_1(AirPolaritySetBonus1),
+    AIR_POLARITY_2(AirPolaritySetBonus2),
+    BLOOD_POLARITY(BloodPolaritySetBonus),
+
+    SPIRITS_POLARITY(SpiritsPolaritySetBonus),
+    VOID_POLARITY(VoidPolaritySetBonus),
+    CHAOS_POLARITY_1(ChaosPolaritySetBonus1),
+    CHAOS_POLARITY_2(ChaosPolaritySetBonus2)
     ;
 
     companion object {

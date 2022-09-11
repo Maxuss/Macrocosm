@@ -126,13 +126,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             PlayerTickEvent(this).callEvent()
 
             if (currentMana < stats.intelligence)
-                currentMana += stats.intelligence / 20f
+                currentMana += stats.vigor
             if (currentHealth < stats.health && !activeEffects!!.contains(PotionEffectType.ABSORPTION) && !activeEffects!!.contains(
                     PotionEffectType.POISON
                 )
             ) {
                 currentMana = min(currentMana, stats.intelligence)
-                currentHealth = min(currentHealth + (stats.health / 100f) + stats.vitality, stats.health)
+                currentHealth = min(currentHealth + stats.vitality, stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
@@ -460,6 +460,9 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     private fun recalculateStats(): Statistics {
         val cloned = baseStats.clone()
+        // vitality + vigor
+        cloned.vitality += (currentHealth / 100f)
+        cloned.vigor += (currentMana / 20f)
         EquipmentSlot.values().forEach {
             val baseItem = paper!!.inventory.getItem(it)
             if (baseItem.type == Material.AIR)

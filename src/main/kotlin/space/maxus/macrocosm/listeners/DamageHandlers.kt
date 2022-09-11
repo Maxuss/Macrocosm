@@ -29,6 +29,7 @@ import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.damage.relativeLocation
 import space.maxus.macrocosm.entity.macrocosm
@@ -52,6 +53,7 @@ object DamageHandlers : Listener {
         bukkitEvent: Cancellable,
         damager: LivingEntity,
         damaged: LivingEntity,
+        kind: DamageKind,
         checkAts: Boolean = true /* e: EntityDamageEvent */
     ) {
         if (damager is Player) {
@@ -87,7 +89,7 @@ object DamageHandlers : Listener {
 
         var superCrit = false
         if (damager is Player) {
-            val event = PlayerDealDamageEvent(damager.macrocosm!!, damaged, damage, crit)
+            val event = PlayerDealDamageEvent(damager.macrocosm!!, damaged, damage, crit, kind)
             val cancelled = !event.callEvent()
             if (cancelled) {
                 bukkitEvent.isCancelled = true
@@ -166,7 +168,7 @@ object DamageHandlers : Listener {
         if (damager !is LivingEntity || damaged !is LivingEntity)
             return
 
-        internalHandleDamage(e, damager, damaged)
+        internalHandleDamage(e, damager, damaged, DamageKind.MELEE)
     }
 
     @EventHandler
@@ -201,7 +203,7 @@ object DamageHandlers : Listener {
             return
         }
 
-        internalHandleDamage(e, shooter, damaged, false)
+        internalHandleDamage(e, shooter, damaged, DamageKind.RANGED, false)
     }
 
     @EventHandler
