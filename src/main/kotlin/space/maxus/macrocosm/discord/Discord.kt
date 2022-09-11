@@ -172,7 +172,10 @@ object Discord : ListenerAdapter() {
     lateinit var bot: JDA
     var commTextChannel: TextChannel? = null
     var mediaTextChannel: TextChannel? = null
-    val enabled: Boolean get() { return Macrocosm.isOnline && ::bot.isInitialized }
+    val enabled: Boolean
+        get() {
+            return Macrocosm.isOnline && ::bot.isInitialized
+        }
     private var communicationChannel: Long? = null
     private var webhookLink: String? = null
     private val bazaarSellCache: Cache<Identifier, ListIterator<BazaarSellOrder>> =
@@ -276,39 +279,39 @@ object Discord : ListenerAdapter() {
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Boss Info").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(role, c))
-                        }
+                                Registry.DISCORD_EMITTERS.register(id("boss_info"), BossInfoEmitter(role, c))
+                            }
                     }
                     guild.getRolesByName("Macrocosm Rare Drop", false).firstOrNull()?.apply {
                         Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Rare Drop").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(role, c))
-                        }
+                                Registry.DISCORD_EMITTERS.register(id("rare_drop"), RareDropEmitter(role, c))
+                            }
                     }
                     guild.getRolesByName("Macrocosm High Skill", false).firstOrNull()?.apply {
                         Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm High Skill").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(role, c))
-                        }
+                                Registry.DISCORD_EMITTERS.register(id("high_skill"), HighSkillEmitter(role, c))
+                            }
                     }
                     guild.getRolesByName("Macrocosm Level Up", false).firstOrNull()?.apply {
                         Registry.DISCORD_EMITTERS.register(id("macrocosm_lvl_up"), MacrocosmLevelEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Level Up").submit().thenAccept { role ->
-                            Registry.DISCORD_EMITTERS.register(
-                                id("macrocosm_lvl_up"),
-                                MacrocosmLevelEmitter(role, c)
-                            )
-                        }
+                                Registry.DISCORD_EMITTERS.register(
+                                    id("macrocosm_lvl_up"),
+                                    MacrocosmLevelEmitter(role, c)
+                                )
+                            }
                     }
                 }
                 Macrocosm.config.getLong("connections.discord.media-channel").let { channel ->
-                    if(channel != 0L) {
+                    if (channel != 0L) {
                         mediaTextChannel = bot.getTextChannelById(channel)!!
                     }
                 }
@@ -317,7 +320,7 @@ object Discord : ListenerAdapter() {
     }
 
     override fun onUserContextInteraction(e: UserContextInteractionEvent) {
-        when(e.name) {
+        when (e.name) {
             "Macrocosm profile data" -> {
                 authOnly(e) { ctx, _ ->
                     profileCommand0(ctx, ctx.user, true)
@@ -497,7 +500,11 @@ object Discord : ListenerAdapter() {
                     .map { it.toString() }.take(25)).queue()
             }
 
-            "subscribe", "unsubscribe" -> e.replyChoiceStrings(Registry.DISCORD_EMITTERS.iter().keys.filter { it.path.contains(e.focusedOption.value) }.take(25).map { it.toString() }).queue()
+            "subscribe", "unsubscribe" -> e.replyChoiceStrings(Registry.DISCORD_EMITTERS.iter().keys.filter {
+                it.path.contains(
+                    e.focusedOption.value
+                )
+            }.take(25).map { it.toString() }).queue()
         }
     }
 
@@ -523,21 +530,52 @@ object Discord : ListenerAdapter() {
     }
 
     override fun onSelectMenuInteraction(e: SelectMenuInteractionEvent) {
-        if(e.componentId.contains("player_menu")) {
+        if (e.componentId.contains("player_menu")) {
             val id = UUID.fromString(e.componentId.split("$").last())
 
-            when(e.values[0]) {
+            when (e.values[0]) {
                 "general" -> {
-                    e.editMessage(MessageEditData.fromEmbeds(profileGeneralEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                    e.editMessage(
+                        MessageEditData.fromEmbeds(
+                            profileGeneralEmbed(
+                                MacrocosmPlayer.loadOrInit(id),
+                                Bukkit.getOfflinePlayer(id)
+                            )
+                        )
+                    ).queue()
                 }
+
                 "statistics" -> {
-                    e.editMessage(MessageEditData.fromEmbeds(profileStatisticsEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                    e.editMessage(
+                        MessageEditData.fromEmbeds(
+                            profileStatisticsEmbed(
+                                MacrocosmPlayer.loadOrInit(id),
+                                Bukkit.getOfflinePlayer(id)
+                            )
+                        )
+                    ).queue()
                 }
+
                 "equipment" -> {
-                    e.editMessage(MessageEditData.fromEmbeds(profileEquipmentEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                    e.editMessage(
+                        MessageEditData.fromEmbeds(
+                            profileEquipmentEmbed(
+                                MacrocosmPlayer.loadOrInit(id),
+                                Bukkit.getOfflinePlayer(id)
+                            )
+                        )
+                    ).queue()
                 }
+
                 "skills" -> {
-                    e.editMessage(MessageEditData.fromEmbeds(profileSkillsEmbed(MacrocosmPlayer.loadOrInit(id), Bukkit.getOfflinePlayer(id)))).queue()
+                    e.editMessage(
+                        MessageEditData.fromEmbeds(
+                            profileSkillsEmbed(
+                                MacrocosmPlayer.loadOrInit(id),
+                                Bukkit.getOfflinePlayer(id)
+                            )
+                        )
+                    ).queue()
                 }
             }
         }
@@ -545,51 +583,97 @@ object Discord : ListenerAdapter() {
 
     private fun unsubscribeCommand(e: GenericCommandInteractionEvent) {
         val member = e.member ?: return
-        val emitterId = Identifier.parse(e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue())
-        val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find event of id `$emitterId` to subscribe you!").build()).setEphemeral(true).queue()
+        val emitterId = Identifier.parse(
+            e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue()
+        )
+        val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(
+            genericErrorEmbed(
+                "Not Found",
+                "Could not find event of id `$emitterId` to subscribe you!"
+            ).build()
+        ).setEphemeral(true).queue()
         emitter.unsubscribe(member)
-        e.replyEmbeds(genericSuccessEmbed("Unsubscription Successful", "Unsubscribed you from the *${emitter.name}* event announcements!").build()).setEphemeral(true).queue()
+        e.replyEmbeds(
+            genericSuccessEmbed(
+                "Unsubscription Successful",
+                "Unsubscribed you from the *${emitter.name}* event announcements!"
+            ).build()
+        ).setEphemeral(true).queue()
     }
 
     private fun subscribeCommand(e: GenericCommandInteractionEvent) {
         val member = e.member ?: return
-        val emitterId = Identifier.parse(e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue())
-        val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find event of id `$emitterId` to subscribe you!").build()).setEphemeral(true).queue()
+        val emitterId = Identifier.parse(
+            e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue()
+        )
+        val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(
+            genericErrorEmbed(
+                "Not Found",
+                "Could not find event of id `$emitterId` to subscribe you!"
+            ).build()
+        ).setEphemeral(true).queue()
         emitter.subscribe(member)
-        e.replyEmbeds(genericSuccessEmbed("Subscription Successful", "Subscribed you to the *${emitter.name}* event announcements!").build()).setEphemeral(true).queue()
+        e.replyEmbeds(
+            genericSuccessEmbed(
+                "Subscription Successful",
+                "Subscribed you to the *${emitter.name}* event announcements!"
+            ).build()
+        ).setEphemeral(true).queue()
     }
 
     private fun apiCommand(e: GenericCommandInteractionEvent, op: OfflinePlayer) {
-        val regeneratedKey = KeyManager.generateRandomKey(op.uniqueId, listOf(APIPermission.VIEW_BAZAAR_DATA, APIPermission.VIEW_PLAYER_DATA))
+        val regeneratedKey = KeyManager.generateRandomKey(
+            op.uniqueId,
+            listOf(APIPermission.VIEW_BAZAAR_DATA, APIPermission.VIEW_PLAYER_DATA)
+        )
         e.replyEmbeds(embed {
             setTitle("**API Key regeneration**")
             setColor(COLOR_MACROCOSM)
 
             addField("**New API Key**", "`$regeneratedKey`", false)
-            addField("**Usage**", "Use this key to access the Macrocosm API. More info on the /doc endpoint of API or in the swagger spec.", false)
+            addField(
+                "**Usage**",
+                "Use this key to access the Macrocosm API. More info on the /doc endpoint of API or in the swagger spec.",
+                false
+            )
         }).setEphemeral(true).queue()
     }
 
     private fun profileEquipmentEmbed(player: MacrocosmPlayer, op: OfflinePlayer): MessageEmbed {
         return embed {
             setTitle("**Player Equipment**")
-            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setAuthor(
+                "${player.rank.format.str().stripTags()} ${op.name}'s Profile",
+                null,
+                "https://crafatar.com/avatars/${player.ref}?overlay=true"
+            )
             setColor(COLOR_MACROCOSM)
 
             val equipment = player.equipment
-            equipment.enumerate().withIndex().associateBy { PlayerEquipment.typesOrdered[it.index] }.forEach { (type, indexed) ->
-                val (_, stack) = indexed
-                if(stack == null) {
-                    addField("**Item in ${type.name.replace("_", " ").capitalized()} Slot**", "`None`", false)
-                } else {
-                    addField("**Item in ${type.name.replace("_", " ").capitalized()} Slot**", "`${stack.buildName().str().stripTags()}`", false)
+            equipment.enumerate().withIndex().associateBy { PlayerEquipment.typesOrdered[it.index] }
+                .forEach { (type, indexed) ->
+                    val (_, stack) = indexed
+                    if (stack == null) {
+                        addField("**Item in ${type.name.replace("_", " ").capitalized()} Slot**", "`None`", false)
+                    } else {
+                        addField(
+                            "**Item in ${type.name.replace("_", " ").capitalized()} Slot**",
+                            "`${stack.buildName().str().stripTags()}`",
+                            false
+                        )
+                    }
                 }
-            }
 
             val activePet = player.activePet
-            addField("**Pet**", if(activePet == null) "`None`" else "`${activePet.rarity(player).name.replace("_", " ").capitalized()} ${activePet.prototype.name.stripTags()} [Lv ${activePet.level(player)}]`", false)
+            addField(
+                "**Pet**",
+                if (activePet == null) "`None`" else "`${
+                    activePet.rarity(player).name.replace("_", " ").capitalized()
+                } ${activePet.prototype.name.stripTags()} [Lv ${activePet.level(player)}]`",
+                false
+            )
 
-            if(op.isOnline) {
+            if (op.isOnline) {
                 val online = op.player!!
                 EquipmentSlot.values().forEach { slot ->
                     val item = online.inventory.getItem(slot)
@@ -604,7 +688,11 @@ object Discord : ListenerAdapter() {
                     if (item.isAirOrNull()) {
                         addField("**Item in $name:**", "`None`", true)
                     } else {
-                        addField("**Item in $name:**", "`${item.macrocosm?.buildName()?.str()?.stripTags() ?: "None"}`", true)
+                        addField(
+                            "**Item in $name:**",
+                            "`${item.macrocosm?.buildName()?.str()?.stripTags() ?: "None"}`",
+                            true
+                        )
                     }
                 }
             } else {
@@ -618,13 +706,22 @@ object Discord : ListenerAdapter() {
 
         return embed {
             setTitle("**Player Skills**")
-            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setAuthor(
+                "${player.rank.format.str().stripTags()} ${op.name}'s Profile",
+                null,
+                "https://crafatar.com/avatars/${player.ref}?overlay=true"
+            )
             setColor(COLOR_MACROCOSM)
 
             skills.entries.chunked(3).forEach { chunk ->
                 chunk.forEach { (skill, value) ->
-                    val totalExperience = (if(value.lvl == 1) .0 else skill.inst.table.totalExpForLevel(value.lvl)) + value.overflow
-                    addField("${skill.emoji} ${skill.inst.name}", "${Formatting.withCommas(totalExperience.toBigDecimal(), false)} EXP (${value.lvl} LVL)", true)
+                    val totalExperience =
+                        (if (value.lvl == 1) .0 else skill.inst.table.totalExpForLevel(value.lvl)) + value.overflow
+                    addField(
+                        "${skill.emoji} ${skill.inst.name}",
+                        "${Formatting.withCommas(totalExperience.toBigDecimal(), false)} EXP (${value.lvl} LVL)",
+                        true
+                    )
                 }
             }
         }
@@ -636,10 +733,18 @@ object Discord : ListenerAdapter() {
         val stats = ogStats ?: player.baseStats
         return embed {
             setTitle("**Player Statistics**")
-            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setAuthor(
+                "${player.rank.format.str().stripTags()} ${op.name}'s Profile",
+                null,
+                "https://crafatar.com/avatars/${player.ref}?overlay=true"
+            )
             setColor(COLOR_MACROCOSM)
 
-            addField("**Raw Stats?**", if(originalStats) "These are stats **not** including equipment stats" else "These are stats **including** equipment stats", false)
+            addField(
+                "**Raw Stats?**",
+                if (originalStats) "These are stats **not** including equipment stats" else "These are stats **including** equipment stats",
+                false
+            )
 
             stats.iter().entries.chunked(3).forEach { chunk ->
                 chunk.forEach { (stat, amount) ->
@@ -654,7 +759,11 @@ object Discord : ListenerAdapter() {
         return embed {
             setThumbnail("https://crafatar.com/renders/body/${player.ref}?overlay=true")
             setTitle("**General Player Information**")
-            setAuthor("${player.rank.format.str().stripTags()} ${op.name}'s Profile", null, "https://crafatar.com/avatars/${player.ref}?overlay=true")
+            setAuthor(
+                "${player.rank.format.str().stripTags()} ${op.name}'s Profile",
+                null,
+                "https://crafatar.com/avatars/${player.ref}?overlay=true"
+            )
             setColor(COLOR_MACROCOSM)
 
             addField("**Username: **", op.name ?: "null", true)
@@ -677,7 +786,7 @@ object Discord : ListenerAdapter() {
             addField("**Online?**", op.isOnline.toString(), true)
             val authenticated = authenticated.containsKey(op.uniqueId)
             addField("**Have Authenticated?**", authenticated.toString(), true)
-            if(authenticated) {
+            if (authenticated) {
                 val user = bot.retrieveUserById(this@Discord.authenticated[op.uniqueId]!!).submit().get()
                 addField("**Discord Account:**", "`${user.asTag}`", true)
             }
@@ -689,13 +798,22 @@ object Discord : ListenerAdapter() {
     }
 
     private fun profileCommand0(e: GenericCommandInteractionEvent, user: User, ephemeral: Boolean) {
-        val uuid = authenticated.entries.firstOrNull { (_, id) -> id == user.idLong }?.key ?: return e.replyEmbeds(genericErrorEmbed("Not Found", "Could not find profile for user ${user.asTag}!\n*The `profile` command only works with authenticated users*").build()).setEphemeral(true).queue()
+        val uuid = authenticated.entries.firstOrNull { (_, id) -> id == user.idLong }?.key ?: return e.replyEmbeds(
+            genericErrorEmbed(
+                "Not Found",
+                "Could not find profile for user ${user.asTag}!\n*The `profile` command only works with authenticated users*"
+            ).build()
+        ).setEphemeral(true).queue()
 
         e.replyEmbeds(embed {
             setTitle("**Select Information Category**")
             setColor(COLOR_MACROCOSM)
 
-            addField("**Select Category**", "Select category of which you would like to get information on this player.", false)
+            addField(
+                "**Select Category**",
+                "Select category of which you would like to get information on this player.",
+                false
+            )
         }).addActionRow(
             SelectMenu.create("player_menu$$uuid")
                 .addOption("General Information", "general", "General information about this player")
@@ -953,8 +1071,7 @@ object Discord : ListenerAdapter() {
     ) {
         val eId = e.user.idLong
         val uuid =
-            authenticated.entries.firstOrNull { (_, id) -> id == eId }?.key ?:
-            if(Macrocosm.isInDevEnvironment) {
+            authenticated.entries.firstOrNull { (_, id) -> id == eId }?.key ?: if (Macrocosm.isInDevEnvironment) {
                 // we can ignore stuff in dev environment
                 command(e, Bukkit.getOfflinePlayer("m_xus"))
                 return
@@ -971,10 +1088,11 @@ object Discord : ListenerAdapter() {
                 is RecipeItem -> item.skin?.skin ?: item.headSkin
                 is PetItem -> {
                     val pet = item.stored ?: return "null"
-                    if(pet.skin != null) {
+                    if (pet.skin != null) {
                         (Registry.COSMETIC.find(pet.skin) as SkullSkin).skin
                     } else Registry.PET.find(pet.id).headSkin
                 }
+
                 else -> unreachable() // we should not reach this
             }
             return try {
@@ -995,10 +1113,15 @@ object Discord : ListenerAdapter() {
             val mc = Registry.ITEM.find(it)
             val item = mc.build(null) ?: return@forEach
             // sending image to buffer channel
-            StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile("item_renders/${it.path}.png").thenAccept { _ ->
-                mediaTextChannel?.sendMessage(MessageCreateData.fromFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))))?.submit()!!.thenAccept { message ->
+            StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile(
+                "item_renders/${it.path}.png"
+            ).thenAccept { _ ->
+                mediaTextChannel?.sendMessage(MessageCreateData.fromFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))))
+                    ?.submit()!!.thenAccept { message ->
                     // meanwhile delete the original render
-                    Threading.runAsync(isDaemon = true) { Accessor.access("item_renders/${it.path}.png").deleteIfExists() }
+                    Threading.runAsync(isDaemon = true) {
+                        Accessor.access("item_renders/${it.path}.png").deleteIfExists()
+                    }
                     val mediaUrl = message.attachments.first().url
                     commTextChannel?.sendMessageEmbeds(embed {
                         setColor(COLOR_MACROCOSM)
@@ -1015,7 +1138,7 @@ object Discord : ListenerAdapter() {
                         )
                         addField(
                             "**API Endpoint URL**",
-                            "`https://${if(Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/resources/item/${it}`",
+                            "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/resources/item/${it}`",
                             false
                         )
                         val thumbnailUrl = itemImage(mc)

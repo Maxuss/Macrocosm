@@ -7,7 +7,8 @@ import space.maxus.macrocosm.text.text
 class ItemRenderBuffer private constructor(val name: Component, val lines: List<Component>) {
     companion object {
         fun builder(name: Component) = Builder(name)
-        fun stack(stack: ItemStack) = ItemRenderBuffer(stack.itemMeta.displayName() ?: text("<red>NULL ITEM"), stack.itemMeta.lore() ?: listOf())
+        fun stack(stack: ItemStack) =
+            ItemRenderBuffer(stack.itemMeta.displayName() ?: text("<red>NULL ITEM"), stack.itemMeta.lore() ?: listOf())
     }
 
     class Builder internal constructor(val name: Component) {

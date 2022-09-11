@@ -15,20 +15,39 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.stripTags
 import java.text.DecimalFormat
 
-class RareDropEmitter(role: Role, channel: Channel): DiscordEmitter<RareDropEmitter.Context>("Rare Drops", role, channel) {
+class RareDropEmitter(role: Role, channel: Channel) :
+    DiscordEmitter<RareDropEmitter.Context>("Rare Drops", role, channel) {
     data class Context(val player: MacrocosmPlayer, val paper: Player, val drop: Drop, val item: MacrocosmItem)
 
     override fun handle(subject: Context, bot: JDA) {
         dedicatedChannel.sendMessageEmbeds(Discord.embed {
             setColor(Discord.COLOR_MACROCOSM)
             setTitle("**Rare Drop!**")
-            setAuthor("${subject.player.rank.format.str().stripTags()} ${subject.paper.name}", null, Discord.playerAvatar(subject.player))
+            setAuthor(
+                "${subject.player.rank.format.str().stripTags()} ${subject.paper.name}",
+                null,
+                Discord.playerAvatar(subject.player)
+            )
             setImage(Discord.itemImage(subject.item))
 
-            addField("**${subject.drop.rarity.name?.stripTags()} DROP**", "${subject.player.rank.format.str().stripTags()} ${subject.paper.name} has just found a rare drop: `${subject.item.buildName().str().stripTags()}`", false)
+            addField(
+                "**${subject.drop.rarity.name?.stripTags()} DROP**",
+                "${
+                    subject.player.rank.format.str().stripTags()
+                } ${subject.paper.name} has just found a rare drop: `${subject.item.buildName().str().stripTags()}`",
+                false
+            )
             val ch = subject.drop.chance * 100f
-            addField("**Chance**", "**${if (ch > 1) DecimalFormat("###.00").format(ch) else DecimalFormat("###.0000").format(ch)}%**", true)
-            addField("**Magic Find**", "${Statistic.MAGIC_FIND.specialChar} **${Formatting.withCommas((subject.player.stats()?.magicFind ?: .0f).toBigDecimal())}**", true)
+            addField(
+                "**Chance**",
+                "**${if (ch > 1) DecimalFormat("###.00").format(ch) else DecimalFormat("###.0000").format(ch)}%**",
+                true
+            )
+            addField(
+                "**Magic Find**",
+                "${Statistic.MAGIC_FIND.specialChar} **${Formatting.withCommas((subject.player.stats()?.magicFind ?: .0f).toBigDecimal())}**",
+                true
+            )
         }).setContent(role.asMention).queue()
     }
 }

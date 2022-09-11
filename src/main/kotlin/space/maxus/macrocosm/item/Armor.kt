@@ -348,7 +348,11 @@ object Armor {
                 Ability.EARTH_POLARITY.ability,
                 Ability.BLESSED_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)),
+            runes = listOf(
+                RuneSlot.COMBAT,
+                RuneSlot.specific(RuneSpec.DEFENSIVE),
+                RuneSlot.specific(RuneSpec.DEFENSIVE)
+            ),
             bootMeta = colorMeta(0x15882E),
             headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmNlZGVjMDRkMjM4MGNkNzcwMjdmOWQ0NDQ1NWM5OGI3ZWRjNWY2NjRjYTBkZDMwYTYxMDY5MDM5MTUzOTFkYiJ9fX0=",
             bootsName = "Boots of Earth",
@@ -375,7 +379,11 @@ object Armor {
                 Ability.FIRE_POLARITY.ability,
                 Ability.BLESSED_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.specific(RuneSpec.OFFENSIVE)),
+            runes = listOf(
+                RuneSlot.COMBAT,
+                RuneSlot.specific(RuneSpec.OFFENSIVE),
+                RuneSlot.specific(RuneSpec.OFFENSIVE)
+            ),
             bootMeta = colorMeta(0xE47A00),
             legsMeta = colorMeta(0xC54704),
             chestMeta = colorMeta(0x231C27),
@@ -404,7 +412,11 @@ object Armor {
                 Ability.WATER_POLARITY.ability,
                 Ability.FORBIDDEN_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.UTILITY, RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.specific(RuneSpec.DEFENSIVE)),
+            runes = listOf(
+                RuneSlot.UTILITY,
+                RuneSlot.specific(RuneSpec.OFFENSIVE),
+                RuneSlot.specific(RuneSpec.DEFENSIVE)
+            ),
             bootMeta = colorMeta(0x003179),
             legsMeta = colorMeta(0x0B78AD),
             chestMeta = colorMeta(0x0E867F),
@@ -435,7 +447,11 @@ object Armor {
                 Ability.AIR_POLARITY_2.ability,
                 Ability.FORBIDDEN_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.UTILITY, RuneSlot.specific(RuneSpec.OFFENSIVE), RuneSlot.specific(RuneSpec.OFFENSIVE)),
+            runes = listOf(
+                RuneSlot.UTILITY,
+                RuneSlot.specific(RuneSpec.OFFENSIVE),
+                RuneSlot.specific(RuneSpec.OFFENSIVE)
+            ),
             bootMeta = colorMeta(0xE5FFFF),
             legsMeta = colorMeta(0xD3E6E6),
             chestMeta = colorMeta(0xA7B1B1),
@@ -465,7 +481,11 @@ object Armor {
                 Ability.BLOOD_POLARITY.ability,
                 Ability.FORBIDDEN_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.COMBAT, RuneSlot.specific(RuneSpec.DEFENSIVE), RuneSlot.specific(RuneSpec.OFFENSIVE)),
+            runes = listOf(
+                RuneSlot.COMBAT,
+                RuneSlot.specific(RuneSpec.DEFENSIVE),
+                RuneSlot.specific(RuneSpec.OFFENSIVE)
+            ),
             bootMeta = colorMeta(0x8C0821),
             legsMeta = colorMeta(0xA20624),
             chestMeta = colorMeta(0x580011),
@@ -494,7 +514,11 @@ object Armor {
                 Ability.SPIRITS_POLARITY.ability,
                 Ability.CURSED_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.UTILITY, RuneSlot.typeBound(StatRune.DIAMOND), RuneSlot.typeBound(StatRune.ADAMANTITE)),
+            runes = listOf(
+                RuneSlot.UTILITY,
+                RuneSlot.typeBound(StatRune.DIAMOND),
+                RuneSlot.typeBound(StatRune.ADAMANTITE)
+            ),
             bootMeta = colorMeta(0x4F8BD6),
             legsMeta = colorMeta(0x4F5DD6),
             chestMeta = colorMeta(0x590FAD),
@@ -524,7 +548,11 @@ object Armor {
                 Ability.VOID_POLARITY.ability,
                 Ability.CURSED_POLARITIES.ability
             ),
-            runes = listOf(RuneSlot.COMBAT, RuneSlot.typeBound(StatRune.AMETHYST), RuneSlot.typeBound(StatRune.MOONSTONE)),
+            runes = listOf(
+                RuneSlot.COMBAT,
+                RuneSlot.typeBound(StatRune.AMETHYST),
+                RuneSlot.typeBound(StatRune.MOONSTONE)
+            ),
             bootMeta = colorMeta(0x2D0856),
             legsMeta = colorMeta(0x54228C),
             chestMeta = colorMeta(0x7510E6),

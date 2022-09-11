@@ -22,10 +22,17 @@ import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.stats.Statistic
 import kotlin.math.roundToInt
 
-object WaterPolaritySetBonus: FullSetBonus("Blessing of Water", "Your spells use <aqua>25%<gray> less mana and your ${Statistic.VIGOR.display}<gray> is increased by <green>250%<gray>, but you can't deal <red>Melee ${Statistic.DAMAGE.display}<gray>.${exemptsEssence("<yellow>Neutral <green>Good")}") {
+object WaterPolaritySetBonus : FullSetBonus(
+    "Blessing of Water",
+    "Your spells use <aqua>25%<gray> less mana and your ${Statistic.VIGOR.display}<gray> is increased by <green>250%<gray>, but you can't deal <red>Melee ${Statistic.DAMAGE.display}<gray>.${
+        exemptsEssence(
+            "<yellow>Neutral <green>Good"
+        )
+    }"
+) {
     override fun registerListeners() {
         listen<AbilityCostApplyEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
             e.mana = e.mana.toDouble() * .75
             particle(Particle.WATER_WAKE) {
@@ -35,42 +42,52 @@ object WaterPolaritySetBonus: FullSetBonus("Blessing of Water", "Your spells use
             }
         }
         listen<CostCompileEvent> { e ->
-            if(!ensureSetRequirement(e.player!!))
+            if (!ensureSetRequirement(e.player!!))
                 return@listen
             val cost = e.cost ?: return@listen
             e.cost = AbilityCost((cost.mana * .75).roundToInt(), cost.health, cost.cooldown, cost.summonDifficulty)
         }
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
             e.stats.vigor *= 2.5f
         }
     }
 }
 
-object AirPolaritySetBonus1: FullSetBonus("Blessing of Air", "Your arrows deal <red>+150% ${Statistic.DAMAGE}<gray>, but your ${Statistic.DEFENSE.display}<gray> is reduced by <red>60%<gray>.") {
+object AirPolaritySetBonus1 : FullSetBonus(
+    "Blessing of Air",
+    "Your arrows deal <red>+150% ${Statistic.DAMAGE}<gray>, but your ${Statistic.DEFENSE.display}<gray> is reduced by <red>60%<gray>."
+) {
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
-            if(e.kind != DamageKind.RANGED || !ensureSetRequirement(e.player))
+            if (e.kind != DamageKind.RANGED || !ensureSetRequirement(e.player))
                 return@listen
             e.damage *= 2.5f
             e.damaged.location.let { it.world.strikeLightningEffect(it) }
         }
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
             e.stats.defense *= .30f
         }
     }
 }
 
-object AirPolaritySetBonus2: FullSetBonus("In the wake of Zephyrus", "Launch yourself in air and create a temporary platform beneath yourself. The platform disappears in <green>10 seconds<gray>.${exemptsEssence("<yellow>Devotedly Neutral")}") {
+object AirPolaritySetBonus2 : FullSetBonus(
+    "In the wake of Zephyrus",
+    "Launch yourself in air and create a temporary platform beneath yourself. The platform disappears in <green>10 seconds<gray>.${
+        exemptsEssence(
+            "<yellow>Devotedly Neutral"
+        )
+    }"
+) {
     override val type: AbilityType = AbilityType.SNEAK
     override val cost: AbilityCost = AbilityCost(500, cooldown = 20)
 
     override fun registerListeners() {
         listen<PlayerSneakEvent> { e ->
-            if(!ensureSetRequirement(e.player) || !ensureRequirements(e.player, EquipmentSlot.CHEST))
+            if (!ensureSetRequirement(e.player) || !ensureRequirements(e.player, EquipmentSlot.CHEST))
                 return@listen
 
             val mc = e.player
@@ -80,7 +97,9 @@ object AirPolaritySetBonus2: FullSetBonus("In the wake of Zephyrus", "Launch you
             taskRunLater(2 * 20L) {
                 val area = LocationArea(p.location.add(vec(-1, -1, -1)), p.location.add(vec(1, -1, 1)))
                 val previousBlockStates = hashMapOf<Location, Material>()
-                area.fillBlocks.forEach { block -> previousBlockStates[block.location] = block.type; block.type = Material.WHITE_CONCRETE }
+                area.fillBlocks.forEach { block ->
+                    previousBlockStates[block.location] = block.type; block.type = Material.WHITE_CONCRETE
+                }
                 sound(Sound.BLOCK_LAVA_EXTINGUISH) {
                     pitch = 0f
                     volume = 5f
@@ -94,10 +113,17 @@ object AirPolaritySetBonus2: FullSetBonus("In the wake of Zephyrus", "Launch you
     }
 }
 
-object BloodPolaritySetBonus: FullSetBonus("Blessing of Blood Moon", "You regenerate <green>part<gray> of <red>Melee ${Statistic.DAMAGE.display}<gray> dealt, but your ${Statistic.VITALITY.display}<gray> is set to <red>0<gray>.<br><dark_gray>Amount of life steal depends<br><dark_gray>on damage dealt.${exemptsEssence("<yellow>Neutral <red>Evil")}") {
+object BloodPolaritySetBonus : FullSetBonus(
+    "Blessing of Blood Moon",
+    "You regenerate <green>part<gray> of <red>Melee ${Statistic.DAMAGE.display}<gray> dealt, but your ${Statistic.VITALITY.display}<gray> is set to <red>0<gray>.<br><dark_gray>Amount of life steal depends<br><dark_gray>on damage dealt.${
+        exemptsEssence(
+            "<yellow>Neutral <red>Evil"
+        )
+    }"
+) {
     override fun registerListeners() {
         listen<PlayerDealDamageEvent>(priority = EventPriority.LOW) { e ->
-            if(e.kind != DamageKind.MELEE || e.isCancelled || !ensureSetRequirement(e.player))
+            if (e.kind != DamageKind.MELEE || e.isCancelled || !ensureSetRequirement(e.player))
                 return@listen
             e.player.heal(determineHealingAmount(e.damage))
             sound(Sound.ENTITY_PHANTOM_BITE) {
@@ -113,18 +139,18 @@ object BloodPolaritySetBonus: FullSetBonus("Blessing of Blood Moon", "You regene
             }
         }
         listen<PlayerCalculateStatsEvent>(priority = EventPriority.LOWEST) { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
             e.stats.vitality = 0f
         }
     }
 
     private fun determineHealingAmount(damage: Float): Float {
-        return if(damage >= 1_000_000f) {
+        return if (damage >= 1_000_000f) {
             1500f
-        } else if(damage >= 100_000f) {
+        } else if (damage >= 100_000f) {
             damage * 0.001f
-        } else if(damage >= 10_000f) {
+        } else if (damage >= 10_000f) {
             damage * 0.02f
         } else {
             damage * 0.25f

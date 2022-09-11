@@ -74,7 +74,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
 
     open fun compareToSnapshot(): List<Identifier> {
         val snapshot = Accessor.access("snapshots/${name.path}.REG_SNAPSHOT")
-        if(!snapshot.exists())
+        if (!snapshot.exists())
             return emptyList()
         val stream = DataInputStream(BufferedInputStream(snapshot.inputStream()))
         val iter = iter().keys

@@ -49,7 +49,7 @@ open class ArmorItem(
         specClone.multiply(HELMET_MODIFIER)
         specClone.round()
 
-        val item = if(headSkin == null) AbilityItem(
+        val item = if (headSkin == null) AbilityItem(
             ItemType.HELMET,
             headName,
             baseRarity,

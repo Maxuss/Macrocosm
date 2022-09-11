@@ -10,6 +10,7 @@ import space.maxus.macrocosm.util.runCatchingReporting
 
 abstract class DiscordEmitter<S>(val name: String, val role: Role, dedicatedChannel: Channel) {
     val dedicatedChannel = dedicatedChannel as TextChannel
+
     companion object {
         internal val SHARED_EMITTER_POOL = Threading.newFixedPool(16)
     }

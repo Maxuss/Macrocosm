@@ -26,7 +26,7 @@ abstract class Drop(val rarity: DropRarity, override val chance: Double, val ite
             val amount = this.amount.random()
             val item = ItemStack(mat, amount)
             if (player.paper != null) {
-                this.rarity.announceEntityDrop(player.paper!!, item.macrocosm!!,  this, true)
+                this.rarity.announceEntityDrop(player.paper!!, item.macrocosm!!, this, true)
             }
             item.macrocosm?.build(player)!!
         } else if (this.item.path.contains("pet")) {

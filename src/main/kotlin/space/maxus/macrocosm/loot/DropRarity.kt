@@ -75,7 +75,7 @@ open class DropRarity(
                 }
             }
 
-            if(!artificial) {
+            if (!artificial) {
                 Threading.runAsync {
                     // if we should broadcast in discord, then do
                     Registry.DISCORD_EMITTERS.tryUse(id("rare_drop")) { emitter ->

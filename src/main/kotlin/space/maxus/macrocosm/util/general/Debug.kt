@@ -76,7 +76,7 @@ object Debug {
             callsInPlace(execution, InvocationKind.AT_MOST_ONCE)
         }
 
-        if(!Macrocosm.isInDevEnvironment)
+        if (!Macrocosm.isInDevEnvironment)
             return
 
         execution()

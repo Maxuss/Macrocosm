@@ -348,7 +348,7 @@ fun renderBar(
 
 private val VOWEL_REGEX = Regex("[aeuioyAEUIOY]")
 fun String.addAnIfNeeded(): String {
-    if(VOWEL_REGEX.matches(this.first().toString()))
+    if (VOWEL_REGEX.matches(this.first().toString()))
         return "an $this"
     return "a $this"
 }

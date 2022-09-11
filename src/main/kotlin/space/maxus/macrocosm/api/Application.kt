@@ -22,6 +22,7 @@ import net.minecraft.server.MinecraftServer
 import org.bukkit.Bukkit
 import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.MacrocosmConstants
 import space.maxus.macrocosm.api.KeyManager.validateKey
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
@@ -99,8 +100,8 @@ fun Application.module() {
                 val success = true
                 val status = "WORKING"
                 val inDevEnv = Macrocosm.isInDevEnvironment
-                val apiVersion = InternalMacrocosmPlugin.API_VERSION
-                val version = InternalMacrocosmPlugin.VERSION
+                val apiVersion = MacrocosmConstants.API_VERSION
+                val version = MacrocosmConstants.VERSION
             })
         }
 

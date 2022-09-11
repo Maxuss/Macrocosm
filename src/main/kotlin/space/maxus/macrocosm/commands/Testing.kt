@@ -29,7 +29,13 @@ fun doTestEmitPost() = command("doemit") {
     runsCatching {
         Threading.runAsync {
             Registry.DISCORD_EMITTERS.tryUse(id("high_skill")) { emitter ->
-                (emitter as HighSkillEmitter).post(HighSkillEmitter.Context(SkillType.MYSTICISM, 47, player.macrocosm!!))
+                (emitter as HighSkillEmitter).post(
+                    HighSkillEmitter.Context(
+                        SkillType.MYSTICISM,
+                        47,
+                        player.macrocosm!!
+                    )
+                )
             }
         }
     }

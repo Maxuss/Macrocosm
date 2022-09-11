@@ -76,7 +76,7 @@ object Threading {
     inline fun driftFromMain(
         crossinline runnable: () -> Unit
     ) {
-        if(Thread.currentThread() == MinecraftServer.getServer().serverThread)
+        if (Thread.currentThread() == MinecraftServer.getServer().serverThread)
             runAsync(runnable = runnable)
         else
             runnable()

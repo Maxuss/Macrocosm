@@ -25,7 +25,10 @@ import java.util.concurrent.CompletableFuture
 import javax.imageio.ImageIO
 
 
-class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Font> = { Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE) }) {
+class StackRenderer(
+    val component: ItemRenderBuffer,
+    val fontProvider: FnRet<Font> = { Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE) }
+) {
     companion object {
         private const val FONT_SIZE = 50
         private const val SHADOW_COLOR = 0.2
@@ -63,7 +66,7 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
             try {
                 val image = render()
                 ImageIO.write(image, "png", Accessor.access(file).toFile())
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -71,16 +74,18 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
 
     private fun beginRenderProcess() {
         var maxTextWidth = getComponentWidth(component.name)
-        var maxTextHeight = getComponentHeight(component.name) + (if (component.lines.isNotEmpty()) NAME_LORE_DIVIDER_SIZE else 0) + TEXT_OFFSET + LINE_OFFSET + BACKGROUND_OFFSET + TEXT_SHADOW_OFFSET
+        var maxTextHeight =
+            getComponentHeight(component.name) + (if (component.lines.isNotEmpty()) NAME_LORE_DIVIDER_SIZE else 0) + TEXT_OFFSET + LINE_OFFSET + BACKGROUND_OFFSET + TEXT_SHADOW_OFFSET
 
-        for(part in component.lines) {
+        for (part in component.lines) {
             val number = getComponentWidth(part)
             if (number > maxTextWidth) maxTextWidth = number
             maxTextHeight += getComponentHeight(part)
         }
 
         width = maxTextWidth.toInt() + TEXT_OFFSET * 2 + 20
-        height = if (component.lines.isEmpty()) (1.5 * getComponentHeight(component.name)).toInt() else maxTextHeight.toInt()
+        height =
+            if (component.lines.isEmpty()) (1.5 * getComponentHeight(component.name)).toInt() else maxTextHeight.toInt()
 
         img = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
         graphics = img.createGraphics()
@@ -118,7 +123,7 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
 
         textCurrentY += (getComponentHeight(component.name).toInt() + NAME_LORE_DIVIDER_SIZE)
 
-        for(part in component.lines) {
+        for (part in component.lines) {
             renderSingleComponent(null, __fontLazy, part, textCurrentX, textCurrentY)
             textCurrentY += getComponentHeight(part).toInt()
         }
@@ -130,40 +135,46 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
         val color = Color(c.color()?.value() ?: currentColor?.rgb ?: NamedTextColor.WHITE.value())
         var font = currentFont
         var text = "null"
-        if(c is TextComponent) {
+        if (c is TextComponent) {
             text = c.content()
-        } else if(c is TranslatableComponent) {
+        } else if (c is TranslatableComponent) {
             val rendered = (GlobalTranslator.render(c, Locale.ENGLISH))
-            if(rendered is TextComponent) {
+            if (rendered is TextComponent) {
                 text = rendered.content()
-            } else if(rendered is TranslatableComponent) {
+            } else if (rendered is TranslatableComponent) {
                 text = (rendered.args().first() as TextComponent).children().first().str().stripTags()
             }
         }
         c.decorations().forEach { (it, state) ->
-            if(state == null)
-                // how tf would state even be null??? its literally marked as `not null`
+            if (state == null)
+            // how tf would state even be null??? its literally marked as `not null`
                 unreachable()
-            when(state) {
-                TextDecoration.State.NOT_SET -> { /* no-op */ }
+            when (state) {
+                TextDecoration.State.NOT_SET -> { /* no-op */
+                }
+
                 TextDecoration.State.FALSE -> {
                     font = font.deriveFont(Font.PLAIN)
                 }
+
                 TextDecoration.State.TRUE -> {
-                    if(it == null)
-                        // once again, the decoration is literally stated that it may not be
-                        // null, wtf??
+                    if (it == null)
+                    // once again, the decoration is literally stated that it may not be
+                    // null, wtf??
                         unreachable()
-                    when(it) {
+                    when (it) {
                         TextDecoration.OBFUSCATED -> {
                             text = "█".repeat(text.length)
                         }
+
                         TextDecoration.BOLD -> {
                             font = InternalMacrocosmPlugin.FONT_MINECRAFT_BOLD.deriveFont(50f)
                         }
+
                         TextDecoration.ITALIC -> {
                             font = InternalMacrocosmPlugin.FONT_MINECRAFT_ITALIC.deriveFont(50f)
                         }
+
                         else -> {
                             // unsupported
                         }
@@ -193,7 +204,7 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
         graphics.drawString(textStr.iterator, x, y)
 
         var xOffset = getTextWidth(font, text).toInt()
-        for(child in c.children()) {
+        for (child in c.children()) {
             xOffset += renderSingleComponent(color, font, child, x + xOffset, y)
         }
         return xOffset
@@ -201,7 +212,7 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
 
     private fun createFallbackString(text: String, mainFont: Font, fallbackFont: Font): AttributedString {
         val result = AttributedString(text)
-        if(text.isBlankOrEmpty())
+        if (text.isBlankOrEmpty())
             return result
         val textLength = text.length
         result.addAttribute(TextAttribute.FONT, mainFont, 0, textLength)
@@ -223,8 +234,14 @@ class StackRenderer(val component: ItemRenderBuffer, val fontProvider: FnRet<Fon
 
     private fun getTextWidth(font: Font, text: String): Double {
         val (canDisplay, cantDisplay) = text.partition { font.canDisplay(it) }
-        return font.getStringBounds(canDisplay, FontRenderContext(font.transform, false, false)).bounds.getWidth() + FALLBACK_FONT.getStringBounds(cantDisplay, FontRenderContext(
-            FALLBACK_FONT.transform, false, false)).bounds.getWidth()
+        return font.getStringBounds(
+            canDisplay,
+            FontRenderContext(font.transform, false, false)
+        ).bounds.getWidth() + FALLBACK_FONT.getStringBounds(
+            cantDisplay, FontRenderContext(
+                FALLBACK_FONT.transform, false, false
+            )
+        ).bounds.getWidth()
     }
 
     private fun getTextHeight(font: Font, text: String): Double {

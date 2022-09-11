@@ -184,7 +184,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         base.multiply(1 + (stars * .02f))
 
         val e = ItemCalculateStatsEvent(player, this, base)
-        if(player != null) {
+        if (player != null) {
             e.callEvent()
         }
         return e.stats
@@ -483,7 +483,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                     tmp.addAll(ability.addLore(this@MacrocosmItem))
                 }
                 val event = CostCompileEvent(player, this@MacrocosmItem, ability.cost?.copy())
-                if(player != null) {
+                if (player != null) {
                     // ignore accidental NPEs
                     event.callEvent()
                 }
@@ -638,7 +638,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
     companion object {
         fun deserializeFromBytes(bytes: String): MacrocosmItem? {
-            return if(bytes == "NULL")
+            return if (bytes == "NULL")
                 null
             else ItemStack.deserializeBytes(Base64.getDecoder().decode(bytes)).macrocosm
         }

@@ -314,7 +314,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             playFor(paper!!)
         }
 
-        if(newLevel > 45) {
+        if (newLevel > 45) {
             Threading.runAsync {
                 // trying to emit the macrocosm:high_skill event
                 Registry.DISCORD_EMITTERS.tryUse(id("high_skill")) { emitter ->
@@ -632,10 +632,12 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         it[PlayersTable.collections] = p.collections.json()
         it[PlayersTable.skills] = p.skills.json()
         it[PlayersTable.recipes] = toJson(p.unlockedRecipes)
-        it[PlayersTable.necklace] = if (p.equipment.necklace == null) "NULL" else p.equipment.necklace!!.serializeToBytes(this)
+        it[PlayersTable.necklace] =
+            if (p.equipment.necklace == null) "NULL" else p.equipment.necklace!!.serializeToBytes(this)
         it[PlayersTable.cloak] = if (p.equipment.cloak == null) "NULL" else p.equipment.cloak!!.serializeToBytes(this)
         it[PlayersTable.belt] = if (p.equipment.belt == null) "NULL" else p.equipment.belt!!.serializeToBytes(this)
-        it[PlayersTable.gloves] = if (p.equipment.gloves == null) "NULL" else p.equipment.gloves!!.serializeToBytes(this)
+        it[PlayersTable.gloves] =
+            if (p.equipment.gloves == null) "NULL" else p.equipment.gloves!!.serializeToBytes(this)
         it[PlayersTable.slayers] = toJson(p.slayers)
         it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
         it[PlayersTable.pets] = toJson(p.ownedPets)
@@ -650,7 +652,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     companion object {
         fun loadOrInit(id: UUID): MacrocosmPlayer {
             val loaded = loadPlayer(id)
-            if(loaded != null)
+            if (loaded != null)
                 return loaded
             val player = MacrocosmPlayer(id)
             Macrocosm.playersLazy.add(id)

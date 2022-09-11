@@ -7,6 +7,6 @@ interface ByteConvert {
     fun toBytes(buffer: BufferedOutputStream)
 }
 
-interface ByteConvertOwned<out T: ByteConvertOwned<T>> {
+interface ByteConvertOwned<out T : ByteConvertOwned<T>> {
     fun fromBytes(buffer: BufferedInputStream): T
 }

@@ -54,7 +54,8 @@ class Monitor {
             val last = currentScopes[forThread.name].lastOrNull() ?: return
             try {
                 currentScopes.remove(forThread.name, last)
-            } catch(ignored: Exception) { /* no-op */ }
+            } catch (ignored: Exception) { /* no-op */
+            }
         }
     }
 

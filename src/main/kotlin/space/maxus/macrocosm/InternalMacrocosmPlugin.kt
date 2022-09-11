@@ -94,16 +94,20 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
         val API_VERSION by Delegates.redirect(MacrocosmConstants::API_VERSION)
+
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
         val VERSION by Delegates.redirect(MacrocosmConstants::VERSION)
         lateinit var TRANSACTION_HISTORY: TransactionHistory
+
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.CURRENT_IP"))
         val CURRENT_IP by Delegates.redirect(MacrocosmConstants::CURRENT_IP)
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
         lateinit var FONT_MINECRAFT_ITALIC: Font; private set
+
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
         val OFFLINE_MODE by Delegates.redirect(MacrocosmConstants::OFFLINE_MODE)
+
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
         val DISCORD_BOT_TOKEN by Delegates.redirect(MacrocosmConstants::DISCORD_BOT_TOKEN)
 
@@ -163,20 +167,20 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
-            if(!rendersDir.exists())
+            if (!rendersDir.exists())
                 rendersDir.createDirectories()
             // Setting up fonts
             walkDataResources("fonts") { path ->
                 val out = Accessor.access("fonts")
-                if(!out.exists())
+                if (!out.exists())
                     out.createDirectories()
                 val filePath = out.resolve(path.name)
                 path.copyTo(filePath, true)
-                if(path.name.contains("Regular"))
+                if (path.name.contains("Regular"))
                     FONT_MINECRAFT = Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
-                else if(path.name.contains("Bold") && !path.name.contains("Italic"))
+                else if (path.name.contains("Bold") && !path.name.contains("Italic"))
                     FONT_MINECRAFT_BOLD = Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
-                else if(path.name.contains("Italic") && !path.name.contains("Bold"))
+                else if (path.name.contains("Italic") && !path.name.contains("Bold"))
                     FONT_MINECRAFT_ITALIC = Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
                 else
                     Font.createFont(Font.TRUETYPE_FONT, filePath.toFile())
@@ -347,7 +351,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         taskRunLater(5 * 20L, sync = false) {
             // detect item registry changes
-            if(Macrocosm.isOnline) {
+            if (Macrocosm.isOnline) {
                 Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
             }
         }

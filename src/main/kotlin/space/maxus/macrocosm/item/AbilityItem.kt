@@ -38,7 +38,17 @@ open class AbilityItem(
     protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
     @Suppress("ClassName")
-    object PLACEHOLDER_ITEM: AbilityItem(ItemType.OTHER, "Placeholder Item", Rarity.UNOBTAINABLE, Material.DIAMOND_HORSE_ARMOR, stats { health = -1f }, mutableListOf(), SpecialStatistics(), 3, listOf())
+    object PLACEHOLDER_ITEM : AbilityItem(
+        ItemType.OTHER,
+        "Placeholder Item",
+        Rarity.UNOBTAINABLE,
+        Material.DIAMOND_HORSE_ARMOR,
+        stats { health = -1f },
+        mutableListOf(),
+        SpecialStatistics(),
+        3,
+        listOf()
+    )
 
     override var amount: Int = 1
     override var stars: Int = 0
