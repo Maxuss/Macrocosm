@@ -1136,7 +1136,7 @@ object Discord : ListenerAdapter() {
                     )
                     val thumbnailUrl = itemImage(mc)
                     setThumbnail(thumbnailUrl)
-                    setImage("attachment://render_${it.path}.png")
+                    setImage("attachment://${it.path}.png")
                 }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit().thenAccept { _ ->
                     // meanwhile delete the original render
                     Threading.runAsync(isDaemon = true) {
