@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.FileUpload
-import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import net.kyori.adventure.text.format.NamedTextColor
@@ -1116,35 +1116,32 @@ object Discord : ListenerAdapter() {
             StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile(
                 "item_renders/${it.path}.png"
             ).thenAccept { _ ->
-                mediaTextChannel?.sendMessage(MessageCreateData.fromFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))))
-                    ?.submit()!!.thenAccept { message ->
+                commTextChannel?.sendMessage(MessageCreateBuilder().setEmbeds(embed {
+                    setColor(COLOR_MACROCOSM)
+                    setTitle("**New Items!**")
+                    addField(
+                        "**${mc.buildName().str().stripTags()}**",
+                        "New item of **${
+                            mc.rarity.name.replace(
+                                "_",
+                                " "
+                            )
+                        }** commodity!\nItem ID: `$it`\nMore info in the API (or in game)!",
+                        false
+                    )
+                    addField(
+                        "**API Endpoint URL**",
+                        "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/resources/item/${it}`",
+                        false
+                    )
+                    val thumbnailUrl = itemImage(mc)
+                    setThumbnail(thumbnailUrl)
+                    setImage("attachment://render_${it.path}.png")
+                }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit().thenAccept { _ ->
                     // meanwhile delete the original render
                     Threading.runAsync(isDaemon = true) {
                         Accessor.access("item_renders/${it.path}.png").deleteIfExists()
                     }
-                    val mediaUrl = message.attachments.first().url
-                    commTextChannel?.sendMessageEmbeds(embed {
-                        setColor(COLOR_MACROCOSM)
-                        setTitle("**New Items!**")
-                        addField(
-                            "**${mc.buildName().str().stripTags()}**",
-                            "New item of **${
-                                mc.rarity.name.replace(
-                                    "_",
-                                    " "
-                                )
-                            }** commodity!\nItem ID: `$it`\nMore info in the API (or in game)!",
-                            false
-                        )
-                        addField(
-                            "**API Endpoint URL**",
-                            "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/resources/item/${it}`",
-                            false
-                        )
-                        val thumbnailUrl = itemImage(mc)
-                        setThumbnail(thumbnailUrl)
-                        setImage(mediaUrl)
-                    })?.queue()
                 }
             }
         }
