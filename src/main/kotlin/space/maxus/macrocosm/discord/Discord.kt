@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.FileUpload
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import net.kyori.adventure.text.format.NamedTextColor
@@ -1106,6 +1107,17 @@ object Discord : ListenerAdapter() {
             }
         }
         return if (item.base.isBlock) "https://mcapi.marveldc.me/item/$id?version=1.19&width=250&height=250&fuzzySearch=false" else "https://raw.githubusercontent.com/Maxuss/Macrocosm-Data/master/items/generated/${id}.png"
+    }
+
+    fun sendVersionDiff(previous: String) {
+        commTextChannel?.sendMessage(MessageCreateData.fromEmbeds(embed {
+            setColor(0x29232D)
+            setTitle("**Macrocosm Version Change**")
+            addField("", "Version $previous → ${Macrocosm.version} \uD83E\uDE79", false)
+            addField("", "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!", false)
+
+            setTimestamp(Instant.now())
+        }))!!.queue()
     }
 
     fun sendItemDiffs(diffs: List<Identifier>) {

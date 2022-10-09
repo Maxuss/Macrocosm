@@ -76,10 +76,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
-import kotlin.io.path.copyTo
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
-import kotlin.io.path.name
+import kotlin.io.path.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
 
@@ -352,6 +349,9 @@ class InternalMacrocosmPlugin : KSpigot() {
         taskRunLater(5 * 20L, sync = false) {
             // detect item registry changes
             if (Macrocosm.isOnline) {
+                val previousVersion = Accessor.access(".VERSION").let { if(it.exists()) it.readText() else null }
+                if(previousVersion != null && this.version != previousVersion)
+                    Discord.sendVersionDiff(previousVersion)
                 Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
             }
         }
@@ -381,12 +381,14 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         storageExecutor.execute { KeyManager.store() }
         storageExecutor.execute { Discord.storeSelf() }
+        storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version) } }
 
         storageExecutor.shutdown()
 
         ZombieAbilities.doomCounter.iter { id ->
             worlds[0].getEntity(id)?.remove()
         }
+
 
         storageExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
 
