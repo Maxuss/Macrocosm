@@ -13,7 +13,6 @@ class PostgresDatabaseImpl(val address: String) : AbstractSQLDatabase() {
             logger.severe("Could not find Postgres driver!")
             error("Tried to launch postgres database without postgres driver!")
         }
-        Database.connect("jdbc")
         return Database.connect(
             "jdbc:postgresql://$address/macrocosm",
             "org.postgresql.Driver",

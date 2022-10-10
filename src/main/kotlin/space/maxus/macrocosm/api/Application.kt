@@ -20,7 +20,6 @@ import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
 import net.minecraft.server.MinecraftServer
 import org.bukkit.Bukkit
-import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.MacrocosmConstants
 import space.maxus.macrocosm.api.KeyManager.validateKey
@@ -359,7 +358,7 @@ fun serverSpin() {
 //        classLoader = Macrocosm.javaClass.classLoader
 
         connector {
-            port = 6060
+            port = 4343
             host = "127.0.0.1"
         }
 

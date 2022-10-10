@@ -1113,8 +1113,8 @@ object Discord : ListenerAdapter() {
         commTextChannel?.sendMessage(MessageCreateData.fromEmbeds(embed {
             setColor(0x29232D)
             setTitle("**Macrocosm Version Change**")
-            addField("", "Version $previous → ${Macrocosm.version} \uD83E\uDE79", false)
-            addField("", "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!", false)
+            addField("Version $previous → ${Macrocosm.version}", "\uD83E\uDE79", false)
+            addField("The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!", "Keep guessing what it could be!", false)
 
             setTimestamp(Instant.now())
         }))!!.queue()
