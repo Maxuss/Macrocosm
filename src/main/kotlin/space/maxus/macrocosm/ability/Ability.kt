@@ -203,6 +203,7 @@ enum class Ability(val ability: MacrocosmAbility) {
     FIERY_SLASH(FierySlashAbility),
     INFERNAL_GREATSWORD_THROW(InfernalGreatswordThrowAbility),
     BERSERKER(BerserkerAbility),
+    IV_BAG(IVBagAbility),
 
     // reliquary
     TITANS_KNOWLEDGE(TitansKnowledge),
