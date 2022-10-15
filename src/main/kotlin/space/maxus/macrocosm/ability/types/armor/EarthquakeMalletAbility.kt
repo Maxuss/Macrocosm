@@ -26,6 +26,7 @@ import space.maxus.macrocosm.util.game.Fmt
 import space.maxus.macrocosm.util.math.MathHelper
 import space.maxus.macrocosm.util.metrics.report
 import space.maxus.macrocosm.util.runNTimes
+import space.maxus.macrocosm.util.superCritMod
 
 object EarthquakeMalletAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,
@@ -124,6 +125,7 @@ object BeatingBagAbility : AbilityBase(
             if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
             GlobalVariables.stunnedEnemies.take(e.damaged.uniqueId) {
+                e.damage *= superCritMod(e.player)
                 e.isSuperCrit = true
             }
         }

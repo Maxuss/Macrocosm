@@ -71,7 +71,7 @@ object Threading {
      * the current Minecraft Server thread ([MinecraftServer.serverThread]),
      * otherwise the code is run on current thread
      *
-     * @param runnable The code to be run
+     * @param runnable The code to run
      */
     inline fun driftFromMain(
         crossinline runnable: () -> Unit

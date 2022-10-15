@@ -59,7 +59,7 @@ open class FullSetBonus(name: String, description: String, val threePiece: Boole
                 }"
             ).noitalic()
         )
-        for (part in description.split("<br>")) {
+        for (part in MacrocosmAbility.formatDamageNumbers(description, player).split("<br>")) {
             for (desc in part.reduceToList(30)) {
                 tmp.add(text("<gray>$desc</gray>").noitalic())
             }

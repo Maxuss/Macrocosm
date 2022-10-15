@@ -60,6 +60,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
 import kotlin.math.*
 import kotlin.random.Random
+import kotlin.reflect.KProperty
 
 val GSON: Gson = GsonBuilder()
     .registerTypeAdapter(Identifier::class.java, IdentifierTypeAdapter)
@@ -499,6 +500,17 @@ fun Random.nextSignedDouble(): Double {
     return if (nextBoolean()) nextDouble() else -nextDouble()
 }
 
+fun Vector.along(f: Location, times: Int, fn: FnArg<Location>) {
+    val each = this.clone().multiply(1f / times.toFloat())
+    var from = f
+    for(i in 0 until times) {
+        from = from.add(each)
+        from.apply(fn)
+    }
+}
+
+val kotlin.time.Duration.ticks get() = this.inWholeSeconds * 20
+
 inline fun <reified K, reified V> multimap(): Multimap<K, V> = ArrayListMultimap.create()
 
 fun allOf(vararg conditions: Boolean): Boolean = conditions.all { it }
@@ -510,4 +522,10 @@ fun String.containsAny(vararg possibles: String): Boolean = possibles.any { cont
 
 fun Player.giveOrDrop(item: ItemStack) {
     if (inventory.firstEmpty() == -1) world.dropItem(location, item) else inventory.addItem(item)
+}
+
+class DeprecatedDelegate(val message: String = "This element is deprecated!") {
+    operator fun getValue(_self: Any, _prop: KProperty<*>) {
+        throw IllegalAccessException(message)
+    }
 }

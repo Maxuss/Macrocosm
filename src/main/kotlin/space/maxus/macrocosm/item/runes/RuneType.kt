@@ -24,6 +24,7 @@ interface RuneSlot {
     fun accepts(rune: RuneType): Boolean
 
     companion object {
+        val UNIVERSAL: RuneSlot get() = DefaultRuneSlot(id("universal"), "*") { true }
         val COMBAT: RuneSlot get() = DefaultRuneSlot(id("combat"), "⚔") { rune -> rune.spec.isCombat }
         val GATHERING: RuneSlot get() = DefaultRuneSlot(id("gathering"), "♣") { rune -> rune.spec.isGathering }
         val UTILITY: RuneSlot get() = DefaultRuneSlot(id("utility"), "☯") { rune -> rune.spec.isUtility }
@@ -36,6 +37,7 @@ interface RuneSlot {
 
         fun fromId(id: Identifier): RuneSlot {
             return when (val p = id.path) {
+                "universal" -> UNIVERSAL
                 "combat" -> COMBAT
                 "gathering" -> GATHERING
                 "utility" -> UTILITY

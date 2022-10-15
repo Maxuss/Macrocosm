@@ -57,10 +57,10 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
+import space.maxus.macrocosm.util.DeprecatedDelegate
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
-import space.maxus.macrocosm.util.data.redirect
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
@@ -76,7 +76,6 @@ import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import kotlin.io.path.*
-import kotlin.properties.Delegates
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -87,25 +86,26 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var UNSAFE: Unsafe; private set
         lateinit var MONITOR: Monitor; private set
         lateinit var DATABASE: DataStorage; private set
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
-        val API_VERSION by Delegates.redirect(MacrocosmConstants::API_VERSION)
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
-        val VERSION by Delegates.redirect(MacrocosmConstants::VERSION)
         lateinit var TRANSACTION_HISTORY: TransactionHistory
 
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
+        val API_VERSION by DeprecatedDelegate()
+
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
+        val VERSION by DeprecatedDelegate()
+
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.CURRENT_IP"))
-        val CURRENT_IP by Delegates.redirect(MacrocosmConstants::CURRENT_IP)
+        val CURRENT_IP by DeprecatedDelegate()
+
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
+        val OFFLINE_MODE by DeprecatedDelegate()
+
+        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
+        val DISCORD_BOT_TOKEN by DeprecatedDelegate()
+
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
         lateinit var FONT_MINECRAFT_ITALIC: Font; private set
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
-        val OFFLINE_MODE by Delegates.redirect(MacrocosmConstants::OFFLINE_MODE)
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
-        val DISCORD_BOT_TOKEN by Delegates.redirect(MacrocosmConstants::DISCORD_BOT_TOKEN)
 
         private data class VersionInfo(val version: String, val apiVersion: String)
     }

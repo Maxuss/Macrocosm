@@ -597,6 +597,36 @@ object Armor {
         )
     )
 
+    val ARMOR_OF_CONFLUX = register(
+        ArmorItem(
+            "",
+            "polarity_conflux",
+            "LEATHER",
+            Rarity.RELIC,
+            stats {
+                health = 300f
+                defense = 250f
+                intelligence = 150f
+                strength = 100f
+                ferocity = 50f
+            },
+            abilities = listOf(
+                Ability.CONFLUX_POLARITY.ability,
+                Ability.ENVOY_OF_POLARITIES.ability,
+                Ability.POLARITY_ORIGINS.ability
+            ),
+            runes = listOf(RuneSlot.COMBAT, RuneSlot.UNIVERSAL, RuneSlot.UNIVERSAL),
+            bootMeta = colorMeta(0xFDDCEF),
+            legsMeta = colorMeta(0xDCE7FD),
+            chestMeta = colorMeta(0xDCFDEC),
+            headSkin = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjQ3YjMxOTI3MWQ5NTczYTVjYjM2MzVjNzg1YTJmZmE5MmEyZDc1OWFjZThiZGExMzhiYmNmZDVhY2YxMGExOCJ9fX0=",
+            bootsName = "Boots of Conflux",
+            legsName = "Leggings of Conflux",
+            chestName = "Chestplate of Conflux",
+            headName = "Skull of Conflux"
+        )
+    )
+
     private fun register(item: ArmorItem, model: Model? = null): ArmorItem {
         cache.add(Pair(item, model))
         return item

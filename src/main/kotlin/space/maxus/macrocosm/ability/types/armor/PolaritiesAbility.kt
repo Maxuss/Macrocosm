@@ -119,8 +119,8 @@ object EnvoyOfPolarities : FullSetBonus(
 }
 
 object PolarityOriginsAbility : FullSetBonus(
-    "Convergence of the Planes",
-    "You are truly blessed by the <gradient:#8B45F7:#5033BF>Idols of Planes</gradient>!<br><gold>All<gray> your stats are increased by <green>3.5%<gray> for every player with the <dark_purple>Polarity Set<gray> not of <rainbow>Convergence<gray> <aqua>alignment<gray> within <yellow>8 blocks<gray>.<br>" +
+    "Convergence of Planes",
+    "You are truly blessed by the <br><gradient:#8B45F7:#5033BF>Idols of Planes</gradient>!<br><gold>All<gray> your stats are increased by <green>3.5%<gray> for every player with the <dark_purple>Polarity Set<gray> not of <rainbow>Convergence<gray> <aqua>alignment<gray> within <yellow>8 blocks<gray>.<br>" +
         "<aqua>Polarity Alignments: <aqua><br>" +
         "<blue>Order: <green>Devotedly Good<br>" +
         "<blue>Earth: <green>Lawful <yellow>Neutral<br>" +

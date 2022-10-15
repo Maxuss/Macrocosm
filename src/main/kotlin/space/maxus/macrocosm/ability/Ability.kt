@@ -259,7 +259,9 @@ enum class Ability(val ability: MacrocosmAbility) {
     SPIRITS_POLARITY(SpiritsPolaritySetBonus),
     VOID_POLARITY(VoidPolaritySetBonus),
     CHAOS_POLARITY_1(ChaosPolaritySetBonus1),
-    CHAOS_POLARITY_2(ChaosPolaritySetBonus2)
+    CHAOS_POLARITY_2(ChaosPolaritySetBonus2),
+
+    CONFLUX_POLARITY(ConfluxPolarity)
     ;
 
     companion object {
