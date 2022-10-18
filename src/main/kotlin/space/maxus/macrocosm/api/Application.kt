@@ -6,6 +6,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
@@ -62,17 +63,11 @@ private val onlineInventoryCompoundCache = ExpiringContainer.empty<String>(Durat
 fun Application.module() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondJson(object {
-                val success = false
-                val error = "Internal Server Error: ${cause.message}"
-            }, HttpStatusCode.InternalServerError)
+            call.respondFailure("Internal Server Error: ${cause.message}", HttpStatusCode.InternalServerError)
         }
 
         status(HttpStatusCode.NotFound) { call, status ->
-            call.respondJson(object {
-                val success = false
-                val error = "Endpoint Not Found"
-            }, status)
+            call.respondFailure("Endpoint ${call.request.uri} not found", status)
         }
     }
 
@@ -94,256 +89,149 @@ fun Application.module() {
             }
         }
 
-        get("/status") {
-            call.respondJson(object {
-                val success = true
-                val status = "WORKING"
-                val inDevEnv = Macrocosm.isInDevEnvironment
-                val apiVersion = MacrocosmConstants.API_VERSION
-                val version = MacrocosmConstants.VERSION
-            })
-        }
-
         // pack
         get("/pack") {
             call.respondFile(PackProvider.packZip)
         }
 
-        // resources
-        route("/resources") {
-            get {
-                call.respondJson(object {
-                    val success = true
-                    val availableRegistries =
-                        Registry.iter().filter { reg -> reg.value.shouldBeExposed }.keys.map { k -> k.path }
-                })
+        // upgraded api version to V2
+        route("v2") {
+            // status
+            get("/status") {
+                call.respondSuccess(
+                    Status(
+                        "OPERATING",
+                        Macrocosm.isInDevEnvironment,
+                        MacrocosmConstants.API_VERSION,
+                        MacrocosmConstants.VERSION
+                    )
+                )
             }
 
-            route("{registry}") {
+            // resources
+            route("/resources") {
                 get {
-                    val reg = Registry.findOrNull(
-                        Identifier.parse(
-                            call.parameters["registry"] ?: return@get call.respondJson(
-                                object {
-                                    val success = false
-                                    val error = "Registry not specified!"
-                                },
-                                HttpStatusCode.BadRequest
+                    call.respondSuccess(AvailableRegistries(Registry.iter().filter { reg -> reg.value.shouldBeExposed }.keys))
+                }
+
+                route("{registry}") {
+                    get {
+                        val reg = Registry.findOrNull(
+                            Identifier.parse(
+                                call.parameters["registry"] ?: return@get call.respondFailure("Registry not specified!", HttpStatusCode.BadRequest)
                             )
-                        )
-                    ) ?: return@get call.respondJson(object {
-                        val success = false
-                        val error = "Could not find registry '${call.parameters["registry"]}'!"
-                    }, HttpStatusCode.NotFound)
-                    if (!reg.shouldBeExposed)
-                        return@get call.respondJson(object {
-                            val success = false
-                            val error = "This registry can not be queried!"
-                        }, HttpStatusCode.BadRequest)
-                    call.respondJson(object {
-                        val success = true
-                        val registry = reg.iter().toMap()
-                    })
-                }
-                get("{element}") {
-                    val regParam = call.parameters["registry"] ?: return@get call.respondJson(object {
-                        val success = false
-                        val error = "Registry not specified!"
-                    }, HttpStatusCode.BadRequest)
-                    val reg = Registry.findOrNull(Identifier.parse(regParam)) ?: return@get call.respondJson(object {
-                        val success = false
-                        val error = "Could not find registry '$regParam'!"
-                    }, HttpStatusCode.NotFound)
-                    if (!reg.shouldBeExposed)
-                        return@get call.respondJson(object {
-                            val success = false
-                            val error = "This registry can not be queried!"
-                        }, HttpStatusCode.BadRequest)
-                    val element = call.parameters["element"] ?: return@get call.respondJson(object {
-                        val success = false
-                        val error = "No element provided!"
-                    }, HttpStatusCode.BadRequest)
-                    val item = reg.findOrNull(Identifier.parse(element)) ?: return@get call.respondJson(object {
-                        val success = false
-                        val error = "Could not find element $element in '${regParam}' registry!"
-                    }, HttpStatusCode.NotFound)
-                    call.respondJson(object {
-                        val success = true
-                        val element = item
-                    })
+                        ) ?: return@get call.respondFailure("Could not find registry '${call.parameters["registry"]}'!", HttpStatusCode.NotFound)
+                        if (!reg.shouldBeExposed)
+                            return@get call.respondFailure("This registry is hidden!", HttpStatusCode.BadRequest)
+                        call.respondSuccess(GetRegistry(reg.iter()))
+                    }
+                    get("{element}") {
+                        val regParam = call.parameters["registry"] ?: return@get call.respondFailure("Registry not specified!", HttpStatusCode.BadRequest)
+                        val reg =
+                            Registry.findOrNull(Identifier.parse(regParam)) ?: return@get call.respondFailure("Could not find registry '${regParam}'!", HttpStatusCode.NotFound)
+                        if (!reg.shouldBeExposed)
+                            return@get call.respondFailure("This registry is hidden!", HttpStatusCode.BadRequest)
+                        val element = call.parameters["element"] ?: return@get call.respondFailure("No key provided!", HttpStatusCode.BadRequest)
+                        val item = reg.findOrNull(Identifier.parse(element)) ?: return@get call.respondFailure("Could not find element $element in '${regParam}' registry!", HttpStatusCode.NotFound)
+                        call.respondSuccess(GetRegistryElement(item))
+                    }
                 }
             }
-        }
 
-        // players
-        route("/players") {
-            getWithKey(APIPermission.VIEW_PLAYER_DATA) {
-                call.respondJson(object {
-                    val success = true
-                    val onlinePlayers = Bukkit.getOnlinePlayers().associate { p -> p.name to p.uniqueId }
-                })
-            }
+            // players
+            route("/players") {
+                getWithKey(APIPermission.VIEW_PLAYER_DATA) {
+                    call.respondJson(OnlinePlayers(Bukkit.getOnlinePlayers().associate { p -> p.name to p.uniqueId }))
+                }
 
-            getWithKey("/{player}/status", APIPermission.VIEW_PLAYER_DATA) {
-                val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player not provided!"
-                }, HttpStatusCode.BadRequest)
-                val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
-                    val success = true
-                    val foundPlayer = false
-                    val message = "Player has never joined the server before!"
-                }, HttpStatusCode.NotFound)
-                call.respondJson(object {
-                    val success = true
-                    val foundPlayer = true
-                    val uuid = player.ref
-                    val isOnline = player.paper != null
-                })
-            }
+                getWithKey("/{player}", APIPermission.VIEW_PLAYER_DATA) {
+                    val player = parseMacrocosmPlayer() ?: return@getWithKey
+                    call.respondSuccess(GeneralPlayerData(player.rank, player.firstJoin, player.lastJoin, player.playtime))
+                }
 
-            getWithKey("/{player}/inventory", APIPermission.VIEW_PLAYER_DATA) {
-                val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player not provided!"
-                }, HttpStatusCode.BadRequest)
-                val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NotFound)
+                getWithKey("/{player}/status", APIPermission.VIEW_PLAYER_DATA) {
+                    val player = parseMacrocosmPlayer() ?: return@getWithKey
+                    call.respondSuccess(PlayerStatus(true, player.ref, player.paper != null))
+                }
 
-                var inventoryData = "null"
-                val online = player.paper
-                if (online == null) {
-                    offlineInventoryCompoundCache.take(player.ref) {
-                        inventoryData = it
-                    }.otherwise {
-                        val dataCompound =
-                            MinecraftServer.getServer().playerDataStorage.getPlayerData(player.ref.toString())
-                        val inventoryTag = dataCompound.getList("Inventory", CompoundTag.TAG_COMPOUND.toInt())
-                        inventoryData = cacheInventory(player.ref, inventoryTag)
-                    }.call()
-                } else {
-                    onlineInventoryCompoundCache.trySetExpiring(player.ref) {
-                        val dataCompound =
-                            MinecraftServer.getServer().playerDataStorage.getPlayerData(player.ref.toString())
-                        val inventoryTag = dataCompound.getList("Inventory", CompoundTag.TAG_COMPOUND.toInt())
-                        inventoryData = cacheInventory(player.ref, inventoryTag)
-                        inventoryData
-                    }.otherwise {
-                        onlineInventoryCompoundCache.take(player.ref) {
+                getWithKey("/{player}/inventory", APIPermission.VIEW_PLAYER_DATA) {
+                    val player = parseMacrocosmPlayer() ?: return@getWithKey
+
+                    var inventoryData = "null"
+                    val online = player.paper
+                    if (online == null) {
+                        offlineInventoryCompoundCache.take(player.ref) {
                             inventoryData = it
                         }.otherwise {
                             val dataCompound =
                                 MinecraftServer.getServer().playerDataStorage.getPlayerData(player.ref.toString())
                             val inventoryTag = dataCompound.getList("Inventory", CompoundTag.TAG_COMPOUND.toInt())
                             inventoryData = cacheInventory(player.ref, inventoryTag)
-                            onlineInventoryCompoundCache[player.ref] = inventoryData
                         }.call()
-                    }.call()
+                    } else {
+                        onlineInventoryCompoundCache.trySetExpiring(player.ref) {
+                            val dataCompound =
+                                MinecraftServer.getServer().playerDataStorage.getPlayerData(player.ref.toString())
+                            val inventoryTag = dataCompound.getList("Inventory", CompoundTag.TAG_COMPOUND.toInt())
+                            inventoryData = cacheInventory(player.ref, inventoryTag)
+                            inventoryData
+                        }.otherwise {
+                            onlineInventoryCompoundCache.take(player.ref) {
+                                inventoryData = it
+                            }.otherwise {
+                                val dataCompound =
+                                    MinecraftServer.getServer().playerDataStorage.getPlayerData(player.ref.toString())
+                                val inventoryTag = dataCompound.getList("Inventory", CompoundTag.TAG_COMPOUND.toInt())
+                                inventoryData = cacheInventory(player.ref, inventoryTag)
+                                onlineInventoryCompoundCache[player.ref] = inventoryData
+                            }.call()
+                        }.call()
+                    }
+                    if(inventoryData != "null") {
+                        call.respondSuccess(PlayerInventory(inventoryData))
+                    } else {
+                        call.respondFailure(inventoryData)
+                    }
                 }
-                call.respondJson(object {
-                    val success = inventoryData != "null"
-                    val inventory = inventoryData
-                })
+
+                getWithKey("/{player}/balance", APIPermission.VIEW_PLAYER_DATA) {
+                    val player = parseMacrocosmPlayer() ?: return@getWithKey
+                    call.respondSuccess(PlayerBalance(player.bank, player.purse))
+                }
+
+                getWithKey("/{player}/skills", APIPermission.VIEW_PLAYER_DATA) {
+                    val player = parseMacrocosmPlayer() ?: return@getWithKey
+                    call.respondSuccess(PlayerSkills(player.skills.skillExp, player.collections.colls))
+                }
             }
 
-            getWithKey("/{player}/balance", APIPermission.VIEW_PLAYER_DATA) {
-                val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player not provided!"
-                }, HttpStatusCode.BadRequest)
-                val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NotFound)
-                call.respondJson(object {
-                    val success = true
-                    val bank = player.bank
-                    val purse = player.purse
-                })
-            }
+            route("/bazaar") {
+                getWithKey(APIPermission.VIEW_BAZAAR_DATA) {
+                    call.respondSuccess(BazaarStatus(Bazaar.table.entries, Bazaar.table.ordersTotal))
+                }
 
-            getWithKey("/{player}/skills", APIPermission.VIEW_PLAYER_DATA) {
-                val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player not provided!"
-                }, HttpStatusCode.BadRequest)
-                val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NotFound)
-                call.respondJson(object {
-                    val success = true
-                    val skills = player.skills.skillExp
-                })
-            }
+                getWithKey("/items", APIPermission.VIEW_BAZAAR_DATA) {
+                    call.respondSuccess(BazaarElements(BazaarElement.allKeys))
+                }
 
-            getWithKey("/{player}/collections", APIPermission.VIEW_PLAYER_DATA) {
-                val playerParam = call.parameters["player"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player not provided!"
-                }, HttpStatusCode.BadRequest)
-                val player = tryRetrievePlayer(playerParam) ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Player has never joined the server before!"
-                }, HttpStatusCode.NotFound)
-                call.respondJson(object {
-                    val success = true
-                    val collections = player.collections.colls
-                })
-            }
-        }
+                getWithKey("/orders/{item}", APIPermission.VIEW_BAZAAR_DATA) {
+                    val itemParam = call.parameters["item"] ?: return@getWithKey call.respondFailure("Item not provided!", HttpStatusCode.BadRequest)
+                    val data = Bazaar.table.itemData
+                    val id = Identifier.parse(itemParam)
+                    if (!data.containsKey(id))
+                        return@getWithKey call.respondFailure("Item $id was not found in bazaar storage!", HttpStatusCode.NotFound)
+                    val itemData = data[id]!!
+                    call.respondSuccess(ItemOrders(itemData.buy.toList().take(100), itemData.sell.toList().take(100)))
+                }
 
-        route("/bazaar") {
-            getWithKey(APIPermission.VIEW_BAZAAR_DATA) {
-                call.respondJson(object {
-                    val success = true
-                    val entries = Bazaar.table.entries
-                    val totalOrders = Bazaar.table.ordersTotal
-                })
-            }
-
-            getWithKey("/items", APIPermission.VIEW_BAZAAR_DATA) {
-                call.respondJson(object {
-                    val success = true
-                    val items = BazaarElement.allKeys
-                })
-            }
-
-            getWithKey("/orders/{item}", APIPermission.VIEW_BAZAAR_DATA) {
-                val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Item not provided!"
-                }, HttpStatusCode.BadRequest)
-                val data = Bazaar.table.itemData
-                val id = Identifier.parse(itemParam)
-                if (!data.containsKey(id))
-                    return@getWithKey call.respondJson(object {
-                        val success = false
-                        val error = "Item $id was not found in bazaar storage!"
-                    }, HttpStatusCode.NotFound)
-                val itemData = data[id]!!
-                call.respondJson(object {
-                    val success = true
-                    val buy = itemData.buy.toList()
-                    val sell = itemData.sell.toList()
-                })
-            }
-
-            getWithKey("/summary/{item}", APIPermission.VIEW_BAZAAR_DATA) {
-                val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson(object {
-                    val success = false
-                    val error = "Item not provided!"
-                }, HttpStatusCode.BadRequest)
-                val data = Bazaar.table.itemData
-                val id = Identifier.parse(itemParam)
-                if (!data.containsKey(id))
-                    return@getWithKey call.respondJson(object {
-                        val success = false
-                        val error = "Item $id was not found in bazaar storage!"
-                    }, HttpStatusCode.NotFound)
-                call.respondJson(Bazaar.table.summary(id))
+                getWithKey("/summary/{item}", APIPermission.VIEW_BAZAAR_DATA) {
+                    val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson("Item not provided!", HttpStatusCode.BadRequest)
+                    val data = Bazaar.table.itemData
+                    val id = Identifier.parse(itemParam)
+                    if (!data.containsKey(id))
+                        return@getWithKey call.respondFailure("Item $id was not found in bazaar storage!", HttpStatusCode.NotFound)
+                    call.respondSuccess(Bazaar.table.summary(id))
+                }
             }
         }
     }
@@ -355,7 +243,6 @@ fun Application.module() {
 fun serverSpin() {
     embeddedServer(Netty, applicationEngineEnvironment {
         log = Macrocosm.slF4JLogger
-//        classLoader = Macrocosm.javaClass.classLoader
 
         connector {
             port = 4343
@@ -431,9 +318,28 @@ private fun tryRetrievePlayer(param: String): MacrocosmPlayer? {
     return Macrocosm.loadedPlayers[online.uniqueId]
 }
 
+private suspend fun PipelineContext<Unit, ApplicationCall>.parseMacrocosmPlayer(): MacrocosmPlayer? {
+    val playerParam = call.parameters["player"] ?: return call.respondFailure(
+        "Player parameter not provided!",
+        HttpStatusCode.BadRequest
+    ).let { null }
+    return tryRetrievePlayer(playerParam) ?: return call.respondFailure(
+        "Player '${playerParam}' not found!",
+        HttpStatusCode.NotFound
+    ).let { null }
+}
+
+private suspend fun ApplicationCall.respondSuccess(obj: Any?, code: HttpStatusCode = HttpStatusCode.OK) {
+    this.respondJson(Success(true, obj), code)
+}
+
+private suspend fun ApplicationCall.respondFailure(obj: Any, code: HttpStatusCode = HttpStatusCode.InternalServerError) {
+    this.respondJson(Failure(false, obj), code)
+}
+
 private suspend fun ApplicationCall.respondJson(obj: Any?, code: HttpStatusCode = HttpStatusCode.OK) {
     this.respondText(
-        if (obj == null) "{\"error\": \"Internal Server Error\"}" else GSON.toJson(obj),
+        if (obj == null) "{\"success\":false, \"error\": \"Internal Server Error\"}" else GSON.toJson(obj),
         ContentType.Application.Json,
         if (obj == null) HttpStatusCode.InternalServerError else code
     )
@@ -468,58 +374,31 @@ private fun Route.getWithKey(path: String, perm: APIPermission, body: PipelineIn
     }
 }
 
-@KtorDsl
-private fun Route.postWithKey(path: String, perm: APIPermission, body: PipelineInterceptor<Unit, ApplicationCall>) {
-    route(path, HttpMethod.Post) {
-        handle {
-            call.requireKey(perm).then {
-                body(it)
-            }.call()
-        }
-    }
-}
-
-
 private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendConditionalCallback {
     when (val result = validateKey(perm)) {
         KeyManager.ValidationResult.SUCCESS -> return SuspendConditionalCallback.suspendSuccess()
         KeyManager.ValidationResult.NO_KEY_PROVIDED -> {
-            respondJson(object {
-                val success = false
-                val error = "${result.name}: Provide API key for this endpoint"
-            }, HttpStatusCode.Forbidden)
+            respondFailure("${result.name}: Provide API key for this endpoint", HttpStatusCode.Forbidden)
             return SuspendConditionalCallback.suspendFail()
         }
 
         KeyManager.ValidationResult.INVALID_KEY -> {
-            respondJson(object {
-                val success = false
-                val error = "${result.name}: The API key you provided was invalid"
-            }, HttpStatusCode.Forbidden)
+            respondFailure("${result.name}: The API key you provided was invalid", HttpStatusCode.Forbidden)
             return SuspendConditionalCallback.suspendFail()
         }
 
         KeyManager.ValidationResult.KEY_THROTTLE -> {
-            respondJson(object {
-                val success = false
-                val error = "${result.name}: API key throttle, max amount of requests reached (100)"
-            }, HttpStatusCode.TooManyRequests)
+            respondFailure("${result.name}: API key throttle, max amount of requests reached (100)", HttpStatusCode.Forbidden)
             return SuspendConditionalCallback.suspendFail()
         }
 
         KeyManager.ValidationResult.INSUFFICIENT_PERMISSIONS -> {
-            respondJson(object {
-                val success = false
-                val error = "${result.name}: This endpoint requires your key to have ${perm.name} permission"
-            })
+            respondFailure("${result.name}: This endpoint requires your key to have ${perm.name} permission", HttpStatusCode.Unauthorized)
             return SuspendConditionalCallback.suspendFail()
         }
 
         KeyManager.ValidationResult.INVALID_FORMAT -> {
-            respondJson(object {
-                val success = false
-                val error = "${result.name}: Invalid key format used (probably legacy)"
-            })
+            respondFailure("${result.name}: Invalid key format used (probably legacy)", HttpStatusCode.Forbidden)
             return SuspendConditionalCallback.suspendFail()
         }
     }

@@ -1143,7 +1143,7 @@ object Discord : ListenerAdapter() {
                     )
                     addField(
                         "**API Endpoint URL**",
-                        "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/resources/item/${it}`",
+                        "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/v2/resources/item/${it}`",
                         false
                     )
                     val thumbnailUrl = itemImage(mc)

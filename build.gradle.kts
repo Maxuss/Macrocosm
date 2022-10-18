@@ -25,10 +25,10 @@ dependencies {
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
-    implementation("io.ktor:ktor-server-core-jvm:2.1.0")
-    implementation("io.ktor:ktor-server-netty-jvm:2.1.0")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.1.0")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.0")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-netty-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.2")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
@@ -36,6 +36,7 @@ dependencies {
         exclude(module = "opus-java")
     }
     implementation("club.minnced:discord-webhooks:0.8.2")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks {
@@ -58,10 +59,12 @@ tasks {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     runServer {
-        for((a, b) in System.getProperties()) {
-            val n = a.toString()
-            if(n.startsWith("macrocosm"))
-                systemProperties[n] = b
+        println("HERE: ${System.getProperties().size}")
+        System.getProperties().forEach { key, value ->
+            val str = key.toString()
+            if(str.startsWith("macrocosm")) {
+                systemProperty(str, value)
+            }
         }
     }
 }

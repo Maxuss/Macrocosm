@@ -1,4 +1,4 @@
-connection:
+connections:
     discord-bot-token: 'NULL'
     discord:
         communication-channel: 0

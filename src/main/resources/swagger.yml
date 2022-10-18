@@ -3,7 +3,6 @@ info:
     description: |
         This is an API used to interact with and access Macrocosm data.
         
-        
         # Authentication
         
         Authentication requires you to provide an API key in most endpoints.
