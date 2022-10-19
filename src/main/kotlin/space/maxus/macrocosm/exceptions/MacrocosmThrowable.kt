@@ -25,7 +25,7 @@ open class MacrocosmThrowable(val code: String, message: String = "Internal erro
                 "Automatic report: Unknown Error occurs: $message",
                 Charsets.UTF_8
             )
-        }&title=${URLEncoder.encode("Unexpected Error '$code'", Charsets.UTF_8)}"
+        }&title=${URLEncoder.encode("Unexpected Error '$code'", Charsets.UTF_8)}&labels=bug"
 
 }
 
