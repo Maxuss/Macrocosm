@@ -20,12 +20,12 @@ open class MacrocosmThrowable(val code: String, message: String = "Internal erro
     }
 
     val reportUrl =
-        "https://gitlab.com/Maxuss/Macrocosm/-/issues/new?issue[description]=${
+        "https://github.com/Maxuss/Macrocosm/issues/new?body=${
             URLEncoder.encode(
-                "Unknown Error occurs: $message",
+                "Automatic report: Unknown Error occurs: $message",
                 Charsets.UTF_8
             )
-        }&issue[title]=${URLEncoder.encode("Unexpected Error '$code'", Charsets.UTF_8)}"
+        }&title=${URLEncoder.encode("Unexpected Error '$code'", Charsets.UTF_8)}"
 
 }
 
