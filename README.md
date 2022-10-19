@@ -3,4 +3,4 @@
 
 Still in-dev
 
-Migrated to github again as a preparation for open sourcing
+Migrated to GitHub again as a preparation for open sourcing
