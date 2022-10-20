@@ -645,6 +645,8 @@
             "health": 50,
             "intelligence": 25
         },
-        "abilities": ["iv_bag"]
+        "abilities": [
+            "iv_bag"
+        ]
     }
 }

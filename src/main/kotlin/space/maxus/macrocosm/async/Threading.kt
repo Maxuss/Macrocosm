@@ -102,6 +102,9 @@ object Threading {
         ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build()
     )
 
+    /**
+     * Runs each of the provided executors concurrently
+     */
     fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
         runAsync {
             Monitor.enter("runEachConcurrently")

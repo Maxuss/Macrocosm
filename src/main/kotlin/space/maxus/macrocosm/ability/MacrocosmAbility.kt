@@ -24,10 +24,20 @@ interface MacrocosmAbility {
     companion object {
         private val DAMAGE_REGEX = "\\[[\\d.]+:[\\d.]+]".toRegex()
 
+        /**
+         * Formats dynamic damage numbers inside the provided string.
+         *
+         * The dynamic damage value is defined as [<base damage>:<scaling value>]
+         *
+         * @param str String to be formatted
+         * @param player Player for which the values will be formatted
+         *
+         * @return Formatted string
+         */
         fun formatDamageNumbers(str: String, player: MacrocosmPlayer?): String {
             val stats = player?.stats()
             return DAMAGE_REGEX.replace(str) { res ->
-                val data = res.value.replace("[", "").replace("]", "").split(":")
+                val data = res.value.trim('[', ']').split(":")
                 val dmg = java.lang.Double.valueOf(data[0])
                 val scaling = java.lang.Double.valueOf(data[1])
                 if (stats == null)
@@ -64,8 +74,8 @@ interface MacrocosmAbility {
     val cost: AbilityCost?
 
     /**
-     * You **have to** override this function, and register listeners there ([net.axay.kspigot.event.listen]))
-     *
+     * You **have to** override this function, and register listeners there ([net.axay.kspigot.event.listen])),
+     * this is where all the ability logic is defined at
      */
     fun registerListeners() {
 

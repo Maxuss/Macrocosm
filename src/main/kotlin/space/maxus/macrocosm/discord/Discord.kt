@@ -1114,7 +1114,11 @@ object Discord : ListenerAdapter() {
             setColor(0x29232D)
             setTitle("**Macrocosm Version Change**")
             addField("Version $previous → ${Macrocosm.version}", "\uD83E\uDE79", false)
-            addField("The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!", "Keep guessing what it could be!", false)
+            addField(
+                "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!",
+                "Keep guessing what it could be!",
+                false
+            )
 
             setTimestamp(Instant.now())
         }))!!.queue()
@@ -1149,12 +1153,13 @@ object Discord : ListenerAdapter() {
                     val thumbnailUrl = itemImage(mc)
                     setThumbnail(thumbnailUrl)
                     setImage("attachment://${it.path}.png")
-                }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit().thenAccept { _ ->
-                    // meanwhile delete the original render
-                    Threading.runAsync(isDaemon = true) {
-                        Accessor.access("item_renders/${it.path}.png").deleteIfExists()
+                }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit()
+                    .thenAccept { _ ->
+                        // meanwhile delete the original render
+                        Threading.runAsync(isDaemon = true) {
+                            Accessor.access("item_renders/${it.path}.png").deleteIfExists()
+                        }
                     }
-                }
             }
         }
     }

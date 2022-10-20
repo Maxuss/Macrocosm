@@ -31,12 +31,15 @@ import space.maxus.macrocosm.util.unreachable
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.time.Duration.Companion.seconds
 
-object ConfluxPolarity: FullSetBonus("<rainbow>Primordial Grace</rainbow>", "Killing enemies results in the release of <gradient:#DCFDF4:#FDE6DC:#F9DCFD>Elemental Spark</gradient>. The sparks combust, dealing <red>[5000:0.1] ${Statistic.DAMAGE.display}<gray> to nearby enemies and <aqua>marks<gray> them for the next <green>2 seconds<gray>.<br>Attacking <aqua>marked<gray> enemies results in ${Fmt.SUPER_CRIT} ${Statistic.DAMAGE}<gray>.") {
+object ConfluxPolarity : FullSetBonus(
+    "<rainbow>Primordial Grace</rainbow>",
+    "Killing enemies results in the release of <gradient:#DCFDF4:#FDE6DC:#F9DCFD>Elemental Spark</gradient>. The sparks combust, dealing <red>[5000:0.1] ${Statistic.DAMAGE.display}<gray> to nearby enemies and <aqua>marks<gray> them for the next <green>2 seconds<gray>.<br>Attacking <aqua>marked<gray> enemies results in ${Fmt.SUPER_CRIT} ${Statistic.DAMAGE}<gray>."
+) {
     val marked = MutableContainer.trulyEmpty()
 
     override fun registerListeners() {
         listen<PlayerKillEntityEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
 
             sound(Sound.BLOCK_BEACON_ACTIVATE) {
@@ -45,10 +48,14 @@ object ConfluxPolarity: FullSetBonus("<rainbow>Primordial Grace</rainbow>", "Kil
                 playAt(e.killed.location)
             }
 
-            spawnParticles(e.killed.location, e.player, DamageCalculator.calculateMagicDamage(5000, .1f, e.player.stats()!!))
+            spawnParticles(
+                e.killed.location,
+                e.player,
+                DamageCalculator.calculateMagicDamage(5000, .1f, e.player.stats()!!)
+            )
         }
         listen<PlayerDealDamageEvent> { e ->
-            if(!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player))
                 return@listen
             marked.takeMutOrRemove(e.damaged.uniqueId) {
                 e.damage *= superCritMod(e.player)
@@ -59,7 +66,7 @@ object ConfluxPolarity: FullSetBonus("<rainbow>Primordial Grace</rainbow>", "Kil
     }
 
     fun spawnParticles(at: Location, player: MacrocosmPlayer, dmg: Float) {
-        val color = when(ThreadLocalRandom.current().nextInt(5)) {
+        val color = when (ThreadLocalRandom.current().nextInt(5)) {
             0 -> 0xFDE6DC
             1 -> 0xFDF7DC
             2 -> 0xDCFDEF
@@ -67,7 +74,7 @@ object ConfluxPolarity: FullSetBonus("<rainbow>Primordial Grace</rainbow>", "Kil
             4 -> 0xFDDCEF
             else -> unreachable()
         }
-        for(i in 0..5) {
+        for (i in 0..5) {
             val vec = Vector.getRandom().multiply(5)
             vec.along(at.clone(), 10) {
                 particle(Particle.REDSTONE) {
@@ -78,8 +85,8 @@ object ConfluxPolarity: FullSetBonus("<rainbow>Primordial Grace</rainbow>", "Kil
                 }
             }
             val end = at.clone().add(vec)
-            for(entity in end.getNearbyLivingEntities(1.5)) {
-                if(entity !is Player && entity !is ArmorStand) {
+            for (entity in end.getNearbyLivingEntities(1.5)) {
+                if (entity !is Player && entity !is ArmorStand) {
                     entity.macrocosm?.damage(dmg, player.paper, DamageKind.MAGIC)
                     DamageHandlers.summonDamageIndicator(entity.location, dmg, DamageType.FIRE)
                     marked[entity.uniqueId] = Unit

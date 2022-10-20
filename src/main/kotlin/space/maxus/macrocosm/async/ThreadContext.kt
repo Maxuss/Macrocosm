@@ -11,5 +11,8 @@ import org.slf4j.LoggerFactory
 class ThreadContext(threadName: String) {
     private val log: Logger = LoggerFactory.getLogger(threadName)
 
+    /**
+     * Logs informational message as this therad's owner
+     */
     fun info(msg: String) = log.info(msg)
 }

@@ -9,7 +9,7 @@ package space.maxus.macrocosm.api
 data class KeyData(val key: String, val data: InlinedKeyData)
 
 /**
- * Represents byte-inlined data stored in the key as base64
+ * Represents byte-inlined data (previously) stored in the key as base64
  *
  * @property createdAt Unix epoch timestamp of when the key was created
  * @property keyIdentifierUnique Unique random number associated with this key

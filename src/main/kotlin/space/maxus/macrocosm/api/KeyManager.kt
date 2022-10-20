@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.util.GSON
-import space.maxus.macrocosm.util.aggregate
 import java.nio.ByteBuffer
 import java.time.Instant
 import java.util.*
@@ -60,40 +59,30 @@ object KeyManager {
      */
     fun generateRandomKey(belongs: UUID, permissions: List<APIPermission>): String {
         val r = ThreadLocalRandom.current()
-        val currentState = currentApiState.ordinal
         val now = Instant.now().toEpochMilli()
         val uniqueIdentifier = r.nextInt()
         val mostSignificantBits = belongs.mostSignificantBits
 
-        val buf = ByteBuffer.allocate(1 + Long.SIZE_BYTES + Int.SIZE_BYTES + (1 + permissions.size) + Long.SIZE_BYTES)
-        buf.put(currentState.toByte())
-        buf.putLong(now)
-        buf.putInt(uniqueIdentifier)
-        buf.put(permissions.size.toByte())
-        permissions.forEach {
-            buf.put(it.ordinal.toByte())
-        }
-        buf.putLong(mostSignificantBits)
+        val buf = ByteBuffer.allocate(2 + Long.SIZE_BYTES * 3)
+        // header
+        buf.put("mx".encodeToByteArray())
+        buf.putLong(r.nextLong() ushr 3)
+        buf.putLong(r.nextLong() ushr 2)
+        buf.putLong(r.nextLong() ushr 1)
+        // previous key data was too generic, we store enough data in the inlined value
+//        buf.put(currentState.toByte())
+//        buf.putLong(now)
+//        buf.putInt(uniqueIdentifier)
+//        buf.put(permissions.size.toByte())
+//        permissions.forEach {
+//            buf.put(it.ordinal.toByte())
+//        }
+//        buf.putLong(mostSignificantBits)
 
         val s = Base64.getUrlEncoder().encodeToString(buf.array())
         val data = KeyData(s, InlinedKeyData(currentApiState, now, uniqueIdentifier, permissions, mostSignificantBits))
         owned.add(data)
         return s
-    }
-
-    private fun readKeyData(key: String): InlinedKeyData? {
-        return try {
-            val buf = ByteBuffer.wrap(Base64.getUrlDecoder().decode(key))
-            val format = APIState.values()[buf.get().toInt()]
-            val createdAt = buf.long
-            val uniqueIdentifier = buf.int
-            val permissions = aggregate(buf.get().toInt()) { APIPermission.values()[buf.get().toInt()] }
-            val mostSignificantBits = buf.long
-            InlinedKeyData(format, createdAt, uniqueIdentifier, permissions, mostSignificantBits)
-        } catch (e: Exception) {
-            // invalid/legacy key format
-            null
-        }
     }
 
     /**

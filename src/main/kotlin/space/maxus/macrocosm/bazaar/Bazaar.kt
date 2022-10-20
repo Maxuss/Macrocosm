@@ -28,17 +28,31 @@ import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Singleton object for managing bazaar operations
+ */
 object Bazaar {
-    val bazaarOpPool = Threading.newFixedPool(8)
+    private val bazaarOpPool = Threading.newFixedPool(8)
 
+    /**
+     * The containing table for bazaar operations
+     */
     lateinit var table: BazaarTable; private set
 
+    /**
+     * Initializes the bazaar
+     *
+     * This init function is **Thread Safe** and can be used in [Threading.runEachConcurrently]
+     */
     fun init() {
         Threading.runAsync {
             table = BazaarTable.readSelf(database)
         }
     }
 
+    /**
+     * Gets all orders for the provided [player]
+     */
     fun getOrdersForPlayer(player: UUID): List<BazaarOrder> {
         return table.itemData.values.map { entry ->
             entry.buy.filter { order -> order.createdBy == player }
@@ -56,11 +70,19 @@ object Bazaar {
         }"
     }
 
+    /**
+     * Instantly sells provided items
+     *
+     * @param player player that has started the instant sell operation
+     * @param paper bukkit player mirror of the [MacrocosmPlayer]
+     * @param item item that is being sold
+     * @param qty quantity of items to sell
+     */
     fun instantSell(player: MacrocosmPlayer, paper: Player, item: Identifier, qty: Int) {
         bazaarOpPool.execute {
             runCatchingReporting(paper) {
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Executing instant sell...")
-                val result = tryDoInstantSell(item, qty, false).get()
+                val result = tryDoInstantSell(player, item, qty, false).get()
                 if (result.amountSold <= 0) {
                     player.sendMessage(ChatChannel.BAZAAR, "<red>Could not find offers to sell items to!")
                     return@execute
@@ -92,7 +114,7 @@ object Bazaar {
 
                 task(sync = true, delay = 0L) {
                     // drifting to sync thread
-                    if (DemandQtyItemsQuery(item, result.amountSold).demand(player, paper) !is Result) {
+                    if (DemandQtyItemsQuery(item, result.amountSold).process(player, paper) !is Result) {
                         bazaarOpPool.execute {
                             player.sendMessage(
                                 ChatChannel.BAZAAR,
@@ -116,7 +138,7 @@ object Bazaar {
                                 pitch = 2f
                                 playFor(paper)
                             }
-                            tryDoInstantSell(item, qty).get()
+                            tryDoInstantSell(player, item, qty).get()
                         }
                     }
                 }
@@ -124,6 +146,14 @@ object Bazaar {
         }
     }
 
+    /**
+     * Instantly buys provided items
+     *
+     * @param player player that has started the instant buy operation
+     * @param paper bukkit player mirror of the [MacrocosmPlayer]
+     * @param item item that is being bought
+     * @param qty quantity of items to buy
+     */
     fun instantBuy(player: MacrocosmPlayer, paper: Player, item: Identifier, qty: Int) {
         bazaarOpPool.execute {
             runCatchingReporting(paper) {
@@ -196,6 +226,15 @@ object Bazaar {
         }
     }
 
+    /**
+     * Creates a buy order as the provided player
+     *
+     * @param player player that has started creating the buy order
+     * @param paper bukkit player mirror of the [MacrocosmPlayer]
+     * @param item item that is being bought
+     * @param amount quantity of items to buy
+     * @param pricePer price per single item
+     */
     fun createBuyOrder(player: MacrocosmPlayer, paper: Player, item: Identifier, amount: Int, pricePer: Double) {
         bazaarOpPool.execute {
             runCatchingReporting(paper) {
@@ -246,13 +285,22 @@ object Bazaar {
         }
     }
 
+    /**
+     * Creates a sell order as the provided player
+     *
+     * @param player player that has started creating the sell order
+     * @param paper bukkit player mirror of the [MacrocosmPlayer]
+     * @param item item that is being sold
+     * @param amount quantity of items to sell
+     * @param pricePer price per single item
+     */
     fun createSellOrder(player: MacrocosmPlayer, paper: Player, item: Identifier, amount: Int, pricePer: Double) {
         bazaarOpPool.execute {
             runCatchingReporting(paper) {
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
                 task(sync = true, delay = 0L) {
                     // drifting to synchronous environment
-                    if (DemandQtyItemsQuery(item, amount).demand(player, paper) !is Result) {
+                    if (DemandQtyItemsQuery(item, amount).process(player, paper) !is Result) {
                         player.sendMessage(ChatChannel.BAZAAR, "<gray>Setting up Sell Order...")
                         table.createOrder(
                             BazaarSellOrder(
@@ -295,6 +343,18 @@ object Bazaar {
         }
     }
 
+    /**
+     * Attempts to instantly buy provided items
+     *
+     * NOTE: this is a partially internal method, if you are looking for a way to do instant buy, look at [Bazaar.instantBuy] instead
+     *
+     * @param player player that initiated the instant buy
+     * @param element item that is being bought
+     * @param amount amount of items that are being bought
+     * @param mutate whether to mutate (modify count of items sold etc.) existing orders
+     *
+     * @return completable future that returns the result if successful
+     */
     fun tryDoInstantBuy(
         player: MacrocosmPlayer,
         element: Identifier,
@@ -323,7 +383,8 @@ object Bazaar {
                     if (mutate) {
                         order.sold += (amount - satisfiedAmount)
                         order.qty -= (amount - satisfiedAmount)
-                        order.buyers.add(player.ref)
+                        if (!order.buyers.contains(player.ref))
+                            order.buyers.add(player.ref)
                     }
                     if (!sellers.contains(order.createdBy))
                         sellers.add(order.createdBy)
@@ -357,7 +418,20 @@ object Bazaar {
         }
     }
 
+    /**
+     * Attempts to instantly sell provided items
+     *
+     * NOTE: this is a partially internal method, if you are looking for a way to do instant sell, look at [Bazaar.instantSell] instead
+     *
+     * @param player player that initiated the instant sell
+     * @param element item that is being sold
+     * @param amount amount of items that are being sold
+     * @param mutate whether to mutate (modify count of items sold etc.) existing orders
+     *
+     * @return completable future that returns the result if successful
+     */
     fun tryDoInstantSell(
+        player: MacrocosmPlayer,
         element: Identifier,
         amount: Int,
         mutate: Boolean = true
@@ -365,7 +439,7 @@ object Bazaar {
         var leftToSell = amount
         var currentProfit = BigDecimal(0)
         var affectedOffers = 0
-        val sellers = mutableListOf<UUID>()
+        val buyers = mutableListOf<UUID>()
         return CompletableFuture.supplyAsync {
             table.iterateThroughOrdersBuy(element) { order ->
                 if (order.qty == 0)
@@ -380,10 +454,12 @@ object Bazaar {
                     if (mutate) {
                         order.qty -= leftToSell
                         order.bought += leftToSell
+                        if (order.sellers.contains(player.ref))
+                            order.sellers.add(player.ref)
                     }
                     leftToSell = 0
-                    if (!sellers.contains(order.createdBy))
-                        sellers.add(order.createdBy)
+                    if (!buyers.contains(order.createdBy))
+                        buyers.add(order.createdBy)
                     return@iterateThroughOrdersBuy true
                 }
                 currentProfit += order.totalPrice
@@ -393,29 +469,48 @@ object Bazaar {
                     order.qty = 0
                     order.bought += diff
                 }
-                if (!sellers.contains(order.createdBy))
-                    sellers.add(order.createdBy)
+                if (!buyers.contains(order.createdBy))
+                    buyers.add(order.createdBy)
                 return@iterateThroughOrdersBuy false
             }
 
-            return@supplyAsync InstantSellResult(amount - leftToSell, currentProfit, affectedOffers, sellers)
+            return@supplyAsync InstantSellResult(amount - leftToSell, currentProfit, affectedOffers, buyers)
         }
     }
 
-
+    /**
+     * An error that occurs when processing bazaar operation
+     */
     class BazaarError(currentQuery: Query, parent: Throwable?, orMessage: String? = null) : MacrocosmThrowable(
         "BAZAAR_ERROR",
         """Unhandled error in bazaar operation "${currentQuery.id}": ${parent?.message ?: orMessage}"""
     )
 
+    /**
+     * An interface for bazaar queries
+     */
     interface Query {
+        /**
+         * ID of this query
+         */
         val id: String
-        fun demand(player: MacrocosmPlayer, paper: Player): Any
+
+        /**
+         * Processes this query returning dynamic value based on the implementation
+         */
+        fun process(player: MacrocosmPlayer, paper: Player): Any
     }
 
+    /**
+     * Demands [coins] amount of coins from the player.
+     *
+     * Possible returns by [process]:
+     *  * Int (1) => the operation went successfully
+     *  * Result (failure) => player does not have enough coins
+     */
     class DemandCoinsQuery(val coins: BigDecimal) : Query {
         override val id = "QUERY_DEMAND_COINS"
-        override fun demand(player: MacrocosmPlayer, paper: Player): Any {
+        override fun process(player: MacrocosmPlayer, paper: Player): Any {
             if (player.purse >= coins) {
                 player.purse -= transact(coins, player.ref, Transaction.Kind.OUTGOING)
                 return 1
@@ -424,10 +519,18 @@ object Bazaar {
         }
     }
 
+    /**
+     * Demands all items of type [element] from player
+     *
+     * Possible returns by [process]:
+     *  * Int(amount) => amount of items were removed
+     *  * Result(failure) => player does not have any items of the type [element]
+     *  * throws BazaarError => invalid operation provoked by you (e.g. invalid [element] ID)
+     */
     class DemandAllItemsQuery(val element: Identifier) : Query {
         override val id = "QUERY_DEMAND_ITEMS_ALL"
 
-        override fun demand(player: MacrocosmPlayer, paper: Player): Any {
+        override fun process(player: MacrocosmPlayer, paper: Player): Any {
             val item = BazaarElement.idToElement(element) ?: throw BazaarError(
                 this,
                 null,
@@ -450,10 +553,18 @@ object Bazaar {
         }
     }
 
+    /**
+     * Demands a certain quantity of items of type [element] from player
+     *
+     * Possible returns by [process]:
+     *  * Result(failure) => player does not have enough items
+     *  * Int(1) => operation successful
+     *  * throws BazaarError => invalid operation provoked by you (e.g. invalid [element] ID)
+     */
     class DemandQtyItemsQuery(val element: Identifier, val amount: Int) : Query {
         override val id = "QUERY_DEMAND_ITEMS_QUANTITY"
 
-        override fun demand(player: MacrocosmPlayer, paper: Player): Any {
+        override fun process(player: MacrocosmPlayer, paper: Player): Any {
             val item = BazaarElement.idToElement(element) ?: throw BazaarError(
                 this,
                 null,

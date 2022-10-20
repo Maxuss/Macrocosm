@@ -13,10 +13,17 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 
-object IVBagAbility: EquipmentAbility("Droplets of Mana", "When using abilities, take <red>7.5%<gray> of your maximum ${Statistic.HEALTH.display}<gray> as damage if your <aqua>${Statistic.INTELLIGENCE.specialChar} Mana<gray> gets too low to regain your maximum ${Statistic.INTELLIGENCE.display}<gray>.") {
+object IVBagAbility : EquipmentAbility(
+    "Droplets of Mana",
+    "When using abilities, take <red>7.5%<gray> of your maximum ${Statistic.HEALTH.display}<gray> as damage if your <aqua>${Statistic.INTELLIGENCE.specialChar} Mana<gray> gets too low to regain your maximum ${Statistic.INTELLIGENCE.display}<gray>."
+) {
     override fun registerListeners() {
         listen<AbilityCostApplyEvent> { e ->
-            if(!ensureRequirements(e.player, ItemType.BELT) || e.player.currentMana > e.player.stats()!!.intelligence * 0.2f)
+            if (!ensureRequirements(
+                    e.player,
+                    ItemType.BELT
+                ) || e.player.currentMana > e.player.stats()!!.intelligence * 0.2f
+            )
                 return@listen
 
             sound(Sound.ENTITY_GENERIC_BIG_FALL) {

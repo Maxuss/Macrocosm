@@ -4,7 +4,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.players.MacrocosmPlayer
 
 /**
- * An abstract class describing an equipment ability
+ * An abstract class describing an ability bound to equipment items
  *
  * @constructor
  * @see space.maxus.macrocosm.ability.AbilityBase

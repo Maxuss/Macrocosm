@@ -160,7 +160,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 //                if (isInDevEnvironment)
 //                    SqliteDatabaseImpl
 //                else
-                    PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
+                PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
             DATABASE.connect()
             playersLazy = DATABASE.readPlayers().toMutableList()
         }
@@ -351,8 +351,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         taskRunLater(5 * 20L, sync = false) {
             // detect item registry changes
             if (Macrocosm.isOnline) {
-                val previousVersion = Accessor.access(".VERSION").let { if(it.exists()) it.readText() else null }
-                if(previousVersion != null && this.version != previousVersion)
+                val previousVersion = Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null }
+                if (previousVersion != null && this.version != previousVersion)
                     Discord.sendVersionDiff(previousVersion)
                 Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
             }

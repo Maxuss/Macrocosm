@@ -503,7 +503,7 @@ fun Random.nextSignedDouble(): Double {
 fun Vector.along(f: Location, times: Int, fn: FnArg<Location>) {
     val each = this.clone().multiply(1f / times.toFloat())
     var from = f
-    for(i in 0 until times) {
+    for (i in 0 until times) {
         from = from.add(each)
         from.apply(fn)
     }
