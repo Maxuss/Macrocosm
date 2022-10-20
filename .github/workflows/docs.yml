@@ -1,0 +1,25 @@
+name: Docs
+on:
+    push:
+        branches: [master]
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  persist-credentials: false
+            - name: Set up JDK
+              uses: actions/setup-java@v3
+              with:
+                  distribution: temurin
+                  java-version: 17
+            - name: Build documentation
+              run: ./gradlew dokkaHtml
+            - name: Relocate documentation
+              run: mkdir docs && mv build/dokka/html/ docs
+            - name: Publish documentation
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: docs
