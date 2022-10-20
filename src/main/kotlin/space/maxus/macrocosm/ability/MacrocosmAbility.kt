@@ -27,7 +27,7 @@ interface MacrocosmAbility {
         /**
          * Formats dynamic damage numbers inside the provided string.
          *
-         * The dynamic damage value is defined as [<base damage>:<scaling value>]
+         * The dynamic damage value is defined as [[&lt;base damage&gt;:&lt;scaling value&gt;]]
          *
          * @param str String to be formatted
          * @param player Player for which the values will be formatted
