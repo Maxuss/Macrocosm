@@ -8,6 +8,7 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
+import org.jetbrains.annotations.ApiStatus
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -57,7 +58,6 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
-import space.maxus.macrocosm.util.DeprecatedDelegate
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.Unsafe
@@ -89,19 +89,24 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var TRANSACTION_HISTORY: TransactionHistory
 
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
-        val API_VERSION by DeprecatedDelegate()
+        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
+        val API_VERSION: String? = null
 
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
-        val VERSION by DeprecatedDelegate()
+        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
+        val VERSION: String? = null
 
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.CURRENT_IP"))
-        val CURRENT_IP by DeprecatedDelegate()
+        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
+        val CURRENT_IP: String? = null
 
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
-        val OFFLINE_MODE by DeprecatedDelegate()
+        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
+        val OFFLINE_MODE: String? = null
 
         @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
-        val DISCORD_BOT_TOKEN by DeprecatedDelegate()
+        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
+        val DISCORD_BOT_TOKEN: String? = null
 
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
