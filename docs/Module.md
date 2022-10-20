@@ -1,5 +1,5 @@
 # Module Macrocosm
-Insert more detailed description here later
+Insert more detailed description here later...
 
 # Package space.maxus.macrocosm
 Upper level package
