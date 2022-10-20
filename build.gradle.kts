@@ -1,3 +1,5 @@
+import java.net.URL
+
 plugins {
     kotlin("jvm") version "1.7.0"
     id("xyz.jpenilla.run-paper") version "1.0.6"
@@ -64,6 +66,20 @@ tasks {
             val str = key.toString()
             if(str.startsWith("macrocosm")) {
                 systemProperty(str, value)
+            }
+        }
+    }
+}
+
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("Macrocosm")
+            includes.from("docs/Module.md")
+            sourceLink {
+                localDirectory.set(file("src/main/kotlin"))
+                remoteUrl.set(URL("https://github.com/Maxuss/Macrocosm/tree/master/src/main/kotlin"))
+                remoteLineSuffix.set("#L")
             }
         }
     }
