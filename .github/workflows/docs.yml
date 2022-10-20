@@ -17,7 +17,7 @@ jobs:
             - name: Build documentation
               run: ./gradlew dokkaHtml
             - name: Relocate documentation
-              run: mkdir docs && mv build/dokka/html/ docs
+              run: mv build/dokka/html/ docs
             - name: Publish documentation
               uses: peaceiris/actions-gh-pages@v3
               with:
