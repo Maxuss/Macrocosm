@@ -3,4 +3,4 @@
 
 Still in-dev
 
-Migrated to GitHub again as a preparation for open sourcing
+🎉 Open source 🎉
