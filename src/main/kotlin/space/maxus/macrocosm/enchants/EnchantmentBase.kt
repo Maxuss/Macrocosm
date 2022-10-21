@@ -7,7 +7,6 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.events.EnchantCalculateStatsEvent
@@ -102,7 +101,7 @@ abstract class EnchantmentBase(
         val reduced =
             regulatedDescription.reduceToList(25).map { mm.deserialize("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
         }
         return reduced
     }

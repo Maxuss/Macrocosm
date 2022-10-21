@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -59,7 +58,7 @@ class RecipeItem(
     override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         if (description != null) {
             val reduced = description.reduceToList(30).map { text("<dark_gray>$it").noitalic() }.toMutableList()
-            reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+            reduced.removeIf { it.toLegacyString().isBlank() }
             lore.addAll(reduced)
             lore.add("".toComponent())
         }

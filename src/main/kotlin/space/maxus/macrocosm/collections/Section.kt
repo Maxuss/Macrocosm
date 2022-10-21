@@ -1,5 +1,8 @@
 package space.maxus.macrocosm.collections
 
+/**
+ * A section for collections
+ */
 enum class Section {
     COMBAT,
     FARMING,

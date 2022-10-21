@@ -24,7 +24,6 @@ import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
@@ -242,7 +241,7 @@ class WitherScrollAbility(
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
         }
         lore.addAll(tmp)
     }

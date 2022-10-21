@@ -2,7 +2,7 @@ package space.maxus.macrocosm.db
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
-import space.maxus.macrocosm.collections.Collections
+import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.pets.StoredPet
@@ -60,7 +60,7 @@ class SqlPlayerData(
     val bank: BigDecimal,
     val memory: PlayerMemory,
     val forge: List<ActiveForgeRecipe>,
-    val collections: Collections,
+    val collections: CollectionCompound,
     val skills: Skills,
     val recipes: List<Identifier>,
     val equipment: PlayerEquipment,
@@ -83,7 +83,7 @@ class SqlPlayerData(
                 res[t.bank],
                 fromJson(res[t.memory]) ?: PlayerMemory(mutableListOf()),
                 fromJson(res[t.forge]) ?: listOf(),
-                Collections.fromJson(res[t.collections]),
+                CollectionCompound.fromJson(res[t.collections]),
                 Skills.fromJson(res[t.skills]),
                 fromJson(res[t.recipes]) ?: listOf(),
                 PlayerEquipment().apply {

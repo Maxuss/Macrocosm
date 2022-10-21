@@ -9,7 +9,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -58,7 +57,7 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
 
         val str = "Use on an <yellow>Anvil<gray> to apply this dye color to armor."
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         reduced.add("".toComponent())
         lore.addAll(reduced)
         val hex = TextColor.color(ddye.color).asHexString().uppercase()

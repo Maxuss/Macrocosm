@@ -13,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -67,7 +66,7 @@ class SkullSkinItem(val sskin: SkullSkin) : MacrocosmItem {
             "Apply pet skins to pets on an <yellow>Anvil<gray> to give your pet a <light_purple>New & Refreshing<gray> look!"
         }
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         reduced.add("".toComponent())
         lore.addAll(reduced)
         val cmp = if (sskin.isHelmet) {

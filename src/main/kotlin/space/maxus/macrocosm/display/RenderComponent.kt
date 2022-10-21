@@ -2,7 +2,6 @@ package space.maxus.macrocosm.display
 
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.text.text
@@ -42,7 +41,7 @@ interface RenderComponent {
 
         init {
             val reduced = description.reduceToList(15).map { text("<gray>$it").noitalic() }.toMutableList()
-            reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+            reduced.removeIf { it.toLegacyString().isBlank() }
             desc = reduced
         }
 

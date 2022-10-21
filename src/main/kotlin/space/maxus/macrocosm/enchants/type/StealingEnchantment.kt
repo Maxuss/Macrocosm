@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.EnchantmentBase
@@ -29,7 +28,7 @@ class StealingEnchantment(
         val str = actualDescription?.replace("{{amount}}", Formatting.stats((amount * level).toBigDecimal()))
             ?: "<gray>Regain <green>${Formatting.stats((amount * level).toBigDecimal())}%<gray> of your max ${stat.display}<gray> on hit."
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 

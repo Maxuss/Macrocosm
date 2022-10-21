@@ -51,7 +51,7 @@ class MobEnchantment(
             Formatting.stats((level * dmgMultiplier * 100).toBigDecimal(), true)
         )
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 

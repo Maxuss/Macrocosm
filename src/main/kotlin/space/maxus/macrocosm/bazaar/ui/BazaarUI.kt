@@ -157,7 +157,7 @@ private fun GUIPageBuilder<ForInventorySixByNine>.addNavButtons(player: Macrocos
             ItemValue.placeholderDescripted(
                 category.displayItem,
                 category.displayName,
-                *category.description.reduceToList(21).filter { !it.isBlankOrEmpty() }.toTypedArray()
+                *category.description.reduceToList(21).filter { !it.isBlank() }.toTypedArray()
             ),
             category.ordinal,
             null

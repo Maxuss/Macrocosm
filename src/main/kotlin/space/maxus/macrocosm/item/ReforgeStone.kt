@@ -13,7 +13,6 @@ import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.capitalized
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -65,7 +64,7 @@ class ReforgeStone(
         val str =
             "Can be used on an <yellow>Anvil<gray> to apply the <gold>${reforgeType.name}<gray> reforge to <blue>${itStr}<gray>."
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         reduced.add("".toComponent())
         reduced.add(text("<blue>${reforgeType.name} <gray>(<gold>Legendary<gray>):").noitalic())
         val stats = reforgeType.stats(Rarity.LEGENDARY)

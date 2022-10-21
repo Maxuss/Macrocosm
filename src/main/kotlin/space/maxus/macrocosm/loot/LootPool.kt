@@ -70,7 +70,7 @@ class LootPool private constructor(val drops: List<Drop>) {
             } else {
                 val item = Registry.ITEM.find(it.item)
                 var amount = it.amount.random()
-                val collType = CollectionType.from(it.item)
+                val collType = CollectionType.fromIdentifier(it.item)
                 if (collType != null) {
                     player?.addCollectionAmount(collType, amount)
                     var boost = 1

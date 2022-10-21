@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageType
@@ -28,7 +27,7 @@ object ThunderlordEnchantment :
         val str =
             "<gray>Strikes a monster with lightning every <green>3<gray> consecutive hits. Lightning deals <green>${100 + ((level - 1) * 25)}%<gray> of your ${Statistic.STRENGTH.display}<gray>."
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 
@@ -63,7 +62,7 @@ object ThunderboltEnchantment :
         val str =
             "<gray>Strikes nearby monsters with lightning every <green>3<gray> consecutive hits on the <blue>same<gray> enemy. Lightning deals <green>${100 + ((level - 1) * 10)}%<gray> of your ${Statistic.CRIT_DAMAGE.display}<gray>."
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 

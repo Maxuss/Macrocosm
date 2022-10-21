@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -78,7 +77,7 @@ class SpellScroll : MacrocosmItem {
             lore.add(text("<gold>Spell: ${sp.name} <yellow><bold>RIGHT CLICK").noitalic())
             val tmp = mutableListOf<Component>()
             for (part in MacrocosmAbility.formatDamageNumbers(sp.description, player).split("<br>")) {
-                tmp.addAll(part.reduceToList(31).filter { t -> !t.isBlankOrEmpty() }
+                tmp.addAll(part.reduceToList(31).filter { t -> !t.isBlank() }
                     .map { t -> text("<gray>$t").noitalic() })
             }
             lore.addAll(tmp)

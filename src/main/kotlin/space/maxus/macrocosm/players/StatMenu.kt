@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.ItemValue
@@ -79,10 +78,10 @@ fun statBreakdown(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                     displayName(name)
 
                     val rawLore = stat.description
-                    if (rawLore.isBlankOrEmpty())
+                    if (rawLore.isBlank())
                         return@createRectCompound glass
 
-                    val lore = rawLore.reduceToList().filter { str -> !str.isBlankOrEmpty() }
+                    val lore = rawLore.reduceToList().filter { str -> !str.isBlank() }
                         .map { reduced -> text("<gray>$reduced").noitalic() }.toMutableList()
 
                     val buf = mutableListOf<String>()

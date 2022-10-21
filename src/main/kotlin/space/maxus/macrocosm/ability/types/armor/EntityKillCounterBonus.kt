@@ -108,7 +108,7 @@ open class EntityKillCounterBonus(
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
         }
         lore.addAll(tmp)
     }

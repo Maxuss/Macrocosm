@@ -26,7 +26,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
-import space.maxus.macrocosm.collections.Collections
+import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.database
 import space.maxus.macrocosm.db.*
@@ -94,7 +94,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var lastAbilityUse: HashMap<Identifier, Long> = hashMapOf()
     var unlockedRecipes: MutableList<Identifier> = mutableListOf()
     var skills: Skills = Skills.default()
-    var collections: Collections = Collections.default()
+    var collections: CollectionCompound = CollectionCompound.default()
     var ownedPets: HashMap<String, StoredPet> = hashMapOf()
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
