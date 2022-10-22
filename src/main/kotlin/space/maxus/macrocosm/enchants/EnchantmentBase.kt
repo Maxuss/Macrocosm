@@ -19,17 +19,42 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import java.math.BigDecimal
 
+/**
+ * A base for enchantment. It is recommended to inherit
+ * this class instead of implementing raw [Enchantment] interface
+ */
 abstract class EnchantmentBase(
     override val name: String,
+    /**
+     * Description for this enchantment
+     */
     private val description: String,
     override val levels: IntRange,
     override val applicable: List<ItemType>,
+    /**
+     * Base statistics this enchantment modifies, zero by default
+     */
     private val baseStats: Statistics = Statistics.zero(),
+    /**
+     * Base special statistics this enchantment modifies, zero by default
+     */
     private val baseSpecials: SpecialStatistics = SpecialStatistics(),
+    /**
+     * Stat modifiers per each level
+     */
     private val multiplier: Float = 1f,
+    /**
+     * Enchantment IDs that this enchantment conflicts with
+     */
     conflicts: List<String> = listOf()
 ) : Enchantment {
     override val conflicts: List<Identifier> = conflicts.map { Identifier.macro(it.lowercase()) }
+
+    /**
+     * Ensures that the player has enchantments in any of the provided [slots]
+     *
+     * @return A pair of (whether the player has the enchantment, the level of enchantment)
+     */
     protected fun ensureRequirements(player: MacrocosmPlayer, vararg slots: EquipmentSlot): Pair<Boolean, Int> {
         val filtered = slots.map {
             val item = player.paper!!.inventory.getItem(it)
@@ -43,6 +68,12 @@ abstract class EnchantmentBase(
         return filtered.maxByOrNull { (_, lvl) -> lvl } ?: filtered.firstOrNull() ?: Pair(false, -1)
     }
 
+    /**
+     * Ensures that the player has enchantments in any of the provided [slots] but also stacks all the
+     * levels.
+     *
+     * @return A pair of (whether the player has the enchantment, the combined level of enchantment)
+     */
     protected fun ensureRequirementsStacking(player: MacrocosmPlayer, vararg slots: EquipmentSlot): Pair<Boolean, Int> {
         val filtered = slots.map {
             val item = player.paper!!.inventory.getItem(it)
@@ -58,6 +89,11 @@ abstract class EnchantmentBase(
         return Pair(true, filtered.sumOf { (_, lvl) -> lvl })
     }
 
+    /**
+     * Checks whether the provided [item] has the enchantment
+     *
+     * @return A pair of (whether the item has the enchantment, the level of enchantment)
+     */
     protected fun ensureRequirements(item: MacrocosmItem): Pair<Boolean, Int> {
         val enchants = item.enchantments
         if (!enchants.contains(this))

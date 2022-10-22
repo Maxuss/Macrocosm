@@ -7,6 +7,19 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 
+/**
+ * An ultimate enchantment. In implementation details differs from [SimpleEnchantment] only by having light purple bold name.
+ * All the other logic is hard coded inside the [MacrocosmItem][space.maxus.macrocosm.item.MacrocosmItem]
+ *
+ * @param name name of the enchantment
+ * @param description description of the enchantment
+ * @param levels possible levels of the enchantment
+ * @param applicable item types this enchantment is applicable to
+ * @param baseStats base statistics that this enchantment applies, excluding the level modifier
+ * @param baseSpecials base special statistics that this enchantment applies, excluding the level modifier
+ * @param multiplier the multiplier that is applied each level
+ * @param conflicts IDs of enchantments this enchantment conflicts with
+ */
 open class UltimateEnchantment(
     name: String,
     description: String,

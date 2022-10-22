@@ -81,3 +81,9 @@ All the event emitters for discord
 
 # Package space.maxus.macrocosm.display
 All the sidebar rendering logic for the Macrocosm
+
+# Package space.maxus.macrocosm.enchants
+Contains logic related to enchantments
+
+# Package space.maxus.macrocosm.type
+Contains all the implemented enchantment types

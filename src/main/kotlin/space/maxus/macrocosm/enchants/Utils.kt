@@ -19,6 +19,9 @@ private val ROMAN_LOOKUP = TreeMap(
     )
 )
 
+/**
+ * Converts an integer to a fancy roman number
+ */
 fun roman(num: Int): String {
     val l = ROMAN_LOOKUP.floorKey(num)
     if (num == l)
