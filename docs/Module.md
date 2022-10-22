@@ -46,7 +46,7 @@ Contains the necessary Bazaar UI function
 # Package space.maxus.macrocosm.chat
 Contains different utilities related to chat component manipulations
 
-# Package space.maxus.macrocom.collections
+# Package space.maxus.macrocosm.collections
 Contains the code necessary for player item collections
 
 # Package space.maxus.macrocosm.commands
@@ -57,3 +57,9 @@ Contains all the item cosmetics
 
 # Package space.maxus.macrocosm.damage
 Contains code for damage calculations and displaying
+
+# Package space.maxus.macrocosm.data
+Runtime data generation/dumping utilities
+
+# Package space.maxus.macrocosm.db
+Database and filesystem access utilities

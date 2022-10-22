@@ -7,12 +7,21 @@ import space.maxus.macrocosm.db.*
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
+/**
+ * An abstract class over SQL databases
+ */
 abstract class AbstractSQLDatabase : DataStorage {
+    /**
+     * An actual connection to a database
+     */
     lateinit var connection: Database
 
+    /**
+     * Obtains a connection to database
+     */
     protected abstract fun obtainConnection(): Database
 
-    override fun connect() {
+    final override fun connect() {
         if (::connection.isInitialized)
             return
         connection = obtainConnection()

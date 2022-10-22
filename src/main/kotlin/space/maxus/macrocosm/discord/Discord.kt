@@ -215,7 +215,7 @@ object Discord : ListenerAdapter() {
     }
 
     fun readSelf() {
-        Accessor.readIfOpen("discord_auth.json").then {
+        Accessor.readIfExists("discord_auth.json").then {
             val json = fromJson<HashMap<UUID, Long>>(it)!!
             authenticated.putAll(json)
         }.call()
