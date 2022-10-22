@@ -7,6 +7,12 @@ import space.maxus.macrocosm.item.cosmetic.SkullSkinItem
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 
+/**
+ * An enum containing all the cosmetics
+ *
+ * This should be merged into a Registry once [this issue](https://github.com/Maxuss/Macrocosm/issues/4) is completed,
+ * once done it will probably be marked as obsolete
+ */
 enum class Cosmetics(val inner: Cosmetic) {
     PURE_BLACK_DYE(Dye("<dark_gray>Pure Black", 0, Rarity.EPIC, Material.BLACK_DYE)),
     PURE_WHITE_DYE(Dye("Pure White", 0xFFFFFF, Rarity.EPIC, Material.WHITE_DYE)),
@@ -33,6 +39,11 @@ enum class Cosmetics(val inner: Cosmetic) {
     ;
 
     companion object {
+        /**
+         * Initializes this cosmetic registry
+         *
+         * This operation is **Thread Safe** and should be called inside the [Threading.runEachConcurrently][space.maxus.macrocosm.async.Threading.runEachConcurrently]
+         */
         fun init() {
             Registry.COSMETIC.delegateRegistration(values().map { id(it.name.lowercase()) to it.inner }) { id, cosmetic ->
                 when (cosmetic) {

@@ -10,17 +10,50 @@ Contains all the ability related stuff
 # Package space.maxus.macrocosm.ability.types
 Contains different types of abilities (e.g. Equipment abilities, Armor abilities, Summoning abilities)
 
+# Package space.maxus.macrocosm.ability.types.armor
+Abilities related to armor items: full set bonuses, etc.
+
+# Package space.maxus.macrocosm.ability.types.equipment
+Abilities related to equipment items: necklaces, gloves, etc.
+
+# Package space.maxus.macrocosm.ability.types.item
+Abilities related to general items: swords, pickaxes, bows etc.
+
+# Package space.maxus.macrocosm.ability.types.other
+Other types of item abilities, e.g. shortbow ability
+
+# Package space.maxus.macrocosm.ability.types.summoning
+Abilities related to summoning minions: staves, sceptres etc.
+
+# Package space.maxus.macrocosm.ability.types.turret
+Abilities related to deployables, e.g. turrets
+
 # Package space.maxus.macrocosm.api
 Contains the code related to the Macrocosm HTTP API implementation
 
 # Package space.maxus.macrocosm.async
 Contains the code managing asynchronous, concurrent and parallel workload of other code
 
-# Package space.maxus.bazaar
+# Package space.maxus.macrocosm.bazaar
 Contains the Bazaar implementation logic
 
-# Package space.maxus.bazaar.ops
+# Package space.maxus.macrocosm.bazaar.ops
 Contains the extra operation info for the Bazaar
 
-# Package space.maxus.bazaar.ui
+# Package space.maxus.macrocosm.bazaar.ui
 Contains the necessary Bazaar UI function
+
+# Package space.maxus.macrocosm.chat
+Contains different utilities related to chat component manipulations
+
+# Package space.maxus.macrocom.collections
+Contains the code necessary for player item collections
+
+# Package space.maxus.macrocosm.commands
+Contains all the logical command functions
+
+# Package space.maxus.macrocosm.cosmetic
+Contains all the item cosmetics
+
+# Package space.maxus.macrocosm.damage
+Contains code for damage calculations and displaying
