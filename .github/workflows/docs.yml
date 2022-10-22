@@ -23,10 +23,8 @@ jobs:
                 java-version: 17
             - name: Build documentation
               run: ./gradlew dokkaHtml
-            - name: Relocate documentation
-              run: mv build/dokka/html/* docs
-            - name: Archive build output
-              run: tar --dereference --hard-dereference --directory docs/ -cvf artifact.tar .
+            - name: Archive documentation
+              run: tar --dereference --hard-dereference --directory build/dokka/html/ -cvf artifact.tar .
             - name: Upload Artifact
               uses: actions/upload-artifact@main
               with:
