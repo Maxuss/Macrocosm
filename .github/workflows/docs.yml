@@ -24,7 +24,7 @@ jobs:
             - name: Relocate documentation
               run: mv build/dokka/html/* docs
             - name: Setup pages
-              run: actions/configure-pages@v2
+              uses: actions/configure-pages@v2
             - name: Upload page artifact
               uses: actions/upload-pages-artifact@v1
               with:
