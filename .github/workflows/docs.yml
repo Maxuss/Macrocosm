@@ -2,34 +2,42 @@ name: Docs
 on:
     push:
         branches: [master]
+
 permissions:
     contents: read
     pages: write
     id-token: write
+    deployments: write
 
 jobs:
-    Publish-Docs:
+    build:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
               with:
-                  persist-credentials: false
+                persist-credentials: false
             - name: Set up JDK
               uses: actions/setup-java@v3
               with:
-                  distribution: temurin
-                  java-version: 17
+                distribution: temurin
+                java-version: 17
             - name: Build documentation
               run: ./gradlew dokkaHtml
             - name: Relocate documentation
               run: mv build/dokka/html/* docs
+    deploy-pages:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
             - name: Setup pages
               uses: actions/configure-pages@v2
             - name: Upload page artifact
               uses: actions/upload-pages-artifact@v1
               with:
                 path: 'docs'
-                cname: macrocosm.maxus.space
             - name: Publish documentation
               id: deployment
               uses: actions/deploy-pages@v1
