@@ -63,3 +63,21 @@ Runtime data generation/dumping utilities
 
 # Package space.maxus.macrocosm.db
 Database and filesystem access utilities
+
+# Package space.maxus.macrocosm.db.impl
+Implementations for database system
+
+# Package space.maxus.macrocosm.db.impl.local
+Local file storage (SQLite) database implementation
+
+# Package space.maxus.macrocosm.db.impl.postgres
+A Postgres database implementation
+
+# Package space.maxus.macrocosm.discord
+All the discord related hooks for Macrocosm
+
+# Package space.maxus.macrocosm.discord.emitters
+All the event emitters for discord
+
+# Package space.maxus.macrocosm.display
+All the sidebar rendering logic for the Macrocosm

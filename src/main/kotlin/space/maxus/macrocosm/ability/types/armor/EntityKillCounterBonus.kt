@@ -8,7 +8,10 @@ import org.bukkit.entity.EntityType
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityType
-import space.maxus.macrocosm.chat.*
+import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.chat.capitalized
+import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.item.KillStorageItem

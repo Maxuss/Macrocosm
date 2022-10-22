@@ -7,7 +7,10 @@ import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarCategory
 import space.maxus.macrocosm.bazaar.BazaarCollection
 import space.maxus.macrocosm.bazaar.BazaarElement
-import space.maxus.macrocosm.chat.*
+import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.chat.capitalized
+import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier

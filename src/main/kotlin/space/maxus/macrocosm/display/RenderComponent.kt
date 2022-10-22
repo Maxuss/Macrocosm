@@ -6,13 +6,34 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.text.text
 
+/**
+ * A component which can be rendered in a sidebar
+ */
 interface RenderComponent {
+    /**
+     * Returns the title of this component
+     */
     fun title(): Component
+
+    /**
+     * Returns all the lines inside this component
+     */
     fun lines(): List<Component>
 
     companion object {
+        /**
+         * Returns a simple (static, unformatted string) render component
+         */
         fun simple(title: String, description: String): RenderComponent = Simple(title, description)
+
+        /**
+         * Returns a fixed (static, formatted chat component) render component
+         */
         fun fixed(title: Component, lines: List<Component>): RenderComponent = Fixed(title, lines)
+
+        /**
+         * Returns a dynamic (changing, formatted chat comonent) render component
+         */
         fun dynamic(title: () -> Component, lines: () -> List<Component>): RenderComponent = Dynamic(title, lines)
     }
 

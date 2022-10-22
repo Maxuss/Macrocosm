@@ -68,7 +68,8 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) {
         fun fromJson(json: String): CollectionCompound {
             val map: HashMap<String, PlayerCollection> =
                 GSON.fromJson(json, object : TypeToken<HashMap<String, PlayerCollection>>() {}.type)
-            return CollectionCompound(HashMap(map.map { (key, value) -> Pair(CollectionType.valueOf(key), value) }.toMap()))
+            return CollectionCompound(HashMap(map.map { (key, value) -> Pair(CollectionType.valueOf(key), value) }
+                .toMap()))
         }
     }
 }

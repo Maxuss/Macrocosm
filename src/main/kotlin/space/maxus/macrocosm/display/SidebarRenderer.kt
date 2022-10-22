@@ -26,11 +26,17 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import kotlin.math.max
 
+/**
+ * A renderer for a sidebar
+ */
 object SidebarRenderer : Listener {
     private val renderQueue: ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, OrderedRenderComponent>> =
         ConcurrentHashMap()
     private val renderPool: ExecutorService = Threading.newFixedPool(5)
 
+    /**
+     * Enqueues a component to the rendering queue
+     */
     fun enqueue(player: Player, component: RenderComponent, priority: RenderPriority): UUID {
         val cid = UUID.randomUUID()
         if (renderQueue.containsKey(player.uniqueId)) {
@@ -46,6 +52,9 @@ object SidebarRenderer : Listener {
         return cid
     }
 
+    /**
+     * Dequeues a component with the [key] ID from the render queue
+     */
     fun dequeue(player: Player, key: UUID) {
         val q = renderQueue[player.uniqueId]!!
         q.remove(key)
@@ -55,6 +64,13 @@ object SidebarRenderer : Listener {
     private val objNameMap = ChatColor.values().map { it.toString() + ChatColor.RESET.toString() }
     private val max = objNameMap.size
     private var ticker: Ticker = Ticker(0..10)
+
+    /**
+     * Performs a single render tick, rendering all components currently in queue
+     *
+     * @see enqueue
+     * @see dequeue
+     */
     fun tick() {
         for (player in Bukkit.getOnlinePlayers()) {
             val components = renderQueue[player.uniqueId] ?: continue
@@ -94,13 +110,18 @@ object SidebarRenderer : Listener {
         }
     }
 
-    fun tickTitle() {
+    private fun tickTitle() {
         ticker.tick()
         for (player in Bukkit.getOnlinePlayers()) {
             updateBoardTitle(player)
         }
     }
 
+    /**
+     * Initializes a sidebar renderer.
+     *
+     * This is a **Thread Safe** method
+     */
     fun init() {
         task(false, delay = 20L, period = 10L) {
             tick()

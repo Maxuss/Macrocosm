@@ -1,5 +1,8 @@
 package space.maxus.macrocosm.display
 
+/**
+ * A priority/position for component rendering
+ */
 enum class RenderPriority(val priority: Int) {
     HIGHEST(0),
     HIGHER(1),

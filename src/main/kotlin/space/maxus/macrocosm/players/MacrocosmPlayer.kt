@@ -25,8 +25,8 @@ import org.jetbrains.exposed.sql.update
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.collections.CollectionCompound
+import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.database
 import space.maxus.macrocosm.db.*

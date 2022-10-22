@@ -5,7 +5,10 @@ import net.kyori.adventure.text.Component
 import org.bukkit.entity.EntityType
 import org.bukkit.event.EventHandler
 import org.bukkit.inventory.EquipmentSlot
-import space.maxus.macrocosm.chat.*
+import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.chat.capitalized
+import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.EnchantmentBase
 import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.item.ItemType

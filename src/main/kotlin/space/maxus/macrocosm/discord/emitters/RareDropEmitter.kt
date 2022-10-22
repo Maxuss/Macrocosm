@@ -9,14 +9,27 @@ import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.discord.DiscordEmitter
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.loot.Drop
+import space.maxus.macrocosm.loot.DropRarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.stripTags
 import java.text.DecimalFormat
 
+
+/**
+ * An emitter that posts message once player gets a really rare drop ([DropRarity.INSANE] | [DropRarity.UNBELIEVABLE])
+ */
 class RareDropEmitter(role: Role, channel: Channel) :
     DiscordEmitter<RareDropEmitter.Context>("Rare Drops", role, channel) {
+    /**
+     * Context for the rare drop emitter
+     *
+     * @property player player that got the drop
+     * @property paper paper mirror of the player
+     * @property drop drop the player has got
+     * @property item item that the player has got
+     */
     data class Context(val player: MacrocosmPlayer, val paper: Player, val drop: Drop, val item: MacrocosmItem)
 
     override fun handle(subject: Context, bot: JDA) {
