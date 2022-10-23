@@ -9,9 +9,6 @@ import space.maxus.macrocosm.util.general.id
 
 /**
  * An enum containing all the cosmetics
- *
- * This should be merged into a Registry once [this issue](https://github.com/Maxuss/Macrocosm/issues/4) is completed,
- * once done it will probably be marked as obsolete
  */
 enum class Cosmetics(val inner: Cosmetic) {
     PURE_BLACK_DYE(Dye("<dark_gray>Pure Black", 0, Rarity.EPIC, Material.BLACK_DYE)),
