@@ -14,10 +14,8 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneSpec
@@ -25,6 +23,7 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.specialStats
@@ -315,8 +314,8 @@ class VanillaItem(
     override var rarity: Rarity = rarityFromMaterial(base)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override var abilities: MutableList<MacrocosmAbility> = mutableListOf()
-    override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override var abilities: MutableList<RegistryPointer> = mutableListOf()
+    override var enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> =
         multimap<RuneSlot, RuneState>().apply {
             for (slot in getRunesForItem(base)) {
@@ -346,7 +345,7 @@ class VanillaItem(
         vanilla.rarity = rarity
         vanilla.rarityUpgraded = rarityUpgraded
         vanilla.reforge = reforge?.clone()
-        vanilla.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        vanilla.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         vanilla.runes.putAll(runes)
         return vanilla
     }

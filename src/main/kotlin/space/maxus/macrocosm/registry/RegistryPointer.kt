@@ -96,13 +96,19 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
         return "$registry@$pointer"
     }
 
-    operator fun <T> getValue(prop: KProperty<*>, self: Any?): T? {
+    operator fun <T> getValue(self: Any?, prop: KProperty<*>): T? {
         return tryGet()
     }
 
-    operator fun <T> setValue(prop: KProperty<*>, self: Any?, value: T) {
+    operator fun <T> setValue(self: Any?, prop: KProperty<*>, value: T?) {
         this.trySet(value)
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Iterable<RegistryPointer>.anyPoints(to: T): Boolean {
+    val id = if (to is Identified) to.id else (Registry.find(first().registry) as Registry<T>).byValue(to)
+    return any { it.pointer == id }
 }
 
 @Suppress("UNCHECKED_CAST")

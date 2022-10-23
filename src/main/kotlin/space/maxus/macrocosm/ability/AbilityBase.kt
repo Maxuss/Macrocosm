@@ -43,7 +43,7 @@ abstract class AbilityBase(
     ): Boolean {
         val item = player.paper!!.inventory.getItem(slot)
         val mc = item.macrocosm
-        if (mc == null || !mc.abilities.contains(this))
+        if (mc == null || !mc.abilities.any { it.pointer == this.id })
             return false
         val success = cost?.ensureRequirements(player, id) ?: true
         if (!success) {

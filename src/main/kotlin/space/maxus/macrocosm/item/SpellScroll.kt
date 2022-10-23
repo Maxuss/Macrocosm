@@ -12,7 +12,6 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
@@ -21,6 +20,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.spell.Spell
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
@@ -36,13 +36,13 @@ class SpellScroll : MacrocosmItem {
     override var stars: Int = 0
     override val id: Identifier = id("spell_scroll")
     override val type: ItemType = ItemType.SCROLL
-    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
+    override val abilities: MutableList<RegistryPointer> = mutableListOf()
     override val base: Material = Material.PAPER
     override var breakingPower: Int = 0
     override var dye: Dye? = null
     override var skin: SkullSkin? = null
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
-    override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = HashMultimap.create()
     var spell: Spell? = null
         set(value) {

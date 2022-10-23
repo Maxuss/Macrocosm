@@ -15,6 +15,6 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 abstract class EquipmentAbility(name: String, description: String) :
     AbilityBase(AbilityType.PASSIVE, name, description) {
     protected fun ensureRequirements(player: MacrocosmPlayer, vararg slots: ItemType): Boolean {
-        return slots.map { slot -> player.equipment[slot]?.abilities?.contains(this) == true }.any { it }
+        return slots.map { slot -> player.equipment[slot]?.abilities?.any { it.pointer == id } == true }.any { it }
     }
 }

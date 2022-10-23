@@ -20,6 +20,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.metrics.report
@@ -55,7 +56,7 @@ open class SummoningAbility(
         listen<PlayerRightClickEvent> { e ->
             val item = e.player.paper?.inventory?.getItem(EquipmentSlot.HAND)
                 ?: report("Player in RightClickEvent was null!") { return@listen }
-            if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
+            if (item.macrocosm == null || !item.macrocosm!!.abilities.anyPoints(this))
                 return@listen
 
             val p = e.player.paper ?: report("Player in RightClickEvent was null!") { return@listen }

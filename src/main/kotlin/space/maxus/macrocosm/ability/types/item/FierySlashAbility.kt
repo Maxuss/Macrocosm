@@ -23,6 +23,7 @@ import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerLeftClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.anyPoints
 import java.util.concurrent.atomic.AtomicBoolean
 
 object FierySlashAbility : AbilityBase(
@@ -89,7 +90,7 @@ object FierySlashAbility : AbilityBase(
             }
         }
         listen<PlayerDealDamageEvent> { e ->
-            if (e.player.mainHand?.abilities?.contains(this) != true || !e.isContact)
+            if (e.player.mainHand?.abilities?.anyPoints(this) != true || !e.isContact)
                 return@listen
 
             e.isCancelled = true

@@ -7,10 +7,10 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.enchants.Enchantment
+import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -20,7 +20,7 @@ open class SkullAbilityItem(
     rarity: Rarity,
     val skullOwner: String,
     stats: Statistics,
-    abilities: MutableList<Identifier> = mutableListOf(),
+    abilities: MutableList<RegistryPointer> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
     runeTypes: List<Identifier> = listOf(),
@@ -33,7 +33,7 @@ open class SkullAbilityItem(
     rarity,
     Material.PLAYER_HEAD,
     stats,
-    abilities.map { Registry.ABILITY.find(it) }.toMutableList(),
+    abilities.map { it.get<MacrocosmAbility>() }.toMutableList(),
     specialStats,
     breakingPower,
     runeTypes.map { RuneSlot.fromId(it) },
@@ -62,12 +62,12 @@ open class SkullAbilityItem(
             rarity,
             skullOwner,
             stats.clone(),
-            abilities.map { Registry.ABILITY.byValue(it)!! }.toMutableList(),
+            abilities,
             specialStats.clone(),
             description = description,
             id = id
         )
-        item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        item.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
         item.stars = stars
