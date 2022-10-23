@@ -1,11 +1,11 @@
 package space.maxus.macrocosm.serde
 
 import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
+import java.io.ObjectOutputStream
 import java.math.BigDecimal
 import java.util.*
 
-data class Serialization(private val stream: DataOutputStream, private val byteStream: ByteArrayOutputStream) {
+data class Serialization(private val stream: ObjectOutputStream, private val byteStream: ByteArrayOutputStream) {
     fun end(): String {
         stream.flush()
         val bytes = byteStream.toByteArray()
@@ -27,6 +27,11 @@ data class Serialization(private val stream: DataOutputStream, private val byteS
         val out = dec.toBigInteger().toByteArray()
         stream.writeInt(out.size)
         stream.write(out)
+        return this
+    }
+
+    fun obj(obj: Any?): Serialization {
+        this.stream.writeObject(obj)
         return this
     }
 

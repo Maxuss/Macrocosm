@@ -94,8 +94,7 @@ enum class ItemValue(
             critChance = 100f
             critDamage = 250f
         }
-    ).apply { enchantUnsafe(space.maxus.macrocosm.enchants.Enchant.THUNDERBOLT.enchant, 7) }
-    ),
+    )),
 
     // shortbows
     THE_QUEENS_STINGER(

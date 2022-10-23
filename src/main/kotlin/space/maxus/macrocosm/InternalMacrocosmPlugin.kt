@@ -9,6 +9,7 @@ import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
 import org.jetbrains.annotations.ApiStatus
+import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -199,35 +200,6 @@ class InternalMacrocosmPlugin : KSpigot() {
 
     override fun startup() {
         Monitor.inject(MinecraftServer.getServer().serverThread)
-        Monitor.enter("Event Registration")
-
-        DataListener.joinLeave()
-        server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(EntityHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(RecipeMenu, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(BlockClickListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(PickupListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
-        // server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
-
-        PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
-        protocolManager.addPacketListener(MiningHandler)
-
-        Monitor.exit()
         Monitor.enter("Registry Initialization")
 
         // required to be sync
@@ -258,6 +230,37 @@ class InternalMacrocosmPlugin : KSpigot() {
         )
 
         Monitor.exit()
+
+        Monitor.enter("Event Registration")
+
+        DataListener.joinLeave()
+        server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(EntityHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(RecipeMenu, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(BlockClickListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(PickupListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
+        // server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
+
+        PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
+        protocolManager.addPacketListener(MiningHandler)
+
+        Monitor.exit()
+
         Monitor.enter("Command Registration")
 
         playtimeCommand()

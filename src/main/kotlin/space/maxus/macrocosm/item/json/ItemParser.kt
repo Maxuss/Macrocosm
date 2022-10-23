@@ -10,13 +10,11 @@ import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.recipes.RecipeParser
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistic
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.GSON
-import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.walkDataResources
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -89,7 +87,7 @@ object ItemParser {
                     rarity,
                     headSkin,
                     stats,
-                    abils.map { RegistryPointer(id("ability"), it) }.toMutableList(),
+                    abils.map { Registry.ABILITY.find(it) }.toMutableList(),
                     specialStats,
                     bp,
                     runes,

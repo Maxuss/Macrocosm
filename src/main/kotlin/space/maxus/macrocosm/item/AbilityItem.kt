@@ -38,8 +38,9 @@ open class AbilityItem(
     id: Identifier? = null,
     protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
-    override val abilities: MutableList<RegistryPointer> =
+    override val abilities: MutableList<RegistryPointer> by lazy {
         abilities.map { registryPointer(space.maxus.macrocosm.util.general.id("ability"), it) }.toMutableList()
+    }
 
     @Suppress("ClassName")
     object PLACEHOLDER_ITEM : AbilityItem(

@@ -1,11 +1,12 @@
 package space.maxus.macrocosm.serde
 
-import java.io.DataInputStream
+import java.io.ObjectInputStream
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.nio.ByteBuffer
 
-class Deserialization(private val input: DataInputStream) {
+@Suppress("UNCHECKED_CAST")
+class Deserialization(private val input: ObjectInputStream) {
     fun end() {
         this.input.close()
     }
@@ -31,5 +32,9 @@ class Deserialization(private val input: DataInputStream) {
             buffer.add(currentByte)
         }
         return Charsets.UTF_8.decode(ByteBuffer.wrap(buffer.toByteArray())).toString()
+    }
+
+    fun <T> obj(): T {
+        return input.readObject() as T
     }
 }
