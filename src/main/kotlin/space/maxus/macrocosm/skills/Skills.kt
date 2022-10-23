@@ -1,9 +1,10 @@
 package space.maxus.macrocosm.skills
 
-import com.google.gson.reflect.TypeToken
-import space.maxus.macrocosm.util.GSON
+import space.maxus.macrocosm.serde.Bytes
+import space.maxus.macrocosm.util.general.defer
+import java.io.Serializable
 
-class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) {
+class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) : Serializable {
 
     operator fun get(sk: SkillType): Double {
         return skillExp[sk]!!.overflow
@@ -28,19 +29,17 @@ class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) {
         skillExp[sk]!!.lvl = lvl
     }
 
-    fun json(): String {
-        return GSON.toJson(skillExp.map { (key, value) -> Pair(key.name, value) }.toMap())
+    fun serialize(): String {
+        return Bytes.serialize().obj(this).end()
     }
 
     companion object {
         fun default(): Skills = Skills(HashMap(SkillType.values().associateWith { PlayerSkill(1, .0) }))
 
-        fun fromJson(json: String): Skills {
-            val map: HashMap<String, PlayerSkill> =
-                GSON.fromJson(json, object : TypeToken<HashMap<String, PlayerSkill>>() {}.type)
-            return Skills(HashMap(map.map { (key, value) -> Pair(SkillType.valueOf(key), value) }.toMap()))
+        fun deserialize(data: String): Skills {
+            return Bytes.deserialize(data).defer { end() }.first { obj() }
         }
     }
 }
 
-data class PlayerSkill(var lvl: Int, var overflow: Double)
+data class PlayerSkill(var lvl: Int, var overflow: Double) : Serializable

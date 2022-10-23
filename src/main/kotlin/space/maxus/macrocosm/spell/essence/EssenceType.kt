@@ -5,8 +5,9 @@ import org.bukkit.Material
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.text.text
+import java.io.Serializable
 
-enum class EssenceType(val display: String, val description: String, val displayItem: Material) {
+enum class EssenceType(val display: String, val description: String, val displayItem: Material) : Serializable {
     FIRE("<gold>Ardens", "Gathered straight out of <gold>blaze's<gray> core.", Material.YELLOW_GLAZED_TERRACOTTA),
     FROST("<aqua>Gelu", "This chilly essence burns your hands with frost.", Material.LIGHT_BLUE_GLAZED_TERRACOTTA),
     WATER("<blue>Amnis", "It smells like rotten seaweed.", Material.BLUE_GLAZED_TERRACOTTA),

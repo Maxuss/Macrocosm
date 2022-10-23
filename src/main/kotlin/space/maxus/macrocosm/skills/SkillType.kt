@@ -2,6 +2,7 @@ package space.maxus.macrocosm.skills
 
 import space.maxus.macrocosm.reward.boostStat
 import space.maxus.macrocosm.stats.Statistic
+import java.io.Serializable
 
 enum class SkillType(
     val profession: String,
@@ -9,7 +10,7 @@ enum class SkillType(
     val descriptor: (lvl: Int) -> String,
     val emoji: String,
     val maxLevel: Int = 50
-) {
+) : Serializable {
     COMBAT(
         "Warrior",
         skill(

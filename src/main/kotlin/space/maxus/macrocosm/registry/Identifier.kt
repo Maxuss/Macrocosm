@@ -7,8 +7,9 @@ import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import java.io.DataOutput
+import java.io.Serializable
 
-data class Identifier(val namespace: String, val path: String) : Tag {
+data class Identifier(val namespace: String, val path: String) : Tag, Serializable {
     fun minecraft() = ResourceLocation(namespace, path)
 
     fun bukkit() = NamespacedKey(namespace, path)

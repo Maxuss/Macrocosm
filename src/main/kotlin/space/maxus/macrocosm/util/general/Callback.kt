@@ -8,6 +8,7 @@ import kotlin.contracts.contract
 
 @JvmInline
 value class Callback(val chain: () -> Unit) {
+    @OptIn(ExperimentalContracts::class)
     inline fun <R> then(runnable: () -> R): R {
         contract {
             callsInPlace(runnable, InvocationKind.EXACTLY_ONCE)
@@ -104,4 +105,20 @@ data class SuspendConditionalCallback(val condition: suspend () -> Boolean) {
     suspend fun call(): Boolean {
         return condition()
     }
+}
+
+data class DeferredAction<T>(val self: T, val deferred: (T) -> Unit) {
+    fun done() {
+        this.deferred(self)
+    }
+
+    inline fun <R> first(action: T.() -> R): R {
+        val ret = action(self)
+        done()
+        return ret
+    }
+}
+
+inline fun <reified T> T.defer(noinline action: T.() -> Unit): DeferredAction<T> {
+    return DeferredAction(this, action)
 }

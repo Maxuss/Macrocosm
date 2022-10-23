@@ -10,12 +10,12 @@ import space.maxus.macrocosm.players.PlayerEquipment
 import space.maxus.macrocosm.players.PlayerMemory
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.spell.essence.EssenceType
 import space.maxus.macrocosm.util.associateWithHashed
-import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.ignoring
 import java.math.BigDecimal
 
@@ -81,21 +81,22 @@ class SqlPlayerData(
                 res[t.playtime],
                 res[t.purse],
                 res[t.bank],
-                fromJson(res[t.memory]) ?: PlayerMemory(mutableListOf()),
-                fromJson(res[t.forge]) ?: listOf(),
-                CollectionCompound.fromJson(res[t.collections]),
-                Skills.fromJson(res[t.skills]),
-                fromJson(res[t.recipes]) ?: listOf(),
+                Bytes.deserializeObject(res[t.memory]) ?: PlayerMemory(mutableListOf()),
+                Bytes.deserializeObject(res[t.forge]) ?: listOf(),
+                CollectionCompound.deserialize(res[t.collections]),
+                Skills.deserialize(res[t.skills]),
+                Bytes.deserializeObject(res[t.recipes]) ?: listOf(),
                 PlayerEquipment().apply {
                     necklace = MacrocosmItem.deserializeFromBytes(res[t.necklace])
                     cloak = MacrocosmItem.deserializeFromBytes(res[t.cloak])
                     belt = MacrocosmItem.deserializeFromBytes(res[t.belt])
                     gloves = MacrocosmItem.deserializeFromBytes(res[t.gloves])
                 },
-                fromJson(res[t.slayers]) ?: hashMapOf(),
+                Bytes.deserializeObject(res[t.slayers]) ?: hashMapOf(),
                 res[t.activePet],
-                fromJson(res[t.pets]) ?: hashMapOf(),
-                fromJson(res[t.essence]) ?: EssenceType.values().toList().associateWithHashed(ignoring(0))
+                Bytes.deserializeObject(res[t.pets]) ?: hashMapOf(),
+                Bytes.deserializeObject(res[t.essence]) ?: EssenceType.values().toList()
+                    .associateWithHashed(ignoring(0))
             )
         }
     }

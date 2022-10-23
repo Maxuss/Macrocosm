@@ -3,6 +3,7 @@
 package space.maxus.macrocosm.bazaar
 
 import space.maxus.macrocosm.registry.Identifier
+import java.io.Serializable
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -10,7 +11,7 @@ import java.util.*
 /**
  * A compound used for JSON serialization of [bazaar item data][BazaarTable]
  */
-data class BazaarOrderCompound(val buy: List<BazaarBuyOrder>, val sell: List<BazaarSellOrder>)
+data class BazaarOrderCompound(val buy: List<BazaarBuyOrder>, val sell: List<BazaarSellOrder>) : Serializable
 
 /**
  * A singular bazaar order
@@ -32,7 +33,7 @@ abstract class BazaarOrder(
      * Epoch milliseconds when this order was created
      */
     val createdAt: Long = Instant.now().toEpochMilli()
-) {
+) : Serializable {
     /**
      * Total coins accumulated in this order
      */
@@ -63,7 +64,7 @@ class BazaarBuyOrder(
     createdBy: UUID,
     originalAmount: Int,
     createdAt: Long = Instant.now().toEpochMilli()
-) : BazaarOrder(item, createdBy, originalAmount, createdAt) {
+) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable {
     override val totalPrice: BigDecimal = pricePer.toBigDecimal() * qty.toBigDecimal()
 }
 
@@ -91,6 +92,6 @@ class BazaarSellOrder(
     createdBy: UUID,
     originalAmount: Int,
     createdAt: Long = Instant.now().toEpochMilli()
-) : BazaarOrder(item, createdBy, originalAmount, createdAt) {
+) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable {
     override val totalPrice: BigDecimal = pricePer.toBigDecimal() * qty.toBigDecimal()
 }

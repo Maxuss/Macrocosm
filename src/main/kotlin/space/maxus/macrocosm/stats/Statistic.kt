@@ -10,6 +10,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.text.text
+import java.io.Serializable
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -27,7 +28,7 @@ enum class Statistic(
     val description: String = "",
     val addExtraLore: MutableList<String>.(Statistics) -> Unit = { },
     val hiddenFancy: Boolean = false
-) {
+) : Serializable {
     DAMAGE(
         StatisticType.OFFENSIVE,
         NamedTextColor.RED,

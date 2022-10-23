@@ -4,13 +4,14 @@ import org.bukkit.Material
 import space.maxus.macrocosm.collections.Section.*
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.math.SkillTable
+import java.io.Serializable
 
 /**
  * A type of collection, which is associated with items that are collected for this collection
  */
 // todo: collection recipes
 // todo: implement an actual collection leveling table instead of a SkillTable
-enum class CollectionType(val inst: Collection) {
+enum class CollectionType(val inst: Collection) : Serializable {
     // combat
     ROTTEN_FLESH(Collection("Rotten Flesh", listOf(), COMBAT, SkillTable)),
     BONE(Collection("Bone", listOf(), COMBAT, SkillTable)),
