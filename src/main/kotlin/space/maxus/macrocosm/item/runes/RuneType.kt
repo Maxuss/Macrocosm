@@ -8,9 +8,9 @@ import net.kyori.adventure.text.format.TextColor.color
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.events.ItemCalculateStatsEvent
 import space.maxus.macrocosm.item.MacrocosmItem
-import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.runes.types.FlameboundRune
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
@@ -44,7 +44,7 @@ interface RuneSlot {
                 else -> {
                     if (RuneSpec.values().map { it.name.lowercase() }.contains(p))
                         return specific(RuneSpec.valueOf(p.uppercase()))
-                    return typeBound(BuffRegistry.findRune(id))
+                    return typeBound(Registry.RUNE.find(id))
                 }
             }
         }
@@ -138,7 +138,7 @@ enum class SpecialRunes(val rune: RuneType) {
     companion object {
         fun init() {
             for (v in values()) {
-                BuffRegistry.registerRune(id(v.name.lowercase()), v.rune)
+                Registry.RUNE.register(id(v.name.lowercase()), v.rune)
             }
         }
     }
@@ -263,7 +263,7 @@ enum class StatRune(
     companion object {
         fun init() {
             for (value in values()) {
-                BuffRegistry.registerRune(value.id, value)
+                Registry.RUNE.register(value.id, value)
             }
             SpecialRunes.init()
         }

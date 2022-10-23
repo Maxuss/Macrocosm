@@ -6,10 +6,10 @@ import net.minecraft.nbt.CompoundTag
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
-import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.reforge.Reforge
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.PreviewFeature
@@ -242,13 +242,13 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) {
                 val (contained, tier) = state
                 if (tier <= 0 || contained == null)
                     continue
-                val runeType = BuffRegistry.findRune(contained)
+                val runeType = Registry.RUNE.find(contained)
                 if (runeType is StatRune)
                     dissolvedRunes.increase(runeType.baseStats.clone().apply { multiply(tier.toFloat()) })
             }
         }
 
-        if (buffs != null && buffs.isNotEmpty()) {
+        if (!buffs.isNullOrEmpty()) {
             for ((buff, lvl) in buffs) {
                 if (lvl <= 0)
                     continue
