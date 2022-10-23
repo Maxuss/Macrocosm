@@ -4,6 +4,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import space.maxus.macrocosm.util.general.ConditionalCallback
+import kotlin.reflect.KProperty
 
 /**
  * A pointer to a value in certain registry
@@ -94,6 +95,23 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
     override fun toString(): String {
         return "$registry@$pointer"
     }
+
+    operator fun <T> getValue(prop: KProperty<*>, self: Any?): T? {
+        return tryGet()
+    }
+
+    operator fun <T> setValue(prop: KProperty<*>, self: Any?, value: T) {
+        this.trySet(value)
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> registryPointer(registry: Identifier, value: T): RegistryPointer {
+    return RegistryPointer(registry, (Registry.find(registry) as Registry<T>).byValue(value)!!)
+}
+
+fun registryPointer(registry: Identifier): RegistryPointer {
+    return RegistryPointer(registry, Identifier.NULL)
 }
 
 object RegistryPointerTypeAdapter: TypeAdapter<RegistryPointer>() {
