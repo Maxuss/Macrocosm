@@ -23,13 +23,13 @@ abstract class AbstractMacrocosmItem(override val id: Identifier, override val t
     override var stars = 0
     override var rarityUpgraded = false
     override val abilities: MutableList<RegistryPointer> = mutableListOf()
-    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
+    override var enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = HashMultimap.create()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
     override var dye: Dye? by registryPointer(Identifier.macro("cosmetic"))
-    override var skin: SkullSkin? = null
-    override var reforge: Reforge? = null
+    override var skin: SkullSkin? by registryPointer(Identifier.macro("cosmetic"))
+    override var reforge: Reforge? by registryPointer(Identifier.macro("reforge"))
 
     abstract override val base: Material
     abstract override var name: Component

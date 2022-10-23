@@ -51,7 +51,7 @@ class LimitedEditionItem(
             rarity,
             base,
             stats.clone(),
-            abilities.map { it.get<MacrocosmAbility>() }.toMutableList(),
+            abilities.mapNotNull { it.get<MacrocosmAbility>() }.toMutableList(),
             specialStats.clone(),
             metaModifier = metaModifier
         )

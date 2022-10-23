@@ -33,7 +33,7 @@ open class SkullAbilityItem(
     rarity,
     Material.PLAYER_HEAD,
     stats,
-    abilities.map { it.get<MacrocosmAbility>() }.toMutableList(),
+    abilities.mapNotNull { it.get<MacrocosmAbility>() }.toMutableList(),
     specialStats,
     breakingPower,
     runeTypes.map { RuneSlot.fromId(it) },

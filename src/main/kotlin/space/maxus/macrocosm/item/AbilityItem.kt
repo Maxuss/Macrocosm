@@ -7,13 +7,9 @@ import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.cosmetic.Dye
-import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.registry.registryPointer
@@ -37,7 +33,7 @@ open class AbilityItem(
     protected val description: String? = null,
     id: Identifier? = null,
     protected val metaModifier: (ItemMeta) -> Unit = { },
-) : MacrocosmItem {
+) : AbstractMacrocosmItem(id ?: Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", "")), type) {
     override val abilities: MutableList<RegistryPointer> =
         abilities.map { registryPointer(space.maxus.macrocosm.util.general.id("ability"), it) }.toMutableList()
 
@@ -54,7 +50,6 @@ open class AbilityItem(
         listOf()
     )
 
-    override var amount: Int = 1
     override var stars: Int = 0
         set(value) {
             if (value > maxStars)
@@ -62,23 +57,14 @@ open class AbilityItem(
             else field = value
         }
     override var name: Component = text(itemName)
-    override var rarityUpgraded: Boolean = false
-    override var reforge: Reforge? = null
-    override var enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap<RuneSlot, RuneState>().apply {
         for (ty in runeTypes) {
             put(ty, RuneState.EMPTY)
         }
     }
-    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
-    override var dye: Dye? = null
-    override var skin: SkullSkin? = null
 
     @PreviewFeature
     override var isDungeonised: Boolean = false
-
-    override var tempColor: Int? = null
-    override var tempSkin: String? = null
 
     override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
         super.buildLore(player, lore)
@@ -99,7 +85,7 @@ open class AbilityItem(
             rarity,
             base,
             stats.clone(),
-            abilities.map { it.get() },
+            abilities.mapNotNull { it.get() },
             specialStats.clone(),
             metaModifier = metaModifier,
             description = description,
@@ -118,21 +104,22 @@ open class AbilityItem(
         return other != null && other is MacrocosmItem && other.id == id
     }
 
+    @OptIn(PreviewFeature::class)
     override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + type.hashCode()
+        var result = type.hashCode()
         result = 31 * result + itemName.hashCode()
         result = 31 * result + rarity.hashCode()
         result = 31 * result + base.hashCode()
         result = 31 * result + stats.hashCode()
-        result = 31 * result + abilities.hashCode()
         result = 31 * result + specialStats.hashCode()
+        result = 31 * result + breakingPower
+        result = 31 * result + (description?.hashCode() ?: 0)
+        result = 31 * result + metaModifier.hashCode()
+        result = 31 * result + abilities.hashCode()
+        result = 31 * result + stars
         result = 31 * result + name.hashCode()
-        result = 31 * result + rarityUpgraded.hashCode()
-        result = 31 * result + (reforge?.hashCode() ?: 0)
-        result = 31 * result + enchantments.hashCode()
+        result = 31 * result + runes.hashCode()
+        result = 31 * result + isDungeonised.hashCode()
         return result
     }
-
-    override val id: Identifier = id ?: Identifier.macro(itemName.lowercase().replace(" ", "_").replace("'", ""))
 }
