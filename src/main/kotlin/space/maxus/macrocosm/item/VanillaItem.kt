@@ -14,16 +14,11 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.cosmetic.Dye
-import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneSpec
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.item.runes.StatRune
-import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.specialStats
@@ -291,7 +286,7 @@ class VanillaItem(
     override val base: Material,
     override var amount: Int = 1,
     private val metaModifier: (ItemMeta) -> Unit = { }
-) : MacrocosmItem {
+) : AbstractMacrocosmItem(Identifier("minecraft", base.name.lowercase()), typeFromMaterial(base)) {
     override var stats: Statistics = statsFromMaterial(base)
     override var specialStats: SpecialStatistics = specialStatsFromMaterial(base)
     override var stars: Int = 0
@@ -300,9 +295,6 @@ class VanillaItem(
                 return
             else field = value
         }
-    override val id: Identifier = Identifier("minecraft", base.name.lowercase())
-    override val type: ItemType = typeFromMaterial(base)
-
     override var name: Component = base.name.lowercase().split("_").joinToString(" ") { str ->
         str.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
@@ -312,20 +304,13 @@ class VanillaItem(
     }.toComponent()
 
     override var rarity: Rarity = rarityFromMaterial(base)
-    override var rarityUpgraded: Boolean = false
-    override var reforge: Reforge? = null
-    override var abilities: MutableList<RegistryPointer> = mutableListOf()
-    override var enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> =
         multimap<RuneSlot, RuneState>().apply {
             for (slot in getRunesForItem(base)) {
                 put(slot, RuneState.EMPTY)
             }
         }
-    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = bpFromMat(base)
-    override var dye: Dye? = null
-    override var skin: SkullSkin? = null
 
     override fun addExtraMeta(meta: ItemMeta) {
         metaModifier(meta)

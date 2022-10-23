@@ -479,7 +479,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             // abilities
             for (abilityRef in abilities) {
                 val tmp = mutableListOf<Component>()
-                val ability = abilityRef.get<MacrocosmAbility>()
+                val ability = abilityRef.get<MacrocosmAbility>() ?: continue
                 ability.buildLore(tmp, player)
                 if (ability is EntityKillCounterBonus && this@MacrocosmItem is KillStorageItem) {
                     tmp.addAll(ability.addLore(this@MacrocosmItem))

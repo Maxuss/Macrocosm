@@ -1,7 +1,5 @@
 package space.maxus.macrocosm.item
 
-import com.google.common.collect.HashMultimap
-import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
@@ -10,40 +8,19 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
-import space.maxus.macrocosm.cosmetic.Dye
-import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.events.CostCompileEvent
-import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.RuneSlot
-import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.spell.Spell
-import space.maxus.macrocosm.stats.SpecialStatistics
-import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.putId
 
-class SpellScroll : MacrocosmItem {
-    override var stats: Statistics = Statistics.zero()
-    override var specialStats: SpecialStatistics = SpecialStatistics()
-    override var amount: Int = 1
-    override var stars: Int = 0
-    override val id: Identifier = id("spell_scroll")
-    override val type: ItemType = ItemType.SCROLL
-    override val abilities: MutableList<RegistryPointer> = mutableListOf()
+class SpellScroll : AbstractMacrocosmItem(id("spell_scroll"), ItemType.SCROLL) {
     override val base: Material = Material.PAPER
-    override var breakingPower: Int = 0
-    override var dye: Dye? = null
-    override var skin: SkullSkin? = null
-    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
-    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
-    override val runes: Multimap<RuneSlot, RuneState> = HashMultimap.create()
     var spell: Spell? = null
         set(value) {
             field = value
@@ -51,11 +28,8 @@ class SpellScroll : MacrocosmItem {
             rarity = value?.rarity ?: rarity
         }
     override var rarity: Rarity = spell?.rarity ?: Rarity.COMMON
-    override var rarityUpgraded: Boolean = false
-    override var reforge: Reforge? = null
     override var name: Component = text(spell?.name ?: "Empty Spell Scroll")
 
-    override val maxStars: Int = 0
     override fun addExtraNbt(cmp: CompoundTag) {
         cmp.putId("Spell", if (spell == null) Identifier.NULL else Registry.SPELL.byValue(spell!!)!!)
     }
