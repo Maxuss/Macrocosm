@@ -22,7 +22,9 @@ import space.maxus.macrocosm.fishing.TrophyFish
 import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.readIdentifier
+import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.writeIdentifier
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.pets.Pet
@@ -189,6 +191,9 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val BAZAAR_ELEMENTS_REF = makeDefaulted<Identifier>(id("bazaar_elements_ref"), false)
         val BAZAAR_ELEMENTS_VANILLA = makeDefaulted<Material>(id("bazaar_elements_vanilla"), false)
         val DISCORD_EMITTERS = makeDefaulted<DiscordEmitter<*>>(id("discord_emitters"), false)
+        val RUNE = makeDefaulted<RuneType>(id("rune"))
+        val ITEM_BUFF = makeDefaulted<MinorItemBuff>(id("item_buff"))
+
         override fun dumpToFile(file: Path) {
 
         }
