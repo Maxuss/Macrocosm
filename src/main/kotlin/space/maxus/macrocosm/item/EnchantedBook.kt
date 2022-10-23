@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
@@ -16,13 +15,15 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.multimap
 
-private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
+private fun rarityFromEnchants(ench: HashMap<Identifier, Int>): Rarity {
     if (ench.values.isEmpty())
         return Rarity.COMMON
     val lvl = ench.values.max()
@@ -35,19 +36,21 @@ private fun rarityFromEnchants(ench: HashMap<Enchantment, Int>): Rarity {
     else Rarity.COMMON
 }
 
-class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashMapOf()) : MacrocosmItem {
+class EnchantedBook(override val enchantments: HashMap<Identifier, Int> = hashMapOf()) : MacrocosmItem {
     override var stats: Statistics get() = Statistics.zero(); set(_) {}
     override var specialStats: SpecialStatistics get() = SpecialStatistics(); set(_) {}
     override var amount: Int = 1
     override var stars: Int = 0
     override val id: Identifier = id("enchanted_book")
     override val type: ItemType = ItemType.OTHER
-    override var name: Component = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
+    override var name: Component =
+        text(enchantments.maxByOrNull { it.value }?.key?.let { Registry.ENCHANT.findOrNull(it)?.name }
+            ?: "Enchanted Book")
     override val base: Material = Material.ENCHANTED_BOOK
     override var rarity: Rarity = rarityFromEnchants(enchantments)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
+    override val abilities: MutableList<RegistryPointer> = mutableListOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
@@ -79,7 +82,7 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
 
     override fun transfer(to: MacrocosmItem) {
         for ((enchant, level) in enchantments) {
-            to.enchant(enchant, level)
+            to.enchant(Registry.ENCHANT.find(enchant), level)
         }
     }
 
@@ -87,13 +90,15 @@ class EnchantedBook(override val enchantments: HashMap<Enchantment, Int> = hashM
         val clone = EnchantedBook()
         clone.enchantments.putAll(this.enchantments)
         clone.rarity = rarityFromEnchants(clone.enchantments)
-        clone.name = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
+        clone.name = text(enchantments.maxByOrNull { it.value }?.key?.let { Registry.ENCHANT.findOrNull(it)?.name }
+            ?: "Enchanted Book")
         return clone
     }
 
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
         val base = super.convert(from, nbt)
-        base.name = text(enchantments.maxByOrNull { it.value }?.key?.name ?: "Enchanted Book")
+        base.name = text(enchantments.maxByOrNull { it.value }?.key?.let { Registry.ENCHANT.findOrNull(it)?.name }
+            ?: "Enchanted Book")
         return base
     }
 }

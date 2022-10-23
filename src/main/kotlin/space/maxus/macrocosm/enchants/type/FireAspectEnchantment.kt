@@ -9,7 +9,6 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
@@ -30,7 +29,7 @@ object FireAspectEnchantment :
         val str =
             "<gray>Sets your enemies <gold>on fire<gray>, dealing <green>${10 + (level * 10)}%</green> of your ${Statistic.DAMAGE.display}<gray> per second for <green>${level + 3}s</green>"
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 
@@ -88,7 +87,7 @@ object FrostAspectEnchantment :
         val str =
             "<aqua>Freezes<gray> your enemies, dealing <green>${10 + (level * 5)}%</green> of your ${Statistic.DAMAGE.display}<gray> per second for <green>${level}s</green>"
         val reduced = str.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 

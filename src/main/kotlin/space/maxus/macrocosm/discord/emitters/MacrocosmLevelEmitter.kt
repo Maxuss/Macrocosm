@@ -5,8 +5,14 @@ import net.dv8tion.jda.api.entities.Channel
 import net.dv8tion.jda.api.entities.Role
 import space.maxus.macrocosm.discord.DiscordEmitter
 
+/**
+ * An emitter that posts a message once a player reaches a high Macrocosm Level
+ */
 class MacrocosmLevelEmitter(role: Role, channel: Channel) :
     DiscordEmitter<MacrocosmLevelEmitter.Context>("Macrocosm High Level Up", role, channel) {
+    /**
+     * A null context, will be implemented later
+     */
     data class Context(val filler: Unit)
 
     override fun handle(subject: Context, bot: JDA) {

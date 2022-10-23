@@ -266,8 +266,7 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     companion object {
         /**
-         * Initializes this ability, storing all data inside the [Registry.ABILITY]
-         *
+         * Initializes all abities, storing all data inside the ability registry [Registry.ABILITY]
          */
         fun init() {
             Registry.ABILITY.delegateRegistration(values().map { id(it.name.lowercase()) to it.ability })

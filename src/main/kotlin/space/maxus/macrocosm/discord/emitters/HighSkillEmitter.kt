@@ -11,8 +11,18 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.stripTags
 
+/**
+ * An emitter that posts message once user reaches high skill level (>45)
+ */
 class HighSkillEmitter(role: Role, channel: Channel) :
     DiscordEmitter<HighSkillEmitter.Context>("High Skill Level Up", role, channel) {
+    /**
+     * Context for this emitter
+     *
+     * @property skill type of skill
+     * @property level level achieved
+     * @property player player that achieved
+     */
     data class Context(val skill: SkillType, val level: Int, val player: MacrocosmPlayer)
 
     override fun handle(subject: Context, bot: JDA) {

@@ -1,0 +1,43 @@
+name: Docs
+on:
+    push:
+        branches: [master]
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+    deployments: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                persist-credentials: false
+            - name: Set up JDK
+              uses: actions/setup-java@v3
+              with:
+                distribution: temurin
+                java-version: 17
+            - name: Build documentation
+              run: ./gradlew dokkaHtml
+            - name: Archive documentation
+              run: tar --dereference --hard-dereference --directory build/dokka/html/ -cvf artifact.tar .
+            - name: Upload Artifact
+              uses: actions/upload-artifact@main
+              with:
+                name: github-pages
+                path: ./artifact.tar
+                if-no-files-found: warn
+    deploy-pages:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - name: Publish documentation
+              id: deployment
+              uses: actions/deploy-pages@v1

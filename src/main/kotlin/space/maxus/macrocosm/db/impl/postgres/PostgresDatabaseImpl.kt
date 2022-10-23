@@ -4,6 +4,9 @@ import org.jetbrains.exposed.sql.Database
 import space.maxus.macrocosm.db.impl.AbstractSQLDatabase
 import space.maxus.macrocosm.logger
 
+/**
+ * A current database implementation, storing itself inside a Postgres database
+ */
 class PostgresDatabaseImpl(val address: String) : AbstractSQLDatabase() {
     override fun obtainConnection(): Database {
         try {

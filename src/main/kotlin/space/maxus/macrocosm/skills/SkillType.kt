@@ -20,7 +20,8 @@ enum class SkillType(
         { lvl -> "<white>Deal <dark_gray>${(lvl - 1) * 4}%➜<green>${lvl * 4}%<white> more damage to enemies." },
         "\uD83D\uDDE1"
     ),
-    FARMING("Farmhand",
+    FARMING(
+        "Farmhand",
         skill(
             "Farming", (
                 boostStat(Statistic.FARMING_FORTUNE, 4.0, hide = true)
@@ -31,7 +32,8 @@ enum class SkillType(
         { lvl -> "<white>Grants <dark_gray>+${(lvl - 1) * 4}➜<green>+${lvl * 4}<white> ${Statistic.FARMING_FORTUNE.display}." },
         "\uD83C\uDF56"
     ),
-    FORAGING("Logger",
+    FORAGING(
+        "Logger",
         skill(
             "Foraging", (
                 boostStat(Statistic.FORAGING_FORTUNE, 4.0, hide = true)
@@ -42,7 +44,8 @@ enum class SkillType(
         { lvl -> "<white>Grants <dark_gray>+${(lvl - 1) * 4}➜<green>+${lvl * 4}<white> ${Statistic.FARMING_FORTUNE.display}." },
         "\uD83E\uDE93"
     ),
-    FISHING("Fisherman",
+    FISHING(
+        "Fisherman",
         skill(
             "Fishing", (
                 boostStat(Statistic.TREASURE_CHANCE, 1.0, hide = true)
@@ -53,7 +56,8 @@ enum class SkillType(
         { lvl -> "<white>Grants <dark_gray>+${(lvl - 1)}%➜<green>+${lvl}%<white> ${Statistic.TREASURE_CHANCE.display}." },
         "\uD83C\uDFA3"
     ),
-    MINING("Prospector",
+    MINING(
+        "Prospector",
         skill(
             "Mining", (
                 boostStat(Statistic.MINING_FORTUNE, 4.0, hide = true)
@@ -64,7 +68,8 @@ enum class SkillType(
         { lvl -> "<white>Grants <dark_gray>+${(lvl - 1) * 4}➜<green>+${lvl * 4}<white> ${Statistic.MINING_FORTUNE.display}." },
         "⛏"
     ),
-    EXCAVATING("Digger",
+    EXCAVATING(
+        "Digger",
         skill(
             "Excavating", (
                 boostStat(Statistic.EXCAVATING_FORTUNE, 4.0, hide = true)
@@ -75,7 +80,8 @@ enum class SkillType(
         { lvl -> "<white>Grants <dark_gray>+${(lvl - 1) * 4}➜<green>+${lvl * 4}<white> ${Statistic.EXCAVATING_FORTUNE.display}." },
         "\uD83E\uDEA3"
     ),
-    ENCHANTING("Enchanter",
+    ENCHANTING(
+        "Enchanter",
         skill(
             "Enchanting", (
                 boostStat(Statistic.ABILITY_DAMAGE, 2.0, hide = true)
@@ -92,7 +98,8 @@ enum class SkillType(
         { lvl -> "<white>Collect <dark_gray>${(lvl - 1) * 4}%➜<green>${lvl * 4}%<white> more experience orbs from any source." },
         "\uD83E\uDDEA"
     ),
-    RUNECRAFTING("Mystic",
+    RUNECRAFTING(
+        "Mystic",
         skill(
             "Runecrafting", (
                 boostStat(Statistic.INTELLIGENCE, .01, hide = true, multiply = true)
@@ -103,7 +110,8 @@ enum class SkillType(
         { lvl -> "<white>Grants a <dark_gray>${(lvl - 1)}%➜<green>${lvl}%<white> boost to your ${Statistic.INTELLIGENCE.display}." },
         "☄"
     ),
-    MYSTICISM("Sorcerer",
+    MYSTICISM(
+        "Sorcerer",
         skill(
             "Mysticism", (
                 boostStat(Statistic.MAGIC_FIND, .02, hide = true, multiply = true)

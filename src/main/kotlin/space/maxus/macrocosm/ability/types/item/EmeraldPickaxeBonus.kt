@@ -8,7 +8,6 @@ import org.bukkit.ChatColor
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityType
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.collections.CollectionType
@@ -39,7 +38,7 @@ object EmeraldPickaxeBonus : AbilityBase(
             tmp.add(text("${Statistic.MINING_FORTUNE.display}<gray> Bonus: <green>$bonus").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
         }
         lore.addAll(tmp)
     }

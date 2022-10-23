@@ -7,7 +7,10 @@ import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarCategory
 import space.maxus.macrocosm.bazaar.BazaarCollection
 import space.maxus.macrocosm.bazaar.BazaarElement
-import space.maxus.macrocosm.chat.*
+import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.chat.capitalized
+import space.maxus.macrocosm.chat.noitalic
+import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -157,7 +160,7 @@ private fun GUIPageBuilder<ForInventorySixByNine>.addNavButtons(player: Macrocos
             ItemValue.placeholderDescripted(
                 category.displayItem,
                 category.displayName,
-                *category.description.reduceToList(21).filter { !it.isBlankOrEmpty() }.toTypedArray()
+                *category.description.reduceToList(21).filter { !it.isBlank() }.toTypedArray()
             ),
             category.ordinal,
             null

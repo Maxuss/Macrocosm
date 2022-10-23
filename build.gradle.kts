@@ -1,8 +1,11 @@
+import java.net.URL
+
 plugins {
     kotlin("jvm") version "1.7.0"
     id("xyz.jpenilla.run-paper") version "1.0.6"
     id("io.papermc.paperweight.userdev") version "1.3.7"
     id("org.hidetake.swagger.generator") version "2.19.2"
+    id("org.jetbrains.dokka") version "1.7.20"
 }
 
 group = "space.maxus"
@@ -59,11 +62,24 @@ tasks {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     runServer {
-        println("HERE: ${System.getProperties().size}")
-        System.getProperties().forEach { key, value ->
+         System.getProperties().forEach { key, value ->
             val str = key.toString()
             if(str.startsWith("macrocosm")) {
                 systemProperty(str, value)
+            }
+        }
+    }
+}
+
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("Macrocosm")
+            includes.from("docs/Module.md")
+            sourceLink {
+                localDirectory.set(file("src/main/kotlin"))
+                remoteUrl.set(URL("https://github.com/Maxuss/Macrocosm/tree/master/src/main/kotlin"))
+                remoteLineSuffix.set("#L")
             }
         }
     }

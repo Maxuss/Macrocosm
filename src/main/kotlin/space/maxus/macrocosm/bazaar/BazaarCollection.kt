@@ -7,7 +7,19 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.unwrapInner
 
-enum class BazaarCollection(val displayName: String, val displayItem: ItemStack, vararg containing: String) {
+/**
+ * A group/collection of bazaar elements
+ */
+enum class BazaarCollection(
+    /**
+     * Display name that is shown to player in the bazaar menu, supports MiniMessage formatting
+     */
+    val displayName: String,
+    /**
+     * The item that is displayed to player in the bazaar menu
+     */
+    val displayItem: ItemStack, vararg containing: String
+) {
     // mining
     COBBLESTONE("<aqua>Cobblestone", ItemStack(Material.COBBLESTONE), "cobblestone", "deepslate", "blackstone"),
     COAL("<yellow>Coal", ItemStack(Material.COAL), "coal"),
@@ -114,6 +126,11 @@ enum class BazaarCollection(val displayName: String, val displayItem: ItemStack,
     HONEY("<gold>Honey", ItemStack(Material.HONEYCOMB), "honey")
     ;
 
+    /**
+     * All the items this collection contains
+     *
+     * This expression contains some moderately heavy logic (multiple string manipulations + regexes) but is **lazily evaluated**
+     */
     val items by lazy {
         containing.map { part ->
             val u = part.uppercase(); BazaarElement.values().filter { it.name.contains(u.toRegex()) }

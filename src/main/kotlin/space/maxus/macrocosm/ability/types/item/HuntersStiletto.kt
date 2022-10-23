@@ -16,6 +16,7 @@ import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pack.Signs
+import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.metrics.report
 import space.maxus.macrocosm.util.runNTimes
@@ -54,7 +55,7 @@ object HuntersStilettoActive : AbilityBase(
             val p = e.player.paper ?: report("Player was null in RightClickEvent!") { return@listen }
 
             val item = p.inventory.getItem(EquipmentSlot.HAND)
-            if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
+            if (item.macrocosm == null || !item.macrocosm!!.abilities.anyPoints(this))
                 return@listen
 
             val entity = p.getTargetEntity(15) as? LivingEntity ?: run {

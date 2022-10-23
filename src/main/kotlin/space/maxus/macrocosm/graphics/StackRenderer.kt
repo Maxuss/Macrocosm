@@ -7,7 +7,6 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.translation.GlobalTranslator
 import space.maxus.macrocosm.InternalMacrocosmPlugin
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.FnRet
@@ -212,7 +211,7 @@ class StackRenderer(
 
     private fun createFallbackString(text: String, mainFont: Font, fallbackFont: Font): AttributedString {
         val result = AttributedString(text)
-        if (text.isBlankOrEmpty())
+        if (text.isBlank())
             return result
         val textLength = text.length
         result.addAttribute(TextAttribute.FONT, mainFont, 0, textLength)

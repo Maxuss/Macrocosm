@@ -4,6 +4,18 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
+/**
+ * A simple enchantment to avoid unneeded inheritance
+ *
+ * @param name name of the enchantment
+ * @param description description of the enchantment
+ * @param levels possible levels of the enchantment
+ * @param applicable item types this enchantment is applicable to
+ * @param base base statistics that this enchantment applies, excluding the level modifier
+ * @param special base special statistics that this enchantment applies, excluding the level modifier
+ * @param multiplier the multiplier that is applied each level
+ * @param conflicts IDs of enchantments this enchantment conflicts with
+ */
 class SimpleEnchantment(
     name: String,
     description: String,

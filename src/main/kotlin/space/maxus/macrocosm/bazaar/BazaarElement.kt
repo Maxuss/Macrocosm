@@ -9,7 +9,21 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.withAll
 
-enum class BazaarElement(val item: MacrocosmItem? = null, val vanilla: Boolean = false) {
+/**
+ * Type of bazaar entry
+ *
+ * You can always find the item this element points to by getting Macrocosm ID of the lowercase ordinal name
+ */
+enum class BazaarElement(
+    /**
+     * Item this element belongs to, or null if it is a vanilla item/is already pointing at valid item in registry
+     */
+    val item: MacrocosmItem? = null,
+    /**
+     * Whether this element points to a vanilla minecraft item
+     */
+    val vanilla: Boolean = false
+) {
     // mining
     COBBLESTONE(vanilla = true),
     ENCHANTED_COBBLESTONE,
@@ -281,6 +295,9 @@ enum class BazaarElement(val item: MacrocosmItem? = null, val vanilla: Boolean =
     ;
 
     companion object {
+        /**
+         * All the bazaar elements
+         */
         val allKeys by lazy {
             Registry.BAZAAR_ELEMENTS_REF.iter().keys.withAll(
                 Registry.BAZAAR_ELEMENTS.iter().keys.withAll(
@@ -289,16 +306,27 @@ enum class BazaarElement(val item: MacrocosmItem? = null, val vanilla: Boolean =
             )
         }
 
+        /**
+         * Attempts to get the collection, the item with provided [id] belongs to
+         */
         fun idToCollection(id: Identifier): BazaarCollection? {
             return BazaarCollection.values().firstOrNull { coll -> coll.items.contains(id) }
         }
 
+        /**
+         * Attempts to get the bazaar element item, the provided [id] points to
+         */
         fun idToElement(id: Identifier): MacrocosmItem? {
             return Registry.BAZAAR_ELEMENTS.findOrNull(id) ?: Registry.ITEM.findOrNull(
                 Registry.BAZAAR_ELEMENTS_REF.findOrNull(id) ?: return VanillaItem(Material.valueOf(id.path.uppercase()))
             )
         }
 
+        /**
+         * Initializes all the element values.
+         *
+         * This init logic is **Thread Safe** and can be called inside the [Threading.runEachConcurrently], even though it uses asynchronous runner under the hood
+         */
         fun init() {
             Threading.runAsync {
                 val pool = Threading.newFixedPool(12)

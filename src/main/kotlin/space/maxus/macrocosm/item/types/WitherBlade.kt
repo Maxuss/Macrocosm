@@ -24,13 +24,11 @@ import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.damage.DamageType
 import space.maxus.macrocosm.damage.relativeLocation
-import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.entity.raycast
 import space.maxus.macrocosm.events.PlayerRightClickEvent
@@ -41,8 +39,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.*
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -179,12 +176,12 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.COMBAT, RuneSlot.UTILITY),
 ) {
     fun addScroll(scroll: WitherScrollAbility) {
-        if (abilities.contains(WITHER_SCROLL_WITHER_IMPACT))
+        if (abilities.anyPoints(WITHER_SCROLL_WITHER_IMPACT))
             return
-        abilities.add(scroll)
+        abilities.add(registryPointer(id("ability"), scroll))
         if (abilities.size >= 3) {
             abilities.clear()
-            abilities.add(WITHER_SCROLL_WITHER_IMPACT)
+            abilities.add(registryPointer(id("ability"), WITHER_SCROLL_WITHER_IMPACT))
         }
     }
 
@@ -195,7 +192,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     override fun addExtraNbt(cmp: CompoundTag) {
         val list = ListTag()
         for (ability in abilities) {
-            list.add(StringTag.valueOf((ability as AbilityBase).id.toString()))
+            list.add(StringTag.valueOf((ability.get<MacrocosmAbility>() as AbilityBase).id.toString()))
         }
         cmp.put("WitherScrolls", list)
     }
@@ -204,7 +201,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
         val base = super.convert(from, nbt)
         val list = nbt.getList("WitherScrolls", 8)
         for (ability in 0 until list.size) {
-            base.abilities.add(Registry.ABILITY.find(Identifier.parse(list.getString(ability))))
+            base.abilities.add(RegistryPointer(id("ability"), Identifier.parse(list.getString(ability))))
         }
         return base
     }
@@ -212,7 +209,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     @Suppress("UNCHECKED_CAST")
     override fun clone(): MacrocosmItem {
         val item = WitherBlade(ChatColor.stripColor(name.toLegacyString())!!, base, stats.clone(), rarity)
-        item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        item.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
         item.abilities.addAll(abilities)
@@ -242,7 +239,7 @@ class WitherScrollAbility(
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
         }
         lore.addAll(tmp)
     }

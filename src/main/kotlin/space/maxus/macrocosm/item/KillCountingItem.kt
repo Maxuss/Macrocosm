@@ -5,8 +5,8 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
-import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -46,12 +46,12 @@ class KillCountingItem(
             rarity,
             base,
             stats.clone(),
-            abilities,
+            abilities.map { it.get<MacrocosmAbility>() }.toMutableList(),
             specialStats.clone(),
             metaModifier = metaModifier,
             description = description
         )
-        item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        item.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
         item.stars = stars

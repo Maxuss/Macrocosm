@@ -16,10 +16,15 @@ import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 
-object BerserkerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Berserker", "Anger all nearest enemies, making them attack each other for the next <yellow>10 seconds<gray>.", AbilityCost(350, cooldown = 20)) {
+object BerserkerAbility : AbilityBase(
+    AbilityType.RIGHT_CLICK,
+    "Berserker",
+    "Anger all nearest enemies, making them attack each other for the next <yellow>10 seconds<gray>.",
+    AbilityCost(350, cooldown = 20)
+) {
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if(!ensureRequirements(e.player, EquipmentSlot.HAND))
+            if (!ensureRequirements(e.player, EquipmentSlot.HAND))
                 return@listen
 
             val p = e.player.paper ?: return@listen
@@ -28,7 +33,7 @@ object BerserkerAbility: AbilityBase(AbilityType.RIGHT_CLICK, "Berserker", "Ange
                 playAt(p.location)
             }
             p.getNearbyEntities(10.0, 4.0, 10.0).filterIsInstance<LivingEntity>().forEach {
-                if(it is ArmorStand || it is Player || it !is Creature)
+                if (it is ArmorStand || it is Player || it !is Creature)
                     return@forEach
                 it.target = it.getNearbyEntities(12.0, 3.0, 12.0).randomOrNull() as? LivingEntity
                 particle(Particle.SWEEP_ATTACK) {

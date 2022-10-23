@@ -2,7 +2,6 @@ package space.maxus.macrocosm.spell.essence
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.text.text
@@ -23,7 +22,7 @@ enum class EssenceType(val display: String, val description: String, val display
 
     fun descript(list: MutableList<Component>) {
         for (part in this.description.reduceToList(21)) {
-            if (part.isBlankOrEmpty())
+            if (part.isBlank())
                 continue
             list.add(text("<gray>$part").noitalic())
         }

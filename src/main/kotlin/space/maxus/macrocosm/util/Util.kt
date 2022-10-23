@@ -35,6 +35,8 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.isAirOrNull
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.IdentifierTypeAdapter
+import space.maxus.macrocosm.registry.RegistryPointer
+import space.maxus.macrocosm.registry.RegistryPointerTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatisticTypeAdapter
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.StatisticTypeAdapter
@@ -67,6 +69,7 @@ val GSON: Gson = GsonBuilder()
     .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
+    .registerTypeAdapter(RegistryPointer::class.java, RegistryPointerTypeAdapter)
     .create()
 val GSON_PRETTY: Gson = GsonBuilder()
     .disableHtmlEscaping()
@@ -74,6 +77,7 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .registerTypeAdapter(Statistics::class.java, StatisticTypeAdapter)
     .registerTypeAdapter(SpecialStatistics::class.java, SpecialStatisticTypeAdapter)
     .registerTypeAdapter(Component::class.java, ComponentTypeAdapter)
+    .registerTypeAdapter(RegistryPointer::class.java, RegistryPointerTypeAdapter)
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
@@ -503,7 +507,7 @@ fun Random.nextSignedDouble(): Double {
 fun Vector.along(f: Location, times: Int, fn: FnArg<Location>) {
     val each = this.clone().multiply(1f / times.toFloat())
     var from = f
-    for(i in 0 until times) {
+    for (i in 0 until times) {
         from = from.add(each)
         from.apply(fn)
     }

@@ -4,10 +4,25 @@ import org.bukkit.Material
 import space.maxus.macrocosm.util.general.varargs
 import space.maxus.macrocosm.util.toList
 
+/**
+ * A bazaar category, containing bazaar collections
+ */
 enum class BazaarCategory(
+    /**
+     * The name that is displayed to player in the bazaar menu, supports MiniMessage formatting
+     */
     val displayName: String,
+    /**
+     * The description for this category, supports MiniMessage formatting
+     */
     val description: String,
+    /**
+     * The material for outline border
+     */
     val outline: Material,
+    /**
+     * The item that is displayed to player in the bazaar menu
+     */
     val displayItem: Material,
     vararg items: BazaarCollection
 ) {
@@ -55,6 +70,9 @@ enum class BazaarCategory(
 
     ;
 
+    /**
+     * All the items in this category
+     */
     val items by varargs(items)
 }
 

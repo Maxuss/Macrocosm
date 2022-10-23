@@ -80,12 +80,24 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import kotlin.io.path.deleteIfExists
 
+/**
+ * A global object that is used for communications with discord bot
+ */
 @Suppress("UNUSED_PARAMETER")
 object Discord : ListenerAdapter() {
+    /**
+     * A connection loop for messaging between discord and server
+     */
     object ConnectionLoop : ListenerAdapter(), Listener {
         private val connectionPool: ExecutorService = Threading.newFixedPool(16)
         private var client: JDAWebhookClient? = null
 
+        /**
+         * Initializes a connection loop.
+         *
+         * This function is **NOT Thread Safe**, so it must be called
+         * in synchronous environment
+         */
         fun init() {
             client = WebhookClientBuilder(webhookLink!!).setThreadFactory(
                 ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler)
@@ -94,7 +106,7 @@ object Discord : ListenerAdapter() {
             Macrocosm.logger.info("Webhook connection initialized!")
         }
 
-        fun trySendMessage(msgStr: String, player: Player) {
+        private fun trySendMessage(msgStr: String, player: Player) {
             val builder = WebhookMessageBuilder()
             if (authenticated.containsKey(player.uniqueId)) {
                 val userId = authenticated[player.uniqueId]!!
@@ -170,9 +182,20 @@ object Discord : ListenerAdapter() {
     private val authenticated: HashMap<UUID, Long> = hashMapOf()
 
     private val commandPool: ExecutorService = Threading.newFixedPool(8)
+
+    /**
+     * The JDA bot instance
+     */
     lateinit var bot: JDA
+
+    /**
+     * Text channel for general communications
+     */
     var commTextChannel: TextChannel? = null
-    var mediaTextChannel: TextChannel? = null
+
+    /**
+     * Gets whether the discord bot is enabled
+     */
     val enabled: Boolean
         get() {
             return Macrocosm.isOnline && ::bot.isInitialized
@@ -186,7 +209,14 @@ object Discord : ListenerAdapter() {
     private val bazaarUserCache: Cache<UUID, ListIterator<BazaarOrder>> =
         CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
 
+    /**
+     * RGB red color preferred for error embeds
+     */
     const val COLOR_RED = 0xBF0000
+
+    /**
+     * RGB macrocosm specific blueish-purple color preferred for success embeds
+     */
     const val COLOR_MACROCOSM = 0x4A26BB
 
     private val EMBED_AUTH_REQUIRED = embed {
@@ -200,6 +230,11 @@ object Discord : ListenerAdapter() {
         )
     }
 
+    /**
+     * Checks if the authentication process has begun for player with [id].
+     *
+     * Returns false if the authentication has already happened OR player did not start authentication.
+     */
     fun hasBegunAuth(id: UUID): ConditionalValueCallback<String> {
         return if (authenticationBridge.containsKey(id)) {
             ConditionalValueCallback.success(authenticationBridge[id]!!.second)
@@ -208,24 +243,43 @@ object Discord : ListenerAdapter() {
         }
     }
 
+    /**
+     * Checks if the player with [id] has already authenticated.
+     */
     fun hasAuthenticated(id: UUID) = authenticated.containsKey(id)
 
+    /**
+     * Performs step 1 of authentication.
+     *
+     * @param id UUID of player to authenticate
+     * @param user expected discord username of the player
+     * @param key authentication key of the player
+     */
     fun step1Auth(id: UUID, user: String, key: String) {
         authenticationBridge[id] = Pair(user, key)
     }
 
+    /**
+     * Reads itself from the local file (`discord_auth.json`)
+     */
     fun readSelf() {
-        Accessor.readIfOpen("discord_auth.json").then {
+        Accessor.readIfExists("discord_auth.json").then {
             val json = fromJson<HashMap<UUID, Long>>(it)!!
             authenticated.putAll(json)
         }.call()
     }
 
+    /**
+     * Stores itself in the local file (`discord_auth.json`)
+     */
     fun storeSelf() {
         Accessor.overwrite("discord_auth.json", toJson(authenticated.toMap()))
         bot.shutdown()
     }
 
+    /**
+     * Performs initial setup for the discord bot
+     */
     fun setupBot() {
         Threading.runAsync {
             var botBuilder =
@@ -309,11 +363,6 @@ object Discord : ListenerAdapter() {
                                     MacrocosmLevelEmitter(role, c)
                                 )
                             }
-                    }
-                }
-                Macrocosm.config.getLong("connections.discord.media-channel").let { channel ->
-                    if (channel != 0L) {
-                        mediaTextChannel = bot.getTextChannelById(channel)!!
                     }
                 }
             }
@@ -1081,6 +1130,19 @@ object Discord : ListenerAdapter() {
         command(e, Bukkit.getOfflinePlayer(uuid))
     }
 
+    /**
+     * Gets a valid URL that most well displays the provided item.
+     *
+     * It provides:
+     * * => [https://mc-heads.net](https://mc-heads.net) if the item is a skull
+     * * => [https://mcapi.marveldc.me](https://mcapi.marveldc.me) of the item is a block
+     * * => [Macrocosm Data Location](https://github.com/Maxuss/Macrocosm-Data) otherwise
+     *
+     * Current limitations:
+     * 1. Does not support enchant glint
+     * 2. Does not support special macrocosm textures
+     * 3. Does not support colored leather armor
+     */
     fun itemImage(item: MacrocosmItem): String {
         val id = item.base.name.lowercase()
         if (id == "player_head") {
@@ -1109,17 +1171,27 @@ object Discord : ListenerAdapter() {
         return if (item.base.isBlock) "https://mcapi.marveldc.me/item/$id?version=1.19&width=250&height=250&fuzzySearch=false" else "https://raw.githubusercontent.com/Maxuss/Macrocosm-Data/master/items/generated/${id}.png"
     }
 
+    /**
+     * Sends embed that displays the difference between current version and previous version
+     */
     fun sendVersionDiff(previous: String) {
         commTextChannel?.sendMessage(MessageCreateData.fromEmbeds(embed {
             setColor(0x29232D)
             setTitle("**Macrocosm Version Change**")
             addField("Version $previous → ${Macrocosm.version}", "\uD83E\uDE79", false)
-            addField("The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!", "Keep guessing what it could be!", false)
+            addField(
+                "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!",
+                "Keep guessing what it could be!",
+                false
+            )
 
             setTimestamp(Instant.now())
         }))!!.queue()
     }
 
+    /**
+     * Sends all the new items introduced since the last restart. Uses [StackRenderer] under the hood.
+     */
     fun sendItemDiffs(diffs: List<Identifier>) {
         diffs.parallelStream().forEach {
             val mc = Registry.ITEM.find(it)
@@ -1149,24 +1221,36 @@ object Discord : ListenerAdapter() {
                     val thumbnailUrl = itemImage(mc)
                     setThumbnail(thumbnailUrl)
                     setImage("attachment://${it.path}.png")
-                }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit().thenAccept { _ ->
-                    // meanwhile delete the original render
-                    Threading.runAsync(isDaemon = true) {
-                        Accessor.access("item_renders/${it.path}.png").deleteIfExists()
+                }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit()
+                    .thenAccept { _ ->
+                        // meanwhile delete the original render
+                        Threading.runAsync(isDaemon = true) {
+                            Accessor.access("item_renders/${it.path}.png").deleteIfExists()
+                        }
                     }
-                }
             }
         }
     }
 
+    /**
+     * Finds a player's avatar via the [Crafatar](https://crafatar.com)
+     */
     fun playerAvatar(player: MacrocosmPlayer): String {
         return "https://crafatar.com/avatars/${player.ref}?overlay=true"
     }
 
+    /**
+     * Gets an authenticated discord user or null
+     */
     fun getAuthenticatedOrNull(player: MacrocosmPlayer): User? {
         return bot.retrieveUserById(authenticated[player.ref] ?: return null).submit().get()
     }
 
+    /**
+     * Constructs a new embed from a [builder]
+     *
+     * @see EmbedBuilder
+     */
     inline fun embed(builder: EmbedBuilder.() -> Unit): MessageEmbed {
         return EmbedBuilder().setFooter(
             "Macrocosm",

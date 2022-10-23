@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.ChatColor
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
@@ -24,10 +23,20 @@ interface MacrocosmAbility {
     companion object {
         private val DAMAGE_REGEX = "\\[[\\d.]+:[\\d.]+]".toRegex()
 
+        /**
+         * Formats dynamic damage numbers inside the provided string.
+         *
+         * The dynamic damage value is defined as [[&lt;base damage&gt;:&lt;scaling value&gt;]]
+         *
+         * @param str String to be formatted
+         * @param player Player for which the values will be formatted
+         *
+         * @return Formatted string
+         */
         fun formatDamageNumbers(str: String, player: MacrocosmPlayer?): String {
             val stats = player?.stats()
             return DAMAGE_REGEX.replace(str) { res ->
-                val data = res.value.replace("[", "").replace("]", "").split(":")
+                val data = res.value.trim('[', ']').split(":")
                 val dmg = java.lang.Double.valueOf(data[0])
                 val scaling = java.lang.Double.valueOf(data[1])
                 if (stats == null)
@@ -64,8 +73,8 @@ interface MacrocosmAbility {
     val cost: AbilityCost?
 
     /**
-     * You **have to** override this function, and register listeners there ([net.axay.kspigot.event.listen]))
-     *
+     * You **have to** override this function, and register listeners there ([net.axay.kspigot.event.listen])),
+     * this is where all the ability logic is defined at
      */
     fun registerListeners() {
 
@@ -86,7 +95,7 @@ interface MacrocosmAbility {
             }
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlankOrEmpty()
+            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
         }
         lore.addAll(tmp)
     }

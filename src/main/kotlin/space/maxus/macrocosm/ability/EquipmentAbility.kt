@@ -4,7 +4,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.players.MacrocosmPlayer
 
 /**
- * An abstract class describing an equipment ability
+ * An abstract class describing an ability bound to equipment items
  *
  * @constructor
  * @see space.maxus.macrocosm.ability.AbilityBase
@@ -15,6 +15,6 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 abstract class EquipmentAbility(name: String, description: String) :
     AbilityBase(AbilityType.PASSIVE, name, description) {
     protected fun ensureRequirements(player: MacrocosmPlayer, vararg slots: ItemType): Boolean {
-        return slots.map { slot -> player.equipment[slot]?.abilities?.contains(this) == true }.any { it }
+        return slots.map { slot -> player.equipment[slot]?.abilities?.any { it.pointer == id } == true }.any { it }
     }
 }

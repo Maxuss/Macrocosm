@@ -192,7 +192,7 @@ internal fun modifyStackGenerateAmountButtonSell(
     stack.meta {
         displayName(text(name).noitalic())
 
-        val res = Bazaar.tryDoInstantSell(item, amount, false).get()
+        val res = Bazaar.tryDoInstantSell(player, item, amount, false).get()
         val perUnit = res.totalProfit / res.amountSold.let { if (it <= 0) 1 else it }.toBigDecimal()
 
         val loreCompound = mutableListOf(

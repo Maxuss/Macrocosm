@@ -111,28 +111,50 @@ fun Application.module() {
             // resources
             route("/resources") {
                 get {
-                    call.respondSuccess(AvailableRegistries(Registry.iter().filter { reg -> reg.value.shouldBeExposed }.keys))
+                    call.respondSuccess(
+                        AvailableRegistries(
+                            Registry.iter().filter { reg -> reg.value.shouldBeExposed }.keys
+                        )
+                    )
                 }
 
                 route("{registry}") {
                     get {
                         val reg = Registry.findOrNull(
                             Identifier.parse(
-                                call.parameters["registry"] ?: return@get call.respondFailure("Registry not specified!", HttpStatusCode.BadRequest)
+                                call.parameters["registry"] ?: return@get call.respondFailure(
+                                    "Registry not specified!",
+                                    HttpStatusCode.BadRequest
+                                )
                             )
-                        ) ?: return@get call.respondFailure("Could not find registry '${call.parameters["registry"]}'!", HttpStatusCode.NotFound)
+                        ) ?: return@get call.respondFailure(
+                            "Could not find registry '${call.parameters["registry"]}'!",
+                            HttpStatusCode.NotFound
+                        )
                         if (!reg.shouldBeExposed)
                             return@get call.respondFailure("This registry is hidden!", HttpStatusCode.BadRequest)
                         call.respondSuccess(GetRegistry(reg.iter()))
                     }
                     get("{element}") {
-                        val regParam = call.parameters["registry"] ?: return@get call.respondFailure("Registry not specified!", HttpStatusCode.BadRequest)
+                        val regParam = call.parameters["registry"] ?: return@get call.respondFailure(
+                            "Registry not specified!",
+                            HttpStatusCode.BadRequest
+                        )
                         val reg =
-                            Registry.findOrNull(Identifier.parse(regParam)) ?: return@get call.respondFailure("Could not find registry '${regParam}'!", HttpStatusCode.NotFound)
+                            Registry.findOrNull(Identifier.parse(regParam)) ?: return@get call.respondFailure(
+                                "Could not find registry '${regParam}'!",
+                                HttpStatusCode.NotFound
+                            )
                         if (!reg.shouldBeExposed)
                             return@get call.respondFailure("This registry is hidden!", HttpStatusCode.BadRequest)
-                        val element = call.parameters["element"] ?: return@get call.respondFailure("No key provided!", HttpStatusCode.BadRequest)
-                        val item = reg.findOrNull(Identifier.parse(element)) ?: return@get call.respondFailure("Could not find element $element in '${regParam}' registry!", HttpStatusCode.NotFound)
+                        val element = call.parameters["element"] ?: return@get call.respondFailure(
+                            "No key provided!",
+                            HttpStatusCode.BadRequest
+                        )
+                        val item = reg.findOrNull(Identifier.parse(element)) ?: return@get call.respondFailure(
+                            "Could not find element $element in '${regParam}' registry!",
+                            HttpStatusCode.NotFound
+                        )
                         call.respondSuccess(GetRegistryElement(item))
                     }
                 }
@@ -146,7 +168,14 @@ fun Application.module() {
 
                 getWithKey("/{player}", APIPermission.VIEW_PLAYER_DATA) {
                     val player = parseMacrocosmPlayer() ?: return@getWithKey
-                    call.respondSuccess(GeneralPlayerData(player.rank, player.firstJoin, player.lastJoin, player.playtime))
+                    call.respondSuccess(
+                        GeneralPlayerData(
+                            player.rank,
+                            player.firstJoin,
+                            player.lastJoin,
+                            player.playtime
+                        )
+                    )
                 }
 
                 getWithKey("/{player}/status", APIPermission.VIEW_PLAYER_DATA) {
@@ -187,7 +216,7 @@ fun Application.module() {
                             }.call()
                         }.call()
                     }
-                    if(inventoryData != "null") {
+                    if (inventoryData != "null") {
                         call.respondSuccess(PlayerInventory(inventoryData))
                     } else {
                         call.respondFailure(inventoryData)
@@ -215,21 +244,33 @@ fun Application.module() {
                 }
 
                 getWithKey("/orders/{item}", APIPermission.VIEW_BAZAAR_DATA) {
-                    val itemParam = call.parameters["item"] ?: return@getWithKey call.respondFailure("Item not provided!", HttpStatusCode.BadRequest)
+                    val itemParam = call.parameters["item"] ?: return@getWithKey call.respondFailure(
+                        "Item not provided!",
+                        HttpStatusCode.BadRequest
+                    )
                     val data = Bazaar.table.itemData
                     val id = Identifier.parse(itemParam)
                     if (!data.containsKey(id))
-                        return@getWithKey call.respondFailure("Item $id was not found in bazaar storage!", HttpStatusCode.NotFound)
+                        return@getWithKey call.respondFailure(
+                            "Item $id was not found in bazaar storage!",
+                            HttpStatusCode.NotFound
+                        )
                     val itemData = data[id]!!
                     call.respondSuccess(ItemOrders(itemData.buy.toList().take(100), itemData.sell.toList().take(100)))
                 }
 
                 getWithKey("/summary/{item}", APIPermission.VIEW_BAZAAR_DATA) {
-                    val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson("Item not provided!", HttpStatusCode.BadRequest)
+                    val itemParam = call.parameters["item"] ?: return@getWithKey call.respondJson(
+                        "Item not provided!",
+                        HttpStatusCode.BadRequest
+                    )
                     val data = Bazaar.table.itemData
                     val id = Identifier.parse(itemParam)
                     if (!data.containsKey(id))
-                        return@getWithKey call.respondFailure("Item $id was not found in bazaar storage!", HttpStatusCode.NotFound)
+                        return@getWithKey call.respondFailure(
+                            "Item $id was not found in bazaar storage!",
+                            HttpStatusCode.NotFound
+                        )
                     call.respondSuccess(Bazaar.table.summary(id))
                 }
             }
@@ -333,7 +374,10 @@ private suspend fun ApplicationCall.respondSuccess(obj: Any?, code: HttpStatusCo
     this.respondJson(Success(true, obj), code)
 }
 
-private suspend fun ApplicationCall.respondFailure(obj: Any, code: HttpStatusCode = HttpStatusCode.InternalServerError) {
+private suspend fun ApplicationCall.respondFailure(
+    obj: Any,
+    code: HttpStatusCode = HttpStatusCode.InternalServerError
+) {
     this.respondJson(Failure(false, obj), code)
 }
 
@@ -388,12 +432,18 @@ private suspend fun ApplicationCall.requireKey(perm: APIPermission): SuspendCond
         }
 
         KeyManager.ValidationResult.KEY_THROTTLE -> {
-            respondFailure("${result.name}: API key throttle, max amount of requests reached (100)", HttpStatusCode.Forbidden)
+            respondFailure(
+                "${result.name}: API key throttle, max amount of requests reached (100)",
+                HttpStatusCode.Forbidden
+            )
             return SuspendConditionalCallback.suspendFail()
         }
 
         KeyManager.ValidationResult.INSUFFICIENT_PERMISSIONS -> {
-            respondFailure("${result.name}: This endpoint requires your key to have ${perm.name} permission", HttpStatusCode.Unauthorized)
+            respondFailure(
+                "${result.name}: This endpoint requires your key to have ${perm.name} permission",
+                HttpStatusCode.Unauthorized
+            )
             return SuspendConditionalCallback.suspendFail()
         }
 

@@ -2,6 +2,7 @@ package space.maxus.macrocosm.enchants
 
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
+import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.enchants.type.*
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.registry.Registry
@@ -10,7 +11,15 @@ import space.maxus.macrocosm.stats.specialStats
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.general.id
 
-enum class Enchant(val enchant: Enchantment) {
+/**
+ * Enum that contains all default enchant values
+ */
+enum class Enchant(
+    /**
+     * An actual enchant stored inside
+     */
+    val enchant: Enchantment
+) {
     SHARPNESS(
         SimpleEnchantment(
             "Sharpness",
@@ -482,6 +491,11 @@ enum class Enchant(val enchant: Enchantment) {
     ;
 
     companion object {
+        /**
+         * Initializes all the enchants and puts them inside the [Registry.ENCHANT].
+         *
+         * This method is **Thread Safe** and should be called inside [Threading.runEachConcurrently]
+         */
         fun init() {
             Registry.ENCHANT.delegateRegistration(values().map { id(it.name.lowercase()) to it.enchant })
         }

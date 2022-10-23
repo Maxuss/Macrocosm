@@ -17,6 +17,7 @@ import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
+import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.nextSignedDouble
@@ -31,7 +32,7 @@ object VoodooDollAbility : AbilityBase(
 
     override fun registerListeners() {
         listen<PlayerRightClickEvent> { e ->
-            if (e.player.mainHand?.abilities?.contains(this) != true)
+            if (e.player.mainHand?.abilities?.anyPoints(this) != true)
                 return@listen
 
             val p = e.player.paper ?: return@listen

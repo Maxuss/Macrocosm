@@ -7,7 +7,6 @@ import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import org.bukkit.event.Listener
-import space.maxus.macrocosm.chat.isBlankOrEmpty
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.entity.MacrocosmEntity
@@ -88,7 +87,7 @@ abstract class Slayer(
 
     fun descript(): List<Component> {
         val reduced = description.reduceToList(25).map { text("<gray>$it").noitalic() }.toMutableList()
-        reduced.removeIf { it.toLegacyString().isBlankOrEmpty() }
+        reduced.removeIf { it.toLegacyString().isBlank() }
         return reduced
     }
 

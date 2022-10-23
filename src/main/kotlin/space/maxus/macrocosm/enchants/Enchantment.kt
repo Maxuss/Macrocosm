@@ -22,22 +22,67 @@ internal fun colorFromLevel(lvl: Int, max: Int): TextColor {
         NamedTextColor.BLUE
 }
 
+/**
+ * An interface that defines an enchantment
+ */
 interface Enchantment : Listener {
+    /**
+     * Display name of the enchantment
+     */
     val name: String
+
+    /**
+     * Possible levels that this enchantment may be applicable to
+     */
     val levels: IntRange
+
+    /**
+     * Items this enchantment can be applicable to
+     */
     val applicable: List<ItemType>
+
+    /**
+     * IDs of enchantments this enchantment conflicts with
+     */
     val conflicts: List<Identifier>
 
+    /**
+     * Provides description for this enchantment
+     */
     fun description(level: Int): List<Component>
 
+    /**
+     * Stats this enchantment modifies
+     */
     fun stats(level: Int, player: MacrocosmPlayer? = null): Statistics = Statistics.zero()
+
+    /**
+     * Special stats this enchantment modifies
+     */
     fun special(level: Int): SpecialStatistics = SpecialStatistics()
 
+    /**
+     * Adds a fancy display of this enchantment to [lore]
+     *
+     * Example:
+     * ```
+     * Enchantment VI
+     * Does some stuff
+     * And more stuff
+     * ```
+     */
     fun displayFancy(lore: MutableList<Component>, level: Int) {
         lore.add(displaySimple(level))
         lore.addAll(description(level))
     }
 
+    /**
+     * Construts a simple display of this enchantment
+     *
+     * Example:
+     *
+     * `Enchantment VI`
+     */
     fun displaySimple(level: Int): Component {
         val mm = MiniMessage.miniMessage()
         val color = colorFromLevel(level, levels.last)

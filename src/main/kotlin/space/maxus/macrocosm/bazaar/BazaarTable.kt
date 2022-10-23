@@ -15,30 +15,75 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.*
 import java.math.BigDecimal
 import java.time.Duration
+import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
+/**
+ * Summary of a sequence of bazaar orders
+ */
 data class BazaarOrderSummary(
+    /**
+     * Total amount of items in the orders
+     */
     val amount: Int,
+    /**
+     * Highest per-item price among all the orders
+     */
     val highestPrice: Double,
+    /**
+     * Lowest per-item price among all the orders
+     */
     val lowestPrice: Double,
+    /**
+     * Average per-item price
+     */
     val averagePrice: Double,
+    /**
+     * Median per-item price
+     */
     val medianPrice: Double,
+    /**
+     * Cumulative amount of coins in all the orders
+     */
     val cumulativeCoins: BigDecimal,
+    /**
+     * Cumulative amount of items in all the orders
+     */
     val cumulativeItems: Int
 )
 
+/**
+ * Summary for a single bazaar item
+ */
 data class BazaarItemSummary(
-    val success: Boolean,
+    /**
+     * Item this summary belongs to
+     */
     val item: Identifier,
+    /**
+     * Total amount of buy and sell orders for this item
+     */
     val ordersCount: Int,
+    /**
+     * Summary of buy orders
+     */
     val buyOrders: BazaarOrderSummary,
+    /**
+     * Summary of sell orders
+     */
     val sellOrders: BazaarOrderSummary
 )
 
+/**
+ * LOB-like bazaar order table
+ */
 class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : DatabaseStore {
     companion object {
+        /**
+         * Constructs new empty bazaar table
+         */
         fun new() =
             BazaarTable(
                 ConcurrentHashMap(
@@ -46,6 +91,9 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
                 )
             )
 
+        /**
+         * Reads itself from the provided [DataStorage]
+         */
         fun readSelf(data: DataStorage): BazaarTable {
             val outMap = ConcurrentHashMap<Identifier, BazaarItemData>()
             data.transact {
@@ -63,19 +111,44 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
         }
     }
 
+    /**
+     * Total count of item entries. This is equal to the total amount of values of the [BazaarElement] enum
+     */
     val entries = itemData.size
+
+    /**
+     * Total amount of both buy and sell orders
+     */
     val ordersTotal = itemData.values.sumOf { entry -> entry.buy.size + entry.sell.size }
     private val summaryCache: Cache<Identifier, BazaarItemSummary> =
         CacheBuilder.newBuilder().expireAfterWrite(Duration.ofMinutes(5)).build()
 
+    /**
+     * Gets the [amount] top buy orders, sorted by the price per item descending
+     *
+     * @param item item to be queried
+     * @param amount amount of items to be queried
+     */
     fun topBuyOrders(item: Identifier, amount: Int): Collection<BazaarBuyOrder> {
-        return this.itemData[item]!!.buy.take(amount)
+        return this.itemData[item]?.buy?.take(amount) ?: Collections.emptySet()
     }
 
+    /**
+     * Gets the [amount] top sell orders, sorted by the price per item ascending
+     *
+     * @param item item to be queried
+     * @param amount amount of items to be queried
+     */
     fun topSellOrders(item: Identifier, amount: Int): Collection<BazaarSellOrder> {
-        return this.itemData[item]!!.sell.take(amount)
+        return this.itemData[item]?.sell?.take(amount) ?: Collections.emptySet()
     }
 
+    /**
+     * Attempts to count summary of a bazaar item.
+     * This is a pretty expensive operation because it uses kotlin-provided sorting method ([kotlin.collections.sorted]) under the hood.
+     *
+     * @param item Item to be queried
+     */
     fun summary(item: Identifier): BazaarItemSummary? {
         val itemData = itemData[item] ?: return null
         val present = summaryCache.getIfPresent(item)
@@ -84,7 +157,6 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
         val buyOrders = itemData.buy.toList()
         val sellOrders = itemData.sell.toList()
         val data = BazaarItemSummary(
-            success = true,
             item = item,
             ordersCount = buyOrders.size + sellOrders.size,
             buyOrders = BazaarOrderSummary(
@@ -111,36 +183,63 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
         return data
     }
 
+    /**
+     * Creates a new bazaar order
+     */
     fun createOrder(order: BazaarOrder) {
         val data = itemData[order.item]!!
         data.pushOrder(order)
     }
 
+    /**
+     * Gets the next buy order without shifting the queue
+     */
     fun nextBuyOrder(item: Identifier): BazaarBuyOrder? {
         val data = itemData[item]!!
         return data.nextBuyOrder()
     }
 
+    /**
+     * Gets the next sell order without shifting the queue
+     */
     fun nextSellOrder(item: Identifier): BazaarSellOrder? {
         val data = itemData[item]!!
         return data.nextSellOrder()
     }
 
+    /**
+     * Iterates through the buy orders
+     *
+     * @param item item to be queried
+     * @param iterator iterator function to be applied, takes in an order and returns true if the iteration should continue and false if it should be stopped
+     */
     fun iterateThroughOrdersBuy(item: Identifier, iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
         val data = itemData[item]!!
         data.iterateBuy(iterator)
     }
 
+    /**
+     * Iterates through the sell orders
+     *
+     * @param item item to be queried
+     * @param iterator iterator function to be applied, takes in an order and returns true if the iteration should continue and false if it should be stopped
+     */
     fun iterateThroughOrdersSell(item: Identifier, iterator: FnArgRet<BazaarSellOrder, Boolean>) {
         val data = itemData[item]!!
         data.iterateSell(iterator)
     }
 
+    /**
+     * Pops the provided order from the queue
+     */
     fun popOrder(order: BazaarOrder) {
         val data = itemData[order.item]!!
         data.popOrder(order)
     }
 
+    /**
+     * Saves itself at the provided [DataStorage]
+     */
     override fun storeSelf(data: DataStorage) {
         transaction((database as AbstractSQLDatabase).connection) {
             itemData.entries.forEach { (key, value) ->
@@ -153,16 +252,33 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
     }
 }
 
+/**
+ * Bazaar data for a single item
+ */
 class BazaarItemData private constructor(
+    /**
+     * All the buy orders in a priority queue
+     */
     val buy: BlockingQueue<BazaarBuyOrder>,
+    /**
+     * All the sell orders in a priority queue
+     */
     val sell: BlockingQueue<BazaarSellOrder>
 ) {
     companion object {
+        /**
+         * Constructs an empty bazaar data
+         */
         fun empty() = BazaarItemData(
             PriorityBlockingQueue(1) { a, b -> a.pricePer.compareTo(b.pricePer) },
-            PriorityBlockingQueue(1) { a, b -> a.pricePer.compareTo(b.pricePer) },
+            PriorityBlockingQueue(1) { a, b -> b.pricePer.compareTo(a.pricePer) },
         )
 
+        /**
+         * Deserializes itself from a JSON string
+         *
+         * note: this is a rather unoptimized method, more compact approach is possible (see [this issue](https://github.com/Maxuss/Macrocosm/issues/3))
+         */
         fun json(json: String): BazaarItemData {
             val cmp: BazaarOrderCompound = fromJson(json)!!
             val empty = empty()
@@ -178,8 +294,16 @@ class BazaarItemData private constructor(
 
     val amount = buy.size + sell.size
 
+    /**
+     * Saves itself to a JSON string
+     *
+     * note: this is a rather unoptimized method, more compact approach is possible (see [this issue](https://github.com/Maxuss/Macrocosm/issues/3))
+     */
     fun json() = toJson(BazaarOrderCompound(buy.toList(), sell.toList()))
 
+    /**
+     * Pushes an order to this queue
+     */
     fun pushOrder(order: BazaarOrder) {
         if (order is BazaarBuyOrder)
             this.buy.offer(order)
@@ -187,14 +311,23 @@ class BazaarItemData private constructor(
             this.sell.offer(order)
     }
 
+    /**
+     * Gets the next buy order without shifting the queue
+     */
     fun nextBuyOrder(): BazaarBuyOrder? {
         return this.buy.peek()
     }
 
+    /**
+     * Gets the next sell order without shifting the queue
+     */
     fun nextSellOrder(): BazaarSellOrder? {
         return this.sell.peek()
     }
 
+    /**
+     * Pops an order from the queue
+     */
     fun popOrder(specific: BazaarOrder) {
         runCatchingReporting {
             if (specific is BazaarBuyOrder)
@@ -205,6 +338,9 @@ class BazaarItemData private constructor(
         }
     }
 
+    /**
+     * Iterates through buy orders
+     */
     fun iterateBuy(iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
         for (order in this.buy) {
             if (iterator(order))
@@ -212,6 +348,9 @@ class BazaarItemData private constructor(
         }
     }
 
+    /**
+     * Iterates through sell orders
+     */
     fun iterateSell(iterator: FnArgRet<BazaarSellOrder, Boolean>) {
         for (order in this.sell) {
             if (iterator(order))

@@ -5,13 +5,19 @@ import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
-@org.jetbrains.annotations.ApiStatus.ScheduledForRemoval
+/**
+ * A legacy object that was used to access database
+ */
+@org.jetbrains.annotations.ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
 @Deprecated(
     "Use DatabaseAccess via `space.maxus.macrocosm.database` instead",
     ReplaceWith("space.maxus.macrocosm.database")
 )
 object Database {
-    @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval
+    /**
+     * A legacy method that was used to connect to database
+     */
+    @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
     @Deprecated(
         "Use DatabaseAccess via `space.maxus.macrocosm.database` instead",
         ReplaceWith("space.maxus.macrocosm.database.connect()")
@@ -21,7 +27,10 @@ object Database {
         database.connect()
     }
 
-    @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval
+    /**
+     * A legacy method that was used to read all player data
+     */
+    @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
     @Deprecated(
         "Use DatabaseAccess via `space.maxus.macrocosm.database` instead",
         ReplaceWith("space.maxus.macrocosm.database.readAllPlayers()")
@@ -31,10 +40,16 @@ object Database {
         return database.readPlayers()
     }
 
-    @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval
+    /**
+     * A legacy object that was used to access limited edition item data
+     */
+    @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
     @Deprecated("Functionality was merged with DatabaseAccess", ReplaceWith("space.maxus.macrocosm.database"))
     object Limited {
-        @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval
+        /**
+         * A legacy method that was used to increment the edition of item
+         */
+        @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
         @Deprecated(
             "Use DatabaseAccess via `space.maxus.macrocosm.database` instead",
             ReplaceWith("space.maxus.macrocosm.database.incrementLimitedEdition(item)")
