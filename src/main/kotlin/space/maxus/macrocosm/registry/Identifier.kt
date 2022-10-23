@@ -11,13 +11,16 @@ import java.io.DataOutput
 data class Identifier(val namespace: String, val path: String) : Tag {
     fun minecraft() = ResourceLocation(namespace, path)
 
-    @Suppress("DEPRECATION")
     fun bukkit() = NamespacedKey(namespace, path)
     fun tag(): StringTag = StringTag.valueOf(toString())
     override fun toString() = "$namespace:$path"
 
     fun isNotNull() = this != NULL
     fun isNull() = this == NULL
+
+    fun verify(): Boolean {
+        return VALIDITY_REGEX.matches(namespace) && VALIDITY_REGEX.matches(path)
+    }
 
     override fun write(output: DataOutput) {
         StringTag.valueOf(toString()).write(output)
@@ -55,6 +58,7 @@ data class Identifier(val namespace: String, val path: String) : Tag {
 
     companion object : PersistentDataType<String, Identifier> {
         val NULL = macro("null")
+        val VALIDITY_REGEX = Regex("[a-zA-Z_#$\\d]+")
 
         fun macro(path: String) = Identifier(Macrocosm.id, path)
         fun parse(value: String): Identifier {
