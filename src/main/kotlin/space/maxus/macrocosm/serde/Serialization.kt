@@ -24,12 +24,15 @@ data class Serialization(private val stream: DataOutputStream, private val byteS
     }
 
     fun decimal(dec: BigDecimal): Serialization {
-        stream.write(dec.toBigInteger().toByteArray())
+        val out = dec.toBigInteger().toByteArray()
+        stream.writeInt(out.size)
+        stream.write(out)
         return this
     }
 
     fun string(str: String): Serialization {
         stream.writeBytes(str)
+        stream.write(0)
         return this
     }
 }
