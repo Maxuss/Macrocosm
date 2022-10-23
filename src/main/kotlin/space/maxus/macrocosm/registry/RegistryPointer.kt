@@ -1,5 +1,8 @@
 package space.maxus.macrocosm.registry
 
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import space.maxus.macrocosm.util.general.ConditionalCallback
 
 class RegistryPointer(val registry: Identifier, pointer: Identifier) {
@@ -52,5 +55,21 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
         var result = registry.hashCode()
         result = 31 * result + pointer.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "$registry@$pointer"
+    }
+}
+
+object RegistryPointerTypeAdapter: TypeAdapter<RegistryPointer>() {
+    override fun write(out: JsonWriter, value: RegistryPointer) {
+        out.value("${value.registry}@${value.pointer}")
+    }
+
+    override fun read(reader: JsonReader): RegistryPointer {
+        val str = reader.nextString()
+        val (reg, id) = str.split("@".toRegex(), 2)
+        return RegistryPointer(Identifier.parse(reg), Identifier.parse(id))
     }
 }
