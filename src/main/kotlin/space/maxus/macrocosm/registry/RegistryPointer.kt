@@ -1,10 +1,20 @@
 package space.maxus.macrocosm.registry
 
+import space.maxus.macrocosm.util.general.ConditionalCallback
+
 class RegistryPointer(val registry: Identifier, pointer: Identifier) {
     var pointer: Identifier = pointer; private set
 
+    /**
+     * Attempts to set value inside this pointer.
+     */
+    fun <T> trySet(v: T): ConditionalCallback {
+        val success = this.set(v)
+        return ConditionalCallback { success }
+    }
+
     @Suppress("UNCHECKED_CAST")
-    fun <T> trySet(v: T): Boolean {
+    fun <T> set(v: T): Boolean {
         val actualRegistry: Registry<T> = (Registry.find(registry) as? Registry<T>) ?: return false
         this.pointer = actualRegistry.byValue(v) ?: return false
         return true
