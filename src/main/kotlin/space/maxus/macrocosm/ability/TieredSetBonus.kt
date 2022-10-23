@@ -29,7 +29,7 @@ open class TieredSetBonus(name: String, description: String) : AbilityBase(Abili
             player.chestplate,
             player.leggings,
             player.boots
-        ).map { it != null && it.abilities.contains(this) }.filter { it }.size
+        ).map { it != null && it.abilities.any { ab -> ab.pointer == id } }.filter { it }.size
         return Pair(tier > 1, tier)
     }
 

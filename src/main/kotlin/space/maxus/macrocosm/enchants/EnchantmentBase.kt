@@ -15,6 +15,7 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import java.math.BigDecimal
@@ -61,9 +62,9 @@ abstract class EnchantmentBase(
             if (item.type == Material.AIR)
                 return@map Pair(false, -1)
             val enchants = item.macrocosm?.enchantments
-            if (enchants?.contains(this) != true)
+            if (enchants?.keys?.contains(Registry.ENCHANT.byValue(this)) != true)
                 return@map Pair(false, -1)
-            Pair(true, enchants[this]!!)
+            Pair(true, enchants[Registry.ENCHANT.byValue(this)!!]!!)
         }.filter { (success, _) -> success }
         return filtered.maxByOrNull { (_, lvl) -> lvl } ?: filtered.firstOrNull() ?: Pair(false, -1)
     }
@@ -80,9 +81,9 @@ abstract class EnchantmentBase(
             if (item.type == Material.AIR)
                 return@map Pair(false, -1)
             val enchants = item.macrocosm?.enchantments
-            if (enchants?.contains(this) != true)
+            if (enchants?.contains(Registry.ENCHANT.byValue(this)) != true)
                 return@map Pair(false, -1)
-            Pair(true, enchants[this]!!)
+            Pair(true, enchants[Registry.ENCHANT.byValue(this)]!!)
         }.filter { (success, _) -> success }
         if (filtered.isEmpty())
             return Pair(false, -1)
@@ -96,9 +97,9 @@ abstract class EnchantmentBase(
      */
     protected fun ensureRequirements(item: MacrocosmItem): Pair<Boolean, Int> {
         val enchants = item.enchantments
-        if (!enchants.contains(this))
+        if (!enchants.contains(Registry.ENCHANT.byValue(this)))
             return Pair(false, -1)
-        return Pair(true, enchants[this]!!)
+        return Pair(true, enchants[Registry.ENCHANT.byValue(this)]!!)
     }
 
 

@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
@@ -22,6 +21,7 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -38,8 +38,8 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) : 
     override var rarity: Rarity = Rarity.SPECIAL
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
-    override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val abilities: MutableList<RegistryPointer> = mutableListOf()
+    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
@@ -98,8 +98,8 @@ class SkullEntityHead(private var eskin: String) : MacrocosmItem {
     override var rarity: Rarity = Rarity.SPECIAL
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
-    override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val abilities: MutableList<RegistryPointer> = mutableListOf()
+    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0

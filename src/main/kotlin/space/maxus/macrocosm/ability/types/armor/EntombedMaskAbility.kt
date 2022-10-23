@@ -22,6 +22,7 @@ import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
 import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
 import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.util.general.id
 import java.util.*
 
@@ -34,7 +35,7 @@ object EntombedMaskAbility :
             if (e.newItem == e.oldItem)
                 return@listen
             val player = e.player.uniqueId
-            if (e.newItem?.macrocosm?.abilities?.contains(this) == true && !summoned.containsKey(player)) {
+            if (e.newItem?.macrocosm?.abilities?.anyPoints(this) == true && !summoned.containsKey(player)) {
                 val world = e.player.world
                 val loc = e.player.location
 
@@ -47,7 +48,7 @@ object EntombedMaskAbility :
                     arr[i] = entity.uuid
                 }
                 summoned[e.player.uniqueId] = Triple(arr[0]!!, arr[1]!!, arr[2]!!)
-            } else if (e.oldItem?.macrocosm?.abilities?.contains(this) == true) {
+            } else if (e.oldItem?.macrocosm?.abilities?.anyPoints(this) == true) {
                 val triple = summoned[e.player.uniqueId]?.toList() ?: return@listen
                 for (i in 0..2) {
                     val entity =

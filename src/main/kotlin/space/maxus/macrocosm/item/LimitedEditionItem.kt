@@ -9,9 +9,9 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -51,11 +51,11 @@ class LimitedEditionItem(
             rarity,
             base,
             stats.clone(),
-            abilities,
+            abilities.map { it.get<MacrocosmAbility>() }.toMutableList(),
             specialStats.clone(),
             metaModifier = metaModifier
         )
-        item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        item.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
         item.stars = stars

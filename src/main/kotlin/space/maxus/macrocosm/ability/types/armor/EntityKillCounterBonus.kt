@@ -18,6 +18,7 @@ import space.maxus.macrocosm.item.KillStorageItem
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 import java.util.*
@@ -127,7 +128,7 @@ open class EntityKillCounterBonus(
 
     override fun registerListeners() {
         listen<ItemCalculateStatsEvent> { e ->
-            if (!e.item.abilities.contains(this))
+            if (!e.item.abilities.anyPoints(this))
                 return@listen
             val (index, _) = counterBuff(e.item)
             e.stats[stat] = e.stats[stat] + rewardTable[index]

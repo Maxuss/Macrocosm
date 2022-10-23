@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
@@ -25,6 +24,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
@@ -48,8 +48,8 @@ class PetItem(
     override var rarity: Rarity = stored?.rarity ?: Rarity.COMMON
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override val abilities: MutableList<MacrocosmAbility> = mutableListOf()
-    override val enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override val abilities: MutableList<RegistryPointer> = mutableListOf()
+    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0

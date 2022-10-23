@@ -42,10 +42,7 @@ import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
-import space.maxus.macrocosm.registry.Clone
-import space.maxus.macrocosm.registry.Identified
-import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.*
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -90,8 +87,8 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     var rarity: Rarity
     var rarityUpgraded: Boolean
     var reforge: Reforge?
-    val abilities: MutableList<MacrocosmAbility>
-    val enchantments: HashMap<Enchantment, Int>
+    val abilities: MutableList<RegistryPointer>
+    val enchantments: HashMap<Identifier, Int>
     val maxStars: Int get() = 20
     val runes: Multimap<RuneSlot, RuneState>
     val buffs: HashMap<MinorItemBuff, Int>
@@ -100,7 +97,8 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     var skin: SkullSkin?
     val sellPrice: Double
         get() {
-            return 1.0 + enchantments.toList().sumOf { (ench, lvl) -> ench.levels.indexOf(lvl) * 25.0 } + (stars / min(
+            return 1.0 + enchantments.toList()
+                .sumOf { (ench, lvl) -> Registry.ENCHANT.find(ench).levels.indexOf(lvl) * 25.0 } + (stars / min(
                 maxStars,
                 1
             ).toDouble()) * 1000 + (if (reforge != null) 1000 else 0) + if (rarityUpgraded) 15000 else 0
@@ -168,7 +166,8 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         val base = stats.clone()
         val special = specialStats()
         for ((ench, level) in enchantments) {
-            base.increase(ench.stats(level, player))
+            val actualEnch = Registry.ENCHANT.find(ench)
+            base.increase(actualEnch.stats(level, player))
         }
         base.increase(reforge?.stats(rarity))
         for ((_, state) in runes.entries()) {
@@ -193,7 +192,8 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     fun specialStats(): SpecialStatistics {
         val base = specialStats.clone()
         for ((ench, level) in enchantments) {
-            base.increase(ench.special(level))
+            val actualEnch = Registry.ENCHANT.find(ench)
+            base.increase(actualEnch.special(level))
         }
         // 2% boost from stars
         base.multiply(1 + (stars * .02f))
@@ -268,7 +268,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         for (k in enchants.allKeys) {
             if (k == "macrocosm:null")
                 continue
-            enchantments[Registry.ENCHANT.find(Identifier.parse(k))] = enchants.getInt(k)
+            enchantments[Identifier.parse(k)] = enchants.getInt(k)
         }
 
         this.stars = nbt.getInt("Stars")
@@ -315,32 +315,32 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
     fun enchantUnsafe(enchantment: Enchantment, lvl: Int) {
         val name = Registry.ENCHANT.byValue(enchantment)
-        enchantments.filter { (ench, _) ->
-            ench.conflicts.contains(Identifier.macro("all"))
+        enchantments.map { (Registry.ENCHANT.find(it.key) to it.key) to it.value }.filter { (ench, _) ->
+            ench.first.conflicts.contains(Identifier.macro("all"))
         }.forEach { (ench, _) ->
-            enchantments.remove(ench)
+            enchantments.remove(ench.second)
         }
         if (enchantment.conflicts.contains(Identifier.macro("all"))) {
             enchantments.filter { (ench, _) ->
-                ench.name != "Telekinesis"
+                Registry.ENCHANT.find(ench).name != "Telekinesis"
             }.forEach { (ench, _) ->
                 enchantments.remove(ench)
             }
         } else {
             enchantments.filter { (ench, _) ->
-                ench.conflicts.contains(name)
+                Registry.ENCHANT.find(ench).conflicts.contains(name)
             }.forEach { (ench, _) ->
                 enchantments.remove(ench)
             }
             if (enchantment is UltimateEnchantment) {
                 enchantments.filter { (ench, _) ->
-                    ench is UltimateEnchantment
+                    Registry.ENCHANT.find(ench) is UltimateEnchantment
                 }.forEach { (ench, _) ->
                     enchantments.remove(ench)
                 }
             }
         }
-        enchantments[enchantment] = lvl
+        enchantments[Registry.ENCHANT.byValue(enchantment)!!] = lvl
     }
 
     /**
@@ -467,17 +467,19 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                         ench.displayFancy(lore, lvl)
                     }
                     for ((ench, lvl) in enchantments) {
-                        if (ench is UltimateEnchantment)
+                        val actualEnch = Registry.ENCHANT.find(ench)
+                        if (actualEnch is UltimateEnchantment)
                             continue
-                        ench.displayFancy(lore, lvl)
+                        actualEnch.displayFancy(lore, lvl)
                     }
                     lore.add("".toComponent())
                 }
             }
 
             // abilities
-            for (ability in abilities) {
+            for (abilityRef in abilities) {
                 val tmp = mutableListOf<Component>()
+                val ability = abilityRef.get<MacrocosmAbility>()
                 ability.buildLore(tmp, player)
                 if (ability is EntityKillCounterBonus && this@MacrocosmItem is KillStorageItem) {
                     tmp.addAll(ability.addLore(this@MacrocosmItem))
@@ -583,7 +585,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         // enchants
         val enchants = CompoundTag()
         for ((ench, level) in enchantments) {
-            enchants.putInt((Registry.ENCHANT.byValue(ench) ?: Identifier.NULL).toString(), level)
+            enchants.putInt(ench.toString(), level)
         }
         nbt.put("Enchantments", enchants)
 

@@ -23,6 +23,7 @@ import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.listeners.DamageHandlers
+import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.metrics.report
 import java.util.*
@@ -124,7 +125,7 @@ object TitansLightning : AbilityBase(
             val p = e.player.paper ?: report("Player in RightClickEvent was null!") { return@listen }
 
             val item = p.inventory.getItem(EquipmentSlot.HAND)
-            if (item.macrocosm == null || !item.macrocosm!!.abilities.contains(this))
+            if (item.macrocosm == null || !item.macrocosm!!.abilities.anyPoints(this))
                 return@listen
 
             val target = p.getTargetEntity(9) as? LivingEntity ?: p.location.getNearbyLivingEntities(

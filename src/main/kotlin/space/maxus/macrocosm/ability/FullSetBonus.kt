@@ -37,7 +37,7 @@ open class FullSetBonus(name: String, description: String, val threePiece: Boole
             player.chestplate,
             player.leggings,
             player.boots
-        )).map { it != null && it.abilities.contains(this) }.all { it }
+        )).map { it != null && it.abilities.any { ab -> ab.pointer == id } }.all { it }
     }
 
     /**

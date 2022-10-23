@@ -9,13 +9,14 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.RegistryPointer
+import space.maxus.macrocosm.registry.registryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.stats.stats
@@ -29,7 +30,7 @@ open class AbilityItem(
     override var rarity: Rarity,
     override val base: Material,
     override var stats: Statistics,
-    override val abilities: MutableList<MacrocosmAbility> = mutableListOf(),
+    abilities: List<MacrocosmAbility> = listOf(),
     override var specialStats: SpecialStatistics = SpecialStatistics(),
     override var breakingPower: Int = 0,
     runeTypes: List<RuneSlot> = listOf(),
@@ -37,6 +38,9 @@ open class AbilityItem(
     id: Identifier? = null,
     protected val metaModifier: (ItemMeta) -> Unit = { },
 ) : MacrocosmItem {
+    override val abilities: MutableList<RegistryPointer> =
+        abilities.map { registryPointer(space.maxus.macrocosm.util.general.id("ability"), it) }.toMutableList()
+
     @Suppress("ClassName")
     object PLACEHOLDER_ITEM : AbilityItem(
         ItemType.OTHER,
@@ -60,7 +64,7 @@ open class AbilityItem(
     override var name: Component = text(itemName)
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
-    override var enchantments: HashMap<Enchantment, Int> = hashMapOf()
+    override var enchantments: HashMap<Identifier, Int> = hashMapOf()
     override val runes: Multimap<RuneSlot, RuneState> = multimap<RuneSlot, RuneState>().apply {
         for (ty in runeTypes) {
             put(ty, RuneState.EMPTY)
@@ -95,13 +99,13 @@ open class AbilityItem(
             rarity,
             base,
             stats.clone(),
-            abilities,
+            abilities.map { it.get() },
             specialStats.clone(),
             metaModifier = metaModifier,
             description = description,
             id = id
         )
-        item.enchantments = enchantments.clone() as HashMap<Enchantment, Int>
+        item.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
         item.stars = stars

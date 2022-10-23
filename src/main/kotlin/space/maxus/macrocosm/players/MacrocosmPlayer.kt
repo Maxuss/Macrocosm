@@ -515,7 +515,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             stats.increase(item.specialStats)
             if (item.enchantments.isNotEmpty()) {
                 for ((ench, level) in item.enchantments) {
-                    val special = ench.special(level)
+                    val actualEnch = Registry.ENCHANT.find(ench)
+                    val special = actualEnch.special(level)
                     stats.increase(special)
                 }
             }
