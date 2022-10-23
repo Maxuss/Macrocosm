@@ -22,7 +22,7 @@ import kotlin.math.roundToInt
 inline fun defaultStats(builder: Statistics.() -> Unit) = Statistics.default().apply(builder)
 inline fun stats(builder: Statistics.() -> Unit) = Statistics.zero().apply(builder)
 
-data class Statistics(private val self: TreeMap<Statistic, Float>): Serializable {
+data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializable {
     companion object {
         @JvmStatic
         fun zero(): Statistics {

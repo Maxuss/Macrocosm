@@ -11,7 +11,7 @@ import java.io.Serializable
  */
 // todo: collection recipes
 // todo: implement an actual collection leveling table instead of a SkillTable
-enum class CollectionType(val inst: Collection): Serializable {
+enum class CollectionType(val inst: Collection) : Serializable {
     // combat
     ROTTEN_FLESH(Collection("Rotten Flesh", listOf(), COMBAT, SkillTable)),
     BONE(Collection("Bone", listOf(), COMBAT, SkillTable)),

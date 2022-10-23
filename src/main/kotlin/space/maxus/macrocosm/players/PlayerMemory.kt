@@ -5,7 +5,7 @@ import java.io.Serializable
 
 data class PlayerMemory(
     val tier6Slayers: MutableList<Identifier>
-): Serializable {
+) : Serializable {
     companion object {
         fun nullMemory() = PlayerMemory(mutableListOf())
     }

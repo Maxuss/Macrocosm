@@ -6,7 +6,7 @@ import java.io.Serializable
 import java.time.Duration
 import java.time.Instant
 
-data class ActiveForgeRecipe(val id: Identifier, val startTime: Long): Serializable {
+data class ActiveForgeRecipe(val id: Identifier, val startTime: Long) : Serializable {
     fun isDoneByNow(): Boolean {
         val duration = Duration.ofSeconds(Registry.FORGE_RECIPE.find(id).length).toMillis()
         val requiredStamp = startTime + duration

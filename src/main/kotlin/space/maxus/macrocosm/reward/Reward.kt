@@ -6,7 +6,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.text
 import java.io.Serializable
 
-interface Reward: Serializable {
+interface Reward : Serializable {
     val isHidden: Boolean
     fun reward(player: MacrocosmPlayer, lvl: Int)
     fun display(lvl: Int): Component

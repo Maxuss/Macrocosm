@@ -2,7 +2,7 @@ package space.maxus.macrocosm.stats
 
 import java.io.Serializable
 
-enum class SpecialStatistic: Serializable {
+enum class SpecialStatistic : Serializable {
     KB_BOOST,
     KB_RESISTANCE,
     FIRE_RESISTANCE,

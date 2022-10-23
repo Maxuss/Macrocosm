@@ -8,7 +8,7 @@ import space.maxus.macrocosm.text.text
 import java.io.Serializable
 
 @Suppress("unused")
-enum class StatisticType(val color: TextColor): Serializable {
+enum class StatisticType(val color: TextColor) : Serializable {
     OFFENSIVE(NamedTextColor.RED),
     DEFENSIVE(NamedTextColor.GREEN),
     SPECIAL(NamedTextColor.AQUA)

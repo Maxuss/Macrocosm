@@ -120,7 +120,7 @@ fun registryPointer(registry: Identifier): RegistryPointer {
     return RegistryPointer(registry, Identifier.NULL)
 }
 
-object RegistryPointerTypeAdapter: TypeAdapter<RegistryPointer>() {
+object RegistryPointerTypeAdapter : TypeAdapter<RegistryPointer>() {
     override fun write(out: JsonWriter, value: RegistryPointer) {
         out.value("${value.registry}@${value.pointer}")
     }

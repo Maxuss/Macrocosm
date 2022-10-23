@@ -11,7 +11,7 @@ import java.util.*
 /**
  * A compound used for JSON serialization of [bazaar item data][BazaarTable]
  */
-data class BazaarOrderCompound(val buy: List<BazaarBuyOrder>, val sell: List<BazaarSellOrder>): Serializable
+data class BazaarOrderCompound(val buy: List<BazaarBuyOrder>, val sell: List<BazaarSellOrder>) : Serializable
 
 /**
  * A singular bazaar order
@@ -33,7 +33,7 @@ abstract class BazaarOrder(
      * Epoch milliseconds when this order was created
      */
     val createdAt: Long = Instant.now().toEpochMilli()
-): Serializable {
+) : Serializable {
     /**
      * Total coins accumulated in this order
      */

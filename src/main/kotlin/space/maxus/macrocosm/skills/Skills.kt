@@ -4,7 +4,7 @@ import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.util.general.defer
 import java.io.Serializable
 
-class Skills(val skillExp: HashMap<SkillType, PlayerSkill>): Serializable {
+class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) : Serializable {
 
     operator fun get(sk: SkillType): Double {
         return skillExp[sk]!!.overflow
@@ -42,4 +42,4 @@ class Skills(val skillExp: HashMap<SkillType, PlayerSkill>): Serializable {
     }
 }
 
-data class PlayerSkill(var lvl: Int, var overflow: Double): Serializable
+data class PlayerSkill(var lvl: Int, var overflow: Double) : Serializable

@@ -10,4 +10,4 @@ data class StoredPet(
     var level: Int,
     var overflow: Double,
     val skin: Identifier? = null
-): Serializable
+) : Serializable

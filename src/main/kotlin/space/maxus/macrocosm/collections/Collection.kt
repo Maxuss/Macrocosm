@@ -21,5 +21,6 @@ fun collection(
 /**
  * A single collection which contains different items and rewards
  */
-open class Collection(val name: String, val rewards: List<Reward>, val section: Section, val table: LevelingTable): Serializable
+open class Collection(val name: String, val rewards: List<Reward>, val section: Section, val table: LevelingTable) :
+    Serializable
 

@@ -8,7 +8,7 @@ import java.io.Serializable
 /**
  * A compound which contains all collections of a player
  */
-class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>): Serializable {
+class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) : Serializable {
 
     /**
      * Gets total amount of items collected for a certain collection type
@@ -72,4 +72,4 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>): 
 /**
  * An object that stores player's progress for a certain collection
  */
-data class PlayerCollection(var lvl: Int, var total: Int): Serializable
+data class PlayerCollection(var lvl: Int, var total: Int) : Serializable

@@ -95,7 +95,8 @@ class SqlPlayerData(
                 Bytes.deserializeObject(res[t.slayers]) ?: hashMapOf(),
                 res[t.activePet],
                 Bytes.deserializeObject(res[t.pets]) ?: hashMapOf(),
-                Bytes.deserializeObject(res[t.essence]) ?: EssenceType.values().toList().associateWithHashed(ignoring(0))
+                Bytes.deserializeObject(res[t.essence]) ?: EssenceType.values().toList()
+                    .associateWithHashed(ignoring(0))
             )
         }
     }

@@ -28,7 +28,7 @@ class Deserialization(private val input: ObjectInputStream) {
     fun string(): String {
         val buffer = mutableListOf<Byte>()
         var currentByte: Byte
-        while(input.readByte().let { currentByte = it; currentByte } != 0x00.toByte()) {
+        while (input.readByte().let { currentByte = it; currentByte } != 0x00.toByte()) {
             buffer.add(currentByte)
         }
         return Charsets.UTF_8.decode(ByteBuffer.wrap(buffer.toByteArray())).toString()

@@ -10,7 +10,7 @@ enum class SkillType(
     val descriptor: (lvl: Int) -> String,
     val emoji: String,
     val maxLevel: Int = 50
-): Serializable {
+) : Serializable {
     COMBAT(
         "Warrior",
         skill(

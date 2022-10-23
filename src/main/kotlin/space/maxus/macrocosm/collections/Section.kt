@@ -5,7 +5,7 @@ import java.io.Serializable
 /**
  * A section for collections
  */
-enum class Section: Serializable {
+enum class Section : Serializable {
     COMBAT,
     FARMING,
     FISHING,

@@ -28,7 +28,7 @@ enum class Statistic(
     val description: String = "",
     val addExtraLore: MutableList<String>.(Statistics) -> Unit = { },
     val hiddenFancy: Boolean = false
-): Serializable {
+) : Serializable {
     DAMAGE(
         StatisticType.OFFENSIVE,
         NamedTextColor.RED,
