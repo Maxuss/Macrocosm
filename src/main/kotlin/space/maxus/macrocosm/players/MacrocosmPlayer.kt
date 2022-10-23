@@ -49,6 +49,7 @@ import space.maxus.macrocosm.players.chat.ChatChannel
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.slayer.SlayerLevel
@@ -65,7 +66,6 @@ import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
-import space.maxus.macrocosm.util.toJson
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -566,11 +566,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 }
                 StatsTable.insert {
                     it[uuid] = p.ref
-                    it[StatsTable.data] = toJson(baseStats)
+                    it[StatsTable.data] = Bytes.serialize().obj(baseStats).end()
                 }
             } else {
                 StatsTable.update {
-                    it[StatsTable.data] = toJson(baseStats)
+                    it[StatsTable.data] = Bytes.serialize().obj(baseStats).end()
                 }
             }
         }
@@ -628,21 +628,21 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         it[PlayersTable.playtime] = newPlaytime
         it[PlayersTable.purse] = p.purse
         it[PlayersTable.bank] = p.bank
-        it[PlayersTable.memory] = toJson(p.memory)
-        it[PlayersTable.forge] = toJson(p.activeForgeRecipes)
-        it[PlayersTable.collections] = p.collections.json()
-        it[PlayersTable.skills] = p.skills.json()
-        it[PlayersTable.recipes] = toJson(p.unlockedRecipes)
+        it[PlayersTable.memory] = Bytes.serialize().obj(p.memory).end()
+        it[PlayersTable.forge] = Bytes.serialize().obj(p.activeForgeRecipes).end()
+        it[PlayersTable.collections] = p.collections.serialize()
+        it[PlayersTable.skills] = p.skills.serialize()
+        it[PlayersTable.recipes] = Bytes.serialize().obj(p.unlockedRecipes).end()
         it[PlayersTable.necklace] =
             if (p.equipment.necklace == null) "NULL" else p.equipment.necklace!!.serializeToBytes(this)
         it[PlayersTable.cloak] = if (p.equipment.cloak == null) "NULL" else p.equipment.cloak!!.serializeToBytes(this)
         it[PlayersTable.belt] = if (p.equipment.belt == null) "NULL" else p.equipment.belt!!.serializeToBytes(this)
         it[PlayersTable.gloves] =
             if (p.equipment.gloves == null) "NULL" else p.equipment.gloves!!.serializeToBytes(this)
-        it[PlayersTable.slayers] = toJson(p.slayers)
+        it[PlayersTable.slayers] = Bytes.serialize().obj(p.slayers).end()
         it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
-        it[PlayersTable.pets] = toJson(p.ownedPets)
-        it[PlayersTable.essence] = toJson(availableEssence)
+        it[PlayersTable.pets] = Bytes.serialize().obj(p.ownedPets).end()
+        it[PlayersTable.essence] = Bytes.serialize().obj(availableEssence).end()
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)

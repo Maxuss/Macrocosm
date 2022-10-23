@@ -9,7 +9,6 @@ import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
 import org.jetbrains.annotations.ApiStatus
-import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar

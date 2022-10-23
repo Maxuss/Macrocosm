@@ -1,11 +1,12 @@
 package space.maxus.macrocosm.stats
 
 import net.minecraft.nbt.CompoundTag
+import java.io.Serializable
 import kotlin.math.roundToInt
 
 fun specialStats(builder: SpecialStatistics.() -> Unit) = SpecialStatistics().apply(builder)
 
-class SpecialStatistics {
+class SpecialStatistics: Serializable {
     private var self: HashMap<SpecialStatistic, Float> =
         hashMapOf(*SpecialStatistic.values().map { it to 0f }.toTypedArray())
 

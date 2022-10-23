@@ -5,9 +5,10 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.text.text
+import java.io.Serializable
 
 @Suppress("unused")
-enum class StatisticType(val color: TextColor) {
+enum class StatisticType(val color: TextColor): Serializable {
     OFFENSIVE(NamedTextColor.RED),
     DEFENSIVE(NamedTextColor.GREEN),
     SPECIAL(NamedTextColor.AQUA)

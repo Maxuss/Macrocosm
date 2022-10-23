@@ -1,12 +1,14 @@
 package space.maxus.macrocosm.collections
 
-import com.google.gson.reflect.TypeToken
-import space.maxus.macrocosm.util.GSON
+import space.maxus.macrocosm.serde.Bytes
+import space.maxus.macrocosm.serde.Deserialization
+import space.maxus.macrocosm.util.general.defer
+import java.io.Serializable
 
 /**
  * A compound which contains all collections of a player
  */
-class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) {
+class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>): Serializable {
 
     /**
      * Gets total amount of items collected for a certain collection type
@@ -46,11 +48,9 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) {
 
     /**
      * Converts this collection to a json string to be stored inside a database
-     *
-     * note: this is a rather unoptimized method, more compact approach is possible (see [this issue](https://github.com/Maxuss/Macrocosm/issues/3))
      */
-    fun json(): String {
-        return GSON.toJson(colls.map { (key, value) -> Pair(key.name, value) }.toMap())
+    fun serialize(): String {
+        return Bytes.serialize().obj(this).end()
     }
 
     companion object {
@@ -62,14 +62,9 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) {
 
         /**
          * Converts this collection from a json string
-         *
-         * note: this is a rather unoptimized method, more compact approach is possible (see [this issue](https://github.com/Maxuss/Macrocosm/issues/3))
          */
-        fun fromJson(json: String): CollectionCompound {
-            val map: HashMap<String, PlayerCollection> =
-                GSON.fromJson(json, object : TypeToken<HashMap<String, PlayerCollection>>() {}.type)
-            return CollectionCompound(HashMap(map.map { (key, value) -> Pair(CollectionType.valueOf(key), value) }
-                .toMap()))
+        fun deserialize(data: String): CollectionCompound {
+            return Bytes.deserialize(data).defer(Deserialization::end).first { obj() }
         }
     }
 }
@@ -77,4 +72,4 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) {
 /**
  * An object that stores player's progress for a certain collection
  */
-data class PlayerCollection(var lvl: Int, var total: Int)
+data class PlayerCollection(var lvl: Int, var total: Int): Serializable

@@ -1,5 +1,7 @@
 package space.maxus.macrocosm.util.math
 
+import java.io.Serializable
+
 object SkillTable : FixedLevelingTable(
     listOf(
         50.0,
@@ -63,4 +65,4 @@ object SkillTable : FixedLevelingTable(
         5100000.0,
         5500000.0
     )
-)
+), Serializable

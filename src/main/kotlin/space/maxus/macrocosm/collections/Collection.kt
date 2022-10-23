@@ -4,6 +4,7 @@ import org.jetbrains.annotations.ApiStatus
 import space.maxus.macrocosm.reward.Reward
 import space.maxus.macrocosm.util.math.LevelingTable
 import space.maxus.macrocosm.util.math.SkillTable
+import java.io.Serializable
 
 /**
  * Constructs a new instance of a collection
@@ -20,5 +21,5 @@ fun collection(
 /**
  * A single collection which contains different items and rewards
  */
-open class Collection(val name: String, val rewards: List<Reward>, val section: Section, val table: LevelingTable)
+open class Collection(val name: String, val rewards: List<Reward>, val section: Section, val table: LevelingTable): Serializable
 
