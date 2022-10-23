@@ -174,7 +174,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             val (contained, tier) = state
             if (tier == 0 || contained == null)
                 continue
-            val r = BuffRegistry.findRune(contained)
+            val r = Registry.RUNE.find(contained)
             if (r is StatRune)
                 base.increase(r.baseStats.clone().apply { multiply(tier.toFloat()) })
         }
@@ -286,7 +286,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             this.runes.put(slot, state)
         }
         val buffsCmp = nbt.getCompound("Buffs")
-        val buffs = buffsCmp.allKeys.map { BuffRegistry.findBuff(Identifier.parse(it)) }
+        val buffs = buffsCmp.allKeys.map { Registry.ITEM_BUFF.find(Identifier.parse(it)) }
             .associateWith { buffsCmp.getInt(it.id.toString()) }
         this.buffs.putAll(buffs)
         if (nbt.contains("Dye")) {
@@ -397,7 +397,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
                     runeComp = if (tier <= 0 || contained == null)
                         runeComp.append(slot.render()).append(" ".toComponent())
                     else
-                        runeComp.append(BuffRegistry.findRune(contained).render(tier)).append(" ".toComponent())
+                        runeComp.append(Registry.RUNE.find(contained).render(tier)).append(" ".toComponent())
                 }
                 lore.add(runeComp.noitalic())
             }
@@ -479,7 +479,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
             // abilities
             for (abilityRef in abilities) {
                 val tmp = mutableListOf<Component>()
-                val ability = abilityRef.get<MacrocosmAbility>()
+                val ability = abilityRef.get<MacrocosmAbility>() ?: continue
                 ability.buildLore(tmp, player)
                 if (ability is EntityKillCounterBonus && this@MacrocosmItem is KillStorageItem) {
                     tmp.addAll(ability.addLore(this@MacrocosmItem))

@@ -21,7 +21,7 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
     /**
      * Attempts to set value inside this pointer.
      */
-    fun <T> trySet(v: T): ConditionalCallback {
+    fun <T: Any> trySet(v: T?): ConditionalCallback {
         val success = this.set(v)
         return ConditionalCallback { success }
     }
@@ -32,9 +32,9 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
      * @return false if failed to write value, true if succeeded
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> set(v: T): Boolean {
-        val actualRegistry: Registry<T> = (Registry.find(registry) as? Registry<T>) ?: return false
-        this.pointer = actualRegistry.byValue(v) ?: return false
+    fun <T: Any> set(v: T?): Boolean {
+        val actualRegistry = Registry.findOrNull(registry) as? Registry<Any> ?: return false
+        this.pointer = if(v == null) Identifier.NULL else actualRegistry.byValue(v) ?: return false
         return true
     }
 
@@ -45,9 +45,11 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
      * @throws NullPointerException if it could not find element of ID [pointer] inside the [registry] registry
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> get(): T {
-        val actualRegistry: Registry<T> = (Registry.find(registry) as? Registry<T>)!!
-        return actualRegistry.find(pointer)
+    fun <T: Any> get(): T? {
+        if(pointer.isNull())
+            return null
+        val actualRegistry = (Registry.find(registry) as? Registry<Any>)!!
+        return actualRegistry.find(pointer) as T
     }
 
     /**
@@ -56,10 +58,12 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
      * @return null if failed to read the value, value of the pointer otherwise
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> tryGet(): T? {
+    fun <T: Any> tryGet(): T? {
+        if(pointer.isNull())
+            return null
         return try {
-            val actualRegistry = Registry.find(registry) as Registry<T>
-            actualRegistry.findOrNull(pointer)
+            val actualRegistry = Registry.find(registry) as Registry<Any>
+            actualRegistry.findOrNull(pointer) as? T
         } catch (e: ClassCastException) {
             null
         }
@@ -96,12 +100,12 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
         return "$registry@$pointer"
     }
 
-    operator fun <T> getValue(self: Any?, prop: KProperty<*>): T? {
+    operator fun <T: Any> getValue(self: Any?, prop: KProperty<*>): T? {
         return tryGet()
     }
 
-    operator fun <T> setValue(self: Any?, prop: KProperty<*>, value: T?) {
-        this.trySet(value)
+    operator fun <T: Any> setValue(self: Any?, prop: KProperty<*>, value: T?) {
+        this.set(value)
     }
 }
 

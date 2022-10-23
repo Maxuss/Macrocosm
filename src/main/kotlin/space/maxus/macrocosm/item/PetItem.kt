@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.item
 
 import com.destroystokyo.paper.profile.ProfileProperty
-import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
@@ -12,51 +11,25 @@ import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.noitalic
-import space.maxus.macrocosm.cosmetic.Dye
-import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
-import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.RuneSlot
-import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.registry.RegistryPointer
-import space.maxus.macrocosm.stats.SpecialStatistics
-import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.getId
-import space.maxus.macrocosm.util.multimap
 
 class PetItem(
-    override val id: Identifier,
+    id: Identifier,
     private var nameStr: String,
     private val headSkin: String,
     var stored: StoredPet? = null
-) : MacrocosmItem {
-    override var stats: Statistics = Statistics.zero()
-    override var specialStats: SpecialStatistics = SpecialStatistics()
-    override var amount: Int = 1
-    override var stars: Int = 0
-    override val type: ItemType = ItemType.OTHER
+) : AbstractMacrocosmItem(id, ItemType.OTHER) {
     override var name: Component = Component.empty()
     override val base: Material = Material.PLAYER_HEAD
     override var rarity: Rarity = stored?.rarity ?: Rarity.COMMON
-    override var rarityUpgraded: Boolean = false
-    override var reforge: Reforge? = null
-    override val abilities: MutableList<RegistryPointer> = mutableListOf()
-    override val enchantments: HashMap<Identifier, Int> = hashMapOf()
-    override val runes: Multimap<RuneSlot, RuneState> = multimap()
-    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
-    override var breakingPower: Int = 0
-    override var dye: Dye? = null
-    override var skin: SkullSkin? = null
-    override val maxStars: Int = 0
-
     override fun buildName(): Component {
         return text("<gray>[Lvl ${stored!!.level}] <${stored!!.rarity.color.asHexString()}>$nameStr").noitalic()
     }

@@ -1,27 +1,18 @@
 package space.maxus.macrocosm.item
 
-import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
 import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.cosmetic.Dye
-import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.enchants.Enchantment
-import space.maxus.macrocosm.item.buffs.MinorItemBuff
-import space.maxus.macrocosm.item.runes.RuneSlot
-import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.registry.RegistryPointer
-import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
-import space.maxus.macrocosm.util.multimap
 
 private fun rarityFromEnchants(ench: HashMap<Identifier, Int>): Rarity {
     if (ench.values.isEmpty())
@@ -36,27 +27,13 @@ private fun rarityFromEnchants(ench: HashMap<Identifier, Int>): Rarity {
     else Rarity.COMMON
 }
 
-class EnchantedBook(override val enchantments: HashMap<Identifier, Int> = hashMapOf()) : MacrocosmItem {
-    override var stats: Statistics get() = Statistics.zero(); set(_) {}
-    override var specialStats: SpecialStatistics get() = SpecialStatistics(); set(_) {}
-    override var amount: Int = 1
-    override var stars: Int = 0
-    override val id: Identifier = id("enchanted_book")
-    override val type: ItemType = ItemType.OTHER
+class EnchantedBook(override var enchantments: HashMap<Identifier, Int> = hashMapOf()) :
+    AbstractMacrocosmItem(id("enchanted_book"), ItemType.OTHER) {
     override var name: Component =
         text(enchantments.maxByOrNull { it.value }?.key?.let { Registry.ENCHANT.findOrNull(it)?.name }
             ?: "Enchanted Book")
     override val base: Material = Material.ENCHANTED_BOOK
     override var rarity: Rarity = rarityFromEnchants(enchantments)
-    override var rarityUpgraded: Boolean = false
-    override var reforge: Reforge? = null
-    override val abilities: MutableList<RegistryPointer> = mutableListOf()
-    override val runes: Multimap<RuneSlot, RuneState> = multimap()
-    override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
-    override var breakingPower: Int = 0
-    override var dye: Dye? = null
-    override var skin: SkullSkin? = null
-
     override fun addPotatoBooks(amount: Int) {
 
     }

@@ -10,6 +10,7 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -19,7 +20,7 @@ open class SkullAbilityItem(
     rarity: Rarity,
     val skullOwner: String,
     stats: Statistics,
-    abilities: MutableList<MacrocosmAbility> = mutableListOf(),
+    abilities: MutableList<RegistryPointer> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
     runeTypes: List<Identifier> = listOf(),
@@ -32,7 +33,7 @@ open class SkullAbilityItem(
     rarity,
     Material.PLAYER_HEAD,
     stats,
-    abilities,
+    abilities.mapNotNull { it.get<MacrocosmAbility>() }.toMutableList(),
     specialStats,
     breakingPower,
     runeTypes.map { RuneSlot.fromId(it) },
@@ -61,7 +62,7 @@ open class SkullAbilityItem(
             rarity,
             skullOwner,
             stats.clone(),
-            abilities.map { it.get<MacrocosmAbility>() }.toMutableList(),
+            abilities,
             specialStats.clone(),
             description = description,
             id = id
