@@ -21,7 +21,6 @@ import space.maxus.macrocosm.generators.Animation
 import space.maxus.macrocosm.generators.AnimationData
 import space.maxus.macrocosm.generators.MetaGenerator
 import space.maxus.macrocosm.generators.Model
-import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.runes.RuneItem
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneSpec
@@ -376,7 +375,7 @@ enum class ItemValue(
         private fun initRunes() {
             val pool = Threading.newFixedPool(5)
 
-            for ((id, allowed) in BuffRegistry.runes) {
+            for ((id, allowed) in Registry.RUNE.iter()) {
                 pool.execute {
                     val baseName = id.path.replace("_", " ").capitalized()
                     for (rarity in runeQualities) {
