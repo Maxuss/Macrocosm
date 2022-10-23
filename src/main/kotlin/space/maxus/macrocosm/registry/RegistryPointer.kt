@@ -25,4 +25,22 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
             null
         }
     }
+
+    operator fun component1(): Identifier {
+        return this.registry
+    }
+
+    operator fun component2(): Identifier {
+        return this.pointer
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other != null && other is RegistryPointer && other.registry == this.registry && other.pointer == this.pointer
+    }
+
+    override fun hashCode(): Int {
+        var result = registry.hashCode()
+        result = 31 * result + pointer.hashCode()
+        return result
+    }
 }
