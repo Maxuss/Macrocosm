@@ -12,6 +12,7 @@ import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.RegistryPointer
+import space.maxus.macrocosm.registry.registryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.stats
 
@@ -26,7 +27,7 @@ abstract class AbstractMacrocosmItem(override val id: Identifier, override val t
     override val runes: Multimap<RuneSlot, RuneState> = HashMultimap.create()
     override val buffs: HashMap<MinorItemBuff, Int> = hashMapOf()
     override var breakingPower: Int = 0
-    override var dye: Dye? = null
+    override var dye: Dye? by registryPointer(Identifier.macro("cosmetic"))
     override var skin: SkullSkin? = null
     override var reforge: Reforge? = null
 
