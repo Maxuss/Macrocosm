@@ -71,6 +71,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.*
+import space.maxus.macrocosm.util.data.SemanticVersion
 import space.maxus.macrocosm.util.general.ConditionalValueCallback
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.metrics.report
@@ -1174,15 +1175,16 @@ object Discord : ListenerAdapter() {
     /**
      * Sends embed that displays the difference between current version and previous version
      */
-    fun sendVersionDiff(previous: String) {
+    fun sendVersionDiff(previous: SemanticVersion) {
         commTextChannel?.sendMessage(MessageCreateData.fromEmbeds(embed {
             setColor(0x29232D)
             setTitle("**Macrocosm Version Change**")
-            addField("Version $previous → ${Macrocosm.version}", "\uD83E\uDE79", false)
+            addField("", "Version $previous → ${Macrocosm.version} \uD83E\uDE79", true)
+            addBlankField(false)
             addField(
-                "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!",
-                "Keep guessing what it could be!",
-                false
+                "",
+                "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!\nKeep guessing what it could be!",
+                true
             )
 
             setTimestamp(Instant.now())

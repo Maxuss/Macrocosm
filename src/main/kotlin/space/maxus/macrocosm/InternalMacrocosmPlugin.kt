@@ -59,6 +59,7 @@ import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
+import space.maxus.macrocosm.util.data.SemanticVersion
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.game.Calendar
@@ -129,8 +130,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes()))
                 .toString()
         )!!
-        MacrocosmConstants.API_VERSION = versionInfo.apiVersion
-        MacrocosmConstants.VERSION = versionInfo.version
+        MacrocosmConstants.API_VERSION = SemanticVersion.fromString(versionInfo.apiVersion)
+        MacrocosmConstants.VERSION = SemanticVersion.fromString(versionInfo.version)
         KeyManager.load()
         BazaarElement.init()
         Threading.contextBoundedRunAsync {
@@ -337,8 +338,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         taskRunLater(5 * 20L, sync = false) {
             // detect item registry changes
             if (Macrocosm.isOnline) {
-                val previousVersion = Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null }
-                if (previousVersion != null && this.version != previousVersion)
+                val previousVersion = SemanticVersion.fromString(Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null } ?: "0.0.0-null")
+                if (this.version != previousVersion)
                     Discord.sendVersionDiff(previousVersion)
                 Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
             }
@@ -369,7 +370,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         storageExecutor.execute { KeyManager.store() }
         storageExecutor.execute { Discord.storeSelf() }
-        storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version) } }
+        storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version.toString()) } }
 
         storageExecutor.shutdown()
 
