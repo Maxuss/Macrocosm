@@ -32,7 +32,6 @@ import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.CostCompileEvent
 import space.maxus.macrocosm.events.ItemCalculateStatsEvent
-import space.maxus.macrocosm.item.buffs.BuffRegistry
 import space.maxus.macrocosm.item.buffs.MinorItemBuff
 import space.maxus.macrocosm.item.buffs.PotatoBook
 import space.maxus.macrocosm.item.runes.RuneSlot
