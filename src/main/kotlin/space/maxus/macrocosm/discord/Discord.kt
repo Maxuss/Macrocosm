@@ -1183,7 +1183,7 @@ object Discord : ListenerAdapter() {
             addBlankField(false)
             addField(
                 "",
-                "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!\nKeep guessing what it could be!",
+                (if(previous.major == Macrocosm.version.major) "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!\nKeep guessing what it could be!" else "The **Macrocosm version** has undergone major change! This is a **big** update!"),
                 true
             )
 

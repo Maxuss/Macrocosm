@@ -5,6 +5,7 @@ import org.bukkit.inventory.meta.ItemMeta
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.registryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.util.general.id
@@ -68,7 +69,7 @@ open class ArmorItem(
             baseRarity,
             headSkin,
             statClone,
-            abilities.toMutableList(),
+            abilities.map { registryPointer(id("ability"), it) }.toMutableList(),
             specClone,
             runeTypes = runes.map { it.id },
             id = id("${baseId}_helmet")
