@@ -88,26 +88,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var DATABASE: DataStorage; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
 
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val API_VERSION: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val VERSION: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.CURRENT_IP"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val CURRENT_IP: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val OFFLINE_MODE: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val DISCORD_BOT_TOKEN: String? = null
-
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
         lateinit var FONT_MINECRAFT_ITALIC: Font; private set
