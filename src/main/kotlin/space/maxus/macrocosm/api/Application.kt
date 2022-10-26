@@ -102,8 +102,8 @@ fun Application.module() {
                     Status(
                         "OPERATING",
                         Macrocosm.isInDevEnvironment,
-                        MacrocosmConstants.API_VERSION,
-                        MacrocosmConstants.VERSION
+                        MacrocosmConstants.API_VERSION.toString(),
+                        MacrocosmConstants.VERSION.toString()
                     )
                 )
             }

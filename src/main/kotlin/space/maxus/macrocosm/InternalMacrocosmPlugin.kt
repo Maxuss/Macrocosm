@@ -8,7 +8,6 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
-import org.jetbrains.annotations.ApiStatus
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -60,6 +59,7 @@ import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
+import space.maxus.macrocosm.util.data.SemanticVersion
 import space.maxus.macrocosm.util.data.Unsafe
 import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.game.Calendar
@@ -87,26 +87,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var MONITOR: Monitor; private set
         lateinit var DATABASE: DataStorage; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.API_VERSION"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val API_VERSION: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.VERSION"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val VERSION: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.CURRENT_IP"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val CURRENT_IP: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.OFFLINE_MODE"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val OFFLINE_MODE: String? = null
-
-        @Deprecated("Use MacrocosmConstants instead.", ReplaceWith("MacrocosmConstants.DISCORD_BOT_TOKEN"))
-        @ApiStatus.ScheduledForRemoval(inVersion = "0.3.0")
-        val DISCORD_BOT_TOKEN: String? = null
 
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
@@ -150,8 +130,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes()))
                 .toString()
         )!!
-        MacrocosmConstants.API_VERSION = versionInfo.apiVersion
-        MacrocosmConstants.VERSION = versionInfo.version
+        MacrocosmConstants.API_VERSION = SemanticVersion.fromString(versionInfo.apiVersion)
+        MacrocosmConstants.VERSION = SemanticVersion.fromString(versionInfo.version)
         KeyManager.load()
         BazaarElement.init()
         Threading.contextBoundedRunAsync {
@@ -358,8 +338,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         taskRunLater(5 * 20L, sync = false) {
             // detect item registry changes
             if (Macrocosm.isOnline) {
-                val previousVersion = Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null }
-                if (previousVersion != null && this.version != previousVersion)
+                val previousVersion = SemanticVersion.fromString(Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null } ?: "0.0.0-null")
+                if (this.version != previousVersion)
                     Discord.sendVersionDiff(previousVersion)
                 Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
             }
@@ -390,7 +370,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         storageExecutor.execute { KeyManager.store() }
         storageExecutor.execute { Discord.storeSelf() }
-        storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version) } }
+        storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version.toString()) } }
 
         storageExecutor.shutdown()
 
