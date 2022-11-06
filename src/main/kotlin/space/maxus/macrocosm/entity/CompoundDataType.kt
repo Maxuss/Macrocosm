@@ -8,6 +8,11 @@ import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
+/**
+ * A persistent data type that allows you to store NBT compounds inside.
+ *
+ * Not really effe
+ */
 object CompoundDataType : PersistentDataType<ByteArray, CompoundTag> {
     override fun getPrimitiveType(): Class<ByteArray> {
         return ByteArray::class.java
