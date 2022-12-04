@@ -14,7 +14,6 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.PreviewFeature
 import java.io.Serializable
-import java.sql.ResultSet
 import java.util.*
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -43,14 +42,6 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializabl
             return Statistics(map)
         }
 
-        @JvmStatic
-        fun fromRes(res: ResultSet): Statistics {
-            val map = TreeMap<Statistic, Float>()
-            for (stat in Statistic.values()) {
-                map[stat] = res.getFloat(stat.name)
-            }
-            return Statistics(map)
-        }
     }
 
     var farmingFortune: Float

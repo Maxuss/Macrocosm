@@ -63,7 +63,6 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
-import space.maxus.macrocosm.util.fromJson
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
 import java.math.BigDecimal
@@ -698,7 +697,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             val stats = database.transact {
                 StatsTable.select { StatsTable.uuid eq id }.map { it[StatsTable.data] }.firstOrNull()
             } ?: return null
-            player.baseStats = fromJson(stats) ?: return null
+            player.baseStats = Bytes.deserializeObject(stats) ?: return null
             return player
 
 //            val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")

@@ -2,15 +2,15 @@ import java.net.URL
 
 plugins {
     kotlin("jvm") version "1.7.0"
-    id("xyz.jpenilla.run-paper") version "1.0.6"
-    id("io.papermc.paperweight.userdev") version "1.3.7"
+    id("xyz.jpenilla.run-paper") version "2.0.0"
+    id("io.papermc.paperweight.userdev") version "1.3.11"
     id("org.hidetake.swagger.generator") version "2.19.2"
     id("org.jetbrains.dokka") version "1.7.20"
 }
 
 group = "space.maxus"
 version = "0.3.0-alpha"
-val apiVersion = "0.6.2-alpha"
+val apiVersion = "0.6.5-alpha"
 
 repositories {
     mavenCentral()
@@ -22,16 +22,16 @@ repositories {
 val exposedVersion: String by project
 
 dependencies {
-    paperDevBundle("1.19-R0.1-SNAPSHOT")
+    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
     implementation("net.axay:kspigot:1.19.0")
-    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    implementation("com.comphenix.protocol:ProtocolLib:4.7.0")
     implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
         exclude("org.spigotmc")
     }
-    implementation("io.ktor:ktor-server-core-jvm:2.1.2")
-    implementation("io.ktor:ktor-server-netty-jvm:2.1.2")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.1.2")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-netty-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.3")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
