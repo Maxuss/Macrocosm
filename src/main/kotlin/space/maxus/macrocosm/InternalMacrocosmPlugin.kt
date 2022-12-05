@@ -344,7 +344,6 @@ class InternalMacrocosmPlugin : KSpigot() {
                 val previousVersion = SemanticVersion.fromString(Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null } ?: "0.0.0-null")
                 if (this.version != previousVersion)
                     Discord.sendVersionDiff(previousVersion)
-                Discord.sendItemDiffs(Registry.ITEM.compareToSnapshot())
             }
         }
     }
@@ -354,9 +353,6 @@ class InternalMacrocosmPlugin : KSpigot() {
     override fun shutdown() {
         val storageExecutor = Threading.newFixedPool(16)
 
-        storageExecutor.execute {
-            Registry.ITEM.makeSnapshot()
-        }
         storageExecutor.execute {
             for ((_, v) in loadedPlayers) {
                 v.storeSelf(database)

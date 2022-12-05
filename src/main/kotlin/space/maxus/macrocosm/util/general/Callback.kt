@@ -47,6 +47,10 @@ data class ConditionalValueCallback<V>(val producer: () -> V?) {
     fun call(): V? {
         return producer()
     }
+
+    operator fun invoke(): V? {
+        return producer()
+    }
 }
 
 data class ConditionalCallback(val condition: () -> Boolean) {
@@ -74,6 +78,10 @@ data class ConditionalCallback(val condition: () -> Boolean) {
     }
 
     fun call(): Boolean {
+        return condition()
+    }
+
+    operator fun invoke(): Boolean {
         return condition()
     }
 }
@@ -105,10 +113,18 @@ data class SuspendConditionalCallback(val condition: suspend () -> Boolean) {
     suspend fun call(): Boolean {
         return condition()
     }
+
+    suspend operator fun invoke(): Boolean {
+        return condition()
+    }
 }
 
 data class DeferredAction<T>(val self: T, val deferred: (T) -> Unit) {
     fun done() {
+        this.deferred(self)
+    }
+
+    operator fun invoke() {
         this.deferred(self)
     }
 
