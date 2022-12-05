@@ -290,6 +290,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         infusionCommand()
         bazaarOpCommand()
         openBazaarMenuCommand()
+        announceItemsCommand()
 
         Monitor.exit()
         Monitor.enter("Resource Generation")

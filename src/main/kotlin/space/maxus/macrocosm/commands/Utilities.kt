@@ -23,6 +23,7 @@ import org.bukkit.entity.Player
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
+import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.bazaar.BazaarIntrinsics
@@ -542,6 +543,19 @@ fun addPetCommand() = command("addpet") {
                     val level = getArgument<Int>("level")
                     player.macrocosm!!.addPet(pet, rarity, level, .0)
                 }
+            }
+        }
+    }
+}
+
+fun announceItemsCommand() = command("announceitems") {
+    requires { it.hasPermission(4) }
+
+    argument("id", ResourceLocationArgument.id()) {
+        runs {
+            val item = getArgument<ResourceLocation>("id").macrocosm
+            Threading.runAsync {
+                Discord.sendItemDiffs(listOf(item))
             }
         }
     }
