@@ -94,6 +94,9 @@ enum class ReforgeType(val ref: Reforge) {
     RENOWNED(RenownedReforge),
     BLOOD_SOAKED(BloodSoakedReforge),
 
+    GLEAMING(GleamingReforge),
+    LAMBENT(LambentReforge),
+
     ;
 
     companion object {

@@ -410,8 +410,6 @@ enum class ItemValue(
         }
 
         fun init() {
-            Ability.init()
-
             Threading.contextBoundedRunAsync("Enchanted Item Generator", true) {
                 info("Initializing enchanted items...")
                 initEnchanted()

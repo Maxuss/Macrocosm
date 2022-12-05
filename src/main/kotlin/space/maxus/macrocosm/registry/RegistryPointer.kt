@@ -21,7 +21,7 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
     /**
      * Attempts to set value inside this pointer.
      */
-    fun <T: Any> trySet(v: T?): ConditionalCallback {
+    fun <T : Any> trySet(v: T?): ConditionalCallback {
         val success = this.set(v)
         return ConditionalCallback { success }
     }
@@ -32,9 +32,9 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
      * @return false if failed to write value, true if succeeded
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T: Any> set(v: T?): Boolean {
+    fun <T : Any> set(v: T?): Boolean {
         val actualRegistry = Registry.findOrNull(registry) as? Registry<Any> ?: return false
-        this.pointer = if(v == null) Identifier.NULL else actualRegistry.byValue(v) ?: return false
+        this.pointer = if (v == null) Identifier.NULL else actualRegistry.byValue(v) ?: return false
         return true
     }
 
@@ -45,8 +45,8 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
      * @throws NullPointerException if it could not find element of ID [pointer] inside the [registry] registry
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T: Any> get(): T? {
-        if(pointer.isNull())
+    fun <T : Any> get(): T? {
+        if (pointer.isNull())
             return null
         val actualRegistry = (Registry.find(registry) as? Registry<Any>)!!
         return actualRegistry.find(pointer) as T
@@ -58,8 +58,8 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
      * @return null if failed to read the value, value of the pointer otherwise
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T: Any> tryGet(): T? {
-        if(pointer.isNull())
+    fun <T : Any> tryGet(): T? {
+        if (pointer.isNull())
             return null
         return try {
             val actualRegistry = Registry.find(registry) as Registry<Any>
@@ -100,18 +100,21 @@ class RegistryPointer(val registry: Identifier, pointer: Identifier) {
         return "$registry@$pointer"
     }
 
-    operator fun <T: Any> getValue(self: Any?, prop: KProperty<*>): T? {
+    operator fun <T : Any> getValue(self: Any?, prop: KProperty<*>): T? {
         return tryGet()
     }
 
-    operator fun <T: Any> setValue(self: Any?, prop: KProperty<*>, value: T?) {
+    operator fun <T : Any> setValue(self: Any?, prop: KProperty<*>, value: T?) {
         this.set(value)
     }
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Iterable<RegistryPointer>.anyPoints(to: T): Boolean {
-    val id = if (to is Identified) to.id else (Registry.find(first().registry) as Registry<T>).byValue(to)
+    val id = if (to is Identified) to.id else (Registry.findOrNull(
+        firstOrNull()?.registry ?: return false
+    ) as? Registry<T>)?.byValue(to)
+        ?: return false
     return any { it.pointer == id }
 }
 

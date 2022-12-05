@@ -296,7 +296,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         }
         this.amount = from.amount
 
-        val baseCmp = from.nbtData
+        val baseCmp =
+            CraftItemStack.asNMSCopy(from).let { if (it.hasTag()) (it.tag ?: CompoundTag()) else CompoundTag() }
+        
         if (baseCmp.contains("__TempColor"))
             this.tempColor = baseCmp.getInt("__TempColor")
         if (baseCmp.contains("__TempSkin"))

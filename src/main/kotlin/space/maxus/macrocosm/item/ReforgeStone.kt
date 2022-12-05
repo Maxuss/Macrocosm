@@ -24,7 +24,7 @@ class ReforgeStone(
     private val reforgeType: Reforge,
     private val stoneName: String,
     override var rarity: Rarity,
-    private val headSkin: String
+    val headSkin: String
 ) : AbstractMacrocosmItem(
     space.maxus.macrocosm.util.general.id(stoneName.lowercase().replace(" ", "_")),
     ItemType.REFORGE_STONE

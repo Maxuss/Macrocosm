@@ -1157,6 +1157,8 @@ object Discord : ListenerAdapter() {
                     } else Registry.PET.find(pet.id).headSkin
                 }
 
+                is ReforgeStone -> item.skin?.skin ?: item.headSkin
+
                 else -> unreachable() // we should not reach this
             }
             return try {
@@ -1183,7 +1185,7 @@ object Discord : ListenerAdapter() {
             addBlankField(false)
             addField(
                 "",
-                (if(previous.major == Macrocosm.version.major) "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!\nKeep guessing what it could be!" else "The **Macrocosm version** has undergone major change! This is a **big** update!"),
+                (if (previous.major == Macrocosm.version.major) "The **Macrocosm version** has changed! *Something* was patched, fixed, updated, or added!\nKeep guessing what it could be!" else "The **Macrocosm version** has undergone major change! This is a **big** update!"),
                 true
             )
 
@@ -1194,43 +1196,41 @@ object Discord : ListenerAdapter() {
     /**
      * Sends all the new items introduced since the last restart. Uses [StackRenderer] under the hood.
      */
-    fun sendItemDiffs(diffs: List<Identifier>) {
-        diffs.parallelStream().forEach {
-            val mc = Registry.ITEM.find(it)
-            val item = mc.build(null) ?: return@forEach
-            // sending image to buffer channel
-            StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile(
-                "item_renders/${it.path}.png"
-            ).thenAccept { _ ->
-                commTextChannel?.sendMessage(MessageCreateBuilder().setEmbeds(embed {
-                    setColor(COLOR_MACROCOSM)
-                    setTitle("**New Items!**")
-                    addField(
-                        "**${mc.buildName().str().stripTags()}**",
-                        "New item of **${
-                            mc.rarity.name.replace(
-                                "_",
-                                " "
-                            )
-                        }** commodity!\nItem ID: `$it`\nMore info in the API (or in game)!",
-                        false
-                    )
-                    addField(
-                        "**API Endpoint URL**",
-                        "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/v2/resources/item/${it}`",
-                        false
-                    )
-                    val thumbnailUrl = itemImage(mc)
-                    setThumbnail(thumbnailUrl)
-                    setImage("attachment://${it.path}.png")
-                }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit()
-                    .thenAccept { _ ->
-                        // meanwhile delete the original render
-                        Threading.runAsync(isDaemon = true) {
-                            Accessor.access("item_renders/${it.path}.png").deleteIfExists()
-                        }
+    fun sendItemDiffs(it: Identifier) {
+        val mc = Registry.ITEM.find(it)
+        val item = mc.build(null) ?: return
+        // sending image to buffer channel
+        StackRenderer(ItemRenderBuffer.stack(item)) { InternalMacrocosmPlugin.FONT_MINECRAFT.deriveFont(50f) }.renderToFile(
+            "item_renders/${it.path}.png"
+        ).thenAccept { _ ->
+            commTextChannel?.sendMessage(MessageCreateBuilder().setEmbeds(embed {
+                setColor(COLOR_MACROCOSM)
+                setTitle("**New Items!**")
+                addField(
+                    "**${mc.buildName().str().stripTags()}**",
+                    "New item of **${
+                        mc.rarity.name.replace(
+                            "_",
+                            " "
+                        )
+                    }** commodity!\nItem ID: `$it`\nMore info in the API (or in game)!",
+                    false
+                )
+                addField(
+                    "**API Endpoint URL**",
+                    "`https://${if (Macrocosm.isInDevEnvironment) "127.0.0.1" else currentIp}/v2/resources/item/${it}`",
+                    false
+                )
+                val thumbnailUrl = itemImage(mc)
+                setThumbnail(thumbnailUrl)
+                setImage("attachment://${it.path}.png")
+            }).setFiles(FileUpload.fromData(Accessor.access("item_renders/${it.path}.png"))).build())!!.submit()
+                .thenAccept { _ ->
+                    // meanwhile delete the original render
+                    Threading.runAsync(isDaemon = true) {
+                        Accessor.access("item_renders/${it.path}.png").deleteIfExists()
                     }
-            }
+                }
         }
     }
 

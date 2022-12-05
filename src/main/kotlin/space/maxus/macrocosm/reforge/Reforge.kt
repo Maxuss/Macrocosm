@@ -23,10 +23,13 @@ interface Reforge : Listener, Clone {
     fun buildLore(lore: MutableList<Component>) {
         if (abilityName == null || abilityDescription == null)
             return
-
         lore.add(text("<blue>$abilityName <blue>($name Bonus)").noitalic())
-        val truncated = abilityDescription!!.reduceToList()
-        lore.addAll(truncated.map { text("<gray>$it").noitalic() })
+        for (part in abilityDescription!!.split("<br>")) {
+            for (desc in part.reduceToList()) {
+                lore.add(text("<gray>$desc</gray>").noitalic())
+            }
+        }
+
         lore.add("".toComponent())
     }
 

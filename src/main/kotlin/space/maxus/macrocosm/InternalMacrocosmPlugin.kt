@@ -8,6 +8,7 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.MinecraftServer
+import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -184,6 +185,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Monitor.enter("Registry Initialization")
 
         // required to be sync
+        Ability.init()
         ReforgeType.init()
         StatRune.init()
         ItemValue.init()
@@ -342,7 +344,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         taskRunLater(5 * 20L, sync = false) {
             // detect item registry changes
             if (Macrocosm.isOnline) {
-                val previousVersion = SemanticVersion.fromString(Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null } ?: "0.0.0-null")
+                val previousVersion = SemanticVersion.fromString(
+                    Accessor.access(".VERSION").let { if (it.exists()) it.readText() else null } ?: "0.0.0-null")
                 if (this.version != previousVersion)
                     Discord.sendVersionDiff(previousVersion)
             }
