@@ -261,7 +261,9 @@ enum class Ability(val ability: MacrocosmAbility) {
     CHAOS_POLARITY_1(ChaosPolaritySetBonus1),
     CHAOS_POLARITY_2(ChaosPolaritySetBonus2),
 
-    CONFLUX_POLARITY(ConfluxPolarity)
+    CONFLUX_POLARITY(ConfluxPolarity),
+
+    CAT_EARS(CatEarsAbility)
     ;
 
     companion object {

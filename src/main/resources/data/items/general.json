@@ -648,5 +648,19 @@
         "abilities": [
             "iv_bag"
         ]
+    },
+    "cat_ears": {
+        "type": "necklace",
+        "rarity": "special",
+        "head_skin": "ewogICJ0aW1lc3RhbXAiIDogMTY3MDQyNDkwNzYyNiwKICAicHJvZmlsZUlkIiA6ICJkZTAyYWE3OGNlNzc0OGU4ODg1Yjc0ZTIzMzJhN2YxMSIsCiAgInByb2ZpbGVOYW1lIiA6ICJDaGlja2xpIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2M5YjgyOWQxMGFhNjIxZDRiN2M4YjkzY2YzZDg2NzYzMDEyYjM0MjZlNWEzNzE1NWNlYzUzNWUzNmVjNTFmYjgiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==",
+        "stats": {
+            "health": 500,
+            "intelligence": 500,
+            "damage": -500
+        },
+        "description": "<italic>'uwu' - Unknown",
+        "abilities": [
+            "cat_ears"
+        ]
     }
 }
