@@ -10,7 +10,8 @@ enum class PetValue(val pet: Pet) {
     PET_BEE(BeePet),
     PET_ENDER_DRAGON(EnderDragonPet),
     PET_PYROCLASTIC_TOAD(PyroclasticToadPet),
-    PET_WASP(WaspPet)
+    PET_WASP(WaspPet),
+    PET_WITHER_PHOENIX(AshenAvolotlePet)
     ;
 
     companion object {

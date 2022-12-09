@@ -39,7 +39,6 @@ import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.net.MacrocosmServer
-import space.maxus.macrocosm.net.SignatureDissolver
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
@@ -109,7 +108,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
-        SignatureDissolver.inject()
+//        SignatureDissolver.inject()
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
             MacrocosmConstants.CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
@@ -227,7 +226,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(SignatureDissolver, this@InternalMacrocosmPlugin)
+//        server.pluginManager.registerEvents(SignatureDissolver, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)

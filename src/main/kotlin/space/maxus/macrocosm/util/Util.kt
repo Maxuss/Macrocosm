@@ -336,6 +336,17 @@ fun todo(message: String = "Not finished yet!"): Nothing {
     throw IllegalStateException("TODO reached: $message")
 }
 
+/**
+ * Hides from the compiler passed value, allowing to avoid certain constant condition warnings when something is not implemented
+ */
+inline fun <reified T> blackBox(value: T): T {
+    return value
+}
+
+inline fun <reified T> unused(value: T) {
+    val (_, _) = Pair<String?, T>(null, value)
+}
+
 fun String.stripTags() = MiniMessage.miniMessage().stripTags(this)
 
 fun renderBar(
