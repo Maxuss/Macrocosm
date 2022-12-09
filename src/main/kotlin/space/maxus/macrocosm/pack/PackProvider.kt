@@ -22,7 +22,7 @@ import kotlin.io.path.*
 
 object PackProvider : Listener {
     private val RESOURCE_PACK_LINK: String =
-        if (Macrocosm.isInDevEnvironment) "http://127.0.0.1:6060/pack" else "http://$currentIp:6060/pack"
+        if (Macrocosm.isInDevEnvironment) "http://127.0.0.1:4343/pack" else "http://$currentIp:4343/pack"
     private var RESOURCE_PACK_HASH: String = "null"
 
     const val PACK_NAME = "§5§lMacrocosm §d§lPack.zip"
