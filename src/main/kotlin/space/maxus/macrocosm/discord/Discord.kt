@@ -101,7 +101,7 @@ object Discord : ListenerAdapter() {
          */
         fun init() {
             client = WebhookClientBuilder(webhookLink!!).setThreadFactory(
-                ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler)
+                ThreadFactoryBuilder()
                     .setNameFormat("Webhook Thread").setDaemon(true).build()
             ).setWait(true).buildJDA()
             Macrocosm.logger.info("Webhook connection initialized!")

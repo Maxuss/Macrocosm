@@ -7,7 +7,6 @@ import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
-import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
@@ -59,7 +58,6 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
-import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.SemanticVersion
 import space.maxus.macrocosm.util.data.Unsafe
@@ -86,7 +84,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
         lateinit var PACKET_MANAGER: ProtocolManager; private set
         lateinit var UNSAFE: Unsafe; private set
-        lateinit var MONITOR: Monitor; private set
         lateinit var DATABASE: DataStorage; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
 
@@ -127,7 +124,6 @@ class InternalMacrocosmPlugin : KSpigot() {
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         UNSAFE = Unsafe(Random.nextInt())
-        MONITOR = Monitor()
         Accessor.init()
         val versionInfo: VersionInfo = fromJson(
             Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes()))
@@ -139,9 +135,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         BazaarElement.init()
         Threading.contextBoundedRunAsync {
             info("Starting REST API Server")
-            Monitor.enter("REST API Server Thread")
             AsyncLauncher.launchApi()
-            Monitor.exit()
         }
         Threading.runAsync {
             DATABASE =
@@ -181,8 +175,6 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     override fun startup() {
-        Monitor.inject(MinecraftServer.getServer().serverThread)
-        Monitor.enter("Registry Initialization")
 
         // required to be sync
         Ability.init()
@@ -212,9 +204,6 @@ class InternalMacrocosmPlugin : KSpigot() {
             WaspPet::init
         )
 
-        Monitor.exit()
-
-        Monitor.enter("Event Registration")
 
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
@@ -242,10 +231,6 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
-
-        Monitor.exit()
-
-        Monitor.enter("Command Registration")
 
         playtimeCommand()
         rankCommand()
@@ -294,31 +279,22 @@ class InternalMacrocosmPlugin : KSpigot() {
         openBazaarMenuCommand()
         announceItemsCommand()
 
-        Monitor.exit()
-        Monitor.enter("Resource Generation")
-
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
         Registry.RESOURCE_GENERATORS.register(id("model_data"), CMDGenerator)
         Registry.RESOURCE_GENERATORS.register(id("model"), TexturedModelGenerator)
         Registry.RESOURCE_GENERATORS.register(id("mcmeta"), MetaGenerator)
 
-        Monitor.exit()
-
         if (dumpTestData) {
             Threading.runAsync(isDaemon = true) {
-                Monitor.enter("Data generation")
                 DataGenerators.registries()
-                Monitor.exit()
             }
         }
 
         val cfgFile = dataFolder.resolve("config.yml")
         if (!cfgFile.exists()) {
-            Monitor.enter("Config creation")
             saveDefaultConfig()
             reloadConfig()
-            Monitor.exit()
         }
 
         config.load(cfgFile)
@@ -391,7 +367,6 @@ class InternalMacrocosmPlugin : KSpigot() {
 val protocolManager by lazy { InternalMacrocosmPlugin.PACKET_MANAGER }
 val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
 val database by lazy { InternalMacrocosmPlugin.DATABASE }
-val monitor by lazy { InternalMacrocosmPlugin.MONITOR }
 val logger by lazy { Macrocosm.logger }
 val currentIp by lazy { MacrocosmConstants.CURRENT_IP }
 val discordBotToken by lazy { MacrocosmConstants.DISCORD_BOT_TOKEN }

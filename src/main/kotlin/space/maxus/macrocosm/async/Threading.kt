@@ -3,7 +3,6 @@ package space.maxus.macrocosm.async
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.util.Fn
-import space.maxus.macrocosm.util.Monitor
 import space.maxus.macrocosm.util.threadNoinline
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -36,12 +35,9 @@ object Threading {
     ) {
         activeThreads.incrementAndGet()
         val thr = thread(false, isDaemon = isDaemon, name = name) {
-            Monitor.enter("runAsync $name")
             runnable(ThreadContext(name))
             activeThreads.decrementAndGet()
-            Monitor.exit(Thread.currentThread())
         }
-        Monitor.inject(thr)
         thr.start()
     }
 
@@ -57,11 +53,8 @@ object Threading {
         crossinline runnable: () -> Unit
     ) {
         threadNoinline(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
-            Monitor.inject(this)
-            Monitor.enter("runAsyncRaw")
             runnable()
             activeThreads.decrementAndGet()
-            Monitor.exit(this)
             interrupt()
         }
     }
@@ -88,7 +81,7 @@ object Threading {
      * @return New [ExecutorService] provided by cached thread pool
      */
     fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool(
-        ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build()
+        ThreadFactoryBuilder().build()
     )
 
     /**
@@ -99,7 +92,7 @@ object Threading {
      */
     fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(
         max,
-        ThreadFactoryBuilder().setUncaughtExceptionHandler(Monitor.exceptionHandler).build()
+        ThreadFactoryBuilder().build()
     )
 
     /**
@@ -107,12 +100,10 @@ object Threading {
      */
     fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
         runAsync {
-            Monitor.enter("runEachConcurrently")
             for (fn in executors) {
                 service.execute(fn)
             }
             service.shutdown()
-            Monitor.exit(Thread.currentThread())
         }
     }
 }
