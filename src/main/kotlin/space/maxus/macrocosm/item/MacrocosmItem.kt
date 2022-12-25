@@ -16,7 +16,7 @@ import net.minecraft.nbt.ListTag
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -298,7 +298,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
         val baseCmp =
             CraftItemStack.asNMSCopy(from).let { if (it.hasTag()) (it.tag ?: CompoundTag()) else CompoundTag() }
-        
+
         if (baseCmp.contains("__TempColor"))
             this.tempColor = baseCmp.getInt("__TempColor")
         if (baseCmp.contains("__TempSkin"))

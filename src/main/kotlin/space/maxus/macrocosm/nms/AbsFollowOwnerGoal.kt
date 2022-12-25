@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.LeavesBlock
 import net.minecraft.world.level.pathfinder.BlockPathTypes
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
 import org.bukkit.event.entity.EntityTeleportEvent
 import java.util.*
 import kotlin.math.abs

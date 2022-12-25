@@ -6,8 +6,8 @@ import net.minecraft.world.entity.OwnableEntity
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*

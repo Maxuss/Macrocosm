@@ -16,20 +16,20 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.GenericSelectMenuInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.components.buttons.Button
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.FileUpload
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
@@ -440,10 +440,15 @@ object Discord : ListenerAdapter() {
                     val order =
                         (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
                             .queue())
-                    val embed = if (order is BazaarBuyOrder) generateBuyOrderEmbed(
-                        order.item,
-                        order
-                    ) else if (order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
+                    val embed = when (order) {
+                        is BazaarBuyOrder -> generateBuyOrderEmbed(
+                            order.item,
+                            order
+                        )
+
+                        is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
+                        else -> unreachable()
+                    }
                     e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
                 }
             }
@@ -580,7 +585,7 @@ object Discord : ListenerAdapter() {
         }
     }
 
-    override fun onSelectMenuInteraction(e: SelectMenuInteractionEvent) {
+    override fun onGenericSelectMenuInteraction(e: GenericSelectMenuInteractionEvent<*, *>) {
         if (e.componentId.contains("player_menu")) {
             val id = UUID.fromString(e.componentId.split("$").last())
 
@@ -866,7 +871,7 @@ object Discord : ListenerAdapter() {
                 false
             )
         }).addActionRow(
-            SelectMenu.create("player_menu$$uuid")
+            StringSelectMenu.create("player_menu$$uuid")
                 .addOption("General Information", "general", "General information about this player")
                 .addOption("Statistics", "statistics", "Gets in-game stats of this player")
                 .addOption("Equipment", "equipment", "Gets some of player's in-game equipment")
@@ -998,10 +1003,15 @@ object Discord : ListenerAdapter() {
                             "Could not find any orders for this user!"
                         ).build()
                     ).setEphemeral(true).queue())
-                    val embed = if (order is BazaarBuyOrder) generateBuyOrderEmbed(
-                        order.item,
-                        order
-                    ) else if (order is BazaarSellOrder) generateSellOrderEmbed(order.item, order) else unreachable()
+                    val embed = when (order) {
+                        is BazaarBuyOrder -> generateBuyOrderEmbed(
+                            order.item,
+                            order
+                        )
+
+                        is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
+                        else -> unreachable()
+                    }
                     e.replyEmbeds(embed).addActionRow(
                         Button.primary("prev_order_user$$uuid", "Previous Order"),
                         Button.primary("next_order_user$$uuid", "Next Order")

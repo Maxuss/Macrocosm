@@ -1,6 +1,6 @@
 package space.maxus.macrocosm.entity
 
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MACROCOSM_TAG

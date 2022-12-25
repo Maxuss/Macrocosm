@@ -1,8 +1,8 @@
 package space.maxus.macrocosm.discord.emitters
 
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.Channel
 import net.dv8tion.jda.api.entities.Role
+import net.dv8tion.jda.api.entities.channel.Channel
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.discord.DiscordEmitter

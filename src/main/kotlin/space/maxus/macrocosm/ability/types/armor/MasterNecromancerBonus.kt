@@ -8,7 +8,7 @@ import net.minecraft.world.entity.monster.Zombie
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerQuitEvent
 import space.maxus.macrocosm.ability.TieredSetBonus

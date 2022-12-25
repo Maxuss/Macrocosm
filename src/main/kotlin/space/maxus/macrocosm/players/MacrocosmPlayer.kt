@@ -12,7 +12,7 @@ import net.minecraft.network.protocol.Packet
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect
@@ -646,7 +646,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
     fun <T, L> sendPacket(packet: T) where T : Packet<L>, L : PacketListener {
-        (this.paper as CraftPlayer).handle.networkManager.send(packet)
+        (this.paper as CraftPlayer).handle.connection.send(packet)
     }
 
     companion object {

@@ -39,6 +39,10 @@ data class Identifier(val namespace: String, val path: String) : Tag, Serializab
         return tag()
     }
 
+    override fun sizeInBytes(): Int {
+        return 36 + 2 * "$namespace:$path".length
+    }
+
     override fun accept(visitor: TagVisitor) {
         return tag().accept(visitor)
     }
