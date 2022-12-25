@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.scoreboard.Criteria
 import org.bukkit.scoreboard.DisplaySlot
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
@@ -148,7 +149,7 @@ object SidebarRenderer : Listener {
     private fun preparePlayer(player: Player) {
         val manager = Bukkit.getScoreboardManager()
         val board = manager.newScoreboard
-        val obj = board.registerNewObjective("defaultBoard", "dummy", text("<light_purple><bold>MACROCOSM"))
+        val obj = board.registerNewObjective("defaultBoard", Criteria.DUMMY, text("<light_purple><bold>MACROCOSM"))
         obj.displaySlot = DisplaySlot.SIDEBAR
 
         val sc = obj.getScore(ChatColor.DARK_GRAY.toString() + "Server: ${Macrocosm.integratedServer.id}")

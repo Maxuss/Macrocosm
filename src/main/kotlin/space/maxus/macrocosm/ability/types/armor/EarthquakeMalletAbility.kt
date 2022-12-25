@@ -44,7 +44,7 @@ object EarthquakeMalletAbility : AbilityBase(
 
             val trajectory = MathHelper.parabola(
                 p.location,
-                p.getTargetBlock(8)?.location ?: p.eyeLocation.add(p.eyeLocation.direction.multiply(5f)),
+                p.getTargetBlockExact(8)?.location ?: p.eyeLocation.add(p.eyeLocation.direction.multiply(5f)),
                 20
             )
 
