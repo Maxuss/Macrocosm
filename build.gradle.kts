@@ -24,8 +24,8 @@ val exposedVersion: String by project
 dependencies {
     paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     implementation("net.axay:kspigot:1.19.1")
-    implementation("com.comphenix.protocol:ProtocolLib:4.7.0")
-    implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
+    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    implementation("LibsDisguises:LibsDisguises:10.0.31-SNAPSHOT") {
         exclude("org.spigotmc")
     }
     implementation("io.ktor:ktor-server-core-jvm:2.2.1")
