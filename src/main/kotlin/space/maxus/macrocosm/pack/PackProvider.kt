@@ -25,7 +25,7 @@ object PackProvider : Listener {
         if (Macrocosm.isInDevEnvironment) "http://127.0.0.1:4343/pack" else "http://$currentIp:4343/pack"
     private var RESOURCE_PACK_HASH: String = "null"
 
-    const val PACK_NAME = "§5§lMacrocosm §d§lPack.zip"
+    const val PACK_NAME = "Macrocosm_Pack.zip"
     private const val BUFFER_SIZE = 4096
 
     lateinit var packZip: File; private set

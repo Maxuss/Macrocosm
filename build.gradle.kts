@@ -22,20 +22,21 @@ repositories {
 val exposedVersion: String by project
 
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    implementation("net.axay:kspigot:1.19.0")
-    implementation("com.comphenix.protocol:ProtocolLib:4.7.0")
-    implementation("LibsDisguises:LibsDisguises:10.0.28-SNAPSHOT") {
+    paperDevBundle("1.19.3-R0.1-SNAPSHOT")
+    implementation("net.axay:kspigot:1.19.1")
+    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    implementation("LibsDisguises:LibsDisguises:10.0.31-SNAPSHOT") {
         exclude("org.spigotmc")
     }
-    implementation("io.ktor:ktor-server-core-jvm:2.1.3")
-    implementation("io.ktor:ktor-server-netty-jvm:2.1.3")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.1.3")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.3")
+    implementation("io.ktor:ktor-server-core-jvm:2.2.1")
+    @Suppress("VulnerableLibrariesLocal") // suppressing while the stable update is not out
+    implementation("io.ktor:ktor-server-netty-jvm:2.2.1")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.2.1")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.1")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("net.dv8tion:JDA:5.0.0-alpha.18") {
+    implementation("net.dv8tion:JDA:5.0.0-beta.2") {
         exclude(module = "opus-java")
     }
     implementation("club.minnced:discord-webhooks:0.8.2")
@@ -62,9 +63,9 @@ tasks {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     runServer {
-         System.getProperties().forEach { key, value ->
+        System.getProperties().forEach { key, value ->
             val str = key.toString()
-            if(str.startsWith("macrocosm")) {
+            if (str.startsWith("macrocosm")) {
                 systemProperty(str, value)
             }
         }

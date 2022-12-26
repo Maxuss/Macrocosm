@@ -43,7 +43,7 @@ object InfiniteTerrorAbility :
             val p = e.player.paper!!
             val damage = DamageCalculator.calculateMagicDamage(30000, .13f, e.player.stats()!!)
 
-            val nearest = (p.getTargetBlock(6)?.location ?: p.eyeLocation.direction.multiply(2f).normalize()
+            val nearest = (p.getTargetBlockExact(6)?.location ?: p.eyeLocation.direction.multiply(2f).normalize()
                 .relativeLocation(p.location)).clone()
 
             spawnTargetingBats(nearest)

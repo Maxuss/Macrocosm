@@ -15,8 +15,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
@@ -399,7 +399,7 @@ fun <K, V> ConcurrentHashMap<K, ConcurrentLinkedQueue<V>>.setOrAppend(key: K, va
 }
 
 fun <L : PacketListener, P : Packet<L>> Player.sendPacket(packet: P) {
-    (this as CraftPlayer).handle.networkManager.send(packet)
+    (this as CraftPlayer).handle.connection.send(packet)
 }
 
 fun EntityType.summon(location: Location): Entity {

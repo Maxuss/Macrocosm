@@ -1,10 +1,10 @@
 package space.maxus.macrocosm.discord
 
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.Channel
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Role
-import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.channel.Channel
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting

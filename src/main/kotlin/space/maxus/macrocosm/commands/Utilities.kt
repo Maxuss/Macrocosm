@@ -641,11 +641,11 @@ fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
         compound.sortContentBy { it.path }
         compoundScroll(
             Slots.RowOneSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 4
+            ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 1
         )
         compoundScroll(
             Slots.RowSixSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 4, reverse = true
+            ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 1, reverse = true
         )
 
     }
