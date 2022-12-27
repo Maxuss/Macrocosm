@@ -45,7 +45,7 @@ Macrocosm really requires only two dependency jars that it does not pull automat
 
 5. Running a server with Macrocosm
 
-**Macrocosm requires Paper**. So don't use Spigot or Bukkit.
+**Macrocosm requires Paper 1.19.3**. So don't use Spigot or Bukkit.
 Put previously obtained `Macrocosm-<version>.jar` into the `plugins` folder, as well as `ProtocolLib` and `LibsDisguises`.
 
 **Launch the server with SQL parameters:**
