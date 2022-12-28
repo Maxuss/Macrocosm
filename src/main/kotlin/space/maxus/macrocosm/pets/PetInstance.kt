@@ -160,6 +160,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         }
     }
 
+
     override fun equals(other: Any?): Boolean {
         return other != null && other is PetInstance && entityId == other.entityId
     }

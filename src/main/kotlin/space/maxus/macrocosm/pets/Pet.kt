@@ -29,7 +29,8 @@ abstract class Pet(
     val preferredSkill: SkillType,
     val abilities: List<PetAbility> = listOf(),
     private val baseStats: Statistics = Statistics.zero(),
-    private val baseSpecials: SpecialStatistics = SpecialStatistics()
+    private val baseSpecials: SpecialStatistics = SpecialStatistics(),
+    val maxLevel: Int = 100,
 ) : Listener {
     abstract val effects: LazyEffects
 

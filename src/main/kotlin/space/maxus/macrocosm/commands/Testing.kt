@@ -15,6 +15,7 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.forge.ForgeType
 import space.maxus.macrocosm.forge.ui.displayForge
+import space.maxus.macrocosm.pets.ui.petsMenu
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.registry.Registry
@@ -38,6 +39,12 @@ fun doTestEmitPost() = command("doemit") {
                 )
             }
         }
+    }
+}
+
+fun petsCommand() = command("pets") {
+    runsCatching {
+        player.openGUI(petsMenu(player.macrocosm!!))
     }
 }
 

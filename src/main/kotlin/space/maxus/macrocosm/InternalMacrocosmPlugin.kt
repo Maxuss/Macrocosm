@@ -277,6 +277,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         bazaarOpCommand()
         openBazaarMenuCommand()
         announceItemsCommand()
+        petsCommand()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

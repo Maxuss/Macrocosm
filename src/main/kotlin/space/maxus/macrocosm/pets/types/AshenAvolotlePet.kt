@@ -66,7 +66,7 @@ object AshenAvolotlePet : Pet(
         if (!ok)
             return
         val mobNearby = e.player.paper!!.getNearbyEntities(10.0, 10.0, 10.0)
-            .any { mob -> mob.customName()!!.toLegacyString().contains("Cinderflame Spirit") }
+            .any { mob -> mob.customName()?.toLegacyString()?.contains("Cinderflame Spirit") == true }
         if (!mobNearby)
             return
         val lvl = pet!!.level
