@@ -8,7 +8,6 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
@@ -16,6 +15,7 @@ import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.block.CustomBlockHandlers
 import space.maxus.macrocosm.block.MacrocosmBlock
+import space.maxus.macrocosm.block.SimpleMacrocosmBlock
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.datagen.DataGenerators
@@ -35,6 +35,7 @@ import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
@@ -54,8 +55,6 @@ import space.maxus.macrocosm.players.banking.TransactionHistory
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
-import space.maxus.macrocosm.registry.Clone
-import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
 import space.maxus.macrocosm.skills.SkillType
@@ -82,7 +81,6 @@ import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import kotlin.io.path.*
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -211,21 +209,19 @@ class InternalMacrocosmPlugin : KSpigot() {
             WaspPet::init
         )
 
-        Registry.BLOCK.register(id("my_test_block"), object : MacrocosmBlock {
-            override val id: Identifier = id("my_test_block")
-            override val hardness: Int = (MacrocosmBlock.HARDNESS_STONE * 1.5).roundToInt()
-            override val steadiness: Int = MacrocosmBlock.STEADINESS_MIN
-            override val suitableTools: List<ItemType> = ItemType.all()
-            override val baseExperience: Pair<Float, SkillType> = 100f to SkillType.ALCHEMY
-
-            override fun pool(player: Player, mc: MacrocosmPlayer): LootPool {
-                return LootPool.of(vanilla(Material.DIAMOND, 1.0, amount = 1..5))
-            }
-
-            override fun clone(): Clone {
-                return this
-            }
-        })
+        Registry.BLOCK.register(
+            id("test_block"),
+            SimpleMacrocosmBlock(
+                "test_block",
+                "Test Block",
+                Rarity.UNCOMMON,
+                MacrocosmBlock.HARDNESS_DEEPSLATE * 1.5,
+                MacrocosmBlock.STEADINESS_MIN,
+                120 to SkillType.EXCAVATING,
+                ItemType.all(),
+                LootPool.of(vanilla(Material.DIAMOND, .8, amount = 2..5))
+            )
+        )
 
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)

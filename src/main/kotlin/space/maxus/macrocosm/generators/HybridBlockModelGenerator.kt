@@ -13,12 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger
 
 const val BEGIN_BLOCK_TEXTURES = 3500
 
-private data class BlockModel(
-    val path: String,
+data class BlockModel(
+    val id: Identifier,
     val parent: String,
-    val model: String,
+    val variant: Pair<Instrument, Int>,
     val textures: String,
-    val variant: Pair<Instrument, Int>
+    val customModelData: Int
 )
 
 private class BlockStateVariants(
@@ -62,8 +62,8 @@ object HybridBlockModelGenerator : ResGenerator {
             "zombie"
         )
 
-    fun blockData(id: Identifier): Pair<Instrument, Int> {
-        return enqueued.first { it.model.replace("macrocosm:block/", "") == id.path }.variant
+    fun model(id: Identifier): BlockModel? {
+        return enqueued.firstOrNull { it.id == id }
     }
 
     private fun nextNoteBlockInfo(): Pair<Instrument, Int> {
@@ -125,11 +125,11 @@ object HybridBlockModelGenerator : ResGenerator {
         MacrocosmBlock.blockReferences["${nextInfo.first.name}${nextInfo.second}"] = block.id
         enqueued.add(
             BlockModel(
-                "assets/macrocosm/models/block/${block.id.path}.json",
+                block.id,
                 "block/cube_all",
-                "macrocosm:block/${block.id.path}",
+                nextInfo,
                 block.texture.toString(),
-                nextInfo
+                732_0000 + latestBlockTexture.get()
             )
         )
     }
@@ -139,9 +139,14 @@ object HybridBlockModelGenerator : ResGenerator {
         val associated = enqueued.associate {
             val base =
                 "instrument=${NoteBlockInstrument.values()[it.variant.first.ordinal].name.lowercase()},note=${it.variant.second},"
-            variants["${base}powered=false"] = BlockStateVariant(it.model)
-            variants["${base}powered=true"] = BlockStateVariant(it.model)
-            it.path to GSON.toJson(SingleBlockModel(it.parent, hashMapOf("all" to it.textures)))
+            variants["${base}powered=false"] = BlockStateVariant("macrocosm:block/${it.id.path}")
+            variants["${base}powered=true"] = BlockStateVariant("macrocosm:block/${it.id.path}")
+            "assets/macrocosm/models/block/${it.id.path}.json" to GSON.toJson(
+                SingleBlockModel(
+                    it.parent,
+                    hashMapOf("all" to it.textures)
+                )
+            )
         }.toMutableMap()
         associated["assets/minecraft/blockstates/note_block.json"] =
             GSON.toJson(BlockStateVariants(variants.apply {

@@ -196,6 +196,10 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val ITEM_BUFF = makeDefaulted<MinorItemBuff>(id("item_buff"))
         val BLOCK = makeImmutable<MacrocosmBlock>(id("block"), true) { _, block ->
             HybridBlockModelGenerator.enqueue(block)
+
+            if (block is AutoRegister<*>) {
+                (block as? AutoRegister<MacrocosmItem>)?.register(ITEM)
+            }
         }
 
         override fun dumpToFile(file: Path) {
