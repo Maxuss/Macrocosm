@@ -2,6 +2,7 @@
 
 package space.maxus.macrocosm.generators
 
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument
 import org.bukkit.Instrument
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.registry.Identifier
@@ -17,7 +18,7 @@ private data class BlockModel(
     val parent: String,
     val model: String,
     val textures: String,
-    val variant: String
+    val variant: Pair<Instrument, Int>
 )
 
 private class BlockStateVariants(
@@ -32,7 +33,6 @@ object HybridBlockModelGenerator : ResGenerator {
     private val enqueued: ConcurrentLinkedQueue<BlockModel> = ConcurrentLinkedQueue()
     private val latestBlockTexture = AtomicInteger(BEGIN_BLOCK_TEXTURES)
     private val firstIndex = AtomicBoolean(true)
-    private val noteBlockPowered = AtomicBoolean(false)
     private val noteBlockNote = AtomicInteger(1)
     private val noteBlockInstrument = AtomicInteger(0)
     private val instruments =
@@ -62,13 +62,28 @@ object HybridBlockModelGenerator : ResGenerator {
             "zombie"
         )
 
-    fun blockData(id: Identifier): String {
+    fun blockData(id: Identifier): Pair<Instrument, Int> {
         return enqueued.first { it.model.replace("macrocosm:block/", "") == id.path }.variant
     }
 
-    fun parseBlockData(bd: String): Triple<Instrument, Int, Boolean> {
-        val (sInstrument, sNote, sPowered) = bd.replace("instrument=", "").replace("note=", "").replace("powered=", "")
-            .split(",")
+    private fun nextNoteBlockInfo(): Pair<Instrument, Int> {
+        val note: Int
+        val sInstrument: String
+        val first = firstIndex.getAndSet(false)
+        // if we have reached false again, update note
+        if (noteBlockNote.getAndUpdate { if (it >= 24) 1 else it + 1 }.also { note = it } == 1 && !first) {
+            // looks like we have done a loop on notes as well
+            // updating the instrument
+            if (noteBlockInstrument.updateAndGet { if (it >= instruments.size) 0 else it + 1 }
+                    .also { sInstrument = instruments[it] } == 0) {
+                // looks like we have done a full loop even on instruments
+                // normally it should not happen
+                throw IllegalStateException("Done a full loop on note block instruments")
+            }
+        } else {
+            // haven't done a loop on notes, just get the instrument
+            sInstrument = instruments[noteBlockInstrument.get()]
+        }
         val instrument = when (sInstrument) {
             "banjo" -> Instrument.BANJO
             "basedrum" -> Instrument.BASS_DRUM
@@ -95,38 +110,7 @@ object HybridBlockModelGenerator : ResGenerator {
             "zombie" -> Instrument.ZOMBIE
             else -> Instrument.PIANO
         }
-        val note = sNote.toInt()
-        val powered = sPowered.toBooleanStrict()
-        return Triple(instrument, note, powered)
-    }
-
-    private fun nextNoteBlockInfo(): String {
-        val powered: Boolean
-        var note: Int
-        var instrument: String
-        val first = firstIndex.getAndSet(false)
-        // reversing powered status
-        if (noteBlockPowered.getAndSet(!noteBlockPowered.get()).also { powered = it } && !first) {
-            // if we have reached false again, update note
-            if (noteBlockNote.updateAndGet { if (it >= 24) 1 else it + 1 }.also { note = it } == 1) {
-                // looks like we have done a loop on notes as well
-                // updating the instrument
-                if (noteBlockInstrument.updateAndGet { if (it >= instruments.size) 0 else it + 1 }
-                        .also { instrument = instruments[it] } == 0) {
-                    // looks like we have done a full loop even on instruments
-                    // normally it should not happen
-                    throw IllegalStateException("Done a full loop on note block instruments")
-                }
-            } else {
-                // haven't done a loop on notes, just get the instrument
-                instrument = instruments[noteBlockInstrument.get()]
-            }
-        } else {
-            // haven't done a full loop on powered status
-            note = noteBlockNote.get()
-            instrument = instruments[noteBlockInstrument.get()]
-        }
-        return "instrument=$instrument,note=$note,powered=$powered"
+        return Pair(instrument, note)
     }
 
     fun enqueue(block: MacrocosmBlock) {
@@ -137,13 +121,14 @@ object HybridBlockModelGenerator : ResGenerator {
                 block.texture.toString()
             )
         )
+        val nextInfo = nextNoteBlockInfo()
         enqueued.add(
             BlockModel(
                 "assets/macrocosm/models/block/${block.id.path}.json",
                 "block/cube_all",
                 "macrocosm:block/${block.id.path}",
                 block.texture.toString(),
-                nextNoteBlockInfo()
+                nextInfo
             )
         )
     }
@@ -151,7 +136,10 @@ object HybridBlockModelGenerator : ResGenerator {
     override fun yieldGenerate(): Map<String, String> {
         val variants = hashMapOf<String, BlockStateVariant>()
         val associated = enqueued.associate {
-            variants[it.variant] = BlockStateVariant(it.model)
+            val base =
+                "instrument=${NoteBlockInstrument.values()[it.variant.first.ordinal].name.lowercase()},note=${it.variant.second},"
+            variants["${base}powered=false"] = BlockStateVariant(it.model)
+            variants["${base}powered=true"] = BlockStateVariant(it.model)
             it.path to GSON.toJson(SingleBlockModel(it.parent, hashMapOf("all" to it.textures)))
         }.toMutableMap()
         associated["assets/minecraft/blockstates/note_block.json"] =

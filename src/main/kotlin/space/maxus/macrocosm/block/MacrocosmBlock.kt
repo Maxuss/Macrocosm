@@ -19,16 +19,14 @@ interface MacrocosmBlock : Clone {
     fun pool(player: Player, mc: MacrocosmPlayer): LootPool
 
     fun place(placer: Player, mc: MacrocosmPlayer, at: Location) {
-        val (instrument, note, powered) = HybridBlockModelGenerator.parseBlockData(
-            HybridBlockModelGenerator.blockData(
-                id
-            )
+        val (instrument, note) = HybridBlockModelGenerator.blockData(
+            id
         )
         at.block.setType(Material.NOTE_BLOCK, false)
         val nb = at.block.blockData as NoteBlock
         nb.instrument = instrument
         nb.note = Note(note)
-        nb.isPowered = powered
+        nb.isPowered = false
         at.block.blockData = nb
     }
 
