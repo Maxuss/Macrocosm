@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.block
 
+import net.axay.kspigot.extensions.events.clickedBlockExceptAir
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Tag
@@ -9,10 +10,8 @@ import org.bukkit.block.data.Bisected
 import org.bukkit.block.data.type.Door
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockPhysicsEvent
-import org.bukkit.event.block.BlockPistonExtendEvent
-import org.bukkit.event.block.BlockPistonRetractEvent
-import org.bukkit.event.block.NotePlayEvent
+import org.bukkit.event.block.*
+import org.bukkit.event.player.PlayerInteractEvent
 
 
 object CustomBlockHandlers : Listener {
@@ -56,7 +55,14 @@ object CustomBlockHandlers : Listener {
     fun onNotePlay(event: NotePlayEvent) {
         event.isCancelled = true
     }
-    
+
+    @EventHandler
+    fun onNoteInteract(e: PlayerInteractEvent) {
+        if (e.action == Action.RIGHT_CLICK_BLOCK && e.hasBlock() && e.clickedBlockExceptAir?.type == Material.NOTE_BLOCK) {
+            e.isCancelled = true
+        }
+    }
+
     private fun updateAndCheck(loc: Location) {
         val b: Block = loc.block.getRelative(BlockFace.UP)
         if (b.type === Material.NOTE_BLOCK) b.state.update(true, true)
