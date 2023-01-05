@@ -82,8 +82,8 @@ enum class EntityValue(val entity: MacrocosmEntity) {
             helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTVkMzE1NTkyNjFiM2U3OTAyNDc1MWZlMDdiNzExYzhmZWVmNTFkNTZjMDM2MzUyMjY5NTU4MDViYzQyODk0ZSJ9fX0="),
             disguiseSkin = "Gladiator_Kraken",
             sounds = EntitySoundBank.from(
-                SoundType.DAMAGED to (Sound.ENTITY_GLOW_SQUID_HURT to 0f),
-                SoundType.DAMAGED to (Sound.ENTITY_GLOW_SQUID_DEATH to 0f),
+                EntitySoundType.DAMAGED to (Sound.ENTITY_GLOW_SQUID_HURT to 0f),
+                EntitySoundType.DAMAGED to (Sound.ENTITY_GLOW_SQUID_DEATH to 0f),
             )
         )
     ),
@@ -171,8 +171,8 @@ enum class EntityValue(val entity: MacrocosmEntity) {
             boots = VanillaItem(Material.NETHERITE_BOOTS),
             mainHand = VanillaItem(Material.NETHERITE_SWORD),
             sounds = EntitySoundBank.from(
-                SoundType.DAMAGED to (Sound.ENTITY_WITHER_SKELETON_HURT to 0.7f),
-                SoundType.DEATH to (Sound.ENTITY_WITHER_DEATH to 0.7f)
+                EntitySoundType.DAMAGED to (Sound.ENTITY_WITHER_SKELETON_HURT to 0.7f),
+                EntitySoundType.DEATH to (Sound.ENTITY_WITHER_DEATH to 0.7f)
             )
         )
     ),

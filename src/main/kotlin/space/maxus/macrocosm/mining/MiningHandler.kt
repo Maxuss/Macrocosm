@@ -4,6 +4,8 @@ import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
+import com.comphenix.protocol.reflect.StructureModifier
+import com.comphenix.protocol.wrappers.EnumWrappers
 import net.axay.kspigot.extensions.events.clickedBlockExceptAir
 import net.axay.kspigot.runnables.task
 import net.minecraft.core.BlockPos
@@ -20,6 +22,7 @@ import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockDamageAbortEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.metadata.FixedMetadataValue
@@ -38,6 +41,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.floor
 import kotlin.math.roundToInt
+
 
 private fun skillExpFromBlock(block: Block): Pair<Float, SkillType>? {
     val meta = block.getMetadata("SKILL_EXP").firstOrNull()?.asFloat()
@@ -189,12 +193,18 @@ private fun suitingTypes(block: Block): List<ItemType> {
     return listOf(ItemType.SHOVEL, ItemType.GAUNTLET, ItemType.OTHER)
 }
 
-object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION),
+object MiningHandler : PacketAdapter(
+    Macrocosm,
+    ListenerPriority.NORMAL,
+    PacketType.Play.Client.BLOCK_DIG,
+    PacketType.Play.Client.ARM_ANIMATION
+),
     Listener {
     /**
      * Blocks that were last broken by player
      */
     private val breakingNow: ConcurrentHashMap<UUID, Location> = ConcurrentHashMap(hashMapOf())
+    private var destroying: Boolean = false
 
     @EventHandler
     fun onStartBreak(e: PlayerInteractEvent) {
@@ -337,28 +347,49 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
         e.player.sendPacket(packet)
     }
 
-    override fun onPacketReceiving(e: PacketEvent) {
-        if (e.packetType == PacketType.Play.Client.ARM_ANIMATION) {
-            val player = e.player
-            val target = player.getTargetBlock(null, 5)
+    @EventHandler
+    fun onBlockStopBreaking(e: BlockDamageAbortEvent) {
+        breakingNow.remove(e.player.uniqueId)
+        val event = StopBreakingBlockEvent(e.player.macrocosm!!, e.block)
+        event.callEvent()
+    }
 
-            if (target.type != Material.AIR) {
+    @EventHandler
+    fun onInteractEvent(e: PlayerInteractEvent) {
+        if (e.action == Action.RIGHT_CLICK_BLOCK) {
+            StopBreakingBlockEvent(e.player.macrocosm!!, e.clickedBlock ?: return).callEvent()
+        }
+    }
+
+    override fun onPacketReceiving(e: PacketEvent) {
+        if (e.packetType == PacketType.Play.Client.BLOCK_DIG) {
+            val packet = e.packet
+
+            val data: StructureModifier<EnumWrappers.PlayerDigType> = packet
+                .getEnumModifier(EnumWrappers.PlayerDigType::class.java, 2)
+            val type = try {
+                data.values[0]
+            } catch (exception: IllegalArgumentException) {
+                EnumWrappers.PlayerDigType.SWAP_HELD_ITEMS
+            }
+            
+            destroying = type == EnumWrappers.PlayerDigType.START_DESTROY_BLOCK
+        } else if (e.packetType == PacketType.Play.Client.ARM_ANIMATION) {
+            val player = e.player
+            val target = player.getTargetBlockExact(6) ?: return
+            if (target.type != Material.AIR && destroying) {
                 val targetLoc = target.location
                 val cachedLoc = breakingNow[player.uniqueId]
                 if (cachedLoc != null && targetLoc != cachedLoc) {
-                    task {
-                        val event = StopBreakingBlockEvent(player.macrocosm!!, cachedLoc.block)
-                        event.callEvent()
-                    }
                     breakingNow[player.uniqueId] = targetLoc
                     return
                 }
+
                 // workaround to call event on main thread
                 task {
                     val event = MineTickEvent(player.macrocosm!!, target)
                     event.callEvent()
                 }
-                breakingNow[player.uniqueId] = targetLoc
             }
         }
     }

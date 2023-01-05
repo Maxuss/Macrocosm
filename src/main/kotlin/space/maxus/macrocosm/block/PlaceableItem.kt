@@ -13,7 +13,7 @@ import space.maxus.macrocosm.registry.Identifier
 
 open class PlaceableItem(
     id: Identifier,
-    private val blockId: Identifier,
+    val blockId: Identifier,
     override var name: Component,
     override var rarity: Rarity
 ) : AbstractMacrocosmItem(id, ItemType.OTHER) {

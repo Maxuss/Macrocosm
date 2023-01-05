@@ -3,6 +3,7 @@ package space.maxus.macrocosm.block
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Note
+import org.bukkit.Sound
 import org.bukkit.block.data.type.NoteBlock
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.generators.HybridBlockModelGenerator
@@ -21,6 +22,7 @@ interface MacrocosmBlock : Clone {
     val steadiness: Int
     val suitableTools: List<ItemType>
     val baseExperience: Pair<Float, SkillType>
+    val soundBank: BlockSoundBank
 
     fun pool(player: Player, mc: MacrocosmPlayer): LootPool
 
@@ -55,7 +57,26 @@ interface MacrocosmBlock : Clone {
 
         @Suppress("DEPRECATION")
         fun fromBlockData(nb: NoteBlock): MacrocosmBlock? {
-            return Registry.BLOCK.findOrNull(blockReferences["${nb.instrument.name}${nb.note.id}"]!!)
+            return Registry.BLOCK.findOrNull(blockReferences["${nb.instrument.name}${nb.note.id}"] ?: return null)
+        }
+    }
+
+    object Sounds {
+        val DEEPSLATE by lazy { newSoundBank("BLOCK_DEEPSLATE") }
+        val STONE by lazy { newSoundBank("BLOCK_SOUND") }
+        val AMETHYST by lazy { newSoundBank("BLOCK_AMETHYST_BLOCK") }
+        val NETHERRACK by lazy { newSoundBank("BLOCK_NETHERRACK") }
+        val GRASS by lazy { newSoundBank("BLOCK_GRASS") }
+        val WET_GRASS by lazy { newSoundBank("BLOCK_WET_GRASS") }
+        val ROOTED_DIRT by lazy { newSoundBank("BLOCK_ROOTED_DIRT") }
+        val BASALT by lazy { newSoundBank("BLOCK_BASALT") }
+        val NETHER_BRICKS by lazy { newSoundBank("BLOCK_NETHER_BRICKS") }
+        val METAL by lazy { newSoundBank("BLOCK_METAL") }
+
+        fun newSoundBank(base: String): BlockSoundBank {
+            return BlockSoundBank.from(*BlockSoundType.values()
+                .associateWith { (Sound.valueOf("${base}_${it.name}") to 1f) }
+                .toList().toTypedArray())
         }
     }
 }

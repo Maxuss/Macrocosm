@@ -7,15 +7,12 @@ import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
-import org.bukkit.Material
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.block.CustomBlockHandlers
-import space.maxus.macrocosm.block.MacrocosmBlock
-import space.maxus.macrocosm.block.SimpleMacrocosmBlock
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.datagen.DataGenerators
@@ -33,15 +30,11 @@ import space.maxus.macrocosm.fishing.TrophyFishes
 import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.Armor
-import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
-import space.maxus.macrocosm.loot.LootPool
-import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
@@ -57,7 +50,6 @@ import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
-import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
@@ -208,21 +200,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             PyroclasticToadPet::init,
             WaspPet::init
         )
-
-        Registry.BLOCK.register(
-            id("test_block"),
-            SimpleMacrocosmBlock(
-                "test_block",
-                "Test Block",
-                Rarity.UNCOMMON,
-                MacrocosmBlock.HARDNESS_DEEPSLATE * 1.5,
-                MacrocosmBlock.STEADINESS_MIN,
-                120 to SkillType.EXCAVATING,
-                ItemType.all(),
-                LootPool.of(vanilla(Material.DIAMOND, .8, amount = 2..5))
-            )
-        )
-
+        
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
@@ -246,6 +224,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(CustomBlockHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)

@@ -4,7 +4,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.entity.EntitySoundBank
-import space.maxus.macrocosm.entity.SoundType
+import space.maxus.macrocosm.entity.EntitySoundType
 import space.maxus.macrocosm.item.ColoredEntityArmor
 import space.maxus.macrocosm.item.SkullEntityHead
 import space.maxus.macrocosm.item.VanillaItem
@@ -68,8 +68,8 @@ object EntombedReaper : SlayerBase(
     leggings = ColoredEntityArmor(Material.LEATHER_LEGGINGS, 0x000000),
     boots = ColoredEntityArmor(Material.LEATHER_BOOTS, 0x000000),
     sounds = EntitySoundBank.from(
-        SoundType.DAMAGED to (Sound.ENTITY_PHANTOM_HURT to 0f),
-        SoundType.DEATH to (Sound.ENTITY_PHANTOM_DEATH to 0f)
+        EntitySoundType.DAMAGED to (Sound.ENTITY_PHANTOM_HURT to 0f),
+        EntitySoundType.DEATH to (Sound.ENTITY_PHANTOM_DEATH to 0f)
     ),
     actualName = "<dark_aqua>Entombed Reaper"
 )

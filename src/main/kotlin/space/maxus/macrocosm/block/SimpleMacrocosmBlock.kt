@@ -22,6 +22,7 @@ open class SimpleMacrocosmBlock(
     baseExperience: Pair<Number, SkillType>,
     override val suitableTools: List<ItemType>,
     private val pool: LootPool,
+    override val soundBank: BlockSoundBank,
     texture: String = id,
 ) : MacrocosmBlock, AutoRegister<MacrocosmItem> {
     override val hardness: Int = hardness.toInt()
@@ -43,7 +44,8 @@ open class SimpleMacrocosmBlock(
             baseExperience,
             suitableTools,
             pool,
-            texture.toString()
+            soundBank,
+            texture.toString(),
         )
     }
 
