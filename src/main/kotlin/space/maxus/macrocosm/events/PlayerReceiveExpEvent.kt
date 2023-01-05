@@ -9,7 +9,7 @@ import space.maxus.macrocosm.skills.SkillType
 class PlayerReceiveExpEvent(
     val player: MacrocosmPlayer,
     var type: SkillType,
-    var amount: Int
+    var amount: Float
 ) : Event(), Cancellable {
     private var eventCancelled = false
 

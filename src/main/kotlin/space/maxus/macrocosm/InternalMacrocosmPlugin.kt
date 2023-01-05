@@ -7,6 +7,7 @@ import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.api.KeyManager
@@ -32,12 +33,14 @@ import space.maxus.macrocosm.fishing.TrophyFishes
 import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.Armor
+import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.loot.LootPool
+import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
@@ -55,6 +58,7 @@ import space.maxus.macrocosm.registry.Clone
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerHandlers
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
@@ -78,6 +82,7 @@ import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import kotlin.io.path.*
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @OptIn(UnsafeFeature::class)
@@ -208,9 +213,13 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         Registry.BLOCK.register(id("my_test_block"), object : MacrocosmBlock {
             override val id: Identifier = id("my_test_block")
-            override val durability: Long = 1000
+            override val hardness: Int = (MacrocosmBlock.HARDNESS_STONE * 1.5).roundToInt()
+            override val steadiness: Int = MacrocosmBlock.STEADINESS_MIN
+            override val suitableTools: List<ItemType> = ItemType.all()
+            override val baseExperience: Pair<Float, SkillType> = 100f to SkillType.ALCHEMY
+
             override fun pool(player: Player, mc: MacrocosmPlayer): LootPool {
-                return LootPool.of()
+                return LootPool.of(vanilla(Material.DIAMOND, 1.0, amount = 1..5))
             }
 
             override fun clone(): Clone {

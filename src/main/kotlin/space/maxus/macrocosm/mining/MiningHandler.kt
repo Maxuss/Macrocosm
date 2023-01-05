@@ -13,6 +13,7 @@ import org.bukkit.Material
 import org.bukkit.block.Barrel
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
+import org.bukkit.block.data.type.NoteBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -23,6 +24,7 @@ import org.bukkit.metadata.LazyMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.loot.LootPool
@@ -34,43 +36,43 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-private fun skillExpFromBlock(block: Block): Pair<Int, SkillType>? {
-    val meta = block.getMetadata("SKILL_EXP").firstOrNull()?.asInt()
+private fun skillExpFromBlock(block: Block): Pair<Float, SkillType>? {
+    val meta = block.getMetadata("SKILL_EXP").firstOrNull()?.asFloat()
     val exp = meta ?: when (block.type) {
         // mining
-        Material.STONE, Material.COBBLESTONE -> return Pair(5, SkillType.MINING)
-        Material.COPPER_ORE, Material.COAL_ORE, Material.DEEPSLATE -> return Pair(15, SkillType.MINING)
+        Material.STONE, Material.COBBLESTONE -> return Pair(5f, SkillType.MINING)
+        Material.COPPER_ORE, Material.COAL_ORE, Material.DEEPSLATE -> return Pair(15f, SkillType.MINING)
         Material.IRON_ORE, Material.NETHER_GOLD_ORE, Material.REDSTONE_ORE, Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_COAL_ORE -> return Pair(
-            25,
+            25f,
             SkillType.MINING
         )
 
         Material.GOLD_ORE, Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_REDSTONE_ORE -> return Pair(
-            35,
+            35f,
             SkillType.MINING
         )
 
-        Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.DEEPSLATE_GOLD_ORE -> return Pair(50, SkillType.MINING)
-        Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> return Pair(80, SkillType.MINING)
-        Material.OBSIDIAN -> return Pair(95, SkillType.MINING)
-        Material.ANCIENT_DEBRIS -> return Pair(250, SkillType.MINING)
+        Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.DEEPSLATE_GOLD_ORE -> return Pair(50f, SkillType.MINING)
+        Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> return Pair(80f, SkillType.MINING)
+        Material.OBSIDIAN -> return Pair(95f, SkillType.MINING)
+        Material.ANCIENT_DEBRIS -> return Pair(250f, SkillType.MINING)
 
         // foraging
-        Material.BIRCH_LOG, Material.OAK_LOG, Material.SPRUCE_LOG -> return Pair(30, SkillType.FORAGING)
-        Material.ACACIA_LOG -> return Pair(40, SkillType.FORAGING)
-        Material.DARK_OAK_LOG, Material.JUNGLE_LOG -> return Pair(50, SkillType.FORAGING)
+        Material.BIRCH_LOG, Material.OAK_LOG, Material.SPRUCE_LOG -> return Pair(30f, SkillType.FORAGING)
+        Material.ACACIA_LOG -> return Pair(40f, SkillType.FORAGING)
+        Material.DARK_OAK_LOG, Material.JUNGLE_LOG -> return Pair(50f, SkillType.FORAGING)
 
         // farming
-        Material.POTATOES, Material.CARROTS -> return Pair(10, SkillType.FARMING)
-        Material.SUGAR_CANE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM -> return Pair(25, SkillType.FARMING)
-        Material.MELON -> return Pair(40, SkillType.FARMING)
-        Material.PUMPKIN -> return Pair(50, SkillType.FARMING)
-        Material.NETHER_WART -> return Pair(60, SkillType.FARMING)
+        Material.POTATOES, Material.CARROTS -> return Pair(10f, SkillType.FARMING)
+        Material.SUGAR_CANE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM -> return Pair(25f, SkillType.FARMING)
+        Material.MELON -> return Pair(40f, SkillType.FARMING)
+        Material.PUMPKIN -> return Pair(50f, SkillType.FARMING)
+        Material.NETHER_WART -> return Pair(60f, SkillType.FARMING)
 
         // excavating
-        Material.DIRT, Material.PODZOL, Material.NETHERRACK -> return Pair(5, SkillType.EXCAVATING)
-        Material.SAND, Material.GRAVEL, Material.CLAY -> return Pair(10, SkillType.EXCAVATING)
-        Material.SOUL_SAND -> return Pair(25, SkillType.EXCAVATING)
+        Material.DIRT, Material.PODZOL, Material.NETHERRACK -> return Pair(5f, SkillType.EXCAVATING)
+        Material.SAND, Material.GRAVEL, Material.CLAY -> return Pair(10f, SkillType.EXCAVATING)
+        Material.SOUL_SAND -> return Pair(25f, SkillType.EXCAVATING)
         else -> return null
     }
     return Pair(
@@ -216,15 +218,20 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
     @EventHandler
     fun onBreakBlock(e: PlayerBreakBlockEvent) {
         val mc = e.player
-        var pool =
-            LootPool.of(*e.block.drops.map { vanilla(it.type, 1.0, amount = it.amount..it.amount) }.toTypedArray())
+        var (pool, exp) = if (e.block.type == Material.NOTE_BLOCK) {
+            val block = MacrocosmBlock.fromBlockData(e.block.blockData as NoteBlock) ?: return
+            val pool = block.pool(mc.paper!!, mc)
+            val exp = block.baseExperience
+            Pair(pool, exp)
+        } else
+            Pair(LootPool.of(*e.block.drops.map { vanilla(it.type, 1.0, amount = it.amount..it.amount) }
+                .toTypedArray()), skillExpFromBlock(e.block) ?: return)
         val items = if (!e.block.hasMetadata("_PLAYER_PLACED")) {
             val event = BlockDropItemsEvent(mc, e.block, pool)
             event.callEvent()
             pool = event.pool
-            val pair = skillExpFromBlock(e.block) ?: return
-            val (exp, type) = pair
-            val expEvent = PlayerReceiveExpEvent(mc, type, exp)
+            val (experience, expType) = exp
+            val expEvent = PlayerReceiveExpEvent(mc, expType, experience)
             if (!expEvent.callEvent())
                 pool.roll(mc, true)
             else {
@@ -241,15 +248,26 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
     @EventHandler
     fun onMineTick(e: MineTickEvent) {
         val breaking = e.block
-        val hardness = blockHardness(breaking)
-        val bp = breakingPowerRequired(breaking)
+        val hardness: Int
+        val bp: Int
+        val suiting: List<ItemType>
+        if (breaking.type == Material.NOTE_BLOCK) {
+            val mc = MacrocosmBlock.fromBlockData(breaking.blockData as NoteBlock)
+                ?: throw IllegalStateException("Invalid custom block found! Have you forgotten to remove it?")
+            hardness = mc.hardness
+            bp = mc.steadiness
+            suiting = mc.suitableTools
+        } else {
+            hardness = blockHardness(breaking)
+            bp = breakingPowerRequired(breaking)
+            suiting = suitingTypes(breaking)
+        }
         val item = e.player.mainHand
         if (item == null && bp > 0)
             return
         val itemBp = item?.breakingPower ?: 0
         if (itemBp < bp)
             return
-        val suiting = suitingTypes(breaking)
         if (item != null && !suiting.contains(item.type))
             return
 
