@@ -75,6 +75,7 @@ enum class CollectionType(val inst: Collection) : Serializable {
     WARPED_WOOD(Collection("Warped Wood", listOf(), FORAGING, SkillTable)),
     STEELWOOD(Collection("Steelwood", listOf(), FORAGING, SkillTable)),
     CRYSTALWOOD(Collection("Crystalwood", listOf(), FORAGING, SkillTable)),
+    SHADEWOOD(Collection("Shadewood", listOf(), FORAGING, SkillTable)),
 
     // excavating
     DIRT(Collection("Dirt", listOf(), EXCAVATING, SkillTable)),
