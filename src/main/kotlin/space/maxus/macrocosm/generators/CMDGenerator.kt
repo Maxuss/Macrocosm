@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * Prefix for custom model data numbers as stated in
  * https://mc-datapacks.github.io/en/conventions/custom_model_id.html
  *
- * Currently supports numbers of 4 numbers length
+ * Currently, it supports numbers of 4 number length
  */
 const val MODEL_PREFIX = 732_0000
 

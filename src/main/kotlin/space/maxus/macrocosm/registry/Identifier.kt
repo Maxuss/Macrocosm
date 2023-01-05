@@ -23,6 +23,10 @@ data class Identifier(val namespace: String, val path: String) : Tag, Serializab
         return VALIDITY_REGEX.matches(namespace) && VALIDITY_REGEX.matches(path)
     }
 
+    fun resolve(part: String): Identifier {
+        return Identifier(this.namespace, "${this.path.trimEnd('/')}/$part")
+    }
+
     override fun write(output: DataOutput) {
         StringTag.valueOf(toString()).write(output)
     }

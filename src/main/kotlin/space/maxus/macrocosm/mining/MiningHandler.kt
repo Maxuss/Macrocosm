@@ -200,7 +200,9 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
 
         // preparing block to be mined
         block!!.setMetadata("BREAKING_STATE", LazyMetadataValue(Macrocosm) { .0f })
-        block.setMetadata("_BREAKING_ID", LazyMetadataValue(Macrocosm) { kotlin.random.Random.nextInt(2000) })
+        block.setMetadata(
+            "_BREAKING_ID",
+            LazyMetadataValue(Macrocosm) { kotlin.random.Random.nextInt(2000) })
 
         // adding haste effect to player
         e.player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_DIGGING, Int.MAX_VALUE, -1))
