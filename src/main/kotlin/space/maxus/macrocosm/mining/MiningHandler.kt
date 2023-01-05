@@ -8,12 +8,15 @@ import net.axay.kspigot.extensions.events.clickedBlockExceptAir
 import net.axay.kspigot.runnables.task
 import net.minecraft.core.BlockPos
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket
+import net.minecraft.world.level.block.LevelEvent
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Barrel
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.block.data.type.NoteBlock
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -295,9 +298,15 @@ object MiningHandler : PacketAdapter(Macrocosm, ListenerPriority.NORMAL, PacketT
                 // sending packet anyway, even if we destroyed block
                 // because client caches them, and next block placed will have that weird texture
                 e.player.sendPacket(ClientboundBlockDestructionPacket(bId, pos, -1))
+                // spawning block destroyed particles
+                (breaking.world as CraftWorld).handle.levelEvent(
+                    LevelEvent.PARTICLES_DESTROY_BLOCK,
+                    BlockPos(breaking.location.x, breaking.location.y, breaking.location.z),
+                    net.minecraft.world.level.block.Block.getId((breaking as CraftBlock).nms)
+                )
                 // setting block to air, without dropping items, because
                 // handlers of PlayerBreakBlockEvent should drop them
-                breaking.type = Material.AIR
+                breaking.setType(Material.AIR, false)
             } else {
                 breaking.removeMetadata("BREAKING_STATE", Macrocosm)
                 val packet = ClientboundBlockDestructionPacket(bId, BlockPos(breaking.x, breaking.y, breaking.z), -1)

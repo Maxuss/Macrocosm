@@ -296,26 +296,34 @@ object Discord : ListenerAdapter() {
 
             bot = botBuilder.setActivity(Activity.playing("/help")).build()
 
-            val commands = bot.updateCommands()
-
-            commands.addCommands(
-                Commands.slash("ping", "Gets the ping of Macrocosm Bot").setGuildOnly(true),
-                Commands.slash("info", "Gets general info about Macrocosm")
-                    .addOption(OptionType.STRING, "category", "Category for the bot to give info on", true, true),
-                Commands.slash("auth", "Links your Minecraft account with this Discord account.")
-                    .addOption(OptionType.STRING, "key", "Your unique authentication key", true, false),
-                Commands.slash("bazaar", "Gets specific bazaar information")
-                    .addOption(OptionType.STRING, "type", "Type of bazaar action", true, true)
-                    .addOption(OptionType.STRING, "product", "Type of bazaar product, an identifier", false, true)
-                    .addOption(OptionType.STRING, "user", "Username/UUID of user which bazaar to check", false, false),
-                Commands.slash("profile", "Gets data on specific player")
-                    .addOption(OptionType.USER, "user", "User which profile to check", false),
-                Commands.slash("api", "Regenerates your Macrocosm API Key"),
-                Commands.user("Macrocosm profile data")
-            ).queue()
-
 
             taskRunLater(3 * 20L, sync = false) {
+                val guild = bot.getGuildById(Macrocosm.config.getLong("connections.discord.guild-id"))!!
+
+                val commands = guild.updateCommands()
+
+                commands.addCommands(
+                    Commands.slash("ping", "Gets the ping of Macrocosm Bot").setGuildOnly(true),
+                    Commands.slash("info", "Gets general info about Macrocosm").setGuildOnly(true)
+                        .addOption(OptionType.STRING, "category", "Category for the bot to give info on", true, true),
+                    Commands.slash("auth", "Links your Minecraft account with this Discord account.")
+                        .addOption(OptionType.STRING, "key", "Your unique authentication key", true, false),
+                    Commands.slash("bazaar", "Gets specific bazaar information")
+                        .addOption(OptionType.STRING, "type", "Type of bazaar action", true, true)
+                        .addOption(OptionType.STRING, "product", "Type of bazaar product, an identifier", false, true)
+                        .addOption(
+                            OptionType.STRING,
+                            "user",
+                            "Username/UUID of user which bazaar to check",
+                            false,
+                            false
+                        ),
+                    Commands.slash("profile", "Gets data on specific player")
+                        .addOption(OptionType.USER, "user", "User which profile to check", false),
+                    Commands.slash("api", "Regenerates your Macrocosm API Key"),
+                    Commands.user("Macrocosm profile data")
+                ).queue()
+ 
                 val ch = communicationChannel
                 if (ch != null) {
                     bot.updateCommands().addCommands(
@@ -325,7 +333,6 @@ object Discord : ListenerAdapter() {
                             .addOption(OptionType.STRING, "event", "Event ID to unsubscribe you from", true, true)
                     ).queue()
 
-                    val guild = bot.getGuildById(Macrocosm.config.getLong("connections.discord.guild-id"))!!
                     val c = guild.getTextChannelById(ch)!!
                     commTextChannel = c
 
