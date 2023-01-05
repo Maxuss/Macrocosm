@@ -13,6 +13,7 @@ import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
+import space.maxus.macrocosm.block.CustomBlockHandlers
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
@@ -239,7 +240,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
-//        server.pluginManager.registerEvents(SignatureDissolver, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(CustomBlockHandlers, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)

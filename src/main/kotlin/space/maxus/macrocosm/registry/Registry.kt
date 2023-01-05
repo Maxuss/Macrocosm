@@ -197,6 +197,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val BLOCK = makeImmutable<MacrocosmBlock>(id("block"), true) { _, block ->
             HybridBlockModelGenerator.enqueue(block)
         }
+        val BLOCK_REFS = makeDefaulted<Identifier>(id("block_refs"), false)
 
         override fun dumpToFile(file: Path) {
 

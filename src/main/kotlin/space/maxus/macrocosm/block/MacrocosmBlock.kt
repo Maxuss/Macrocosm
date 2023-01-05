@@ -10,6 +10,8 @@ import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Clone
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.util.general.id
 
 interface MacrocosmBlock : Clone {
     val id: Identifier
@@ -32,5 +34,12 @@ interface MacrocosmBlock : Clone {
 
     override fun clone(): Clone {
         throw IllegalStateException("Override the clone method for MacrocosmBlock!")
+    }
+
+    companion object {
+        fun fromBlockData(nb: NoteBlock): MacrocosmBlock? {
+            val hash = Pair(nb.instrument, nb.note).hashCode()
+            return Registry.BLOCK.findOrNull(Registry.BLOCK_REFS.find(id("ref@$hash")))
+        }
     }
 }

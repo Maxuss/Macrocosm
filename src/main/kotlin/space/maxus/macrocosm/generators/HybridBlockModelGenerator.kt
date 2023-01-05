@@ -6,7 +6,9 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument
 import org.bukkit.Instrument
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.GSON
+import space.maxus.macrocosm.util.general.id
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -122,6 +124,7 @@ object HybridBlockModelGenerator : ResGenerator {
             )
         )
         val nextInfo = nextNoteBlockInfo()
+        Registry.BLOCK_REFS.register(id("ref@${nextInfo.hashCode()}"), block.id)
         enqueued.add(
             BlockModel(
                 "assets/macrocosm/models/block/${block.id.path}.json",
