@@ -81,6 +81,25 @@ fun connectDiscordCommand() = command("discordauth") {
     }
 }
 
+fun placeBlockCommand() = command("placeblock") {
+    argument("block", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.BLOCK.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "block"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val block = Registry.BLOCK.find(getArgument<ResourceLocation>("block").macrocosm)
+            block.place(player, player.macrocosm!!, player.location)
+        }
+    }
+}
+
 fun bazaarOpCommand() = command("bazaarop") {
     requires { it.hasPermission(4) }
 

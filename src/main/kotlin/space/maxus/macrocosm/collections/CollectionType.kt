@@ -75,6 +75,7 @@ enum class CollectionType(val inst: Collection) : Serializable {
     WARPED_WOOD(Collection("Warped Wood", listOf(), FORAGING, SkillTable)),
     STEELWOOD(Collection("Steelwood", listOf(), FORAGING, SkillTable)),
     CRYSTALWOOD(Collection("Crystalwood", listOf(), FORAGING, SkillTable)),
+    SHADEWOOD(Collection("Shadewood", listOf(), FORAGING, SkillTable)),
 
     // excavating
     DIRT(Collection("Dirt", listOf(), EXCAVATING, SkillTable)),
@@ -163,12 +164,28 @@ enum class CollectionType(val inst: Collection) : Serializable {
          */
         fun fromIdentifier(id: Identifier): CollectionType? {
             if (id.path.contains("enchanted_"))
-                return from(Material.valueOf(id.path.replace("enchanted_", "").uppercase()))
+                return try {
+                    from(Material.valueOf(id.path.replace("enchanted_", "").uppercase()))
+                } catch (e: IllegalArgumentException) {
+                    return when (id.path.replace("enchanted_", "")) {
+                        "magmafish" -> MAGMAFISH
+                        "moonstone_dust" -> MOONSTONE_DUST
+                        "steelwood" -> STEELWOOD
+                        "crystalwood" -> CRYSTALWOOD
+                        "shadewood" -> SHADEWOOD
+                        "silver" -> SILVER
+                        "mithril" -> MITHRIL
+                        "adamantite" -> ADAMANTITE
+                        "titanium" -> TITANIUM
+                        else -> null
+                    }
+                }
             return when (id.path) {
                 "magmafish" -> MAGMAFISH
                 "moonstone_dust" -> MOONSTONE_DUST
                 "steelwood" -> STEELWOOD
                 "crystalwood" -> CRYSTALWOOD
+                "shadewood" -> SHADEWOOD
                 "silver" -> SILVER
                 "mithril" -> MITHRIL
                 "adamantite" -> ADAMANTITE

@@ -1,33 +1,10 @@
 package space.maxus.macrocosm.entity
 
-import com.google.common.collect.ArrayListMultimap
-import net.axay.kspigot.sound.sound
-import org.bukkit.Location
-import org.bukkit.Sound
-import kotlin.random.Random
+import space.maxus.macrocosm.util.game.SoundBank
 
-enum class SoundType {
+enum class EntitySoundType {
     DAMAGED,
     DEATH
 }
 
-class EntitySoundBank private constructor(private val sounds: ArrayListMultimap<SoundType, Pair<Sound, Float>>) {
-    companion object {
-        fun from(vararg sounds: Pair<SoundType, Pair<Sound, Float>>): EntitySoundBank {
-            val mm = ArrayListMultimap.create<SoundType, Pair<Sound, Float>>()
-            for ((type, pair) in sounds) {
-                mm.put(type, pair)
-            }
-            return EntitySoundBank(mm)
-        }
-    }
-
-    fun playRandom(at: Location, type: SoundType, deltaPitch: Float = .1f) {
-        val (sound, pitch) = sounds[type].randomOrNull() ?: return
-        sound(sound) {
-            this.pitch = pitch + if (Random.nextBoolean()) deltaPitch else -deltaPitch
-            playAt(at)
-        }
-    }
-
-}
+typealias EntitySoundBank = SoundBank<EntitySoundType>

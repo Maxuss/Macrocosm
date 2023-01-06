@@ -68,7 +68,7 @@ data class StoredPet(
             lore.add(text("<gray>Progress to Level $next: <yellow>${Formatting.withCommas(ratio)}%").noitalic())
             lore.add(
                 text(
-                    "<green>${"-".repeat(coloredBarCount)}<white>${"-".repeat(emptyBarCount)} <yellow>${
+                    "<green>${"-".repeat(coloredBarCount)}<white>${"-".repeat(emptyBarCount)}  <yellow>${
                         Formatting.withCommas(
                             overflow.toBigDecimal()
                         )

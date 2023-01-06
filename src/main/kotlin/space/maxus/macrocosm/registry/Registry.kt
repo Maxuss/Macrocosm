@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.cosmetic.Cosmetic
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.discord.DiscordEmitter
@@ -193,6 +194,13 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val DISCORD_EMITTERS = makeDefaulted<DiscordEmitter<*>>(id("discord_emitters"), false)
         val RUNE = makeDefaulted<RuneType>(id("rune"))
         val ITEM_BUFF = makeDefaulted<MinorItemBuff>(id("item_buff"))
+        val BLOCK = makeDelegated<MacrocosmBlock>(id("block"), true) { _, block ->
+            HybridBlockModelGenerator.enqueue(block)
+
+            if (block is AutoRegister<*>) {
+                (block as? AutoRegister<MacrocosmItem>)?.register(ITEM)
+            }
+        }
 
         override fun dumpToFile(file: Path) {
 

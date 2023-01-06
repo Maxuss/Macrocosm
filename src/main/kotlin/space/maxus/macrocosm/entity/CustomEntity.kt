@@ -127,7 +127,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         if (Registry.SOUND.has(id)) {
             val soundBank = Registry.SOUND.find(id)
-            soundBank.playRandom(entity.location, SoundType.DAMAGED)
+            soundBank.playRandom(entity.location, EntitySoundType.DAMAGED)
         }
 
         currentHealth -= amount
@@ -175,7 +175,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         if (Registry.SOUND.has(id)) {
             val soundBank = Registry.SOUND.find(id)
-            soundBank.playRandom(entity.location, SoundType.DEATH)
+            soundBank.playRandom(entity.location, EntitySoundType.DEATH)
         }
 
         var pool = lootPool(killer)

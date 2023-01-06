@@ -12,9 +12,11 @@ import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
+import space.maxus.macrocosm.block.CustomBlockHandlers
+import space.maxus.macrocosm.block.MiningHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
-import space.maxus.macrocosm.data.DataGenerators
+import space.maxus.macrocosm.datagen.DataGenerators
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.db.DataStorage
 import space.maxus.macrocosm.db.impl.postgres.PostgresDatabaseImpl
@@ -27,17 +29,13 @@ import space.maxus.macrocosm.fishing.FishingHandler
 import space.maxus.macrocosm.fishing.SeaCreatures
 import space.maxus.macrocosm.fishing.TrophyFishes
 import space.maxus.macrocosm.forge.ForgeRecipe
-import space.maxus.macrocosm.generators.CMDGenerator
-import space.maxus.macrocosm.generators.MetaGenerator
-import space.maxus.macrocosm.generators.TexturedModelGenerator
-import space.maxus.macrocosm.generators.generate
+import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.Armor
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
-import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
@@ -203,7 +201,6 @@ class InternalMacrocosmPlugin : KSpigot() {
             WaspPet::init
         )
 
-
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
@@ -226,7 +223,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
-//        server.pluginManager.registerEvents(SignatureDissolver, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(CustomBlockHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
@@ -278,12 +276,14 @@ class InternalMacrocosmPlugin : KSpigot() {
         openBazaarMenuCommand()
         announceItemsCommand()
         petsCommand()
+        placeBlockCommand()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
         Registry.RESOURCE_GENERATORS.register(id("model_data"), CMDGenerator)
         Registry.RESOURCE_GENERATORS.register(id("model"), TexturedModelGenerator)
         Registry.RESOURCE_GENERATORS.register(id("mcmeta"), MetaGenerator)
+        Registry.RESOURCE_GENERATORS.register(id("blocks"), HybridBlockModelGenerator)
 
         if (dumpTestData) {
             Threading.runAsync(isDaemon = true) {
