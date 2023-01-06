@@ -23,6 +23,7 @@ import space.maxus.macrocosm.events.StopBreakingBlockEvent
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -93,11 +94,11 @@ object CustomBlockHandlers : Listener {
     }
 
     object WoodHandlers : Listener {
-        private val breakingSound = ConcurrentHashMap<Location, KSpigotRunnable>()
+        val breakingSound = ConcurrentHashMap<UUID, KSpigotRunnable>()
 
         @EventHandler
         fun onBreakWood(e: PlayerBreakBlockEvent) {
-            breakingSound.remove(e.block.location)?.cancel()
+            breakingSound.remove(e.player.ref)?.cancel()
             if (e.block.type == Material.NOTE_BLOCK) {
                 val mc = MacrocosmBlock.fromBlockData(e.block.blockData as NoteBlock) ?: return
                 mc.soundBank.playRandom(e.block.location, BlockSoundType.BREAK, 0f)
@@ -109,15 +110,15 @@ object CustomBlockHandlers : Listener {
 
         @EventHandler
         fun onHitWood(e: MineTickEvent) {
-            if (breakingSound.containsKey(e.block.location))
+            if (breakingSound.containsKey(e.player.ref))
                 return
             if (e.block.type == Material.NOTE_BLOCK) {
                 val mc = MacrocosmBlock.fromBlockData(e.block.blockData as NoteBlock) ?: return
-                breakingSound[e.block.location] = task(false, delay = 2L, period = 4L) {
+                breakingSound[e.player.ref] = task(false, delay = 2L, period = 4L) {
                     mc.soundBank.playRandom(e.block.location, BlockSoundType.BREAK, .25f, .5f)
                 }!!
             } else if (e.block.blockData.soundGroup.hitSound == Sound.BLOCK_WOOD_HIT) {
-                breakingSound[e.block.location] = task(false, delay = 2L, period = 4L) {
+                breakingSound[e.player.ref] = task(false, delay = 2L, period = 4L) {
                     e.block.world.playSound(e.block.location, "minecraft:custom.block.wood.hit", .25f, .5f)
                 }!!
             }
@@ -125,7 +126,7 @@ object CustomBlockHandlers : Listener {
 
         @EventHandler(priority = EventPriority.HIGHEST)
         fun onStopHittingWood(e: StopBreakingBlockEvent) {
-            breakingSound.remove(e.block.location)?.cancel()
+            breakingSound.remove(e.player.ref)?.cancel()
         }
 
 

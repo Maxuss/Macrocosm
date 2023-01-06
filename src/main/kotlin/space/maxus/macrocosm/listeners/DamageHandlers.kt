@@ -322,7 +322,7 @@ object DamageHandlers : Listener {
             return
         val damage = e.damage * 10
         e.damage = .0
-        val entity = e.entity as LivingEntity
+        val entity = e.entity as? LivingEntity ?: return
         if (entity is Player) {
             entity.macrocosm!!.damage(damage.toFloat(), text("electricity"))
         } else {

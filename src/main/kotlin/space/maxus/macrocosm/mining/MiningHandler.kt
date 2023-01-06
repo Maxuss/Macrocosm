@@ -30,6 +30,7 @@ import org.bukkit.metadata.LazyMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.block.CustomBlockHandlers
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.item.ItemType
@@ -266,7 +267,7 @@ object MiningHandler : PacketAdapter(
         val suiting: List<ItemType>
         if (breaking.type == Material.NOTE_BLOCK) {
             val mc = MacrocosmBlock.fromBlockData(breaking.blockData as NoteBlock)
-                ?: throw IllegalStateException("Invalid custom block found! Have you forgotten to remove it?")
+                ?: return
             hardness = mc.hardness
             bp = mc.steadiness
             suiting = mc.suitableTools
@@ -372,11 +373,16 @@ object MiningHandler : PacketAdapter(
             } catch (exception: IllegalArgumentException) {
                 EnumWrappers.PlayerDigType.SWAP_HELD_ITEMS
             }
-            
-            destroying = type == EnumWrappers.PlayerDigType.START_DESTROY_BLOCK
+
+            destroying = if (type == EnumWrappers.PlayerDigType.START_DESTROY_BLOCK) {
+                CustomBlockHandlers.WoodHandlers.breakingSound.remove(e.player.uniqueId)?.cancel()
+                true
+            } else {
+                false
+            }
         } else if (e.packetType == PacketType.Play.Client.ARM_ANIMATION) {
             val player = e.player
-            val target = player.getTargetBlockExact(6) ?: return
+            val target = player.getTargetBlockExact(5) ?: return
             if (target.type != Material.AIR && destroying) {
                 val targetLoc = target.location
                 val cachedLoc = breakingNow[player.uniqueId]

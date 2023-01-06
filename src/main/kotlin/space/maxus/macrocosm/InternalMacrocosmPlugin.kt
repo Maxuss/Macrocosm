@@ -200,7 +200,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             PyroclasticToadPet::init,
             WaspPet::init
         )
-        
+
         DataListener.joinLeave()
         server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
