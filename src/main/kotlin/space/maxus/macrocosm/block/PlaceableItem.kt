@@ -11,6 +11,16 @@ import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.registry.Identifier
 
+/**
+ * A placeable [MacrocosmBlock] encapsulated in a [MacrocosmItem].
+ *
+ * Uses a minecraft:paper as a base, but adds CustomModelData to it using the [HybridBlockModelGenerator]
+ *
+ * @param id Identifier of the item
+ * @param blockId Identifier of the block that can be placed
+ * @param name Name of the item
+ * @param rarity Rarity of the item
+ */
 open class PlaceableItem(
     id: Identifier,
     val blockId: Identifier,

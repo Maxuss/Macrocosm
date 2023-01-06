@@ -192,7 +192,11 @@ private fun suitingTypes(block: Block): List<ItemType> {
     return listOf(ItemType.SHOVEL, ItemType.GAUNTLET, ItemType.OTHER)
 }
 
-
+/**
+ * Object that contains (almost) all the custom mining logic for Macrocosm.
+ *
+ * It listens to clientbound play packets (0x1C and 0x2F) packets and bases everything off of them
+ */
 object MiningHandler : PacketAdapter(
     Macrocosm,
     ListenerPriority.NORMAL,
@@ -200,9 +204,7 @@ object MiningHandler : PacketAdapter(
     PacketType.Play.Client.ARM_ANIMATION
 ),
     Listener {
-    /**
-     * Blocks that were last broken by player
-     */
+    // Blocks that were last broken by player
     private val breakingNow: ConcurrentHashMap<UUID, Location> = ConcurrentHashMap(hashMapOf())
     private var destroying: Boolean = false
 
@@ -361,6 +363,9 @@ object MiningHandler : PacketAdapter(
         }
     }
 
+    /**
+     * The main packet handler
+     */
     override fun onPacketReceiving(e: PacketEvent) {
         if (e.packetType == PacketType.Play.Client.BLOCK_DIG) {
             val packet = e.packet

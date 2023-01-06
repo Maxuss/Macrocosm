@@ -194,7 +194,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val DISCORD_EMITTERS = makeDefaulted<DiscordEmitter<*>>(id("discord_emitters"), false)
         val RUNE = makeDefaulted<RuneType>(id("rune"))
         val ITEM_BUFF = makeDefaulted<MinorItemBuff>(id("item_buff"))
-        val BLOCK = makeImmutable<MacrocosmBlock>(id("block"), true) { _, block ->
+        val BLOCK = makeDelegated<MacrocosmBlock>(id("block"), true) { _, block ->
             HybridBlockModelGenerator.enqueue(block)
 
             if (block is AutoRegister<*>) {

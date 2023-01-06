@@ -11,8 +11,19 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
+/**
+ * A constant CMD ID from which textures for custom block items begin
+ */
 const val BEGIN_BLOCK_TEXTURES = 3500
 
+/**
+ * A single model for a block
+ * @property id Identifier of the custom block
+ * @property parent Parent model for this block
+ * @property variant Note Block variant for this block model
+ * @property textures Textures of this block model
+ * @property customModelData CMD for this block model
+ */
 data class BlockModel(
     val id: Identifier,
     val parent: String,
@@ -29,6 +40,9 @@ private class BlockStateVariant(val model: String)
 
 private class SingleBlockModel(val parent: String, val textures: HashMap<String, String>)
 
+/**
+ * A hybrid data generator for block models AND inventory representations of said blocks
+ */
 object HybridBlockModelGenerator : ResGenerator {
     private val enqueued: ConcurrentLinkedQueue<BlockModel> = ConcurrentLinkedQueue()
     private val latestBlockTexture = AtomicInteger(BEGIN_BLOCK_TEXTURES)
@@ -62,6 +76,9 @@ object HybridBlockModelGenerator : ResGenerator {
             "zombie"
         )
 
+    /**
+     * First a model for a block with provided [id]
+     */
     fun model(id: Identifier): BlockModel? {
         return enqueued.firstOrNull { it.id == id }
     }
