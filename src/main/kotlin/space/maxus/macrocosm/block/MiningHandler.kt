@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.mining
+package space.maxus.macrocosm.block
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority
@@ -30,8 +30,6 @@ import org.bukkit.metadata.LazyMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.block.CustomBlockHandlers
-import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.loot.LootPool
@@ -42,7 +40,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.floor
 import kotlin.math.roundToInt
-
+import kotlin.random.Random
 
 private fun skillExpFromBlock(block: Block): Pair<Float, SkillType>? {
     val meta = block.getMetadata("SKILL_EXP").firstOrNull()?.asFloat()
@@ -194,6 +192,7 @@ private fun suitingTypes(block: Block): List<ItemType> {
     return listOf(ItemType.SHOVEL, ItemType.GAUNTLET, ItemType.OTHER)
 }
 
+
 object MiningHandler : PacketAdapter(
     Macrocosm,
     ListenerPriority.NORMAL,
@@ -218,7 +217,7 @@ object MiningHandler : PacketAdapter(
         block!!.setMetadata("BREAKING_STATE", LazyMetadataValue(Macrocosm) { .0f })
         block.setMetadata(
             "_BREAKING_ID",
-            LazyMetadataValue(Macrocosm) { kotlin.random.Random.nextInt(2000) })
+            LazyMetadataValue(Macrocosm) { Random.nextInt(2000) })
 
         // adding haste effect to player
         e.player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_DIGGING, Int.MAX_VALUE, -1))
@@ -285,7 +284,7 @@ object MiningHandler : PacketAdapter(
         if (item != null && !suiting.contains(item.type))
             return
 
-        val bId = breaking.getMetadata("_BREAKING_ID").firstOrNull()?.asInt() ?: kotlin.random.Random.nextInt()
+        val bId = breaking.getMetadata("_BREAKING_ID").firstOrNull()?.asInt() ?: Random.nextInt()
 
         var state = breaking.getMetadata("BREAKING_STATE").firstOrNull()?.asFloat() ?: return
         // amount of damage applied to block on each tick
@@ -342,7 +341,7 @@ object MiningHandler : PacketAdapter(
         if (breaking.type.isAir)
             return
         e.block.removeMetadata("BREAKING_STATE", Macrocosm)
-        val bId = e.block.getMetadata("_BREAKING_ID").firstOrNull()?.asInt() ?: kotlin.random.Random.nextInt(2000)
+        val bId = e.block.getMetadata("_BREAKING_ID").firstOrNull()?.asInt() ?: Random.nextInt(2000)
         e.block.removeMetadata("_BREAKING_ID", Macrocosm)
         val packet = ClientboundBlockDestructionPacket(bId, BlockPos(breaking.x, breaking.y, breaking.z), -1)
         e.player.sendPacket(packet)

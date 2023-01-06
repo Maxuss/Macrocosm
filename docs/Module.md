@@ -58,6 +58,10 @@ Contains the extra operation info for the Bazaar
 
 Contains the necessary Bazaar UI function
 
+# Package space.maxus.macrocosm.block
+
+Contains all the custom block logic
+
 # Package space.maxus.macrocosm.chat
 
 Contains different utilities related to chat component manipulations
