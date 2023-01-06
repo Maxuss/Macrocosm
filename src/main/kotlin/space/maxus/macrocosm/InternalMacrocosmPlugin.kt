@@ -13,6 +13,7 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.block.CustomBlockHandlers
+import space.maxus.macrocosm.block.MiningHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.datagen.DataGenerators
@@ -35,7 +36,6 @@ import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
-import space.maxus.macrocosm.mining.MiningHandler
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
