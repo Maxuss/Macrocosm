@@ -67,7 +67,7 @@ connections:
         media-channel: null # legacy field, unused now
         guild-id: int <YOUR DISCORD SERVER ID>
 game:
-    sandbox: bool <WHETHER THE GAME IS IN SANDBOX MODE (unimplemented for now)> 
+    sandbox: bool <WHETHER THE GAME IS IN SANDBOX MODE> 
 ```
 
 After that you can launch the server. Do note, that not using the discord features may give you tons of errors in the console, it was not tested yet.
