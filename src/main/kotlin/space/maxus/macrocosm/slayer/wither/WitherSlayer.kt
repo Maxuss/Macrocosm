@@ -13,7 +13,7 @@ object WitherSlayer : Slayer(
     Material.CHARCOAL,
     Material.NETHERITE_SCRAP,
     "cinderflame_spirit",
-    "A spirit born from the devastating flames of Nether and was never supposed to exist.",
+    "A spirit born from the devastating flames of The Sizzling Island and was never supposed to exist.",
     listOf(
         "Challenging",
         "Hard",
