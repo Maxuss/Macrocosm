@@ -15,7 +15,9 @@ import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
 import space.maxus.macrocosm.damage.DamageCalculator
+import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.entity.macrocosm
+import space.maxus.macrocosm.events.PlayerDealDamageEvent
 import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.anyPoints
@@ -85,9 +87,12 @@ object AOTSAbility : AbilityBase(
                         continue
 
                     val mc = entity.macrocosm!!
-                    val received = DamageCalculator.calculateStandardReceived(dmg, mc.calculateStats())
-                    mc.damage(received, p)
-                    DamageHandlers.summonDamageIndicator(entity.location, received)
+                    val event = PlayerDealDamageEvent(e.player, entity, DamageCalculator.calculateStandardReceived(dmg, mc.calculateStats()), false, DamageKind.MELEE, false)
+                    event.callEvent()
+                    if(!event.isCancelled) {
+                        mc.damage(event.damage, p, event.kind)
+                        DamageHandlers.summonDamageIndicator(entity.location, event.damage)
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.slayer
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile
 import net.axay.kspigot.extensions.pluginKey
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
@@ -16,6 +17,7 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
+import java.util.concurrent.ConcurrentLinkedQueue
 
 open class SlayerBase(
     type: EntityType,
@@ -39,7 +41,8 @@ open class SlayerBase(
     sounds: EntitySoundBank? = null,
     @Transient
     override val rewardingSkill: SkillType = SkillType.COMBAT,
-    actualName: String? = null
+    actualName: String? = null,
+    disguiseProfile: WrappedGameProfile? = null
 ) : EntityBase(
     text(actualName ?: "${slayer.slayer.name} ${roman(tier)}"),
     type,
@@ -48,7 +51,8 @@ open class SlayerBase(
     experience,
     stats,
     disguiseSkin = disguiseSkin,
-    sounds = sounds
+    sounds = sounds,
+    disguiseProfile = disguiseProfile
 ) {
     fun summonBy(at: Location, summoner: Player) {
         val entity = spawn(at)
@@ -62,7 +66,9 @@ open class SlayerBase(
 
     override fun spawn(at: Location): LivingEntity {
         val e = super.spawn(at)
-        SlayerAbility.bosses.put(slayer, e.uniqueId)
+        if(SlayerAbility.bosses[slayer] == null)
+            SlayerAbility.bosses[slayer] = ConcurrentLinkedQueue()
+        SlayerAbility.bosses[slayer]!!.add(e.uniqueId)
         return e
     }
 }

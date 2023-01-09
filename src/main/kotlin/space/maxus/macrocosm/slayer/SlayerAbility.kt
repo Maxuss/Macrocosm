@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.slayer
 
-import com.google.common.collect.Multimap
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -10,8 +9,9 @@ import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.multimap
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class SlayerAbility(
     val abilityId: String,
@@ -21,7 +21,7 @@ class SlayerAbility(
     val listenerRegister: SlayerAbility.() -> Unit
 ) {
     companion object {
-        val bosses: Multimap<SlayerType, UUID> = multimap()
+        val bosses: ConcurrentHashMap<SlayerType, ConcurrentLinkedQueue<UUID>> = ConcurrentHashMap(EnumMap(SlayerType::class.java))
     }
 
     fun descript(tier: Int): List<Component> {
@@ -38,19 +38,17 @@ class SlayerAbility(
         return output
     }
 
-    inline fun applyToBosses(handler: (MacrocosmEntity, LivingEntity, Int) -> Unit) {
-        for ((ty, boss) in bosses.entries().parallelStream()) {
-            if (ty == slayerType) {
-                val entity = Bukkit.getEntity(boss) as? LivingEntity
-                if (entity == null) {
-                    bosses.remove(ty, boss)
-                    continue
-                }
-                val slayer = entity.macrocosm!!
-                val id = slayer.getId(entity).path
-                val tier = Integer.valueOf(id.replace("${slayerType.name.lowercase()}_", ""))
-                handler(slayer, entity, tier)
+    fun applyToBosses(handler: (MacrocosmEntity, LivingEntity, Int) -> Unit) {
+        bosses[slayerType]?.forEach { boss ->
+            val entity = Bukkit.getEntity(boss) as? LivingEntity
+            if (entity == null || entity.isDead) {
+                bosses[slayerType]!!.remove(boss)
+                return@forEach
             }
+            val slayer = entity.macrocosm!!
+            val id = slayer.getId(entity).path
+            val tier = Integer.valueOf(id.replace("${slayerType.name.lowercase()}_", ""))
+            handler(slayer, entity, tier)
         }
     }
 

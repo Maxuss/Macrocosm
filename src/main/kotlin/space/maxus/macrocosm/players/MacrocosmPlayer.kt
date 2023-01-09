@@ -130,10 +130,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     PotionEffectType.POISON
                 )
             ) {
-                currentMana = min(currentMana, stats.intelligence)
                 currentHealth = min(currentHealth + stats.vitality, stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
+            currentMana = min(currentMana, stats.intelligence)
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
 
             sendStatBar(stats)
@@ -699,75 +699,6 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             } ?: return null
             player.baseStats = Bytes.deserializeObject(stats) ?: return null
             return player
-
-//            val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
-//            if (!stats.next())
-//                return null
-//            player.baseStats = Statistics.fromRes(stats)
-//
-//            val skillsCollections = stmt.executeQuery("SELECT * FROM SkillsCollections WHERE UUID = '$id'")
-//            if (!skillsCollections.next()) return null
-//            val skills = Skills.fromJson(skillsCollections.getString("SKILLS"))
-//            val colls = Collections.fromJson(skillsCollections.getString("COLLECTIONS"))
-//            player.skills = skills
-//            player.collections = colls
-//
-//            val recipesRes = stmt.executeQuery("SELECT * FROM Recipes WHERE UUID = '$id'")
-//            if (!recipesRes.next())
-//                return null
-//            val recipes =
-//                GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object : TypeToken<List<String>>() {}.type)
-//                    .map { Identifier.parse(it) }
-//            player.unlockedRecipes = recipes.toMutableList()
-//
-//            // pets
-//            val petsRes = stmt.executeQuery("SELECT * FROM Pets WHERE UUID = '$id'")
-//            if (!petsRes.next())
-//                return null
-//            player.ownedPets =
-//                GSON.fromJson(petsRes.getString("PETS"), object : TypeToken<HashMap<String, StoredPet>>() {}.type)
-//            val active = petsRes.getString("ACTIVE_PET")
-//            if (active.isNotEmpty()) {
-//                val pet = player.ownedPets[active]!!
-//                // delaying spawning pet, to prevent weird bugs
-//                task(delay = 20L) {
-//                    player.activePet = Registry.PET.find(pet.id).spawn(player, active)
-//                }
-//            }
-//
-//            // slayers
-//            val slayerRes = stmt.executeQuery("SELECT * FROM Slayers WHERE UUID = '$id'")
-//            if (!slayerRes.next())
-//                return null
-//            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(
-//                slayerRes.getString("EXPERIENCE"),
-//                object : TypeToken<HashMap<String, SlayerLevel>>() {}.type
-//            )
-//            player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
-//
-//            // equipment
-//            val eqRes = stmt.executeQuery("SELECT * FROM Equipment WHERE UUID = '$id'")
-//            if (!eqRes.next())
-//                return null
-//            val equipment = PlayerEquipment()
-//            listOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES).associateWith {
-//                val contained = eqRes.getString(it.name)
-//                if (contained == "NULL")
-//                    null
-//                else
-//                    MacrocosmItem.deserializeFromBytes(contained)
-//            }.forEach { (ty, item) ->
-//                equipment[ty] = item
-//            }
-//            player.equipment = equipment
-//
-//            // essence
-//            val esRes = stmt.executeQuery("SELECT * FROM Essence WHERE UUID = '$id'")
-//            if(!esRes.next())
-//                return null
-//            player.availableEssence = GSON.fromJson(esRes.getString("ESSENCE"), object: TypeToken<HashMap<EssenceType, Int>>() { }.type)
-//
-//            stmt.close()
         }
     }
 

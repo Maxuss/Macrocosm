@@ -1,11 +1,20 @@
 package space.maxus.macrocosm.entity
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile
+import com.comphenix.protocol.wrappers.WrappedSignedProperty
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.item.MACROCOSM_TAG
 import space.maxus.macrocosm.nms.NativeMacrocosmSummon
 import space.maxus.macrocosm.util.general.getId
+import java.util.*
+
+fun textureProfile(value: String, signature: String): WrappedGameProfile {
+    val profile = WrappedGameProfile(UUID.randomUUID(), "")
+    profile.properties.put("textures", WrappedSignedProperty("textures", value, signature))
+    return profile
+}
 
 val LivingEntity.macrocosm: MacrocosmEntity? get() = Entities.toMacrocosm(this)
 

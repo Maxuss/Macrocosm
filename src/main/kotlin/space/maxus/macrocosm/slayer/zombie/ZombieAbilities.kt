@@ -45,7 +45,7 @@ object ZombieAbilities {
         "<red>Regeneration",
         "Boss rapidly regenerates <red>[50/150/1000/2500] ${Statistic.HEALTH.display}<gray> every second."
     ) {
-        val healths = listOf(50, 150, 1000, 2500)
+        val healths = arrayOf(50, 150, 1000, 2500)
         task(period = 20L) {
             applyToBosses { mc, living, lvl ->
                 if (lvl > 4)

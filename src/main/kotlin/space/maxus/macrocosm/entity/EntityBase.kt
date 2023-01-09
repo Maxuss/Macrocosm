@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.entity
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile
 import me.libraryaddict.disguise.DisguiseAPI
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
 import net.kyori.adventure.text.Component
@@ -34,6 +35,7 @@ open class EntityBase(
     private val sounds: EntitySoundBank? = null,
     override val rewardingSkill: SkillType = SkillType.COMBAT,
     override val playerFriendly: Boolean = false,
+    private val disguiseProfile: WrappedGameProfile? = null
 ) : MacrocosmEntity {
     override var currentHealth: Float = baseStats.health
 
@@ -71,6 +73,10 @@ open class EntityBase(
         if (Registry.DISGUISE.has(id)) {
             val skin = Registry.DISGUISE.find(id)
             val disguise = PlayerDisguise(nameMm(buildName()), skin)
+            if(disguiseProfile != null) {
+                disguise.gameProfile = disguiseProfile
+            }
+
             DisguiseAPI.disguiseEntity(entity, disguise)
         }
     }

@@ -136,7 +136,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializabl
         }
 
     var vitality: Float
-        get() = self[Statistic.VITALITY]!!
+        get() = self[Statistic.VITALITY]!! + self[Statistic.HEALTH]!! * .01f
         set(value) {
             self[Statistic.VITALITY] = value
         }
@@ -166,7 +166,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializabl
         }
 
     var vigor: Float
-        get() = self[Statistic.VIGOR]!!
+        get() = self[Statistic.VIGOR]!! + self[Statistic.INTELLIGENCE]!! * .02f
         set(value) {
             self[Statistic.VIGOR] = value
         }
