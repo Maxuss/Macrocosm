@@ -68,5 +68,6 @@ object CMDGenerator : ResGenerator {
 
     private data class ModelOverride(val predicate: ModelPredicate, val model: String)
 
+    @Suppress("PropertyName")
     private data class ModelPredicate(val custom_model_data: Int)
 }

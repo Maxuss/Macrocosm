@@ -67,7 +67,7 @@ class ReforgeStone(
     }
 
     override fun addPotatoBooks(amount: Int) {
-
+        // this item should not have potato books applied
     }
 
     override fun enchant(enchantment: Enchantment, level: Int): Boolean {
@@ -75,7 +75,7 @@ class ReforgeStone(
     }
 
     override fun reforge(ref: Reforge) {
-
+        // this item should not be reforged
     }
 
     override fun stats(player: MacrocosmPlayer?): Statistics {

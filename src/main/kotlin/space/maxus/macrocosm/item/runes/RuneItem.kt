@@ -90,7 +90,7 @@ class RuneItem(
     }
 
     override fun addPotatoBooks(amount: Int) {
-
+        // this item should not have potato books added to it
     }
 
     override fun enchant(enchantment: Enchantment, level: Int): Boolean {
@@ -98,7 +98,7 @@ class RuneItem(
     }
 
     override fun reforge(ref: Reforge) {
-
+        // this item should not be reforged
     }
 
     override fun stats(player: MacrocosmPlayer?): Statistics {

@@ -23,7 +23,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) :
     override var name: Component = text("")
     override var rarity: Rarity = Rarity.SPECIAL
     override fun addPotatoBooks(amount: Int) {
-
+        // should not be modified, visual only
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {
@@ -47,6 +47,7 @@ class ColoredEntityArmor(override val base: Material, private var color: Int) :
     }
 
     override fun reforge(ref: Reforge) {
+        // should not be modified, visual only
 
     }
 
@@ -68,6 +69,7 @@ class SkullEntityHead(private var eskin: String) : AbstractMacrocosmItem(id("sku
     override var rarity: Rarity = Rarity.SPECIAL
 
     override fun addPotatoBooks(amount: Int) {
+        // should not be modified, visual only
 
     }
 
@@ -94,6 +96,7 @@ class SkullEntityHead(private var eskin: String) : AbstractMacrocosmItem(id("sku
     }
 
     override fun reforge(ref: Reforge) {
+        // should not be modified, visual only
 
     }
 

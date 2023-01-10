@@ -48,7 +48,6 @@ object Entities {
         if (tag.contains(MACROCOSM_TAG)) {
             val id = tag.getCompound(MACROCOSM_TAG).getId("ID")
             if (id.namespace != "minecraft") {
-                // custom.loadChanges(entity)
                 return CustomEntity(entity.uniqueId)
             }
         }

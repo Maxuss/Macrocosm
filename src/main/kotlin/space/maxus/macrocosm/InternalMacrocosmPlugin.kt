@@ -63,7 +63,6 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.walkDataResources
 import space.maxus.macrocosm.workarounds.AsyncLauncher
-import space.maxus.macrocosm.zone.ZoneType
 import java.awt.Font
 import java.net.URL
 import java.nio.ByteBuffer
@@ -106,7 +105,6 @@ class InternalMacrocosmPlugin : KSpigot() {
     lateinit var playersLazy: MutableList<UUID>; private set
 
     override fun load() {
-//        SignatureDissolver.inject()
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
             MacrocosmConstants.CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
@@ -189,7 +187,6 @@ class InternalMacrocosmPlugin : KSpigot() {
             Buffs::init,
             EntityValue::init,
             PetValue::init,
-            ZoneType::init,
             Cosmetics::init,
             SlayerType::init,
             ItemParser::init,
@@ -213,7 +210,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
-        // server.pluginManager.registerEvents(EquipListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)

@@ -35,7 +35,7 @@ class EnchantedBook(override var enchantments: HashMap<Identifier, Int> = hashMa
     override val base: Material = Material.ENCHANTED_BOOK
     override var rarity: Rarity = rarityFromEnchants(enchantments)
     override fun addPotatoBooks(amount: Int) {
-
+        // this item should not have potato books added
     }
 
     override fun stats(player: MacrocosmPlayer?): Statistics {
@@ -54,7 +54,7 @@ class EnchantedBook(override var enchantments: HashMap<Identifier, Int> = hashMa
     }
 
     override fun reforge(ref: Reforge) {
-
+        // this item should not be reforged
     }
 
     override fun transfer(to: MacrocosmItem) {

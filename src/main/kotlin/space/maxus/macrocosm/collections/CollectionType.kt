@@ -88,6 +88,75 @@ enum class CollectionType(val inst: Collection) : Serializable {
     ;
 
     companion object {
+        private val matToColl = hashMapOf(
+            Material.ROTTEN_FLESH to ROTTEN_FLESH,
+            Material.BONE to BONE,
+            Material.SLIME_BALL to SLIME_BALL,
+            Material.SLIME_BLOCK to SLIME_BALL,
+            Material.STRING to STRING,
+            Material.GUNPOWDER to GUNPOWDER,
+            Material.MAGMA_CREAM to MAGMA_CREAM,
+            Material.BLAZE_ROD to BLAZE_ROD,
+            Material.ENDER_PEARL to ENDER_PEARL,
+            Material.GHAST_TEAR to GHAST_TEAR,
+
+            Material.COBBLESTONE to COBBLESTONE,
+            Material.STONE to COBBLESTONE,
+            Material.COAL to COAL,
+            Material.COPPER_INGOT to COPPER_INGOT,
+            Material.REDSTONE to REDSTONE,
+            Material.GOLD_INGOT to GOLD_INGOT,
+            Material.IRON_INGOT to IRON_INGOT,
+            Material.DIAMOND to DIAMOND,
+            Material.EMERALD to EMERALD,
+            Material.ICE to ICE,
+            Material.BLUE_ICE to ICE,
+            Material.PACKED_ICE to ICE,
+            Material.END_STONE to END_STONE,
+
+            Material.WHEAT to WHEAT,
+            Material.CARROT to CARROT,
+            Material.POTATO to POTATO,
+            Material.SUGAR_CANE to SUGAR_CANE,
+            Material.CACTUS to CACTUS,
+            Material.MUSHROOM_STEM to MUSHROOM,
+            Material.RED_MUSHROOM to MUSHROOM,
+            Material.BROWN_MUSHROOM to MUSHROOM,
+            Material.CHICKEN to CHICKEN,
+            Material.PORKCHOP to PORK,
+            Material.BEEF to BEEF,
+            Material.MUTTON to MUTTON,
+            Material.NETHER_WART to NETHER_WART,
+            Material.NETHER_WART_BLOCK to NETHER_WART,
+            Material.CHORUS_FRUIT to CHORUS,
+
+            Material.COD to COD,
+            Material.SALMON to SALMON,
+            Material.PUFFERFISH to PUFFERFISH,
+            Material.TROPICAL_FISH to TROPICAL_FISH,
+            Material.SPONGE to SPONGE,
+            Material.WET_SPONGE to SPONGE,
+            Material.INK_SAC to INK_SAC,
+            Material.PRISMARINE_CRYSTALS to PRISMARINE,
+            Material.PRISMARINE_SHARD to PRISMARINE,
+            Material.KELP to SEAWEED,
+
+            Material.OAK_LOG to OAK,
+            Material.SPRUCE_LOG to SPRUCE,
+            Material.BIRCH_LOG to BIRCH,
+            Material.DARK_OAK_LOG to DARK_OAK,
+            Material.CRIMSON_STEM to CRIMSON_WOOD,
+            Material.WARPED_STEM to WARPED_WOOD,
+
+            Material.DIRT to DIRT,
+            Material.SAND to SAND,
+            Material.GRAVEL to GRAVEL,
+            Material.CRIMSON_NYLIUM to NYLIUM,
+            Material.WARPED_NYLIUM to NYLIUM,
+            Material.NETHERRACK to NETHERRACK
+
+        )
+
         /**
          * Converts the provided material to a collection type
          *
@@ -97,64 +166,7 @@ enum class CollectionType(val inst: Collection) : Serializable {
          * @return null when no collection types match the material
          */
         fun from(mat: Material): CollectionType? {
-            return when (mat) {
-                Material.ROTTEN_FLESH -> ROTTEN_FLESH
-                Material.BONE -> BONE
-                Material.SLIME_BALL, Material.SLIME_BLOCK -> SLIME_BALL
-                Material.STRING -> STRING
-                Material.GUNPOWDER -> GUNPOWDER
-                Material.MAGMA_CREAM -> MAGMA_CREAM
-                Material.BLAZE_ROD -> BLAZE_ROD
-                Material.ENDER_PEARL -> ENDER_PEARL
-                Material.GHAST_TEAR -> GHAST_TEAR
-
-                Material.COBBLESTONE, Material.STONE -> COBBLESTONE
-                Material.COAL -> COAL
-                Material.COPPER_INGOT -> COPPER_INGOT
-                Material.REDSTONE -> REDSTONE
-                Material.GOLD_INGOT -> GOLD_INGOT
-                Material.IRON_INGOT -> IRON_INGOT
-                Material.DIAMOND -> DIAMOND
-                Material.EMERALD -> EMERALD
-                Material.ICE, Material.BLUE_ICE, Material.PACKED_ICE -> ICE
-                Material.END_STONE -> END_STONE
-
-                Material.WHEAT -> WHEAT
-                Material.CARROT -> CARROT
-                Material.POTATO -> POTATO
-                Material.SUGAR_CANE -> SUGAR_CANE
-                Material.CACTUS -> CACTUS
-                Material.MUSHROOM_STEM, Material.RED_MUSHROOM, Material.BROWN_MUSHROOM -> MUSHROOM
-                Material.CHICKEN -> CHICKEN
-                Material.PORKCHOP -> PORK
-                Material.BEEF -> BEEF
-                Material.MUTTON -> MUTTON
-                Material.NETHER_WART, Material.NETHER_WART_BLOCK -> NETHER_WART
-                Material.CHORUS_FRUIT -> CHORUS
-
-                Material.COD -> COD
-                Material.SALMON -> SALMON
-                Material.PUFFERFISH -> PUFFERFISH
-                Material.TROPICAL_FISH -> TROPICAL_FISH
-                Material.SPONGE, Material.WET_SPONGE -> SPONGE
-                Material.INK_SAC -> INK_SAC
-                Material.PRISMARINE_CRYSTALS, Material.PRISMARINE_SHARD -> PRISMARINE
-                Material.KELP -> SEAWEED
-
-                Material.OAK_LOG -> OAK
-                Material.SPRUCE_LOG -> SPRUCE
-                Material.BIRCH_LOG -> BIRCH
-                Material.DARK_OAK_LOG -> DARK_OAK
-                Material.CRIMSON_STEM -> CRIMSON_WOOD
-                Material.WARPED_STEM -> WARPED_WOOD
-
-                Material.DIRT -> DIRT
-                Material.SAND -> SAND
-                Material.GRAVEL -> GRAVEL
-                Material.CRIMSON_NYLIUM, Material.WARPED_NYLIUM -> NYLIUM
-                Material.NETHERRACK -> NETHERRACK
-                else -> null
-            }
+            return matToColl[mat]
         }
 
         /**

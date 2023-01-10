@@ -90,9 +90,6 @@ object RecipeMenu : Listener {
 
         val clickedIndex = e.slot
 
-//        Debug.log(inv.getItem(clickedIndex).toString())
-//        Debug.log(e.view.topInventory.getItem(clickedIndex).toString())
-
         val modifiedOutput = clickedIndex == outputIndex
 
         val pickedOutput = modifiedOutput && e.action.name.containsAny("PICKUP", "MOVE")

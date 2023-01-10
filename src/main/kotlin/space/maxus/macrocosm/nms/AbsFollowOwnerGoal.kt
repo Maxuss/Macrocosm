@@ -57,7 +57,7 @@ class AbsFollowOwnerGoal(
     }
 
     override fun canContinueToUse(): Boolean {
-        return if (navigation.isDone) false else this.entity.distanceToSqr(
+        return navigation.isDone && this.entity.distanceToSqr(
             owner ?: return false
         ) > (stopDistance * stopDistance).toDouble()
     }

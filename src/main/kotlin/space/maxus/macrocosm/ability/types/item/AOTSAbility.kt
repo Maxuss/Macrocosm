@@ -50,13 +50,12 @@ object AOTSAbility : AbilityBase(
             costTask[p.uniqueId] = task(delay = 5 * 20L) {
                 playerCosts.remove(p.uniqueId)
             }!!
-            val damage = min((cost / 2), 160)
             if (!AbilityCost(newCost).ensureRequirements(e.player, id("aots_throw")))
                 return@listen
 
             val stats = e.player.stats()!!
             var (dmg, _) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
-            dmg *= (damage / 100f)
+            dmg *= (min((cost / 2), 160) / 100f)
             val stand = p.world.spawnEntity(p.location, EntityType.ARMOR_STAND) as ArmorStand
             stand.isInvisible = true
             stand.isInvulnerable = true

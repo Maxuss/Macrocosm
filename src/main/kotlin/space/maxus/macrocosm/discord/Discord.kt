@@ -387,59 +387,67 @@ object Discord : ListenerAdapter() {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun <B> interactionBazaarNext(
+        e: ButtonInteractionEvent,
+        cache: Cache<Identifier, ListIterator<B>>,
+        generator: (Identifier, B) -> MessageEmbed
+    ) {
+        val item = Identifier.parse(e.componentId.split("$").last())
+        val queue = cache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
+            .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
+        val order =
+            (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
+                .queue()) as B
+        val embed = generator(item, order)
+        e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <B> interactionBazaarPrev(
+        e: ButtonInteractionEvent,
+        cache: Cache<Identifier, ListIterator<B>>,
+        generator: (Identifier, B) -> MessageEmbed
+    ) {
+        val item = Identifier.parse(e.componentId.split("$").last())
+        val queue = cache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
+            .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
+        val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
+            .setEphemeral(true).queue()) as B
+        val embed = generator(item, order)
+        e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+    }
+
     override fun onButtonInteraction(e: ButtonInteractionEvent) {
         when (e.componentId) {
             else -> {
                 if (e.componentId.contains("next_order_buy")) {
-                    val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
-                        .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
-                    val order =
-                        (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
-                            .queue())
-                    val embed = generateBuyOrderEmbed(item, order)
-                    e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+                    interactionBazaarNext(e, bazaarBuyCache, this::generateBuyOrderEmbed)
                 } else if (e.componentId.contains("next_order_sell")) {
-                    val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5)
-                        .let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
-                    val order =
-                        (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
-                            .queue())
-                    val embed = generateSellOrderEmbed(item, order)
-                    e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+                    interactionBazaarNext(e, bazaarSellCache, this::generateSellOrderEmbed)
                 } else if (e.componentId.contains("prev_order_buy")) {
-                    val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
-                        .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
-                    val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
-                        .setEphemeral(true).queue())
-                    val embed = generateBuyOrderEmbed(item, order)
-                    e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+                    interactionBazaarPrev(e, bazaarBuyCache, this::generateBuyOrderEmbed)
                 } else if (e.componentId.contains("prev_order_sell")) {
-                    val item = Identifier.parse(e.componentId.split("$").last())
-                    val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5)
-                        .let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
-                    val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
-                        .setEphemeral(true).queue())
-                    val embed = generateSellOrderEmbed(item, order)
-                    e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+                    interactionBazaarPrev(e, bazaarSellCache, this::generateSellOrderEmbed)
                 } else if (e.componentId.contains("prev_order_user")) {
                     val user = UUID.fromString(e.componentId.split("$").last())
                     val queue = bazaarUserCache.getIfPresent(user) ?: Bazaar.getOrdersForPlayer(user).listIterator()
                         .let { bazaarUserCache.put(user, it); it }
                     val order = (if (queue.hasPrevious()) queue.previous() else return e.reply("Queue end reached!")
                         .setEphemeral(true).queue())
-                    val embed = when (order) {
-                        is BazaarBuyOrder -> generateBuyOrderEmbed(
-                            order.item,
-                            order
-                        )
+                    e.editMessage(
+                        MessageEditData.fromEmbeds(
+                            when (order) {
+                                is BazaarBuyOrder -> generateBuyOrderEmbed(
+                                    order.item,
+                                    order
+                                )
 
-                        is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
-                        else -> unreachable()
-                    }
-                    e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+                                is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
+                                else -> unreachable()
+                            }
+                        )
+                    ).queue()
                 } else if (e.componentId.contains("next_order_user")) {
                     val user = UUID.fromString(e.componentId.split("$").last())
                     val queue = bazaarUserCache.getIfPresent(user) ?: Bazaar.getOrdersForPlayer(user).listIterator()
@@ -447,16 +455,19 @@ object Discord : ListenerAdapter() {
                     val order =
                         (if (queue.hasNext()) queue.next() else return e.reply("Queue end reached!").setEphemeral(true)
                             .queue())
-                    val embed = when (order) {
-                        is BazaarBuyOrder -> generateBuyOrderEmbed(
-                            order.item,
-                            order
-                        )
+                    e.editMessage(
+                        MessageEditData.fromEmbeds(
+                            when (order) {
+                                is BazaarBuyOrder -> generateBuyOrderEmbed(
+                                    order.item,
+                                    order
+                                )
 
-                        is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
-                        else -> unreachable()
-                    }
-                    e.editMessage(MessageEditData.fromEmbeds(embed)).queue()
+                                is BazaarSellOrder -> generateSellOrderEmbed(order.item, order)
+                                else -> unreachable()
+                            }
+                        )
+                    ).queue()
                 }
             }
         }
@@ -970,8 +981,7 @@ object Discord : ListenerAdapter() {
                                     "Could not find any buy orders for this product!"
                                 ).build()
                             ).setEphemeral(true).queue())
-                            val embed = generateBuyOrderEmbed(item, order)
-                            e.replyEmbeds(embed).addActionRow(
+                            e.replyEmbeds(generateBuyOrderEmbed(item, order)).addActionRow(
                                 Button.primary("prev_order_buy$$item", "Previous Order"),
                                 Button.primary("next_order_buy$$item", "Next Order")
                             ).queue()
@@ -987,8 +997,7 @@ object Discord : ListenerAdapter() {
                                     "Could not find any sell orders for this product!"
                                 ).build()
                             ).setEphemeral(true).queue())
-                            val embed = generateSellOrderEmbed(item, order)
-                            e.replyEmbeds(embed).addActionRow(
+                            e.replyEmbeds(generateSellOrderEmbed(item, order)).addActionRow(
                                 Button.primary("prev_order_sell$$item", "Previous Order"),
                                 Button.primary("next_order_sell$$item", "Next Order")
                             ).queue()

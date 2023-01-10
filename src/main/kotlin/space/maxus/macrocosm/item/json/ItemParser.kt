@@ -69,7 +69,7 @@ object ItemParser {
             )
         } else if (!obj.has("abilities")) {
             // parsing recipe item
-            RecipeItem(type, rarity, name, headSkin, desc, if (obj.has("glow")) obj["glow"].asBoolean else false)
+            RecipeItem(type, rarity, name, headSkin, desc, obj.has("glow") && obj["glow"].asBoolean)
         } else {
             // parsing ability item
             val stats = if (obj.has("stats")) parseStats(obj.get("stats").asJsonObject) else Statistics.zero()
@@ -150,11 +150,11 @@ object ItemParser {
         return if (obj.has("frames")) Animation(
             obj["frames"].asInt,
             if (obj.has("time")) obj["time"].asInt else 2,
-            if (obj.has("interpolate")) obj["interpolate"].asBoolean else false
+            obj.has("interpolate") && obj["interpolate"].asBoolean
         ) else RawAnimation(
             obj["raw_frames"].asJsonArray.map { ele -> ele.asInt },
             if (obj.has("time")) obj["time"].asInt else 2,
-            if (obj.has("interpolate")) obj["interpolate"].asBoolean else false
+            obj.has("interpolate") && obj["interpolate"].asBoolean
         )
     }
 
@@ -162,9 +162,7 @@ object ItemParser {
         val zero = SpecialStatistics()
 
         for ((key, value) in obj.entrySet()) {
-            val stat = SpecialStatistic.valueOf(key.uppercase())
-            val v = value.asNumber.toFloat()
-            zero[stat] = v
+            zero[SpecialStatistic.valueOf(key.uppercase())] = value.asNumber.toFloat()
         }
 
         return zero

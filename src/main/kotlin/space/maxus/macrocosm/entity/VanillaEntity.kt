@@ -35,7 +35,9 @@ internal fun specialsFromEntity(entity: LivingEntity?) = specialStats {
             fireResistance = 1f
         }
 
-        else -> {}
+        else -> {
+            // do not modify stats
+        }
     }
 }
 
@@ -210,7 +212,9 @@ internal fun statsFromEntity(entity: LivingEntity?) = defaultStats {
             magicFind = 500f
         }
 
-        else -> {}
+        else -> {
+            // do not modify stats
+        }
     }
 }
 
@@ -264,15 +268,7 @@ fun dropsFromType(ty: EntityType): List<Drop> {
             vanilla(Material.ROTTEN_FLESH, .8, amount = 1..2),
         )
 
-        EntityType.ARMOR_STAND -> listOf(
-            vanilla(Material.ARMOR_STAND, 1.0)
-        )
-
-        EntityType.DONKEY -> listOf(
-            vanilla(Material.LEATHER, .9, amount = 1..3),
-        )
-
-        EntityType.MULE -> listOf(
+        EntityType.DONKEY, EntityType.MULE, EntityType.HORSE, EntityType.LLAMA -> listOf(
             vanilla(Material.LEATHER, .9, amount = 1..3),
         )
 
@@ -422,26 +418,10 @@ fun dropsFromType(ty: EntityType): List<Drop> {
             vanilla(Material.POPPY, 1.0),
         )
 
-        EntityType.HORSE -> listOf(
-            vanilla(Material.LEATHER, .9, amount = 1..3),
-        )
-
         EntityType.RABBIT -> listOf(
             vanilla(Material.RABBIT_HIDE, .7),
             vanilla(Material.RABBIT, 1.0, amount = 1..2),
             vanilla(Material.RABBIT_FOOT, .6, amount = 1..2),
-        )
-
-        EntityType.POLAR_BEAR -> listOf(
-            vanilla(Material.ICE, 1.0, amount = 1..2)
-        )
-
-        EntityType.LLAMA -> listOf(
-            vanilla(Material.LEATHER, .9, amount = 1..3),
-        )
-
-        EntityType.PARROT -> listOf(
-            vanilla(Material.FEATHER, .9, amount = 1..3),
         )
 
         EntityType.PHANTOM -> listOf(
@@ -554,7 +534,7 @@ class VanillaEntity(val id: UUID) : MacrocosmEntity {
     override var baseSpecials: SpecialStatistics = specialsFromEntity(paper)
     override val rewardingSkill: SkillType
     override val experience: Double
-    override val playerFriendly: Boolean get() = if (paper == null) false else isEntityFriendly(paper!!)
+    override val playerFriendly: Boolean get() = paper != null && isEntityFriendly(paper!!)
 
     init {
         val (exp, skill) = skillFromType(type, level)

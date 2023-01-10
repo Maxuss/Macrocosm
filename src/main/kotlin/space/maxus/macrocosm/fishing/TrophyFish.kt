@@ -58,7 +58,9 @@ class TrophyFish(
     override val type: ItemType = ItemType.OTHER
     override var name: Component
         get() = text("$baseName <bold>${tier?.name}")
-        set(@Suppress("UNUSED_PARAMETER") value) {}
+        set(@Suppress("UNUSED_PARAMETER") value) {
+            // this item should not have name set externally
+        }
     override val base: Material = Material.PLAYER_HEAD
     override var rarityUpgraded: Boolean = false
     override var reforge: Reforge? = null
@@ -77,7 +79,7 @@ class TrophyFish(
     }
 
     override fun addPotatoBooks(amount: Int) {
-
+        // this item should not have potato books applied
     }
 
     override fun addRune(index: Int, rune: RuneType, tier: Int): Boolean {
@@ -85,7 +87,7 @@ class TrophyFish(
     }
 
     override fun reforge(ref: Reforge) {
-
+        // this item should not be reforged
     }
 
     override fun stats(player: MacrocosmPlayer?): Statistics {

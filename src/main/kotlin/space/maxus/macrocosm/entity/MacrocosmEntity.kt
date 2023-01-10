@@ -77,7 +77,7 @@ interface MacrocosmEntity : Listener {
     }
 
     fun addExtraNbt(nbt: CompoundTag) {
-
+        // by default, no extra NBT data is not added to entity
     }
 
     fun rewardExperience(player: MacrocosmPlayer) {
@@ -85,7 +85,7 @@ interface MacrocosmEntity : Listener {
     }
 
     fun preModify(entity: LivingEntity) {
-
+        // by default, entities do not apply any premodifications
     }
 
     fun getId(entity: LivingEntity): Identifier {

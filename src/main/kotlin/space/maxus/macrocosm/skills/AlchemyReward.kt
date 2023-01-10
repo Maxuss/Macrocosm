@@ -19,7 +19,7 @@ object AlchemyReward : Reward, Listener {
     }
 
     override fun reward(player: MacrocosmPlayer, lvl: Int) {
-
+        // unused
     }
 
     override fun display(lvl: Int): Component {

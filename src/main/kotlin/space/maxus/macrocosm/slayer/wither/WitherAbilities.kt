@@ -15,9 +15,7 @@ import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
-import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
-import org.bukkit.util.BlockIterator
 import org.bukkit.util.BoundingBox
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.Macrocosm
@@ -33,7 +31,6 @@ import space.maxus.macrocosm.slayer.SlayerAbility
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.general.Debug
 import space.maxus.macrocosm.util.unreachable
 import java.util.*
 import kotlin.math.min
@@ -301,7 +298,7 @@ object WitherAbilities {
         }
     }
 
-    fun meteorSummon(at: Location) {
+    private fun meteorSummon(at: Location) {
         sound(Sound.ENTITY_ENDER_DRAGON_DEATH) {
             volume = 5f
             pitch = 2f
@@ -314,10 +311,10 @@ object WitherAbilities {
         val sqRadius = radius * radius // meteor is 2 blocks wide
 
         val entities = mutableListOf<Entity>()
-        for(i in -radius..radius) {
-            for(j in -radius..radius) {
-                for(k in -radius..radius) {
-                    if((i * i + j * j + k * k) <= sqRadius) {
+        (-radius..radius).forEach { i ->
+            (-radius..radius).forEach { j ->
+                (-radius..radius).forEach { k ->
+                    if ((i * i + j * j + k * k) <= sqRadius) {
                         val (entity1, entity2) = summonMeteorEntity(meteorCenter.clone().add(vec(i, j, k)))
                         entities.add(entity1)
                         entities.add(entity2)

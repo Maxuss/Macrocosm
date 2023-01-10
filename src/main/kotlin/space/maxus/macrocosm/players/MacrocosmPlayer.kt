@@ -573,48 +573,6 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 }
             }
         }
-
-//        stmt.executeUpdate(
-//            "INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${
-//                GSON.toJson(
-//                    this.memory
-//                )
-//            }', '${GSON.toJson(this.activeForgeRecipes)}')"
-//        )
-//        var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
-//        var rightHand = "VALUES ('$ref'"
-//        for ((k, value) in baseStats.iter()) {
-//            leftHand += ", ${k.name}"
-//            rightHand += ", $value"
-//        }
-//        stmt.executeUpdate("$leftHand)$rightHand)")
-//        val skillsJson = skills.json()
-//        val collectionJson = collections.json()
-//        val recipes = GSON.toJson(unlockedRecipes.map { it.toString() })
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
-//
-//        val active = if (activePet != null) {
-//            activePet!!.hashKey
-//        } else ""
-//        val pets = GSON.toJson(ownedPets)
-//
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
-//
-//        // slayers
-//        val slayers = GSON.toJson(slayers.mapKeys { (k, _) -> k.name })
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
-//
-//        // equipment
-//        val equipment =
-//            this.equipment.enumerate().joinToString(separator = ", ") { "'${it?.serializeToBytes(this) ?: "NULL"}'" }
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Equipment VALUES ('$ref', $equipment)""")
-//
-//        // essence
-//        val essence = GSON.toJson(this.availableEssence)
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Essence VALUES ('$ref', '$essence')""")
-//
-//        stmt.close()
     }
 
     private fun dump(it: UpdateBuilder<*>, p: MacrocosmPlayer, id: Boolean) {

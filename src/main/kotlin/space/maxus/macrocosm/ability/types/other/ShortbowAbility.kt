@@ -24,7 +24,7 @@ object ShortbowAbility : AbilityBase(AbilityType.RIGHT_CLICK, "Shortbow", "Insta
             )
             e.player.onAtsCooldown = true
             // 0.45s is default attack speed, becomes 0.2s at 100 attack speed
-            taskRunLater((((1.2 - (e.player.stats()!!.attackSpeed / 100f))) * 9f).roundToLong()) {
+            taskRunLater(((1.2 - (e.player.stats()!!.attackSpeed / 100f)) * 9f).roundToLong()) {
                 e.player.onAtsCooldown = false
             }
 

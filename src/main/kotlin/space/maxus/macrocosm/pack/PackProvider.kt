@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.currentIp
+import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.recreateFile
@@ -77,7 +78,7 @@ object PackProvider : Listener {
             try {
                 `is`.close()
             } catch (e: IOException) {
-                throw RuntimeException("Unable to close input stream for MD5 calculation", e)
+                logger.severe("Unable to close input stream for MD5 calculation")
             }
         }
     }

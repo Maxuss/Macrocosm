@@ -252,11 +252,8 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializabl
 
         for ((stat, value) in self) {
             var formatted = stat.formatSimple(value) ?: continue
-            if (prev != null) {
-                if (prev.type != stat.type) {
-                    base.add(" ".toComponent())
-                }
-            }
+            if (prev != null && prev.type != stat.type)
+                base.add(" ".toComponent())
 
             // reforges
             if (reforge != null && reforge[stat] != 0f) {

@@ -19,11 +19,8 @@ import space.maxus.macrocosm.players.banking.transact
 import space.maxus.macrocosm.players.chat.ChatChannel
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.util.*
 import space.maxus.macrocosm.util.general.Result
-import space.maxus.macrocosm.util.giveOrDrop
-import space.maxus.macrocosm.util.runCatchingReporting
-import space.maxus.macrocosm.util.unwrapInner
-import space.maxus.macrocosm.util.withAll
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -100,18 +97,6 @@ object Bazaar {
                     Transaction.Kind.INCOMING
                 )
 
-//                    val itemBuilt = BazaarElement.idToElement(item)!!.build(player)!!
-//                    var amount = result.amountSold
-//                    while(amount > 64) {
-//                        val clone = itemBuilt.clone()
-//                        clone.amount = 64
-//                        amount -= 64
-//                        paper.inventory.removeItemAnySlot(clone)
-//                    }
-//                    val clone = itemBuilt.clone()
-//                    clone.amount = amount
-//                    paper.inventory.removeItemAnySlot(clone)
-
                 task(sync = true, delay = 0L) {
                     // drifting to sync thread
                     if (DemandQtyItemsQuery(item, result.amountSold).process(player, paper) !is Result) {
@@ -142,6 +127,7 @@ object Bazaar {
                         }
                     }
                 }
+                NULL
             }
         }
     }
