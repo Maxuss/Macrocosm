@@ -35,7 +35,7 @@ class SpellScroll : AbstractMacrocosmItem(id("spell_scroll"), ItemType.SCROLL) {
     }
 
     override fun reforge(ref: Reforge) {
-
+        // this item should not be reforged
     }
 
     override fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {

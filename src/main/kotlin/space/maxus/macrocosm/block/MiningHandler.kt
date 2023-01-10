@@ -85,22 +85,12 @@ private fun skillExpFromBlock(block: Block): Pair<Float, SkillType>? {
         exp, SkillType.valueOf(
             block.getMetadata("SKILL_TYPE").firstOrNull()?.asString() ?: when (block.type) {
                 // mining
-                Material.STONE, Material.COBBLESTONE -> return Pair(exp, SkillType.MINING)
+                Material.STONE, Material.COBBLESTONE, Material.IRON_ORE, Material.NETHER_GOLD_ORE, Material.REDSTONE_ORE, Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_COAL_ORE, Material.GOLD_ORE, Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_REDSTONE_ORE, Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.DEEPSLATE_GOLD_ORE -> return Pair(
+                    exp,
+                    SkillType.MINING
+                )
+
                 Material.COPPER_ORE, Material.COAL_ORE, Material.DEEPSLATE -> return Pair(exp, SkillType.MINING)
-                Material.IRON_ORE, Material.NETHER_GOLD_ORE, Material.REDSTONE_ORE, Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_COAL_ORE -> return Pair(
-                    exp,
-                    SkillType.MINING
-                )
-
-                Material.GOLD_ORE, Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_REDSTONE_ORE -> return Pair(
-                    exp,
-                    SkillType.MINING
-                )
-
-                Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.DEEPSLATE_GOLD_ORE -> return Pair(
-                    exp,
-                    SkillType.MINING
-                )
 
                 Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> return Pair(exp, SkillType.MINING)
                 Material.OBSIDIAN -> return Pair(exp, SkillType.MINING)
@@ -112,8 +102,7 @@ private fun skillExpFromBlock(block: Block): Pair<Float, SkillType>? {
                 Material.DARK_OAK_LOG, Material.JUNGLE_LOG -> return Pair(exp, SkillType.FORAGING)
 
                 // farming
-                Material.POTATOES, Material.CARROTS -> return Pair(exp, SkillType.FARMING)
-                Material.SUGAR_CANE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM -> return Pair(
+                Material.POTATOES, Material.CARROTS, Material.SUGAR_CANE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM -> return Pair(
                     exp,
                     SkillType.FARMING
                 )

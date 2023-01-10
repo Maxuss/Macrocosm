@@ -38,7 +38,7 @@ object AtonedHorror : SlayerBase(
         strength = 200f
         trueDefense = 700f
         ferocity = 200f
-        speed = 300f
+        speed = 280f
     },
     VanillaItem(Material.IRON_AXE),
     helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2FmZGUyODRkN2M4ZDQ0YWE1OWIyNjdmNmYwODcxY2RjZWY5OTI2YzgxNjA3YWJiZGI2MWIxNGUxYjZhOTQyZiJ9fX0="),

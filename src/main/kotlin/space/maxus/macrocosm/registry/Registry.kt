@@ -118,12 +118,6 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         private fun <V> makeDefaulted(name: Identifier, expose: Boolean = true): Registry<V> =
             register(name, DefaultedRegistry<V>(name, expose)) as Registry<V>
 
-        private fun <V> makeCloseable(name: Identifier, expose: Boolean = true): CloseableRegistry<V> {
-            val reg = CloseableRegistry<V>(name, expose)
-            reg.open()
-            return register(name, reg) as CloseableRegistry<V>
-        }
-
         private fun <V : Clone> makeImmutable(
             name: Identifier,
             expose: Boolean = true,
@@ -203,7 +197,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         }
 
         override fun dumpToFile(file: Path) {
-
+            // Global registry can not dump data to file
         }
     }
 }

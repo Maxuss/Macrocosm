@@ -140,6 +140,7 @@ object TerrainTossAbility : AbilityBase(
                 stand.passengers.clear()
                 stand.addPassenger(passenger)
             } catch (ignored: NullPointerException) {
+                // ignored
             }
         }
     }

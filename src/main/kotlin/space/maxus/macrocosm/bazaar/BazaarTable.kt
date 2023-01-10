@@ -10,6 +10,7 @@ import space.maxus.macrocosm.db.BazaarDataTable
 import space.maxus.macrocosm.db.DataStorage
 import space.maxus.macrocosm.db.DatabaseStore
 import space.maxus.macrocosm.db.impl.AbstractSQLDatabase
+import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.util.*
@@ -307,10 +308,12 @@ class BazaarItemData private constructor(
      * Pushes an order to this queue
      */
     fun pushOrder(order: BazaarOrder) {
-        if (order is BazaarBuyOrder)
-            this.buy.offer(order)
-        else if (order is BazaarSellOrder)
-            this.sell.offer(order)
+        if (order is BazaarBuyOrder) {
+            if (!this.buy.offer(order)) {
+                logger.severe("Failed to push a buy order!")
+            }
+        } else if (order is BazaarSellOrder && !this.sell.offer(order))
+            logger.severe("Failed to push a sell order!")
     }
 
     /**
@@ -332,11 +335,10 @@ class BazaarItemData private constructor(
      */
     fun popOrder(specific: BazaarOrder) {
         runCatchingReporting {
-            if (specific is BazaarBuyOrder)
-                this.buy.remove(specific)
-            else if (specific is BazaarSellOrder)
-                this.sell.remove(specific)
-            NULL
+            if (specific is BazaarBuyOrder && !this.buy.remove(specific))
+                logger.severe("Tried to remove non-existent buy order")
+            else if (specific is BazaarSellOrder && !this.sell.remove(specific))
+                logger.severe("Tried to remove non-existent sell order")
         }
     }
 

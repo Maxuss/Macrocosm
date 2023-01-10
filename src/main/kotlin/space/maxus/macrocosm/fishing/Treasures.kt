@@ -4,14 +4,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 
 enum class Treasures(val treasure: FishingTreasure) {
-//    TEST_TREASURE(
-//        FishingTreasure(
-//            id("minecraft", "diamond"),
-//            0,
-//            Predicates.alwaysTrue(),
-//            1.0
-//        )
-//    )
+
     ;
 
     companion object {

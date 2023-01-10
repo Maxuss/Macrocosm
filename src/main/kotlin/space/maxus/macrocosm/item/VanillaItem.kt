@@ -202,7 +202,9 @@ private fun statsFromMaterial(mat: Material) = stats {
             magicFind = 1f
         }
 
-        else -> {}
+        else -> {
+            // do not modify stats
+        }
     }
 }
 
@@ -262,7 +264,9 @@ private fun getRunesForItem(item: Material): List<RuneSlot> {
             RuneSlot.UTILITY
         )
 
-        else -> {}
+        else -> {
+            // do not modify runes
+        }
     }
 
     // other equipment

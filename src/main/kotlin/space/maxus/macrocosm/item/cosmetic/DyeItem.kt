@@ -70,7 +70,7 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
     }
 
     override fun addPotatoBooks(amount: Int) {
-
+        // this item should not have potato books
     }
 
     override fun enchant(enchantment: Enchantment, level: Int): Boolean {
@@ -78,7 +78,7 @@ class DyeItem(private val ddye: Dye) : MacrocosmItem {
     }
 
     override fun reforge(ref: Reforge) {
-
+        // this item should not be reforged
     }
 
     override fun stats(player: MacrocosmPlayer?): Statistics {

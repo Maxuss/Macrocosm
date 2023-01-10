@@ -3,6 +3,7 @@ package space.maxus.macrocosm.entity
 import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
 import org.bukkit.util.BlockIterator
+import org.bukkit.util.Vector
 import space.maxus.macrocosm.text.text
 
 fun raycast(from: LivingEntity, distance: Int): Location {
@@ -30,4 +31,19 @@ fun raycast(from: LivingEntity, distance: Int): Location {
         from.sendMessage(text("<red>There are blocks in the way!"))
         from.location
     }
+}
+
+fun raycast(from: Location, direction: Vector, distance: Int): Location {
+    from.direction = direction
+    val iterator = BlockIterator(from, 1.0, distance)
+    while (iterator.hasNext()) {
+        val loc: Location = iterator.next().location
+        if (loc.block.type.isSolid) {
+            loc.y += 1
+            return loc
+        }
+    }
+    val n: Location = from.clone().add(from.direction.multiply(distance))
+    n.y = n.y + 1
+    return n
 }

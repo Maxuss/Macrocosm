@@ -21,15 +21,12 @@ object ItemUpdateHandlers : Listener {
         val key = pluginKey("LAST_ITEM_UPDATE")
         val time = System.currentTimeMillis()
         // only update items every 5 seconds
-        if (pdc.has(key) && (time - pdc.get(
+        if ((pdc.has(key) && (time - pdc.get(
                 key,
                 PersistentDataType.LONG
             )!!) >= 5L.toDuration(DurationUnit.SECONDS).inWholeMilliseconds
+                ) || !pdc.has(key)
         ) {
-            val i = item.macrocosm!!.build(mc)!!
-            i.itemMeta.persistentDataContainer.set(key, PersistentDataType.LONG, time)
-            player.inventory.setItem(e.newSlot, i)
-        } else if (!pdc.has(key)) {
             val i = item.macrocosm!!.build(mc)!!
             i.itemMeta.persistentDataContainer.set(key, PersistentDataType.LONG, time)
             player.inventory.setItem(e.newSlot, i)

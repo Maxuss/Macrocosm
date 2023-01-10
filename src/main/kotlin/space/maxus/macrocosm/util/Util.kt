@@ -30,6 +30,7 @@ import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.item.macrocosmTag
 import space.maxus.macrocosm.listeners.FallingBlockListener
+import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.isAirOrNull
@@ -427,8 +428,8 @@ fun createFloatingBlock(loc: Location, item: ItemStack): ArmorStand {
 }
 
 fun File.recreateFile() {
-    if (this.exists())
-        this.delete()
+    if (this.exists() && !this.delete())
+        logger.severe("Failed to delete original file")
     this.createNewFile()
 }
 

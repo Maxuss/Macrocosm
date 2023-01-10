@@ -27,7 +27,7 @@ object AshenAvolotlePet : Pet(
     listOf(
         PetAbility(
             "Ashen Mantle",
-            "You gain <yellow>+[0.01]%<gray> to <red>ALL<gray> your stats while in <#721810>The Wasteland</#721810>"
+            "You gain <yellow>+[0.01]%<gray> to <red>ALL<gray> your stats while on <#721810>The Sizzling Island</#721810> or <gold>The Ashfall Plains<gray>"
         ),
         PetAbility(
             "Fueled by Hatred",

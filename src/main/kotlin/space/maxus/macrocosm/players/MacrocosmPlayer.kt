@@ -130,10 +130,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                     PotionEffectType.POISON
                 )
             ) {
-                currentMana = min(currentMana, stats.intelligence)
                 currentHealth = min(currentHealth + stats.vitality, stats.health)
                 paper!!.health = clamp((currentHealth / stats.health) * 20f, 0f, 20f).toDouble()
             }
+            currentMana = min(currentMana, stats.intelligence)
             paper?.walkSpeed = 0.2F * (stats.speed / 100f)
 
             sendStatBar(stats)
@@ -573,48 +573,6 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 }
             }
         }
-
-//        stmt.executeUpdate(
-//            "INSERT OR REPLACE INTO Players VALUES ('$ref', ${rank.id()}, $firstJoin, $lastJoin, $newPlaytime, $purse, $bank, '${
-//                GSON.toJson(
-//                    this.memory
-//                )
-//            }', '${GSON.toJson(this.activeForgeRecipes)}')"
-//        )
-//        var leftHand = "INSERT OR REPLACE INTO Stats(UUID"
-//        var rightHand = "VALUES ('$ref'"
-//        for ((k, value) in baseStats.iter()) {
-//            leftHand += ", ${k.name}"
-//            rightHand += ", $value"
-//        }
-//        stmt.executeUpdate("$leftHand)$rightHand)")
-//        val skillsJson = skills.json()
-//        val collectionJson = collections.json()
-//        val recipes = GSON.toJson(unlockedRecipes.map { it.toString() })
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO SkillsCollections VALUES ('$ref', '$collectionJson', '$skillsJson')""")
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Recipes VALUES ('$ref', '$recipes')""")
-//
-//        val active = if (activePet != null) {
-//            activePet!!.hashKey
-//        } else ""
-//        val pets = GSON.toJson(ownedPets)
-//
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Pets VALUES ('$ref', '$active', '$pets')""")
-//
-//        // slayers
-//        val slayers = GSON.toJson(slayers.mapKeys { (k, _) -> k.name })
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Slayers VALUES ('$ref', '$slayers')""")
-//
-//        // equipment
-//        val equipment =
-//            this.equipment.enumerate().joinToString(separator = ", ") { "'${it?.serializeToBytes(this) ?: "NULL"}'" }
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Equipment VALUES ('$ref', $equipment)""")
-//
-//        // essence
-//        val essence = GSON.toJson(this.availableEssence)
-//        stmt.executeUpdate("""INSERT OR REPLACE INTO Essence VALUES ('$ref', '$essence')""")
-//
-//        stmt.close()
     }
 
     private fun dump(it: UpdateBuilder<*>, p: MacrocosmPlayer, id: Boolean) {
@@ -699,75 +657,6 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             } ?: return null
             player.baseStats = Bytes.deserializeObject(stats) ?: return null
             return player
-
-//            val stats = stmt.executeQuery("SELECT * FROM Stats WHERE UUID = '$id'")
-//            if (!stats.next())
-//                return null
-//            player.baseStats = Statistics.fromRes(stats)
-//
-//            val skillsCollections = stmt.executeQuery("SELECT * FROM SkillsCollections WHERE UUID = '$id'")
-//            if (!skillsCollections.next()) return null
-//            val skills = Skills.fromJson(skillsCollections.getString("SKILLS"))
-//            val colls = Collections.fromJson(skillsCollections.getString("COLLECTIONS"))
-//            player.skills = skills
-//            player.collections = colls
-//
-//            val recipesRes = stmt.executeQuery("SELECT * FROM Recipes WHERE UUID = '$id'")
-//            if (!recipesRes.next())
-//                return null
-//            val recipes =
-//                GSON.fromJson<List<String>>(recipesRes.getString("RECIPES"), object : TypeToken<List<String>>() {}.type)
-//                    .map { Identifier.parse(it) }
-//            player.unlockedRecipes = recipes.toMutableList()
-//
-//            // pets
-//            val petsRes = stmt.executeQuery("SELECT * FROM Pets WHERE UUID = '$id'")
-//            if (!petsRes.next())
-//                return null
-//            player.ownedPets =
-//                GSON.fromJson(petsRes.getString("PETS"), object : TypeToken<HashMap<String, StoredPet>>() {}.type)
-//            val active = petsRes.getString("ACTIVE_PET")
-//            if (active.isNotEmpty()) {
-//                val pet = player.ownedPets[active]!!
-//                // delaying spawning pet, to prevent weird bugs
-//                task(delay = 20L) {
-//                    player.activePet = Registry.PET.find(pet.id).spawn(player, active)
-//                }
-//            }
-//
-//            // slayers
-//            val slayerRes = stmt.executeQuery("SELECT * FROM Slayers WHERE UUID = '$id'")
-//            if (!slayerRes.next())
-//                return null
-//            val exp = GSON.fromJson<HashMap<String, SlayerLevel>>(
-//                slayerRes.getString("EXPERIENCE"),
-//                object : TypeToken<HashMap<String, SlayerLevel>>() {}.type
-//            )
-//            player.slayers = HashMap(exp.mapKeys { (k, _) -> SlayerType.valueOf(k) })
-//
-//            // equipment
-//            val eqRes = stmt.executeQuery("SELECT * FROM Equipment WHERE UUID = '$id'")
-//            if (!eqRes.next())
-//                return null
-//            val equipment = PlayerEquipment()
-//            listOf(ItemType.NECKLACE, ItemType.CLOAK, ItemType.BELT, ItemType.GLOVES).associateWith {
-//                val contained = eqRes.getString(it.name)
-//                if (contained == "NULL")
-//                    null
-//                else
-//                    MacrocosmItem.deserializeFromBytes(contained)
-//            }.forEach { (ty, item) ->
-//                equipment[ty] = item
-//            }
-//            player.equipment = equipment
-//
-//            // essence
-//            val esRes = stmt.executeQuery("SELECT * FROM Essence WHERE UUID = '$id'")
-//            if(!esRes.next())
-//                return null
-//            player.availableEssence = GSON.fromJson(esRes.getString("ESSENCE"), object: TypeToken<HashMap<EssenceType, Int>>() { }.type)
-//
-//            stmt.close()
         }
     }
 

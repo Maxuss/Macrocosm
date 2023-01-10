@@ -70,7 +70,7 @@ object DamageHandlers : Listener {
         if (damager is Player && checkAts) {
             damager.macrocosm!!.onAtsCooldown = true
             // 0.45s is default attack speed, becomes 0.2s at 100 attack speed
-            taskRunLater((((1.2 - (damagerStats.attackSpeed / 100f))) * 9f).roundToLong()) {
+            taskRunLater(((1.2 - (damagerStats.attackSpeed / 100f)) * 9f).roundToLong()) {
                 damager.macrocosm?.onAtsCooldown = false
             }
         }
