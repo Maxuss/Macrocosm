@@ -21,7 +21,7 @@ class CinderflameSpirit(stats: Statistics, tier: Int, exp: Double) : SlayerBase(
     exp,
     stats,
     mainHand = VanillaItem(Material.STONE_AXE),
-    helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UzN2RmMjdkMWU5MjVkMmY3OGRlNjkzNDEzYWRhYjc1ZDc5MTg4NDViYWM4ZjYxNzRmZGIyMmVjNTc3NjExZCJ9fX0="),
+    helmet = SkullEntityHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFmNGY0ZGMzYjA5ODQ4MWQ4MTc1ZDg0ODkyYzE0NjM3ODU5YWNlNmI1MjQxN2Q0ZWRmZWRmNThlNmRiNTRmOSJ9fX0="),
     chestplate = VanillaItem(Material.CHAINMAIL_CHESTPLATE),
     boots = VanillaItem(Material.NETHERITE_BOOTS)
 )
