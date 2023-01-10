@@ -39,7 +39,7 @@ object LethargyAbility : AbilityBase(
     override fun registerListeners() {
         listen<PlayerDealDamageEvent> { e ->
             val u = e.player.paper?.uniqueId ?: return@listen
-            if (hits.contains(u)) {
+            if (hits.containsKey(u)) {
                 hits[u] = hits[u]!! + 1
                 e.player.paper?.title(
                     subText = text("<gold>${hits[u]!!}")
@@ -62,7 +62,7 @@ object LethargyAbility : AbilityBase(
                     )
                     vector increase vec(x = .2)
                 }
-            } else if (disable.contains(u)) {
+            } else if (disable.containsKey(u)) {
                 val a = disable.remove(u)!!
                 e.player.tempStats.strength -= a
             }
