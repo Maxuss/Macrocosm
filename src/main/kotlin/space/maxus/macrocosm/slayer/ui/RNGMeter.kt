@@ -21,7 +21,7 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.stripTags
 import kotlin.math.roundToInt
 
-private val slayerLevelBuff = arrayOf(1.0, 1.0, 1.0, .95, .95, .9, .85, .85, .8)
+val slayerLevelBuff = arrayOf(1.0, 1.0, 1.0, .95, .95, .9, .85, .85, .8)
 fun rngMeterButton(slayer: SlayerLevel, slayerType: SlayerType): ItemStack {
     return itemStack(Material.PAINTING) {
         meta {
@@ -59,7 +59,7 @@ fun rngMeterButton(slayer: SlayerLevel, slayerType: SlayerType): ItemStack {
                 val ratio = slayer.rng[slayerType]!!.expAccumulated / expToDrop
                 val progress = ratio * 100
                 lore.add("Progress: <light_purple>${Formatting.withCommas(progress.toBigDecimal())}<dark_purple>%")
-                val barCount = (ratio * 25).roundToInt()
+                val barCount = (ratio * 25).roundToInt().coerceIn(0..25)
                 lore.add("<light_purple>${"-".repeat(barCount)}<white>${"-".repeat(25-barCount)} <light_purple>${Formatting.withCommas(slayer.rng[slayerType]!!.expAccumulated.toBigDecimal(), true)}<dark_purple>/<light_purple>${truncateBigNumber(expToDrop.toFloat(), false)}")
             }
 
@@ -89,7 +89,7 @@ fun rngMeter(player: MacrocosmPlayer, slayer: SlayerLevel, slayerType: SlayerTyp
             }
             val oldChance = drop.drop.chance
             val expToDrop = (((1 / oldChance) * 900) * slayerLevelBuff[slayer.level]).roundToInt()
-            val newChance = oldChance + (slayer.rng[slayerType]!!.expAccumulated / expToDrop)
+            val newChance = oldChance + (slayer.rng[slayerType]!!.expAccumulated / expToDrop) * .03
             val item = buildDropItem(player, slayer, drop, if(dropIndex == slayer.rng[slayerType]!!.selectedRngDrop) newChance.toFloat() else -1f)
             item.meta {
                 val lore = lore()!!.toMutableList()
@@ -100,7 +100,7 @@ fun rngMeter(player: MacrocosmPlayer, slayer: SlayerLevel, slayerType: SlayerTyp
                     val ratio = slayer.rng[slayerType]!!.expAccumulated / expToDrop
                     val progress = ratio * 100
                     lore.add(text("<gray>Progress: <light_purple>${Formatting.withCommas(progress.toBigDecimal())}<dark_purple>%").noitalic())
-                    val barCount = (ratio * 25).roundToInt()
+                    val barCount = (ratio * 25).roundToInt().coerceIn(0..25)
                     lore.add(text("<light_purple>${"-".repeat(barCount)}<white>${"-".repeat(25-barCount)} <light_purple>${Formatting.withCommas(slayer.rng[slayerType]!!.expAccumulated.toBigDecimal(), true)}<dark_purple>/<light_purple>${truncateBigNumber(expToDrop.toFloat(), false)}").noitalic())
                     lore.add(Component.empty())
                     lore.addAll(listOf(

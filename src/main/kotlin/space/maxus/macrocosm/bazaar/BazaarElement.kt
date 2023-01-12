@@ -172,7 +172,7 @@ enum class BazaarElement(
 
     // fishing
     COD(vanilla = true),
-    ENCHANTED_RAW_COD,
+    ENCHANTED_COD,
     ENCHANTED_COOKED_COD,
 
     SALMON(vanilla = true),

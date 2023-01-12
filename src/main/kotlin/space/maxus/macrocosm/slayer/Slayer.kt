@@ -47,13 +47,6 @@ fun rewardExperienceForTier(tier: Int): Double = when (tier) {
     else -> 0.0
 }
 
-fun rngMeterForTier(tier: Int): Double = when (tier) {
-    4 -> .004
-    5 -> .008
-    6 -> .021
-    else -> .0
-}
-
 abstract class Slayer(
     val name: String,
     val item: Material,

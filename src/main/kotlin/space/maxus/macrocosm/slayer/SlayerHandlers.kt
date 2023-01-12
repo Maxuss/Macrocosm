@@ -19,11 +19,10 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerDeathEvent
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.slayer.ui.slayerLevelBuff
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import java.util.*
-import kotlin.math.ceil
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 object SlayerHandlers : Listener {
@@ -91,24 +90,18 @@ object SlayerHandlers : Listener {
 
         player.sendMessage("<gold><bold>NICE! SLAYER BOSS SLAIN!")
         val currentLevel = player.slayers[quest.type]!!
-        val newExp = currentLevel.overflow + rewardExperienceForTier(quest.tier)
-        val rngForTier = rngMeterForTier(quest.tier)
-        // TODO: add actual handlers here
-        var rng = .0
-        if (rng > .0) {
-            if (rng > 1.0) {
-                val pool = e.killed.macrocosm!!.lootPool(e.player)
-                val rngesus = pool.drops.filter { it.rarity.rarity >= 4 }.random().clone()
-                val item = rngesus.dropRngesusReward(e.player)
-                rng = .0
-                e.player.paper!!.world.dropItemNaturally(e.player.paper!!.location, item)
-            }
-            val tiles = min(ceil(rng * 20).roundToInt(), 15)
-            player.sendMessage(
-                "<light_purple>RNGesus Meter: <gradient:dark_purple:light_purple><bold>" + "-".repeat(
-                    tiles
-                ) + "</gradient><gray>" + "-".repeat(15 - tiles) + " <light_purple>${Formatting.stats((rng * 100).toBigDecimal())}%"
-            )
+        val expForTier = rewardExperienceForTier(quest.tier)
+        val newExp = currentLevel.overflow + expForTier
+
+        // RNG Meter handlers
+        val rngStatus = currentLevel.rng[quest.type]!!
+        val selectedDrop = quest.type.slayer.drops[rngStatus.selectedRngDrop]
+        var accumulated = rngStatus.expAccumulated + expForTier
+        val oldChance = selectedDrop.drop.chance
+        val expToDrop = (((1 / oldChance) * 900) * slayerLevelBuff[currentLevel.level]).roundToInt()
+        if(accumulated >= expToDrop) {
+            selectedDrop.drop.dropRngesusReward(player)
+            accumulated = expForTier
         }
         if (SlayerTable.shouldLevelUp(currentLevel.level, newExp, .0)) {
             player.slayers[quest.type] = SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, currentLevel.rng)
@@ -137,7 +130,9 @@ object SlayerHandlers : Listener {
                     )
             )
         } else {
-            player.slayers[quest.type] = SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, currentLevel.rng)
+            player.slayers[quest.type] = SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, currentLevel.rng.apply {
+                this[quest.type]!!.expAccumulated = accumulated
+            })
             if (currentLevel.level == 9)
                 player.sendMessage(
                     "<yellow>${
