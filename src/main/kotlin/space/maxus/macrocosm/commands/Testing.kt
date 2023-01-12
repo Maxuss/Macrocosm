@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.commands
 
+import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.axay.kspigot.commands.argument
@@ -69,7 +70,21 @@ fun setSlayerLevelCommand() = command("slayerlvl") {
             runs {
                 val ty = SlayerType.valueOf(getArgument("id"))
                 val slayer = player.macrocosm!!.slayers[ty]!!
-                player.macrocosm!!.slayers[ty] = SlayerLevel(getArgument("exp"), 0.0, listOf(), slayer.rngMeter)
+                player.macrocosm!!.slayers[ty] = SlayerLevel(getArgument("exp"), 0.0, listOf(), slayer.rng)
+            }
+        }
+    }
+}
+
+fun addSlayerExpCommand()  = command("slayerxp") {
+    argument("id", StringArgumentType.string()) {
+        argument("exp", DoubleArgumentType.doubleArg(.0)) {
+            runs {
+                val ty = SlayerType.valueOf(getArgument("id"))
+                val slayer = player.macrocosm!!.slayers[ty]!!
+                player.macrocosm!!.slayers[ty] = SlayerLevel(slayer.level, slayer.overflow, slayer.collectedRewards, slayer.rng.apply {
+                    this[ty]!!.expAccumulated += getArgument<Double>("exp")
+                })
             }
         }
     }

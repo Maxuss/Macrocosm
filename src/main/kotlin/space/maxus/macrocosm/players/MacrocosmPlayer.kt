@@ -52,10 +52,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
-import space.maxus.macrocosm.slayer.SlayerLevel
-import space.maxus.macrocosm.slayer.SlayerQuest
-import space.maxus.macrocosm.slayer.SlayerStatus
-import space.maxus.macrocosm.slayer.SlayerType
+import space.maxus.macrocosm.slayer.*
 import space.maxus.macrocosm.spell.essence.EssenceType
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistic
@@ -98,7 +95,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> =
-        SlayerType.values().asIterable().associateWithHashed(ignoring(SlayerLevel(0, .0, listOf(), .0)))
+        SlayerType.values().asIterable().associateWithHashed(ignoring(SlayerLevel(0, .0, listOf(), HashMap(SlayerType.values().associateWith { RngStatus(.0, -1) }))))
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0

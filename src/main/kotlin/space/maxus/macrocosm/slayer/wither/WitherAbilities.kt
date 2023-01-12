@@ -87,7 +87,7 @@ object WitherAbilities {
         val barriersActivated25 = mutableListOf<UUID>()
 
         listen<PlayerDealDamageEvent> { e ->
-            if(!SlayerAbility.bosses[SlayerType.CINDERFLAME_SPIRIT]!!.contains(e.damaged.uniqueId))
+            if(SlayerAbility.bosses[SlayerType.CINDERFLAME_SPIRIT]?.contains(e.damaged.uniqueId) != true)
                 return@listen
             val mc = e.damaged.macrocosm ?: return@listen
             val currentBarrierCount = barrierAmount[e.damaged.uniqueId]

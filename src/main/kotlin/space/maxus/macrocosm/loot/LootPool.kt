@@ -11,6 +11,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.slayer.ui.slayerLevelBuff
 import space.maxus.macrocosm.util.general.id
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -20,15 +21,34 @@ class LootPool private constructor(val drops: List<Drop>) {
         fun of(vararg drops: Drop) = LootPool(drops.toList().filter { it.amount.last > 0 })
     }
 
-    fun roll(mf: Float = 0f) = drops.filter { drop ->
+    fun roll(mf: Float = 0f, player: MacrocosmPlayer? = null, ) = drops.filter { drop ->
         val mfMod = mf / 100.0
-        val chance = drop.chance * (1 + mfMod)
+        val chance = if(player == null) drop.chance * (1 + mfMod) else {
+            val base = drop.chance * (1 + mfMod)
+            val slayer = player.slayerQuest
+            if(slayer == null)
+                base
+            else {
+                val slayerLevel = player.slayers[slayer.type]!!
+                val rngSelected = slayerLevel.rng[slayer.type]!!
+                val dropSelected = rngSelected.selectedRngDrop
+                val actualDrop = slayer.type.slayer.drops[dropSelected].drop
+                if(actualDrop == drop) {
+                    // applying calculations
+                    val expToDrop = (((1 / base) * 900) * slayerLevelBuff[slayerLevel.level]).roundToInt()
+                    val newChance = base + (rngSelected.expAccumulated / expToDrop) * .03
+                    newChance
+                } else {
+                    base
+                }
+            }
+        }
         Random.nextDouble() <= chance
     }
 
     fun roll(player: MacrocosmPlayer?, applyFortune: Boolean = true): List<ItemStack?> {
         val stats = player?.stats()
-        val roll = roll(stats?.magicFind ?: 0f)
+        val roll = roll(mf = stats?.magicFind ?: 0f)
         return roll.map {
             if (it.item.namespace == "minecraft") {
                 val mat = Material.valueOf(it.item.path.uppercase())

@@ -109,7 +109,7 @@ fun rewardsMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventoryFourBy
                             playerLevel.level,
                             playerLevel.overflow,
                             listOf(*playerLevel.collectedRewards.toTypedArray(), lvl),
-                            playerLevel.rngMeter
+                            playerLevel.rng
                         )
                         event.player.closeInventory()
                         player.sendMessage("<yellow>You have claimed rewards for ${slayer.name}<yellow> LVL $lvl")

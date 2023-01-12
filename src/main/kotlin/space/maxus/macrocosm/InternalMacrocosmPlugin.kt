@@ -273,6 +273,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         announceItemsCommand()
         petsCommand()
         placeBlockCommand()
+        addSlayerExpCommand()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
