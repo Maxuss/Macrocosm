@@ -69,7 +69,7 @@ fun setSlayerLevelCommand() = command("slayerlvl") {
             runs {
                 val ty = SlayerType.valueOf(getArgument("id"))
                 val slayer = player.macrocosm!!.slayers[ty]!!
-                player.macrocosm!!.slayers[ty] = SlayerLevel(getArgument("exp"), 0.0, listOf(), slayer.rngMeter)
+                player.macrocosm!!.slayers[ty] = SlayerLevel(getArgument("exp"), 0.0, listOf(), slayer.rng)
             }
         }
     }

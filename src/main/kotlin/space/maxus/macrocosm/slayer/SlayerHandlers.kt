@@ -93,7 +93,8 @@ object SlayerHandlers : Listener {
         val currentLevel = player.slayers[quest.type]!!
         val newExp = currentLevel.overflow + rewardExperienceForTier(quest.tier)
         val rngForTier = rngMeterForTier(quest.tier)
-        var rng = currentLevel.rngMeter + rngForTier
+        // TODO: add actual handlers here
+        var rng = .0
         if (rng > .0) {
             if (rng > 1.0) {
                 val pool = e.killed.macrocosm!!.lootPool(e.player)
@@ -110,7 +111,7 @@ object SlayerHandlers : Listener {
             )
         }
         if (SlayerTable.shouldLevelUp(currentLevel.level, newExp, .0)) {
-            player.slayers[quest.type] = SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, rng)
+            player.slayers[quest.type] = SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, currentLevel.rng)
             player.sendMessage(
                 "<green><bold>LVL UP! <dark_purple>▶ </bold><yellow>${
                     quest.type.name.replace("_", " ").capitalized()
@@ -136,7 +137,7 @@ object SlayerHandlers : Listener {
                     )
             )
         } else {
-            player.slayers[quest.type] = SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, rng)
+            player.slayers[quest.type] = SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, currentLevel.rng)
             if (currentLevel.level == 9)
                 player.sendMessage(
                     "<yellow>${

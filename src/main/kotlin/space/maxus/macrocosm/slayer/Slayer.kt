@@ -73,6 +73,7 @@ abstract class Slayer(
     val requiredExp: List<Double>,
     val tiers: IntRange,
     val entities: String,
+    val entityKind: String,
     val rewards: List<SlayerReward>,
     drops: List<SlayerDrop>
 ) : Listener {

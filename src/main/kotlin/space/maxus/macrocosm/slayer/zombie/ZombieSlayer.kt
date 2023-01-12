@@ -54,6 +54,7 @@ object ZombieSlayer : Slayer(
     ),
     1..6,
     "Zombies",
+    "Zombie",
     rewardsOf(
         listOf(
             FixedStatReward(Statistic.HEALTH, 2f),

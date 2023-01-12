@@ -44,6 +44,7 @@ object WitherSlayer : Slayer(
     ),
     1..6,
     "Wither Skeletons",
+    "Wither Skeleton",
     rewardsOf(
         // todo: rewards
     ),

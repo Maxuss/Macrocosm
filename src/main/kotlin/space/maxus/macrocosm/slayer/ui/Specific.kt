@@ -1,11 +1,13 @@
 package space.maxus.macrocosm.slayer.ui
 
 import net.axay.kspigot.gui.*
+import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
-import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.Sound
 import space.maxus.macrocosm.chat.Formatting
+import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.item.ItemValue
@@ -18,7 +20,6 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
-import space.maxus.macrocosm.util.renderBar
 import space.maxus.macrocosm.util.stripTags
 import kotlin.math.roundToInt
 
@@ -174,25 +175,17 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                 ev.player.openGUI(dropsMenu(player, ty))
             }
 
-            // rng meter
-            val rng = player.slayers[ty]!!.rngMeter.toFloat()
+            val item = rngMeterButton(player.slayers[ty]!!, ty)
+            item.meta {
+                val lore = lore()!!
+                lore.add(Component.empty())
+                lore.add(text("<yellow>Click to select!").noitalic())
+                lore(lore)
+            }
 
-            placeholder(
-                Slots.RowTwoSlotSeven, ItemValue.placeholderDescripted(
-                    Material.PAINTING,
-                    "<light_purple>RNG Meter",
-                    "Feeling unlucky? Kill high tier",
-                    "bosses to accumulate RNG meter",
-                    "points. Upon reaching 100%",
-                    "guarantees a <light_purple>Crazy Rare<gray> drop!",
-                    " ",
-                    "Your Meter:",
-                    renderBar(
-                        rng, 15,
-                        NamedTextColor.DARK_PURPLE, NamedTextColor.LIGHT_PURPLE
-                    ) + " <light_purple>${Formatting.stats((rng * 100).toBigDecimal())}%"
-                )
-            )
+            button(Slots.RowTwoSlotSeven, item) {
+                it.player.openGUI(rngMeter(player, player.slayers[ty]!!, ty))
+            }
 
             button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.ARROW, "<red>Back")) { ev ->
                 ev.bukkitEvent.isCancelled = true
