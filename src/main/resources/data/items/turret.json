@@ -1,13 +1,11 @@
 {
     "turret_tesla_coil": {
         "name": "Tesla Coil",
-        "material": "diamond_block",
         "rarity": "epic",
         "type": "turret",
         "description": "Bzzzt!",
         "model": {
             "id": 20,
-            "from": "item/diamond_block",
             "to": "macrocosm:item/tesla_coil",
             "raw": true
         },
@@ -18,13 +16,11 @@
     },
     "turret_flamethrower": {
         "name": "Flamethrower Turret",
-        "material": "diamond_block",
         "rarity": "legendary",
         "type": "turret",
         "description": "Pshhhh",
         "model": {
             "id": 21,
-            "from": "item/diamond_block",
             "to": "macrocosm:item/flamethrower_turret",
             "raw": true
         },
@@ -35,12 +31,10 @@
     },
     "turret_heavy": {
         "name": "Heavy Turret",
-        "material": "diamond_block",
         "rarity": "epic",
         "type": "turret",
         "model": {
             "id": 22,
-            "from": "item/diamond_block",
             "to": "macrocosm:item/heavy_turret",
             "raw": true
         },

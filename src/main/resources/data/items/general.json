@@ -68,7 +68,6 @@
         ]
     },
     "eternal_terror_wand": {
-        "material": "blaze_rod",
         "type": "wand",
         "rarity": "epic",
         "stats": {
@@ -87,7 +86,6 @@
         "description": "It's morbin' time",
         "model": {
             "id": 0,
-            "from": "item/blaze_rod",
             "to": "macrocosm:item/eternal_terror_wand",
             "parent": "item/handheld"
         },
@@ -98,7 +96,6 @@
         }
     },
     "hyperions_ring": {
-        "material": "gold_ingot",
         "type": "other",
         "rarity": "legendary",
         "name": "Hyperion's Ring",
@@ -112,7 +109,6 @@
         "description": "Only works in off hand",
         "model": {
             "id": 1,
-            "from": "item/gold_ingot",
             "to": "macrocosm:item/hyperions_ring",
             "raw": true
         }
@@ -221,7 +217,6 @@
         "name": "Titan's Gladius",
         "rarity": "legendary",
         "type": "longsword",
-        "material": "iron_sword",
         "stats": {
             "damage": 250,
             "strength": 400,
@@ -237,7 +232,6 @@
         ],
         "model": {
             "id": 7,
-            "from": "item/iron_sword",
             "to": "macrocosm:item/titans_gladius",
             "parent": "item/handheld"
         }
@@ -246,7 +240,6 @@
         "name": "Sentinel's Shield",
         "rarity": "legendary",
         "type": "shield",
-        "material": "iron_ingot",
         "stats": {
             "intelligence": 100,
             "defense": 600,
@@ -261,7 +254,6 @@
             "defensive"
         ],
         "model": {
-            "from": "item/iron_ingot",
             "to": "macrocosm:item/sentinels_shield",
             "id": 6,
             "raw": true
@@ -271,7 +263,6 @@
         "name": "Titan's Thunder",
         "rarity": "relic",
         "type": "longsword",
-        "material": "iron_sword",
         "stats": {
             "damage": 350,
             "strength": 400,
@@ -288,7 +279,6 @@
         "model": {
             "parent": "item/handheld",
             "id": 8,
-            "from": "item/iron_sword",
             "to": "macrocosm:item/titans_thunder"
         },
         "animation": {
@@ -321,7 +311,6 @@
         "name": "Blackshard of the Dead Knight",
         "rarity": "epic",
         "type": "sword",
-        "material": "diamond_sword",
         "stats": {
             "damage": 200,
             "strength": 200,
@@ -333,7 +322,6 @@
         ],
         "model": {
             "id": 8,
-            "from": "item/diamond_sword",
             "to": "macrocosm:item/blackshard",
             "parent": "item/handheld"
         },
@@ -367,7 +355,6 @@
         "rarity": "epic",
         "type": "shield",
         "name": "Shield of the Yawning Dead",
-        "material": "iron_ingot",
         "stats": {
             "defense": 200,
             "true_defense": 30
@@ -380,7 +367,6 @@
         "model": {
             "id": 10,
             "raw": true,
-            "from": "item/iron_ingot",
             "to": "macrocosm:item/shield_of_the_dead"
         },
         "abilities": [
@@ -391,7 +377,7 @@
         "rarity": "relic",
         "name": "Armor of the Damned",
         "type": "chestplate",
-        "material": "netherite_chestplate",
+        "material": "iron_chestplate",
         "stats": {
             "health": 500,
             "defense": 450,
@@ -406,7 +392,7 @@
         ],
         "model": {
             "id": 10,
-            "from": "item/netherite_chestplate",
+            "from": "item/iron_chestplate",
             "to": "macrocosm:item/damned_chestplate"
         },
         "abilities": [
@@ -580,7 +566,6 @@
         "type": "dagger",
         "name": "Assassin's Dagger",
         "rarity": "epic",
-        "material": "iron_sword",
         "stats": {
             "damage": 250,
             "crit_damage": 150,
@@ -592,7 +577,6 @@
         ],
         "model": {
             "id": 11,
-            "from": "item/iron_sword",
             "to": "macrocosm:item/assassins_dagger",
             "parent": "item/handheld"
         }
@@ -601,7 +585,6 @@
         "type": "drill",
         "name": "Mole Claws Powered Drill",
         "rarity": "legendary",
-        "material": "prismarine_shard",
         "breaking_power": 6,
         "stats": {
             "mining_speed": 1500,
@@ -613,7 +596,6 @@
         ],
         "model": {
             "id": 22,
-            "from": "item/prismarine_shard",
             "to": "macrocosm:item/moledrill",
             "parent": "item/handheld"
         },

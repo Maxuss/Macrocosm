@@ -111,6 +111,11 @@
                 "required": [
                     "head_skin"
                 ]
+            },
+            {
+                "required": [
+                    "model"
+                ]
             }
         ],
         "additionalProperties": false

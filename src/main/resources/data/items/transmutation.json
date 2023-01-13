@@ -1,22 +1,18 @@
 {
     "sapphire_shard": {
-        "material": "amethyst_shard",
         "rarity": "epic",
         "description": "It shines with sorrow",
         "glow": true,
         "model": {
             "id": 2,
-            "from": "item/amethyst_shard",
             "to": "macrocosm:item/sapphire_shard"
         }
     },
     "prismatic_shard": {
-        "material": "amethyst_shard",
         "rarity": "legendary",
         "description": "It is said that this gemstone can produce solar energy out of nothing.",
         "model": {
             "id": 3,
-            "from": "item/amethyst_shard",
             "to": "macrocosm:item/sapphire_shard"
         },
         "animation": {

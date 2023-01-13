@@ -40,7 +40,6 @@
         "description": "Main power source for energy generators."
     },
     "flamethrower": {
-        "material": "stick",
         "rarity": "epic",
         "type": "sword",
         "stats": {
@@ -54,7 +53,6 @@
         ],
         "model": {
             "id": 5,
-            "from": "item/stick",
             "to": "macrocosm:item/flamethrower",
             "parent": "item/handheld"
         },

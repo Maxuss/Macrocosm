@@ -52,7 +52,7 @@ object ItemParser {
 
     private fun parseAndPrepare(id: Identifier, obj: JsonObject): MacrocosmItem {
         val type =
-            if (obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else Material.PLAYER_HEAD
+            if (obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else if(obj.has("model")) Material.PAPER else Material.PLAYER_HEAD
         val headSkin = if (type == Material.PLAYER_HEAD) obj["head_skin"].asString else null
         val rarity = Rarity.valueOf(obj["rarity"].asString.uppercase())
         val name = if (obj.has("name")) obj["name"].asString else id.path.replace("_", " ").capitalized()
@@ -131,13 +131,13 @@ object ItemParser {
         return if (obj.has("raw") && obj["raw"].asBoolean)
             RawModel(
                 obj["id"].asInt,
-                obj["from"].asString,
+                if(obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
             )
         else
             Model(
                 obj["id"].asInt,
-                obj["from"].asString,
+                if(obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
                 if (obj.has("parent"))
                     obj["parent"].asString
