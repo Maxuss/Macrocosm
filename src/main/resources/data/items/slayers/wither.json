@@ -52,7 +52,7 @@
             "flamethrower"
         ],
         "model": {
-            "id": 5,
+            "id": 305,
             "to": "macrocosm:item/flamethrower",
             "parent": "item/handheld"
         },

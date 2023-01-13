@@ -5,7 +5,7 @@
         "type": "turret",
         "description": "Bzzzt!",
         "model": {
-            "id": 20,
+            "id": 100,
             "to": "macrocosm:item/tesla_coil",
             "raw": true
         },
@@ -20,7 +20,7 @@
         "type": "turret",
         "description": "Pshhhh",
         "model": {
-            "id": 21,
+            "id": 101,
             "to": "macrocosm:item/flamethrower_turret",
             "raw": true
         },
@@ -34,7 +34,7 @@
         "rarity": "epic",
         "type": "turret",
         "model": {
-            "id": 22,
+            "id": 102,
             "to": "macrocosm:item/heavy_turret",
             "raw": true
         },

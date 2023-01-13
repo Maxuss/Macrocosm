@@ -7,7 +7,6 @@ import org.bukkit.Instrument
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.GSON
-import space.maxus.macrocosm.util.general.Debug
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger

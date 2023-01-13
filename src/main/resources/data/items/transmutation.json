@@ -4,7 +4,7 @@
         "description": "It shines with sorrow",
         "glow": true,
         "model": {
-            "id": 2,
+            "id": 202,
             "to": "macrocosm:item/sapphire_shard"
         }
     },
@@ -12,7 +12,7 @@
         "rarity": "legendary",
         "description": "It is said that this gemstone can produce solar energy out of nothing.",
         "model": {
-            "id": 3,
+            "id": 203,
             "to": "macrocosm:item/sapphire_shard"
         },
         "animation": {
