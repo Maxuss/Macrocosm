@@ -139,7 +139,7 @@ interface MacrocosmBlock {
         /**
          * Vanilla stone sound bank
          */
-        val STONE by lazy { newSoundBank("BLOCK_SOUND") }
+        val STONE by lazy { newSoundBank("BLOCK_STONE") }
 
         /**
          * Vanilla deepslate sound bank

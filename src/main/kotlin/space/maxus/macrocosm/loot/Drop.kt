@@ -63,5 +63,7 @@ fun vanilla(material: Material, chance: Double, rarity: DropRarity = DropRarity.
 fun custom(item: MacrocosmItem, rarity: DropRarity, chance: Double, amount: IntRange = 1..1) =
     MacrocosmDrop(Registry.ITEM.byValue(item)!!, rarity, chance, amount)
 
+fun custom(item: Identifier, rarity: DropRarity, chance: Double, amount: IntRange = 1..1) = MacrocosmDrop(item, rarity, chance, amount)
+
 fun pet(pet: Pet, rarity: Rarity, dropRarity: DropRarity, chance: Double) =
     MacrocosmDrop(id("${pet.id.path}@${rarity.name.lowercase()}"), dropRarity, chance)

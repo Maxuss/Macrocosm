@@ -56,6 +56,7 @@ enum class ItemType(
         fun weapons() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, DAGGER, STAFF)
         fun weaponsWand() = listOf(AXE, LONGSWORD, SWORD, GAUNTLET, BOW, WAND, DAGGER, STAFF)
         fun tools() = listOf(PICKAXE, HOE, AXE, SHOVEL, GAUNTLET, DRILL, FISHING_ROD)
+        fun mining() = listOf(PICKAXE, GAUNTLET, DRILL)
         fun leftHand() = listOf(SHIELD, WAND, CHARM)
         fun armor() = listOf(HELMET, CHESTPLATE, LEGGINGS, BOOTS, CLOAK)
         fun accessories() = listOf(ACCESSORY, CHARM)

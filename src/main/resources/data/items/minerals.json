@@ -1,0 +1,74 @@
+{
+    "adamantine_bar": {
+        "rarity": "epic",
+        "description": "A bar of pure Adamantine. Unimaginably valuable among dwarves.",
+        "model": {
+            "id": 50,
+            "to": "macrocosm:item/adamantine_bar"
+        }
+    },
+    "geyserite": {
+        "rarity": "rare",
+        "description": "This mineral is known for absorbing volcanic energy. Warning: VERY explosive",
+        "model": {
+            "id": 51,
+            "to": "macrocosm:item/geyserite"
+        }
+    },
+    "lumium_bar": {
+        "rarity": "rare",
+        "description": "A shining bar of Lumium, imbued with essence of Shadowed Vale. Contains powerful magical energy",
+        "model": {
+            "id": 52,
+            "to": "macrocosm:item/lumium_bar"
+        }
+    },
+    "mithril_bar": {
+        "rarity": "rare",
+        "description": "A bar of pure Mithril. Light yet effective for ranged weapons and wands.",
+        "model": {
+            "id": 53,
+            "to": "macrocosm:item/mithril_bar"
+        }
+    },
+    "raw_adamantine": {
+        "rarity": "rare",
+        "description": "Unprocessed Adamantine. Durable and strong, used for toughest equipment. ",
+        "model": {
+            "id": 54,
+            "to": "macrocosm:item/raw_adamantine"
+        }
+    },
+    "raw_lumium": {
+        "rarity": "rare",
+        "description": "Unprocessed Lumium. Magical essence radiates from it, even though it's completely raw.",
+        "model": {
+            "id": 55,
+            "to": "macrocosm:item/raw_lumium"
+        }
+    },
+    "raw_titanium": {
+        "rarity": "rare",
+        "description": "Unprocessed Titanium. This tough metal requires processing in the Deepslate Forge.",
+        "model": {
+            "id": 56,
+            "to": "macrocosm:item/raw_titanium"
+        }
+    },
+    "silver_ingot": {
+        "rarity": "rare",
+        "description": "A shining ingot of Silver. Has underrated magical potential.",
+        "model": {
+            "id": 57,
+            "to": "macrocosm:item/silver_ingot"
+        }
+    },
+    "titanium_ingot": {
+        "rarity": "epic",
+        "description": "A shimmering ingot of Titanium. This metal is valued by mechanics and dwarves for its toughness.",
+        "model": {
+            "id": 58,
+            "to": "macrocosm:item/titanium_ingot"
+        }
+    }
+}

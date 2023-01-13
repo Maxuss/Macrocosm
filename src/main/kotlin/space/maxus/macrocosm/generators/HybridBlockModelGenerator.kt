@@ -7,6 +7,7 @@ import org.bukkit.Instrument
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.GSON
+import space.maxus.macrocosm.util.general.Debug
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -131,9 +132,10 @@ object HybridBlockModelGenerator : ResGenerator {
     }
 
     fun enqueue(block: MacrocosmBlock) {
+        val latestTexture = latestBlockTexture.getAndIncrement()
         CMDGenerator.enqueue(
             Model(
-                latestBlockTexture.getAndIncrement(),
+                latestTexture,
                 "item/paper",
                 block.texture.toString()
             )
@@ -146,7 +148,7 @@ object HybridBlockModelGenerator : ResGenerator {
                 "block/cube_all",
                 nextInfo,
                 block.texture.toString(),
-                732_0000 + latestBlockTexture.get()
+                732_0000 + latestTexture
             )
         )
     }

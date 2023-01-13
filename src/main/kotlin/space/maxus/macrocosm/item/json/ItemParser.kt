@@ -3,6 +3,7 @@ package space.maxus.macrocosm.item.json
 import com.google.gson.JsonObject
 import org.bukkit.Material
 import space.maxus.macrocosm.async.Threading
+import space.maxus.macrocosm.block.Blocks
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.*
@@ -47,6 +48,9 @@ object ItemParser {
 
             // only starting recipe parser after all items are registered to prevent data racing
             RecipeParser.init()
+
+            // same for blocks
+            Blocks.init()
         }
     }
 

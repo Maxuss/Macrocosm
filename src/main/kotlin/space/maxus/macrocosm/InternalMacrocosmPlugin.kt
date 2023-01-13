@@ -195,7 +195,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             SeaCreatures::init,
             TrophyFishes::init,
             PyroclasticToadPet::init,
-            WaspPet::init
+            WaspPet::init,
         )
 
         DataListener.joinLeave()
