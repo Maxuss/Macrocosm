@@ -79,21 +79,22 @@ fun specificSlayerMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventor
                     buffer.add("")
                     val stats = model.calculateStats()
                     val dmg = stats.damage * (1 + (stats.strength / 100f))
-                    buffer.add(" Health: <red>${Statistic.HEALTH.specialChar} ${Formatting.withCommas(stats.health.toBigDecimal())}")
+                    buffer.add(" Health: <red>${Formatting.withCommas(stats.health.toBigDecimal())} ${Statistic.HEALTH.specialChar} ")
                     buffer.add(
-                        " Damage: <red>${Statistic.DAMAGE.specialChar} ${
+                        "Damage: <red>${
                             Formatting.withCommas(
                                 dmg.roundToInt().toBigDecimal()
                             )
-                        }"
+                        } ${Statistic.DAMAGE.specialChar}"
                     )
                     buffer.add("")
                     slayer.abilitiesForTier(it).map { abil -> abil.descript(it).map { e -> e.str() } }
                         .forEach { l -> l.forEach { v -> buffer.add(v) }; buffer.add("") }
-                    buffer.add("Cost to start: <gold>${Formatting.stats(costFromTier(it).toBigDecimal())} Coins")
                     buffer.add("")
-                    buffer.add("Slayer EXP: <red>${Formatting.stats(rewardExperienceForTier(it).toBigDecimal())} EXP")
-                    buffer.add("  <green>And extra drops!")
+                    buffer.add("Reward: <light_purple>${Formatting.stats(rewardExperienceForTier(it).toBigDecimal())} ${slayer.entityKind} Slayer EXP")
+                    buffer.add("  <dark_gray> + Boss drops")
+                    buffer.add("")
+                    buffer.add("Cost to start: <gold>${Formatting.stats(costFromTier(it).toBigDecimal())} coins")
                     buffer.add("")
                     if (it >= 5) {
                         if (player.slayers[ty]!!.level < it + 2)

@@ -41,8 +41,8 @@ fun rewardExperienceForTier(tier: Int): Double = when (tier) {
     1 -> 5.0
     2 -> 15.0
     3 -> 100.0
-    4 -> 250.0
-    5 -> 500.0
+    4 -> 500.0
+    5 -> 1500.0
     6 -> 5000.0
     else -> 0.0
 }

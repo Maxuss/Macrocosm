@@ -11,6 +11,7 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.padForward
+import space.maxus.macrocosm.util.stripTags
 
 data class LinearInventorySlots<T : ForInventory>(val slots: List<InventorySlot>) : InventorySlotCompound<T> {
     override fun withInvType(invType: GUIType<T>): Collection<InventorySlot> {
@@ -22,7 +23,7 @@ fun IntRange.slots(row: Int): Array<InventorySlot> {
     return map { InventorySlot(row, it) }.toTypedArray()
 }
 
-fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSpigotGUI(GUIType.FIVE_BY_NINE) {
+fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
     title = text("Slayer Menu")
     defaultPage = 0
 
@@ -30,7 +31,7 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
         // specific slayer buttons
-        val cmp = createRectCompound<Int>(Slots.RowFourSlotThree, Slots.RowFourSlotSeven, iconGenerator = { ty ->
+        val cmp = createRectCompound<Int>(Slots.RowThreeSlotThree, Slots.RowThreeSlotSeven, iconGenerator = { ty ->
             if (ty == -1) {
                 return@createRectCompound ItemValue.placeholderDescripted(
                     Material.COAL_BLOCK,
@@ -42,15 +43,17 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
             if (it.slayer.requirementCheck(player))
                 ItemValue.placeholderDescripted(
                     it.slayer.item,
-                    it.slayer.name,
-                    *it.slayer.description.reduceToList(20).toTypedArray()
+                    "<red>\uD83D\uDC80 <yellow>${it.slayer.name.stripTags()}",
+                    *it.slayer.description.reduceToList(20).toMutableList()
+                        .apply { add(""); add("<gray>${it.slayer.entityKind} Slayer: <yellow>LVL ${player.slayers[it]!!.level + 1}"); add(""); add("<yellow>Click to view boss.") }
+                        .toTypedArray()
                 )
             else
                 ItemValue.placeholderDescripted(
                     it.slayer.item,
-                    it.slayer.name,
+                    "<red>\uD83D\uDC80 <yellow>${it.slayer.name.stripTags()}",
                     *it.slayer.description.reduceToList(20).toMutableList()
-                        .apply { add(""); add(it.slayer.requirementString); add(""); add("<yellow>Click to view details.") }
+                        .apply { add(""); add(it.slayer.requirementString); add(""); }
                         .toTypedArray()
                 )
         }, onClick = { e, it ->
@@ -72,7 +75,7 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFiveByNine> = kSp
         })
         cmp.addContent(SlayerType.values().map { it.ordinal }.padForward(5, -1))
 
-        button(Slots.RowTwoSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close"), onClick = {
+        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close"), onClick = {
             it.bukkitEvent.isCancelled = true
             it.player.closeInventory()
         })
