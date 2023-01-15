@@ -9,6 +9,7 @@ import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
+import space.maxus.macrocosm.accessory.power.AccessoryPowers
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -197,6 +198,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             TrophyFishes::init,
             PyroclasticToadPet::init,
             WaspPet::init,
+            AccessoryPowers::init
         )
 
         DataListener.joinLeave()

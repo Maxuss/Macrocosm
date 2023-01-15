@@ -22,6 +22,9 @@
         "rarity": "epic",
         "type": "accessory",
         "abilities": [],
+        "stats": {
+            "strength": 50
+        },
         "name": "Test Accessory"
     }
 }

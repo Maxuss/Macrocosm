@@ -26,6 +26,9 @@ import java.io.Externalizable
 import java.io.ObjectInput
 import java.io.ObjectOutput
 import java.io.Serializable
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.ln
+import kotlin.math.pow
 
 data class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externalizable {
     override fun writeExternal(out: ObjectOutput) {
@@ -39,9 +42,35 @@ data class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externa
     }
 }
 
+private val rarityToMp = hashMapOf(
+    Rarity.SPECIAL to 3,
+    Rarity.VERY_SPECIAL to 5,
+    Rarity.COMMON to 3,
+    Rarity.UNCOMMON to 5,
+    Rarity.RARE to 8,
+    Rarity.EPIC to 12,
+    Rarity.LEGENDARY to 16,
+    Rarity.RELIC to 25,
+    Rarity.MYTHIC to 22,
+    Rarity.DIVINE to 25,
+    Rarity.UNOBTAINABLE to 30,
+)
+
 class AccessoryBag: Serializable {
+    var power: Identifier = Identifier.NULL
     var capacity: Int = 3
     val accessories: MutableList<AccessoryContainer> = mutableListOf()
+
+    val magicPower get() = accessories.sumOf { rarityToMp[it.rarity]!! }
+
+    fun statModifier(): Double {
+        val mp = magicPower
+        if(cachedResults.containsKey(mp))
+            return cachedResults[mp]!!
+        val res = (29.97 * (ln(.0019 * mp + 1))).pow(1.2)
+        cachedResults[mp] = res
+        return res
+    }
 
     fun addAccessory(item: AccessoryItem): Boolean {
         if(accessories.size + 1 > capacity || accessories.any { it.item == item.id })
@@ -61,7 +90,7 @@ class AccessoryBag: Serializable {
                 e.player.closeInventory()
             }
 
-            val compound = createCompound<Pair<Int, ItemStack>>({ if(it.first == -1) ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "") else it.second }) { e, (index, item) ->
+            val compound = createCompound<Pair<Int, ItemStack>>({ it.second }) { e, (index, item) ->
                 e.bukkitEvent.isCancelled = true
                 if(index != -1 && e.player.inventory.emptySlots != 0) {
                     accessories.removeAt(index)
@@ -75,6 +104,9 @@ class AccessoryBag: Serializable {
             compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward"), compound)
             compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back"), compound, reverse = true)
 
+
+            val lightGrayGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
+            val grayGlass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
             runCatchingReporting(player.paper ?: return@page) {
                 val mapped = accessories.mapIndexed { index, item -> index to run {
                     val base = Registry.ITEM.findOrNull(item.item) ?: return@run ItemValue.NULL.item.build(player)!!
@@ -83,10 +115,14 @@ class AccessoryBag: Serializable {
                         base.rarityUpgraded = true
                     }
                     base.build(player) ?: ItemValue.NULL.item.build(player)!!
-                } }.padForward(BagCapacity.MAXIMAL.amount, Pair(-1, ItemStack(Material.AIR)))
+                } }.padForward(capacity, Pair(-1, lightGrayGlass)).padForward(BagCapacity.MAXIMAL.amount, Pair(-1, grayGlass))
                 compound.addContent(mapped)
             }
         }
+    }
+
+    companion object {
+        val cachedResults = ConcurrentHashMap<Int, Double>()
     }
 
     object Handlers: Listener {

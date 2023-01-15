@@ -461,7 +461,24 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         val cloned = baseStats.clone()
         // vitality + vigor
         cloned.vitality += (currentHealth / 100f)
-        cloned.vigor += (currentMana / 20f)
+        cloned.vigor += (currentMana / 50f)
+        @Suppress("SENSELESS_COMPARISON") // NPEs actually do happen on player join
+        if(accessoryBag != null) {
+            for (accessory in accessoryBag.accessories) {
+                val item = Registry.ITEM.find(accessory.item)
+                if (item.rarity != accessory.rarity) {
+                    item.rarity = accessory.rarity
+                    item.rarityUpgraded = true
+                }
+                cloned.increase(item.stats(this))
+            }
+            val power = Registry.ACCESSORY_POWER.findOrNull(accessoryBag.power)
+            if (power != null) {
+                val stats = power.stats.clone()
+                stats.multiply(accessoryBag.statModifier().toFloat())
+                cloned.increase(stats)
+            }
+        }
         EquipmentSlot.values().forEach {
             val baseItem = paper!!.inventory.getItem(it)
             if (baseItem.type == Material.AIR)
