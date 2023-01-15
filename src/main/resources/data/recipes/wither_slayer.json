@@ -1,0 +1,27 @@
+{
+    "blazing_alloy": {
+        "amount": 4,
+        "ingredients": [
+            {
+                "item": "flaming_ashes",
+                "amount": 32
+            },
+            {
+                "item": "flaming_ashes",
+                "amount": 32
+            },
+            {
+                "item": "flaming_ashes",
+                "amount": 32
+            },
+            {
+                "item": "flaming_ashes",
+                "amount": 32
+            },
+            {
+                "item": "enchanted_gold_ingot",
+                "amount": 32
+            }
+        ]
+    }
+}
