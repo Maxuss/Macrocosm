@@ -25,7 +25,7 @@ class AccessoryBag: Serializable {
     val accessories: MutableList<AccessoryItem> = mutableListOf()
 
     fun addAccessory(item: AccessoryItem): Boolean {
-        if(accessories.size + 1 > capacity)
+        if(accessories.size + 1 > capacity || accessories.any { it.id == item.id })
             return false
         accessories.add(item)
         return true
