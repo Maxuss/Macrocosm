@@ -10,9 +10,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.emptySlots
@@ -21,14 +24,16 @@ import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.runCatchingReporting
 import java.io.Serializable
 
+data class AccessoryContainer(val item: Identifier, val rarity: Rarity): Serializable
+
 class AccessoryBag: Serializable {
     var capacity: Int = 3
-    val accessories: MutableList<AccessoryItem> = mutableListOf()
+    val accessories: MutableList<AccessoryContainer> = mutableListOf()
 
     fun addAccessory(item: AccessoryItem): Boolean {
-        if(accessories.size + 1 > capacity || accessories.any { it.id == item.id })
+        if(accessories.size + 1 > capacity || accessories.any { it.item == item.id })
             return false
-        accessories.add(item)
+        accessories.add(item.container)
         return true
     }
 
@@ -58,7 +63,15 @@ class AccessoryBag: Serializable {
             compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back"), compound, reverse = true)
 
             runCatchingReporting(player.paper ?: return@page) {
-                compound.addContent(accessories.mapIndexed { index, item -> index to item.build(player)!! }.padForward(BagCapacity.MAXIMAL.amount, Pair(-1, ItemStack(Material.AIR))))
+                val mapped = accessories.mapIndexed { index, item -> index to run {
+                    val base = Registry.ITEM.findOrNull(item.item) ?: return@run ItemValue.NULL.item.build(player)!!
+                    if(item.rarity != base.rarity) {
+                        base.rarity = item.rarity
+                        base.rarityUpgraded = true
+                    }
+                    base.build(player) ?: ItemValue.NULL.item.build(player)!!
+                } }.padForward(BagCapacity.MAXIMAL.amount, Pair(-1, ItemStack(Material.AIR)))
+                compound.addContent(mapped)
             }
         }
     }

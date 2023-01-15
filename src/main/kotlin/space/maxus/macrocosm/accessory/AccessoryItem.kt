@@ -13,10 +13,9 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
-import java.io.Serializable
 import java.util.*
 
-open class AccessoryItem(id: String, name: String, override var rarity: Rarity, override var stats: Statistics, override val abilities: MutableList<RegistryPointer>, private val headSkin: String? = null, override val base: Material = if(headSkin == null) error("Unassigned Material for accessory") else Material.PLAYER_HEAD, protected var uuid: UUID = UUID.randomUUID()): AbstractMacrocosmItem(id(id), ItemType.ACCESSORY), Serializable {
+open class AccessoryItem(id: String, name: String, override var rarity: Rarity, override var stats: Statistics, override val abilities: MutableList<RegistryPointer>, private val headSkin: String? = null, override val base: Material = if(headSkin == null) error("Unassigned Material for accessory") else Material.PLAYER_HEAD, protected var uuid: UUID = UUID.randomUUID()): AbstractMacrocosmItem(id(id), ItemType.ACCESSORY) {
     override var name: Component = text(name)
 
     override fun addExtraNbt(cmp: CompoundTag) {
@@ -41,4 +40,6 @@ open class AccessoryItem(id: String, name: String, override var rarity: Rarity, 
             UUID.randomUUID()
         )
     }
+
+    val container: AccessoryContainer get() = AccessoryContainer(id, rarity)
 }
