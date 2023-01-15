@@ -15,5 +15,13 @@
             "berserker"
         ],
         "name": "Horn of Indignation"
+    },
+    "test_accessory": {
+        "material": "string",
+        "glow": true,
+        "rarity": "epic",
+        "type": "accessory",
+        "abilities": [],
+        "name": "Test Accessory"
     }
 }

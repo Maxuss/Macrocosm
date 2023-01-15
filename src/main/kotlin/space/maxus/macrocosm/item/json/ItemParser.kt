@@ -2,6 +2,8 @@ package space.maxus.macrocosm.item.json
 
 import com.google.gson.JsonObject
 import org.bukkit.Material
+import space.maxus.macrocosm.accessory.AccessoryItem
+import space.maxus.macrocosm.accessory.TexturedAccessoryItem
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.block.Blocks
 import space.maxus.macrocosm.chat.capitalized
@@ -86,7 +88,28 @@ object ItemParser {
             val runes = if (obj.has("runes")) obj["runes"].asJsonArray.map { ele ->
                 if (ele.isJsonObject) Identifier.parse(ele.asJsonObject["specific"].asString) else Identifier.parse(ele.asString)
             } else listOf()
-            if (headSkin != null)
+            if(itemType == ItemType.ACCESSORY) {
+                if(obj.has("model")) {
+                    TexturedAccessoryItem(
+                        id.path,
+                        name,
+                        rarity,
+                        stats,
+                        abils.map { RegistryPointer(Identifier.macro("ability"), it) }.toMutableList()
+                    )
+                } else {
+                    AccessoryItem(
+                        id.path,
+                        name,
+                        rarity,
+                        stats,
+                        abils.map { RegistryPointer(Identifier.macro("ability"), it) }.toMutableList(),
+                        headSkin,
+                        if(headSkin == null) type else Material.PLAYER_HEAD
+                    )
+
+                }
+            } else if (headSkin != null)
                 SkullAbilityItem(
                     itemType!!,
                     name,

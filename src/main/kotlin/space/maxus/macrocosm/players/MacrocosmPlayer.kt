@@ -23,6 +23,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.update
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
@@ -62,6 +63,7 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
+import space.maxus.macrocosm.util.runCatchingReporting
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -102,6 +104,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var memory: PlayerMemory = PlayerMemory.nullMemory()
     var activeForgeRecipes: MutableList<ActiveForgeRecipe> = mutableListOf()
     var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
+    var accessoryBag: AccessoryBag = AccessoryBag()
 
     private var slayerRenderId: UUID? = null
     private var statCache: Statistics? = null
@@ -597,6 +600,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
         it[PlayersTable.pets] = Bytes.serialize().obj(p.ownedPets).end()
         it[PlayersTable.essence] = Bytes.serialize().obj(availableEssence).end()
+        it[PlayersTable.accessories] = Bytes.serialize().obj(accessoryBag).end()
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
@@ -621,9 +625,11 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         fun loadPlayer(id: UUID): MacrocosmPlayer? {
             if (Macrocosm.loadedPlayers.containsKey(id))
                 return Macrocosm.loadedPlayers[id]
-            val sql = database.transact {
-                PlayersTable.select { PlayersTable.uuid eq id }.map { SqlPlayerData.fromRes(it) }.firstOrNull()
-            } ?: return null
+            val sql = runCatchingReporting(Bukkit.getPlayer(id)) {
+                database.transact {
+                    PlayersTable.select { PlayersTable.uuid eq id }.map { SqlPlayerData.fromRes(it) }.firstOrNull()
+                }
+            }.getOrNull() ?: return null
 
             val player = MacrocosmPlayer(id)
             player.rank = sql.rank
@@ -648,10 +654,13 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
                 }
             }
             player.availableEssence = sql.essence
+            player.accessoryBag = sql.accessories
 
-            val stats = database.transact {
-                StatsTable.select { StatsTable.uuid eq id }.map { it[StatsTable.data] }.firstOrNull()
-            } ?: return null
+            val stats = runCatchingReporting(Bukkit.getPlayer(id)) {
+                database.transact {
+                    StatsTable.select { StatsTable.uuid eq id }.map { it[StatsTable.data] }.firstOrNull()
+                }
+            }.getOrNull() ?: return null
             player.baseStats = Bytes.deserializeObject(stats) ?: return null
             return player
         }

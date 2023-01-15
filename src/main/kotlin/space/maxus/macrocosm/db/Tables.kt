@@ -2,6 +2,7 @@ package space.maxus.macrocosm.db
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
+import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.MacrocosmItem
@@ -47,6 +48,7 @@ object PlayersTable : Table("players") {
     val activePet = text("active_pet")
     val pets = text("pets")
     val essence = text("essence")
+    val accessories = text("accessories")
 
     override val primaryKey: PrimaryKey = PrimaryKey(uuid)
 }
@@ -67,7 +69,8 @@ class SqlPlayerData(
     val slayerExp: HashMap<SlayerType, SlayerLevel>,
     val activePet: String,
     val pets: HashMap<String, StoredPet>,
-    val essence: HashMap<EssenceType, Int>
+    val essence: HashMap<EssenceType, Int>,
+    val accessories: AccessoryBag
 ) {
 
     companion object {
@@ -96,7 +99,8 @@ class SqlPlayerData(
                 res[t.activePet],
                 Bytes.deserializeObject(res[t.pets]) ?: hashMapOf(),
                 Bytes.deserializeObject(res[t.essence]) ?: EssenceType.values().toList()
-                    .associateWithHashed(ignoring(0))
+                    .associateWithHashed(ignoring(0)),
+                Bytes.deserializeObject(res[t.accessories]) ?: AccessoryBag()
             )
         }
     }

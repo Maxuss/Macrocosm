@@ -214,7 +214,7 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
      * @param item item to be queried
      * @param iterator iterator function to be applied, takes in an order and returns true if the iteration should continue and false if it should be stopped
      */
-    fun iterateThroughOrdersBuy(item: Identifier, iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
+    fun iterateThroughOrdersBuy(item: Identifier, iterator: (BazaarBuyOrder) -> Boolean) {
         val data = itemData[item]!!
         data.iterateBuy(iterator)
     }
@@ -225,7 +225,7 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
      * @param item item to be queried
      * @param iterator iterator function to be applied, takes in an order and returns true if the iteration should continue and false if it should be stopped
      */
-    fun iterateThroughOrdersSell(item: Identifier, iterator: FnArgRet<BazaarSellOrder, Boolean>) {
+    fun iterateThroughOrdersSell(item: Identifier, iterator: (BazaarSellOrder) -> Boolean) {
         val data = itemData[item]!!
         data.iterateSell(iterator)
     }
@@ -345,7 +345,7 @@ class BazaarItemData private constructor(
     /**
      * Iterates through buy orders
      */
-    fun iterateBuy(iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
+    fun iterateBuy(iterator: (BazaarBuyOrder) -> Boolean) {
         for (order in this.buy) {
             if (iterator(order))
                 return
@@ -355,7 +355,7 @@ class BazaarItemData private constructor(
     /**
      * Iterates through sell orders
      */
-    fun iterateSell(iterator: FnArgRet<BazaarSellOrder, Boolean>) {
+    fun iterateSell(iterator: (BazaarSellOrder) -> Boolean) {
         for (order in this.sell) {
             if (iterator(order))
                 return

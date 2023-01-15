@@ -12,7 +12,9 @@ import space.maxus.macrocosm.item.types.WITHER_SCROLL_IMPLOSION
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_SHADOW_WARP
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_IMPACT
 import space.maxus.macrocosm.item.types.WITHER_SCROLL_WITHER_SHIELD
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.general.id
@@ -265,6 +267,8 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     CAT_EARS(CatEarsAbility)
     ;
+
+    val ptr by lazy { RegistryPointer(Identifier.macro("ability"), Identifier.macro(name.lowercase())) }
 
     companion object {
         /**

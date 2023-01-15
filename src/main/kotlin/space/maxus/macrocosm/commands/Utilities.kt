@@ -81,6 +81,13 @@ fun connectDiscordCommand() = command("discordauth") {
     }
 }
 
+fun accessoriesCommand() = command("accessories") {
+    runsCatching {
+        val mc = player.macrocosm!!
+        player.openGUI(mc.accessoryBag.ui(mc))
+    }
+}
+
 fun placeBlockCommand() = command("placeblock") {
     argument("block", ResourceLocationArgument.id()) {
         suggestListSuspending { ctx ->
