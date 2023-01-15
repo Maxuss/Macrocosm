@@ -1,0 +1,29 @@
+{
+    "speed_talisman": {
+        "type": "accessory",
+        "name": "Speed Talisman",
+        "stats": {
+            "speed": 1
+        },
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODYyNGJhY2I1ZjE5ODZlNjQ3N2FiY2U0YWU3ZGNhMTgyMGE1MjYwYjYyMzNiNTViYTFkOWJhOTM2Yzg0YiJ9fX0="
+    },
+    "speed_ring": {
+        "type": "accessory",
+        "name": "Speed Ring",
+        "stats": {
+            "speed": 3
+        },
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzJkYTQwYTkxZjhmYTdlMWNiZGQ5MzRkYTkyYTc2NjhkYzk1ZDc1YjU3YzljODBhMzgxYzVlMTc4Y2VlNmJhNyJ9fX0="
+    },
+    "speed_artifact": {
+        "type": "accessory",
+        "name": "Speed Artifact",
+        "stats": {
+            "speed": 5
+        },
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjA2NzA2ZWVjYjJkNTU4YWNlMjdhYmRhMGIwYjdiODAxZDM2ZDE3ZGQ3YTg5MGE5NTIwZGJlNTIyMzc0ZjhhNiJ9fX0="
+    }
+}

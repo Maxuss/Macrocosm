@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.ability
 
 import org.bukkit.entity.EntityType
+import space.maxus.macrocosm.ability.types.accessory.*
 import space.maxus.macrocosm.ability.types.armor.*
 import space.maxus.macrocosm.ability.types.equipment.*
 import space.maxus.macrocosm.ability.types.item.*
@@ -265,7 +266,60 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     CONFLUX_POLARITY(ConfluxPolarity),
 
-    CAT_EARS(CatEarsAbility)
+    CAT_EARS(CatEarsAbility),
+
+    //#region Accessories
+    NIGHT_VISION_CHARM(NightVisionAbility),
+
+    HASTE_T1(HasteAbility("haste_talisman", 15)),
+    HASTE_T2(HasteAbility("haste_ring", 25)),
+    HASTE_T3(HasteAbility("haste_artifact", 40)),
+    HASTE_T4(HasteAbility("haste_relic", 70)),
+
+    EXPERIENCE_ARTIFACT(ExperienceAbility),
+    NIGHT_CRYSTAL(NightCrystalAbility),
+    DAY_CRYSTAL(DayCrystalAbility),
+    EMERALD_RING(EmeraldAbility("emerald_ring", 1)),
+    EMERALD_ARTIFACT(EmeraldAbility("emerald_artifact", 5)),
+    FIRE_TALISMAN(FireTalisman),
+
+    FEATHER_TALISMAN(FeatherTalisman("feather_talisman", .10f)),
+    FEATHER_RING(FeatherTalisman("feather_ring", .15f)),
+    FEATHER_ARTIFACT(FeatherTalisman("feather_artifact", .25f)),
+
+    TITANIUM_TALISMAN(TitaniumTalisman("titanium_talisman", 5)),
+    TITANIUM_RING(TitaniumTalisman("titanium_ring", 10)),
+    TITANIUM_ARTIFACT(TitaniumTalisman("titanium_artifact", 15)),
+    TITANIUM_RELIC(TitaniumTalisman("titanium_relic", 30)),
+
+    PIGGY_BANK(PiggyBankAbility("piggy_bank", 2)),
+    PIGGY_VAULT(PiggyBankAbility("piggy_vault", 3)),
+
+    SCAVENGER_TALISMAN(ScavengerTalisman("scavenger_talisman", 1f)),
+    SCAVENGER_RING(ScavengerTalisman("scavenger_ring", 2f, "Monsters drop even more coins")),
+
+    ZOMBIE_TALISMAN(ZombieTalisman("zombie_talisman", .05f)),
+    ZOMBIE_RING(ZombieTalisman("zombie_ring", .1f)),
+    ZOMBIE_ARTIFACT(ZombieTalisman("zombie_artifact", .15f)),
+
+    WITHER_ARTIFACT(WitherTalisman("wither_artifact", .2f)),
+    WITHER_RELIC(WitherTalisman("wither_relic", .3f)),
+
+    SPIDER_TALISMAN(SpiderTalisman("spider_talisman", .1f)),
+    SPIDER_RING(SpiderTalisman("spider_ring", .15f)),
+    SPIDER_ARTIFACT(SpiderTalisman("spider_artifact", .2f)),
+
+    ENDER_ARTIFACT(EnderTalisman("ender_artifact", .15f)),
+    ENDER_RELIC(EnderTalisman("ender_relic", .3f)),
+
+    SPELUNKER_RING(SpelunkerTalisman("spelunker_talisman", 10)),
+    SPELUNKER_ARTIFACT(SpelunkerTalisman("spelunker_artifact", 20)),
+
+    TARANTULA_TALISMAN(TarantulaTalisman),
+    GLACIER_TARANTULA_TALISMAN(GlacierTarantulaTalisman),
+
+
+    //#endregion
     ;
 
     val ptr by lazy { RegistryPointer(Identifier.macro("ability"), Identifier.macro(name.lowercase())) }
