@@ -17,6 +17,7 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.emptySlots
 import space.maxus.macrocosm.util.giveOrDrop
+import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.runCatchingReporting
 import java.io.Serializable
 
@@ -37,10 +38,14 @@ class AccessoryBag: Serializable {
 
         page(0) {
             placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
-
-            val compound = createCompound<Pair<Int, ItemStack>>({ it.second }) { e, (index, item) ->
+            button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
                 e.bukkitEvent.isCancelled = true
-                if(e.player.inventory.emptySlots != 0) {
+                e.player.closeInventory()
+            }
+
+            val compound = createCompound<Pair<Int, ItemStack>>({ if(it.first == -1) ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "") else it.second }) { e, (index, item) ->
+                e.bukkitEvent.isCancelled = true
+                if(index != -1 && e.player.inventory.emptySlots != 0) {
                     accessories.removeAt(index)
                     e.player.giveOrDrop(item)
                     e.player.openGUI(ui(player))
@@ -49,8 +54,11 @@ class AccessoryBag: Serializable {
 
             compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
 
+            compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward"), compound)
+            compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back"), compound, reverse = true)
+
             runCatchingReporting(player.paper ?: return@page) {
-                compound.addContent(accessories.mapIndexed { index, item -> index to item.build(player)!! })
+                compound.addContent(accessories.mapIndexed { index, item -> index to item.build(player)!! }.padForward(BagCapacity.MAXIMAL.amount, Pair(-1, ItemStack(Material.AIR))))
             }
         }
     }
@@ -91,5 +99,6 @@ enum class BagCapacity(val amount: Int) {
     HUMONGOUS(39),
     COLOSSAL(45),
     TITANIC(51),
-    PREPOSTEROUS(57)
+    PREPOSTEROUS(57),
+    MAXIMAL(60)
 }
