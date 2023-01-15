@@ -30,7 +30,9 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ln
 import kotlin.math.pow
 
-data class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externalizable {
+class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externalizable {
+    constructor(): this(Identifier.NULL, Rarity.COMMON)
+
     override fun writeExternal(out: ObjectOutput) {
         out.writeObject(item.toString())
         out.writeInt(rarity.ordinal)
@@ -42,7 +44,7 @@ data class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externa
     }
 }
 
-private val rarityToMp = hashMapOf(
+val rarityToMp = hashMapOf(
     Rarity.SPECIAL to 3,
     Rarity.VERY_SPECIAL to 5,
     Rarity.COMMON to 3,
@@ -64,12 +66,7 @@ class AccessoryBag: Serializable {
     val magicPower get() = accessories.sumOf { rarityToMp[it.rarity]!! }
 
     fun statModifier(): Double {
-        val mp = magicPower
-        if(cachedResults.containsKey(mp))
-            return cachedResults[mp]!!
-        val res = (29.97 * (ln(.0019 * mp + 1))).pow(1.2)
-        cachedResults[mp] = res
-        return res
+        return Companion.statModifier(magicPower)
     }
 
     fun addAccessory(item: AccessoryItem): Boolean {
@@ -123,6 +120,15 @@ class AccessoryBag: Serializable {
 
     companion object {
         val cachedResults = ConcurrentHashMap<Int, Double>()
+
+        fun statModifier(mp: Int): Double {
+            if(cachedResults.containsKey(mp))
+                return cachedResults[mp]!!
+            val res = (29.97 * (ln(.0019 * mp + 1))).pow(1.2)
+            cachedResults[mp] = res
+            return res
+        }
+
     }
 
     object Handlers: Listener {

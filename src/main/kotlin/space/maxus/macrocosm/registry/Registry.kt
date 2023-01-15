@@ -198,6 +198,8 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         }
         val ACCESSORY_POWER = makeDelegated<AccessoryPower>(id("accessory_power"), true) { _, power ->
             power.registerListeners()
+
+            (power as? AutoRegister<MacrocosmItem>)?.register(ITEM)
         }
 
         override fun dumpToFile(file: Path) {

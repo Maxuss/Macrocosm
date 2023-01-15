@@ -21,6 +21,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.accessory.ui.thaumaturgyUi
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -78,6 +79,13 @@ fun connectDiscordCommand() = command("discordauth") {
                 }
             }.call()
         }
+    }
+}
+
+fun thaumaturgyTest() = command("thaum") {
+    runsCatching {
+        val mc = player.macrocosm!!
+        player.openGUI(thaumaturgyUi(mc))
     }
 }
 

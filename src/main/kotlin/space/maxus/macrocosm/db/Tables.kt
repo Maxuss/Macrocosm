@@ -84,7 +84,7 @@ class SqlPlayerData(
                 res[t.playtime],
                 res[t.purse],
                 res[t.bank],
-                Bytes.deserializeObject(res[t.memory]) ?: PlayerMemory(mutableListOf()),
+                Bytes.deserializeObject(res[t.memory]) ?: PlayerMemory.nullMemory(),
                 Bytes.deserializeObject(res[t.forge]) ?: listOf(),
                 CollectionCompound.deserialize(res[t.collections]),
                 Skills.deserialize(res[t.skills]),

@@ -19,6 +19,7 @@ open class AccessoryItem(id: String, name: String, override var rarity: Rarity, 
     override var name: Component = text(name)
 
     override fun addExtraNbt(cmp: CompoundTag) {
+        super.addExtraNbt(cmp)
         cmp.putUUID("UUID", this.uuid)
     }
 

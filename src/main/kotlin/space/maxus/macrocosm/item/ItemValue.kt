@@ -8,6 +8,7 @@ import net.axay.kspigot.items.meta
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
@@ -221,6 +222,17 @@ enum class ItemValue(
                 persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
                 val reduced = description.map { s -> text("<gray>$s").noitalic() }.toMutableList()
                 lore(reduced)
+                flags(*ItemFlag.values())
+            }
+        }
+
+        fun placeholderDescriptedGlow(type: Material, name: String, vararg description: String) = itemStack(type) {
+            meta {
+                displayName(text(name).noitalic())
+                persistentDataContainer[pluginKey("placeholder"), PersistentDataType.BYTE] = 1
+                val reduced = description.map { s -> text("<gray>$s").noitalic() }.toMutableList()
+                lore(reduced)
+                addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
                 flags(*ItemFlag.values())
             }
         }
