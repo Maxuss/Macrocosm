@@ -22,9 +22,22 @@ import space.maxus.macrocosm.util.emptySlots
 import space.maxus.macrocosm.util.giveOrDrop
 import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.runCatchingReporting
+import java.io.Externalizable
+import java.io.ObjectInput
+import java.io.ObjectOutput
 import java.io.Serializable
 
-data class AccessoryContainer(val item: Identifier, val rarity: Rarity): Serializable
+data class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externalizable {
+    override fun writeExternal(out: ObjectOutput) {
+        out.writeObject(item.toString())
+        out.writeInt(rarity.ordinal)
+    }
+
+    override fun readExternal(`in`: ObjectInput) {
+        item = Identifier.parse(`in`.readObject() as String)
+        rarity = Rarity.values()[`in`.readInt()]
+    }
+}
 
 class AccessoryBag: Serializable {
     var capacity: Int = 3
