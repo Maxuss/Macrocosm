@@ -47,14 +47,14 @@ class PowerStone(id: Identifier, name: String, val powerId: Identifier, override
         buffer.add("")
         val mp = player?.accessoryBag?.magicPower ?: 500
         val closestMagicalPower = roundMpValues.minBy { abs(mp - it) }
-        buffer.add("At <gold>$closestMagicalPower Magical Power<gray>:")
-        val modifier = AccessoryBag.statModifier(mp)
+        buffer.add("At <gold>$closestMagicalPower Magic Power<gray>:")
+        val modifier = AccessoryBag.statModifier(closestMagicalPower)
         val stats = power.stats.clone()
         stats.multiply(modifier.toFloat())
         for((stat, value) in stats.iter()) {
             if(value != 0f) {
                 val approx = floor(value).roundToInt()
-                val mod = if(value < 0f) "-" else "+"
+                val mod = if(value < 0f) "" else "+"
                 buffer.add("<${stat.color.asHexString()}>$mod$approx${stat.display}")
             }
         }

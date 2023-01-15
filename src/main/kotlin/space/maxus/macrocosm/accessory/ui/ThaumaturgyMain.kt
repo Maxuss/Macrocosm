@@ -116,7 +116,7 @@ fun thaumaturgyUi(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigot
             }
         })
 
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotSeven, compound)
+        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
         compound.addContent(player.memory.knownPowers.map { Registry.ACCESSORY_POWER.find(it) })
     }
 }

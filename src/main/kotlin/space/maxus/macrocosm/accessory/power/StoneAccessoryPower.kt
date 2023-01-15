@@ -61,7 +61,7 @@ abstract class StoneAccessoryPower(
             "",
             "Stats:",
             *statsForMp.iter().filter { it.value != 0f }.map { (stat, value) ->
-                val mod = if(value < 0f) "-" else "+"
+                val mod = if(value < 0f) "" else "+"
                 val sValue = ceil(value).roundToInt()
                 "<${stat.color.asHexString()}>$mod$sValue${stat.display}"
             }.toTypedArray(),

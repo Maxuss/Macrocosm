@@ -22,7 +22,12 @@ interface AccessoryPower {
     fun registerListeners()
 
     fun ensureRequirements(player: Player): Boolean {
-        return player.macrocosm?.accessoryBag?.power == this.id
+        return player.macrocosm?.accessoryBag != null && player.macrocosm?.accessoryBag?.power == this.id
+    }
+
+    fun ensureRequirements(player: MacrocosmPlayer): Boolean {
+        @Suppress("SENSELESS_COMPARISON") // Can be NPE here
+        return player.accessoryBag != null && player.accessoryBag.power == this.id
     }
 
     fun thaumaturgyPlaceholder(player: MacrocosmPlayer, mp: Int, selected: Boolean = false): ItemStack {
@@ -37,7 +42,7 @@ interface AccessoryPower {
             "",
             "Stats:",
             *statsForMp.iter().filter { it.value != 0f }.map { (stat, value) ->
-                val mod = if(value < 0f) "-" else "+"
+                val mod = if(value < 0f) "" else "+"
                 val sValue = ceil(value).roundToInt()
                 "<${stat.color.asHexString()}>$mod$sValue${stat.display}"
             }.toTypedArray(),

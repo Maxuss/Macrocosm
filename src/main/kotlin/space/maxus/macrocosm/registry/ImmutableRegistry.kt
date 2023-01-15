@@ -7,7 +7,7 @@ open class ImmutableRegistry<R : Clone>(
     expose: Boolean = true
 ) :
     DelegatedRegistry<R>(name, delegate, expose) {
-    override fun findOrNull(id: Identifier): R? {
+    override fun findOrNull(id: Identifier?): R? {
         return super.findOrNull(id)?.clone() as? R
     }
 

@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.players
 
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.general.id
 import java.io.Serializable
 
 data class PlayerMemory(
@@ -9,6 +8,14 @@ data class PlayerMemory(
     val knownPowers: MutableList<Identifier>
 ) : Serializable {
     companion object {
-        fun nullMemory() = PlayerMemory(mutableListOf(), mutableListOf(id("test_power"), id("test_power_2")))
+        fun nullMemory() = PlayerMemory(mutableListOf(), mutableListOf(
+            "fortuitous",
+            "pretty",
+            "protected",
+            "simple",
+            "warrior",
+            "inspired",
+            "ominous",
+        ).map(Identifier::macro).toMutableList())
     }
 }

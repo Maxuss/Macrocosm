@@ -59,7 +59,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
     }
 
     open fun find(id: Identifier): T = iter()[id]!!
-    open fun findOrNull(id: Identifier): T? = iter()[id]
+    open fun findOrNull(id: Identifier?): T? = if(id == null) null else iter()[id]
     open fun has(id: Identifier): Boolean = iter().containsKey(id)
 
     open fun tryUse(id: Identifier, executor: (T) -> Unit) {

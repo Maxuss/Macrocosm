@@ -11,10 +11,13 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.accessory.power.PowerStone
+import space.maxus.macrocosm.accessory.power.StoneAccessoryPower
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.giveOrDrop
@@ -74,11 +77,15 @@ fun learnPowerUi(player: MacrocosmPlayer, stones: MutableList<PowerStone> = muta
                 "",
                 "<yellow>Click to browse!")) { e ->
             e.bukkitEvent.isCancelled = true
-            // TODO: yea x3
+            e.player.closeInventory(InventoryCloseEvent.Reason.UNKNOWN)
+            e.player.openGUI(powerStonesGuide(player))
         }
 
         val distinct = stones.map { it.id }.distinct()
-        if(distinct.size == 1 && stones.size == 9 && !player.memory.knownPowers.contains(stones.first().powerId)) {
+        val powerId = stones.firstOrNull()?.powerId
+        val power = Registry.ACCESSORY_POWER.findOrNull(powerId)
+        val combatReq = if(power is StoneAccessoryPower) power.combatLevel else 0
+        if(distinct.size == 1 && stones.size == 9 && !player.memory.knownPowers.contains(powerId) && player.skills.level(SkillType.COMBAT) >= combatReq) {
             button(
                 Slots.RowFourSlotThree, ItemValue.placeholderHeadDesc(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTNjMjQ3YjBkODJkZDg3MTQ4Yzk2NTZhNDJlMDI0MDcwYzQ1OTcwZTExNDlmZGM1NTNlZjYzNjBmMjc5OWM2YyJ9fX0=",
@@ -96,7 +103,7 @@ fun learnPowerUi(player: MacrocosmPlayer, stones: MutableList<PowerStone> = muta
                     volume = 2f
                     playAt(e.player.location)
                 }
-                player.memory.knownPowers.add(stones.first().powerId)
+                player.memory.knownPowers.add(powerId!!)
                 e.player.sendMessage(text("<yellow>You permanently unlocked the <green>${stones.first().name.str()}<yellow> power!"))
                 e.player.openGUI(learnPowerUi(player, mutableListOf()))
             }
@@ -110,7 +117,7 @@ fun learnPowerUi(player: MacrocosmPlayer, stones: MutableList<PowerStone> = muta
                     "to permanently unlock their",
                     "<green>power<gray>.",
                     "",
-                    if(stones.size != 9) "<red>Missing some stones!" else if(distinct.size != 1) "<red>Yikes! Random item detected!" else if(player.memory.knownPowers.contains(stones.first().powerId)) "<red>Already learned!" else "<red>Missing some stones!"
+                    if(stones.size != 9) "<red>Missing some stones!" else if(distinct.size != 1) "<red>Yikes! Random item detected!" else if(player.memory.knownPowers.contains(powerId)) "<red>Already learned!" else "<red>Higher combat level required!"
                 )
             ) { e ->
                 e.bukkitEvent.isCancelled = true
