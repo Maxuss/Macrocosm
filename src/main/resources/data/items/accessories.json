@@ -25,5 +25,89 @@
         },
         "rarity": "rare",
         "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjA2NzA2ZWVjYjJkNTU4YWNlMjdhYmRhMGIwYjdiODAxZDM2ZDE3ZGQ3YTg5MGE5NTIwZGJlNTIyMzc0ZjhhNiJ9fX0="
+    },
+    "survivor_cube": {
+        "type": "accessory",
+        "name": "Survivor Cube",
+        "stats": {
+            "vitality": 10
+        },
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTNjMjQ3YjBkODJkZDg3MTQ4Yzk2NTZhNDJlMDI0MDcwYzQ1OTcwZTExNDlmZGM1NTNlZjYzNjBmMjc5OWM2YyJ9fX0="
+    },
+    "burning_claw_talisman": {
+        "type": "accessory",
+        "name": "Burning Claw Talisman",
+        "stats": {
+            "crit_damage": 1
+        },
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY3MzZmZDk1ZDNhNmE0YWFhYzQ2NzA5YTA3YWVjN2YxYzM4ZjBhM2FhZTU3M2U2ZjQ4MzM4ODgxOTQxMmI2NSJ9fX0="
+    },
+    "burning_claw_ring": {
+        "type": "accessory",
+        "name": "Burning Claw Ring",
+        "stats": {
+            "crit_damage": 3
+        },
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDUyOGZlNWRiZTAyZTFkOGQxMjE4NmUyYWY5OGJlMTMzNGNhN2Q1OTZiNzAyMWVmN2Y5NzhjNzA4OGIyMzVmYyJ9fX0="
+    },
+    "burning_claw_artifact": {
+        "type": "accessory",
+        "name": "Burning Claw Artifact",
+        "stats": {
+            "crit_damage": 7
+        },
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmIxNWM4NjQ1YmJhYmM0MjM1MjM1MGIxYzlkODRhZjcxOTY2YzRjNTZhODZkMDNhY2QwNzllZDU3ZjNlYWQzZiJ9fX0="
+    },
+    "old_blueprints": {
+        "type": "accessory",
+        "name": "Old Blueprints",
+        "stats": {
+            "intelligence": 1
+        },
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWRjMzA2MGNmNzUyNGFlM2ViNGRmZDJiNTg5ODAzOTVkMjNmN2UzNjk1NTE0MTU0YjFlNGE4MGQyOWM5ZjNmIn19fQ==",
+        "abilities": [
+            "old_blueprints"
+        ]
+    },
+    "bait_talisman": {
+        "type": "accessory",
+        "name": "Salmon Bait",
+        "stats": {
+            "sea_creature_chance": 0.5
+        },
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhlYTgxM2ZiYmQwZmJlMWEzYTNmNmRkNWVhZTc0MDY5YzVlNmJjNTIzYzk0NTk2ZGM1NTI3NmNiNDI5NmNmNSJ9fX0="
+    },
+    "bait_ring": {
+        "type": "accessory",
+        "name": "Starfish Bait",
+        "stats": {
+            "sea_creature_chance": 1
+        },
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWJhYTU1NTdkODA0ZWQ1MTQ0MTgzODBkMjBlNjQyMDljZDk1MDFlZDA1ZTY5NzM1NGM3M2MyZmQ3MjY5MzRmOCJ9fX0="
+    },
+    "bait_artifact": {
+        "type": "accessory",
+        "name": "Clam Bait",
+        "stats": {
+            "sea_creature_chance": 1.5
+        },
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDNlYzg0NTBmMmMzMmQwMDhmNjg0M2UwMGRmMzhmNWU0MDE2OTFlMTk1N2IwMmM4ZmI2MzM4ZWY4ODFiYTc3MiJ9fX0="
+    },
+    "bait_relic": {
+        "type": "accessory",
+        "name": "Nautilus Bait",
+        "stats": {
+            "sea_creature_chance": 2
+        },
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2E5YmEzZjE2YjdkMWYxNDRjNmE3MWIxYmUxMTNiMTdlZjNhMTkwNTZmN2UzYWZlNWVhZWZkOGI0OTc0ZDZmZSJ9fX0="
     }
 }

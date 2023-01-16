@@ -318,6 +318,9 @@ enum class Ability(val ability: MacrocosmAbility) {
     TARANTULA_TALISMAN(TarantulaTalisman),
     GLACIER_TARANTULA_TALISMAN(GlacierTarantulaTalisman),
 
+    REAPER_ORB(ReaperOrb),
+    RESEARCH_PILE(ResearchPile),
+    OLD_BLUEPRINTS(OldBlueprints)
 
     //#endregion
     ;

@@ -10,9 +10,9 @@ import kotlin.contracts.contract
 
 @DevelopmentOnly
 object Debug {
-    fun dumpObjectData(obj: Any) {
+    fun constructObjectData(obj: Any): String {
         if (!Macrocosm.isInDevEnvironment)
-            return
+            return "INVALID_OPERATION"
 
         val clazz = obj::class
         val dump = StringBuffer()
@@ -46,7 +46,11 @@ object Debug {
             }
         }
 
-        Macrocosm.logger.info(dump.toString())
+        return dump.toString()
+    }
+
+    fun dumpObjectData(obj: Any) {
+        Macrocosm.logger.info(constructObjectData(obj))
     }
 
     fun log(message: String) {

@@ -59,7 +59,7 @@ object ItemParser {
     private fun parseAndPrepare(id: Identifier, obj: JsonObject): MacrocosmItem {
         val type =
             if (obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else if(obj.has("model")) Material.PAPER else Material.PLAYER_HEAD
-        val headSkin = if (type == Material.PLAYER_HEAD) obj["head_skin"].asString else null
+        val headSkin = if(obj.has("head_skin")) obj["head_skin"].asString else null
         val rarity = Rarity.valueOf(obj["rarity"].asString.uppercase())
         val name = if (obj.has("name")) obj["name"].asString else id.path.replace("_", " ").capitalized()
         val desc = if (obj.has("description")) obj["description"].asString else null
@@ -73,15 +73,16 @@ object ItemParser {
                 rarity,
                 headSkin ?: throw AssertionError("Schema expected head skin for reforge item!")
             )
-        } else if (!obj.has("abilities")) {
+        } else if (!obj.has("abilities") && itemType != ItemType.ACCESSORY) {
             // parsing recipe item
             RecipeItem(type, rarity, name, headSkin, desc, obj.has("glow") && obj["glow"].asBoolean)
         } else {
             // parsing ability item
             val stats = if (obj.has("stats")) parseStats(obj.get("stats").asJsonObject) else Statistics.zero()
-            val abils =
-                obj["abilities"].asJsonArray.mapNotNull { ele -> Identifier.parse(ele.asString) }
-                    .toMutableList()
+            val abils = if(obj.has("abilities"))
+                    obj["abilities"].asJsonArray.mapNotNull { ele -> Identifier.parse(ele.asString) }
+                        .toMutableList()
+                else mutableListOf()
             val specialStats =
                 if (obj.has("special_stats")) parseSpecialStats(obj.get("special_stats").asJsonObject) else SpecialStatistics()
             val bp = if (obj.has("breaking_power")) obj["breaking_power"].asInt else 0

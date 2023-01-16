@@ -282,6 +282,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         addSlayerExpCommand()
         accessoriesCommand()
         thaumaturgyTest()
+        handDebug()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

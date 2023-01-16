@@ -8,7 +8,7 @@ import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import java.util.*
 
-class TexturedAccessoryItem(id: String, name: String, rarity: Rarity, stats: Statistics, abilities: List<RegistryPointer>, uuid: UUID = UUID.randomUUID()): AccessoryItem(id, name, rarity, stats, abilities.toMutableList(), null, Material.PAPER, uuid) {
+class TexturedAccessoryItem(id: String, name: String, rarity: Rarity, stats: Statistics, abilities: List<RegistryPointer>, uuid: UUID = UUID.randomUUID(), family: String = extractAccessoryFamily(id)): AccessoryItem(id, name, rarity, stats, abilities.toMutableList(), null, Material.PAPER, uuid, family) {
     override fun clone(): MacrocosmItem {
         return TexturedAccessoryItem(
             id.path,
@@ -16,7 +16,8 @@ class TexturedAccessoryItem(id: String, name: String, rarity: Rarity, stats: Sta
             rarity,
             stats,
             abilities,
-            UUID.randomUUID()
+            UUID.randomUUID(),
+            family
         )
     }
 }

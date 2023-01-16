@@ -30,16 +30,18 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ln
 import kotlin.math.pow
 
-class AccessoryContainer(var item: Identifier, var rarity: Rarity): Externalizable {
-    constructor(): this(Identifier.NULL, Rarity.COMMON)
+class AccessoryContainer(var item: Identifier, var family: String, var rarity: Rarity): Externalizable {
+    constructor(): this(Identifier.NULL, "null", Rarity.COMMON)
 
     override fun writeExternal(out: ObjectOutput) {
         out.writeObject(item.toString())
+        out.writeObject(family)
         out.writeInt(rarity.ordinal)
     }
 
     override fun readExternal(`in`: ObjectInput) {
         item = Identifier.parse(`in`.readObject() as String)
+        family = `in`.readObject() as String
         rarity = Rarity.values()[`in`.readInt()]
     }
 }
@@ -70,7 +72,7 @@ class AccessoryBag: Serializable {
     }
 
     fun addAccessory(item: AccessoryItem): Boolean {
-        if(accessories.size + 1 > capacity || accessories.any { it.item == item.id })
+        if(accessories.size + 1 > capacity || accessories.any { it.item == item.id } || accessories.any { it.family == item.family })
             return false
         accessories.add(item.container)
         return true
@@ -100,7 +102,6 @@ class AccessoryBag: Serializable {
 
             compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward"), compound)
             compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back"), compound, reverse = true)
-
 
             val lightGrayGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
             val grayGlass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
