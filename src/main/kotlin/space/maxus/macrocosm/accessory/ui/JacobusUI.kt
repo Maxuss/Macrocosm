@@ -63,7 +63,7 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                 if(bag.jacobusSlots == 8) {
                     // award a register on 5th purchase
                     e.player.giveOrDrop(Registry.ITEM.find(id("jacobus_register")).build(player)!!)
-                    player.sendMessage("<green>You have been awarded by <gold>Jacobus<gray> with a <gold>Jacobus Register<green>!")
+                    player.sendMessage("<green>You have been awarded by <gold>Jacqueefis<green> with a <gold>Jacqueefis Register<green>!")
                 }
                 var count = 0
                 task(period = 2L, sync = false) {

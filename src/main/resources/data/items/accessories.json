@@ -112,7 +112,7 @@
     },
     "jacobus_register": {
         "type": "accessory",
-        "name": "Jacobus' Register",
+        "name": "Jacqueefis' Register",
         "stats": {
             "health": 10,
             "magic_find": 1
