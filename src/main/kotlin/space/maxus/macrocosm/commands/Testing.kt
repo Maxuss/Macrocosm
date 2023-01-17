@@ -10,6 +10,7 @@ import net.axay.kspigot.commands.suggestList
 import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
+import space.maxus.macrocosm.accessory.ui.jacobusUi
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.ui.globalBazaarMenu
 import space.maxus.macrocosm.collections.CollectionType
@@ -45,6 +46,13 @@ fun doTestEmitPost() = command("doemit") {
         }
     }
 }
+
+fun testJacobus() = command("jacobustest") {
+    runsCatching {
+        player.openGUI(jacobusUi(player.macrocosm!!))
+    }
+}
+
 @OptIn(DevelopmentOnly::class)
 fun handDebug() = command("handdebug") {
     runsCatching {

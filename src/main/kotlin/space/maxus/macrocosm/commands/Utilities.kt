@@ -237,7 +237,7 @@ fun apiCommand() = command("api") {
         }
     }
     runs {
-        player.sendMessage(text("<green>Macrocosm API documentation is located <click:open_url:'http://${InetAddress.getLocalHost().hostAddress}:6060/doc'><yellow><hover:show_text:'<gray>Click to open documentation!'>here</click><green>!"))
+        player.sendMessage(text("<green>Macrocosm API documentation is located <click:open_url:'http://${InetAddress.getLocalHost().hostAddress}:4343/doc'><yellow><hover:show_text:'<gray>Click to open documentation!'>here</click><green>!"))
     }
 }
 

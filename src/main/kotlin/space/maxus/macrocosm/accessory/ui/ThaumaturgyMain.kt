@@ -13,8 +13,6 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
 fun thaumaturgyUi(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     defaultPage = 0
@@ -67,25 +65,6 @@ fun thaumaturgyUi(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigot
         )) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(learnPowerUi(player, mutableListOf()))
-        }
-        button(Slots.RowOneSlotSeven, ItemValue.placeholderDescripted(
-            Material.COMPARATOR,
-            "<green>Stats Tuning",
-            "Optimize your build to your liking by",
-            "using <yellow>Tuning Points<gray>.",
-            "",
-            "Every <gold>10 MP<gray> grants <yellow>1 Tuning Point<gray>.",
-            "",
-            "Magic Power: <gold>$totalMp",
-            "Tuning Points: <yellow>${floor(totalMp / 10f).roundToInt()}",
-            "",
-            "Your tuning:",
-            "<TBD>",
-            "",
-            "<yellow>Click to tune your stats!"
-        )) { e ->
-            e.bukkitEvent.isCancelled = true
-            // TODO yea x2
         }
 
         val compound = createCompound<AccessoryPower>({

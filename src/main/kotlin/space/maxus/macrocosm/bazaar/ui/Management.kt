@@ -76,7 +76,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                                         "<dark_gray> - ${
                                             MacrocosmPlayer.loadPlayer(seller)?.rank?.playerName(player.name ?: "NULL")
                                                 ?.str() ?: "Unknown Seller!"
-                                        }}"
+                                        }"
                                     }
                                 }
                             } else {

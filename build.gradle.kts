@@ -1,11 +1,12 @@
 import java.net.URL
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.8.0"
     id("xyz.jpenilla.run-paper") version "2.0.0"
     id("io.papermc.paperweight.userdev") version "1.3.11"
     id("org.hidetake.swagger.generator") version "2.19.2"
     id("org.jetbrains.dokka") version "1.7.20"
+
 }
 
 group = "space.maxus"

@@ -541,11 +541,11 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
                 '400':
-                    description: `item` argument not provided
+                    description: item argument not provided
                     schema:
                         $ref: '#/definitions/Error'
                 '404':
-                    description: Could not find provided `item` in the bazaar
+                    description: Could not find provided item in the bazaar
                     schema:
                         $ref: '#/definitions/Error'
                 '200':
@@ -583,7 +583,7 @@ paths:
                     schema:
                         $ref: '#/definitions/ErrorKeyThrottle'
                 '400':
-                    description: `item` argument not provided
+                    description: item argument not provided
                     schema:
                         $ref: '#/definitions/Error'
                 '404':

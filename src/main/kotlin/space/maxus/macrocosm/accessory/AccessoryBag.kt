@@ -18,15 +18,13 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.util.emptySlots
-import space.maxus.macrocosm.util.giveOrDrop
-import space.maxus.macrocosm.util.padForward
-import space.maxus.macrocosm.util.runCatchingReporting
+import space.maxus.macrocosm.util.*
 import java.io.Externalizable
 import java.io.ObjectInput
 import java.io.ObjectOutput
 import java.io.Serializable
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.set
 import kotlin.math.ln
 import kotlin.math.pow
 
@@ -62,8 +60,13 @@ val rarityToMp = hashMapOf(
 
 class AccessoryBag: Serializable {
     var power: Identifier = Identifier.NULL
-    var capacity: Int = 3
+    var capacity: Int = 9
+    var redstoneCollSlots: Int = 0
+    var jacobusSlots: Int = 0
+    var mithrilCollSlots: Int = 0
     val accessories: MutableList<AccessoryContainer> = mutableListOf()
+
+    val serialVersionUID = 1_100_000_000L
 
     val magicPower get() = accessories.sumOf { rarityToMp[it.rarity]!! }
 
@@ -78,49 +81,81 @@ class AccessoryBag: Serializable {
         return true
     }
 
-    fun ui(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-        defaultPage = 0
-        title = text("Accessories")
+    fun ui(player: MacrocosmPlayer): GUI<*> {
+        val (size, beginCompound, endCompound) = when(capacity) {
+            in 1..9 -> Triple(GUIType.TWO_BY_NINE, Slots.RowTwoSlotOne, Slots.RowTwoSlotNine)
+            in 10..18 -> Triple(GUIType.THREE_BY_NINE, Slots.RowTwoSlotOne, Slots.RowThreeSlotNine)
+            in 19..27 -> Triple(GUIType.FOUR_BY_NINE, Slots.RowTwoSlotOne, Slots.RowFourSlotNine)
+            in 28..36 -> Triple(GUIType.FIVE_BY_NINE, Slots.RowTwoSlotOne, Slots.RowFiveSlotNine)
+            else -> Triple(GUIType.TWO_BY_NINE, Slots.RowTwoSlotOne, Slots.RowSixSlotNine)
+        }
+        return kSpigotGUI(size) {
+            defaultPage = 0
+            title = text("Accessories")
 
-        page(0) {
-            placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
-            button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
-                e.bukkitEvent.isCancelled = true
-                e.player.closeInventory()
-            }
+            val partitioned = accessories.padNullsForward(capacity).chunked(45)
 
-            val compound = createCompound<Pair<Int, ItemStack>>({ it.second }) { e, (index, item) ->
-                e.bukkitEvent.isCancelled = true
-                if(index != -1 && e.player.inventory.emptySlots != 0) {
-                    accessories.removeAt(index)
-                    e.player.giveOrDrop(item)
-                    e.player.openGUI(ui(player))
-                }
-            }
-
-            compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
-
-            compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward"), compound)
-            compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back"), compound, reverse = true)
-
-            val lightGrayGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
-            val grayGlass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
-            runCatchingReporting(player.paper ?: return@page) {
-                val mapped = accessories.mapIndexed { index, item -> index to run {
-                    val base = Registry.ITEM.findOrNull(item.item) ?: return@run ItemValue.NULL.item.build(player)!!
-                    if(item.rarity != base.rarity) {
-                        base.rarity = item.rarity
-                        base.rarityUpgraded = true
+            for((index, accs) in partitioned.withIndex()) {
+                page(index) {
+                    placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+                    button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
+                        e.bukkitEvent.isCancelled = true
+                        e.player.closeInventory()
                     }
-                    base.build(player) ?: ItemValue.NULL.item.build(player)!!
-                } }.padForward(capacity, Pair(-1, lightGrayGlass)).padForward(BagCapacity.MAXIMAL.amount, Pair(-1, grayGlass))
-                compound.addContent(mapped)
+
+                    val compound = createCompound<Pair<Int, ItemStack>>({ it.second }) { e, (index, item) ->
+                        e.bukkitEvent.isCancelled = true
+                        if(index != -1 && e.player.inventory.emptySlots != 0) {
+                            accessories.removeAt(index)
+                            e.player.giveOrDrop(item)
+                            e.player.openGUI(ui(player))
+                        }
+                    }
+
+                    @Suppress("UNCHECKED_CAST")
+                    compoundSpace((beginCompound rectTo endCompound) as InventorySlotCompound<ForInventoryTwoByNine>, compound)
+
+                    if(capacity > 45) {
+                        if (page != partitioned.size - 1)
+                            pageChanger(
+                                Slots.RowOneSlotNine,
+                                ItemValue.placeholder(Material.ARROW, "<green>Next Page"),
+                                page + 1,
+                                null,
+                                null
+                            )
+                        if (page != 0)
+                            pageChanger(
+                                Slots.RowOneSlotEight,
+                                ItemValue.placeholder(Material.ARROW, "<red>Previous Page"),
+                                page - 1,
+                                null,
+                                null
+                            )
+                    }
+
+                    val lightGrayGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
+                    val grayGlass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
+                    val unoccupied = accs.count { it == null }
+                    runCatchingReporting(player.paper ?: return@page) {
+                        val mapped = accs.mapIndexedNotNull { index, item -> index to run {
+                            val base = Registry.ITEM.findOrNull(item?.item ?: return@mapIndexedNotNull null) ?: return@run ItemValue.NULL.item.build(player)!!
+                            if(item.rarity != base.rarity) {
+                                base.rarity = item.rarity
+                                base.rarityUpgraded = true
+                            }
+                            base.build(player) ?: ItemValue.NULL.item.build(player)!!
+                        } }.let { it.padForward(it.size + unoccupied, Pair(-1, lightGrayGlass)).padForward(45, Pair(-1, grayGlass)) }
+                        compound.addContent(mapped)
+                    }
+                }
             }
         }
     }
 
+
     companion object {
-        val cachedResults = ConcurrentHashMap<Int, Double>()
+        private val cachedResults = ConcurrentHashMap<Int, Double>()
 
         fun statModifier(mp: Int): Double {
             if(cachedResults.containsKey(mp))
@@ -158,9 +193,7 @@ class AccessoryBag: Serializable {
     }
 }
 
-enum class BagCapacity(val amount: Int) {
-    SMALL(3),
-    MEDIUM(9),
+enum class BagCapacityBonus(val amount: Int) {
     LARGE(15),
     GREATER(21),
     GIANT(27),
