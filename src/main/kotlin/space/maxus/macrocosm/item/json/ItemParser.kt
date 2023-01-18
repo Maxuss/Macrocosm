@@ -158,13 +158,13 @@ object ItemParser {
     private fun parseModel(obj: JsonObject): Model {
         return if (obj.has("raw") && obj["raw"].asBoolean)
             RawModel(
-                obj["id"].asInt,
+                732_0000 + obj["to"].asString.hashCode() % 3500,
                 if (obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
             )
         else
             Model(
-                obj["id"].asInt,
+                732_0000 + obj["to"].asString.hashCode() % 3500,
                 if (obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
                 if (obj.has("parent"))

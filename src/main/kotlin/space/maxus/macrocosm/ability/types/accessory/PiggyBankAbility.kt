@@ -43,7 +43,7 @@ class PiggyBankAbility(applicable: String, private val times: Int) : AccessoryAb
                     playAt(e.player.paper!!.location)
                 }
                 if(it - 1 <= 0) {
-                    e.player.sendMessage("<bold><red>Your piggy ${if(times == 3) "Piggy Vault" else "Piggy Bank"} broke!")
+                    e.player.sendMessage("<bold><red>Your ${if(times == 3) "Piggy Vault" else "Piggy Bank"} broke!")
                 }
                 it - 1
             }
