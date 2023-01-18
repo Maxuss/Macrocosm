@@ -46,6 +46,18 @@ Contains the code related to the Macrocosm HTTP API implementation
 
 Contains the code managing asynchronous, concurrent and parallel workload of other code
 
+# Package space.maxus.macrocosm.accessory
+
+Contains all the accessory related code
+
+# Package space.maxus.macrocosm.accessory.ui
+
+Contains UI related methods for accessories
+
+# Package space.maxus.macrocosm.accessory.power
+
+Contains the Accessory Power management code
+
 # Package space.maxus.macrocosm.bazaar
 
 Contains the Bazaar implementation logic

@@ -21,6 +21,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.accessory.ui.thaumaturgyUi
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -78,6 +79,20 @@ fun connectDiscordCommand() = command("discordauth") {
                 }
             }.call()
         }
+    }
+}
+
+fun thaumaturgyTest() = command("thaum") {
+    runsCatching {
+        val mc = player.macrocosm!!
+        player.openGUI(thaumaturgyUi(mc))
+    }
+}
+
+fun accessoriesCommand() = command("accessories") {
+    runsCatching {
+        val mc = player.macrocosm!!
+        player.openGUI(mc.accessoryBag.ui(mc))
     }
 }
 
@@ -222,7 +237,7 @@ fun apiCommand() = command("api") {
         }
     }
     runs {
-        player.sendMessage(text("<green>Macrocosm API documentation is located <click:open_url:'http://${InetAddress.getLocalHost().hostAddress}:6060/doc'><yellow><hover:show_text:'<gray>Click to open documentation!'>here</click><green>!"))
+        player.sendMessage(text("<green>Macrocosm API documentation is located <click:open_url:'http://${InetAddress.getLocalHost().hostAddress}:4343/doc'><yellow><hover:show_text:'<gray>Click to open documentation!'>here</click><green>!"))
     }
 }
 

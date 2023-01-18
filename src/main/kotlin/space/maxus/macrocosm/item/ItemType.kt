@@ -37,6 +37,7 @@ enum class ItemType(
     TURRET(false),
     CONSUMABLE(false),
     REFORGE_STONE(false),
+    POWER_STONE(false),
     SCROLL(false),
     OTHER(false, leftHand = true),
 

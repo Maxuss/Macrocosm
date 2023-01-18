@@ -2,6 +2,8 @@ package space.maxus.macrocosm.item.json
 
 import com.google.gson.JsonObject
 import org.bukkit.Material
+import space.maxus.macrocosm.accessory.AccessoryItem
+import space.maxus.macrocosm.accessory.TexturedAccessoryItem
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.block.Blocks
 import space.maxus.macrocosm.chat.capitalized
@@ -56,8 +58,8 @@ object ItemParser {
 
     private fun parseAndPrepare(id: Identifier, obj: JsonObject): MacrocosmItem {
         val type =
-            if (obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else if(obj.has("model")) Material.PAPER else Material.PLAYER_HEAD
-        val headSkin = if (type == Material.PLAYER_HEAD) obj["head_skin"].asString else null
+            if (obj.has("material")) Material.valueOf(obj["material"].asString.uppercase()) else if (obj.has("model")) Material.PAPER else Material.PLAYER_HEAD
+        val headSkin = if (obj.has("head_skin")) obj["head_skin"].asString else null
         val rarity = Rarity.valueOf(obj["rarity"].asString.uppercase())
         val name = if (obj.has("name")) obj["name"].asString else id.path.replace("_", " ").capitalized()
         val desc = if (obj.has("description")) obj["description"].asString else null
@@ -71,22 +73,44 @@ object ItemParser {
                 rarity,
                 headSkin ?: throw AssertionError("Schema expected head skin for reforge item!")
             )
-        } else if (!obj.has("abilities")) {
+        } else if (!obj.has("abilities") && itemType != ItemType.ACCESSORY) {
             // parsing recipe item
             RecipeItem(type, rarity, name, headSkin, desc, obj.has("glow") && obj["glow"].asBoolean)
         } else {
             // parsing ability item
             val stats = if (obj.has("stats")) parseStats(obj.get("stats").asJsonObject) else Statistics.zero()
-            val abils =
+            val abils = if (obj.has("abilities"))
                 obj["abilities"].asJsonArray.mapNotNull { ele -> Identifier.parse(ele.asString) }
                     .toMutableList()
+            else mutableListOf()
             val specialStats =
                 if (obj.has("special_stats")) parseSpecialStats(obj.get("special_stats").asJsonObject) else SpecialStatistics()
             val bp = if (obj.has("breaking_power")) obj["breaking_power"].asInt else 0
             val runes = if (obj.has("runes")) obj["runes"].asJsonArray.map { ele ->
                 if (ele.isJsonObject) Identifier.parse(ele.asJsonObject["specific"].asString) else Identifier.parse(ele.asString)
             } else listOf()
-            if (headSkin != null)
+            if (itemType == ItemType.ACCESSORY) {
+                if (obj.has("model")) {
+                    TexturedAccessoryItem(
+                        id.path,
+                        name,
+                        rarity,
+                        stats,
+                        abils.map { RegistryPointer(Identifier.macro("ability"), it) }.toMutableList()
+                    )
+                } else {
+                    AccessoryItem(
+                        id.path,
+                        name,
+                        rarity,
+                        stats,
+                        abils.map { RegistryPointer(Identifier.macro("ability"), it) }.toMutableList(),
+                        headSkin,
+                        if (headSkin == null) type else Material.PLAYER_HEAD
+                    )
+
+                }
+            } else if (headSkin != null)
                 SkullAbilityItem(
                     itemType!!,
                     name,
@@ -135,13 +159,13 @@ object ItemParser {
         return if (obj.has("raw") && obj["raw"].asBoolean)
             RawModel(
                 obj["id"].asInt,
-                if(obj.has("from")) obj["from"].asString else "item/paper",
+                if (obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
             )
         else
             Model(
                 obj["id"].asInt,
-                if(obj.has("from")) obj["from"].asString else "item/paper",
+                if (obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
                 if (obj.has("parent"))
                     obj["parent"].asString

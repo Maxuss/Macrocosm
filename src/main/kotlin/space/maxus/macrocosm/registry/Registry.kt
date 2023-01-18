@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
+import space.maxus.macrocosm.accessory.power.AccessoryPower
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.cosmetic.Cosmetic
@@ -58,7 +59,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
     }
 
     open fun find(id: Identifier): T = iter()[id]!!
-    open fun findOrNull(id: Identifier): T? = iter()[id]
+    open fun findOrNull(id: Identifier?): T? = if (id == null) null else iter()[id]
     open fun has(id: Identifier): Boolean = iter().containsKey(id)
 
     open fun tryUse(id: Identifier, executor: (T) -> Unit) {
@@ -194,6 +195,11 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
             if (block is AutoRegister<*>) {
                 (block as? AutoRegister<MacrocosmItem>)?.register(ITEM)
             }
+        }
+        val ACCESSORY_POWER = makeDelegated<AccessoryPower>(id("accessory_power"), true) { _, power ->
+            power.registerListeners()
+
+            (power as? AutoRegister<MacrocosmItem>)?.register(ITEM)
         }
 
         override fun dumpToFile(file: Path) {

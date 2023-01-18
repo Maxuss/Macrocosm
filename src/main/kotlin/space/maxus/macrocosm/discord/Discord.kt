@@ -323,7 +323,7 @@ object Discord : ListenerAdapter() {
                     Commands.slash("api", "Regenerates your Macrocosm API Key"),
                     Commands.user("Macrocosm profile data")
                 ).queue()
- 
+
                 val ch = communicationChannel
                 if (ch != null) {
                     bot.updateCommands().addCommands(

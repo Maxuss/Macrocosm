@@ -16,8 +16,8 @@ import space.maxus.macrocosm.registry.registryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.stats
 
-abstract class AbstractMacrocosmItem(override val id: Identifier, override val type: ItemType): MacrocosmItem {
-    override var stats = stats {  }
+abstract class AbstractMacrocosmItem(override val id: Identifier, override val type: ItemType) : MacrocosmItem {
+    override var stats = stats { }
     override var specialStats = SpecialStatistics()
     override var amount = 1
     override var stars = 0

@@ -53,17 +53,23 @@ object WitherSlayer : Slayer(
     )
 ) {
     override fun abilitiesForTier(tier: Int): List<SlayerAbility> {
-        return when(tier) {
+        return when (tier) {
             1 -> listOf(WitherAbilities.CAUTERIZE)
             2 -> listOf(WitherAbilities.CAUTERIZE, WitherAbilities.CINDER_BARRIER)
             3 -> listOf(WitherAbilities.CAUTERIZE, WitherAbilities.CINDER_BARRIER, WitherAbilities.INFERNO_BURST)
-            4 -> listOf(WitherAbilities.CAUTERIZE, WitherAbilities.CINDER_BARRIER, WitherAbilities.INFERNO_BURST, WitherAbilities.UNDERWORLD_UNSEALED)
+            4 -> listOf(
+                WitherAbilities.CAUTERIZE,
+                WitherAbilities.CINDER_BARRIER,
+                WitherAbilities.INFERNO_BURST,
+                WitherAbilities.UNDERWORLD_UNSEALED
+            )
+
             else -> listOf()
         }
     }
 
     override fun bossModelForTier(tier: Int): MacrocosmEntity {
-        return when(tier) {
+        return when (tier) {
             1 -> CinderflameSpirit(
                 stats {
                     health = 15000f
@@ -75,6 +81,7 @@ object WitherSlayer : Slayer(
                 1,
                 500.0
             )
+
             2 -> CinderflameSpirit(
                 stats {
                     health = 50000f
@@ -86,6 +93,7 @@ object WitherSlayer : Slayer(
                 2,
                 800.0
             )
+
             3 -> CinderflameSpirit(
                 stats {
                     health = 250_000f
@@ -99,6 +107,7 @@ object WitherSlayer : Slayer(
                 3,
                 1200.0
             )
+
             4 -> CinderflameSpirit(
                 stats {
                     health = 1_900_000f
@@ -112,6 +121,7 @@ object WitherSlayer : Slayer(
                 4,
                 2300.0
             )
+
             5 -> IncendiaryIncarnation
             6 -> PyroclasticGoliath
             else -> unreachable()

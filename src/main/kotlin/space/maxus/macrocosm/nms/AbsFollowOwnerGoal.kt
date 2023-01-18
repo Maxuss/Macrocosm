@@ -115,7 +115,7 @@ class AbsFollowOwnerGoal(
                 x.toDouble() + 0.5,
                 y.toDouble(),
                 z.toDouble() + 0.5,
-                this.entity.getYRot(),
+                this.entity.yRot,
                 this.entity.xRot
             )
             val event = EntityTeleportEvent(entity, entity.location, to)

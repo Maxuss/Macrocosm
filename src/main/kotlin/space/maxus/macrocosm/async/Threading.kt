@@ -2,7 +2,6 @@ package space.maxus.macrocosm.async
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import net.minecraft.server.MinecraftServer
-import space.maxus.macrocosm.util.Fn
 import space.maxus.macrocosm.util.threadNoinline
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -98,7 +97,7 @@ object Threading {
     /**
      * Runs each of the provided executors concurrently
      */
-    fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: Fn) {
+    fun runEachConcurrently(service: ExecutorService = Executors.newCachedThreadPool(), vararg executors: () -> Unit) {
         runAsync {
             for (fn in executors) {
                 service.execute(fn)

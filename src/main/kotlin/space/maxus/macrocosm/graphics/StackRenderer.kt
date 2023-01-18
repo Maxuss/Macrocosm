@@ -9,7 +9,6 @@ import net.kyori.adventure.translation.GlobalTranslator
 import space.maxus.macrocosm.InternalMacrocosmPlugin
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.util.FnRet
 import space.maxus.macrocosm.util.stripTags
 import space.maxus.macrocosm.util.unreachable
 import java.awt.Color
@@ -26,7 +25,7 @@ import javax.imageio.ImageIO
 
 class StackRenderer(
     val component: ItemRenderBuffer,
-    val fontProvider: FnRet<Font> = { Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE) }
+    val fontProvider: () -> Font = { Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE) }
 ) {
     companion object {
         private const val FONT_SIZE = 50

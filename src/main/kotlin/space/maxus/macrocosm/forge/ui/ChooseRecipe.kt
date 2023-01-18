@@ -5,6 +5,7 @@ import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
 import org.bukkit.Material
 import org.bukkit.Sound
+import space.maxus.macrocosm.ability.types.accessory.OldBlueprints
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.forge.ForgeRecipe
@@ -80,10 +81,11 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
 
                             playFor(e.player)
                         }
+                        val addMillis = if (OldBlueprints.hasAccs(player)) recipe.length * 250 else 0
                         player.activeForgeRecipes.add(
                             ActiveForgeRecipe(
                                 Registry.FORGE_RECIPE.byValue(recipe)!!,
-                                Instant.now().toEpochMilli()
+                                Instant.now().toEpochMilli() + addMillis
                             )
                         )
                         e.player.openGUI(displayForge(player, forge))

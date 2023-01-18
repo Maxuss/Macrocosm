@@ -13,13 +13,25 @@ import space.maxus.macrocosm.db.impl.AbstractSQLDatabase
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.serde.Bytes
-import space.maxus.macrocosm.util.*
+import space.maxus.macrocosm.util.associateWithHashed
+import space.maxus.macrocosm.util.insteadOfNaN
+import space.maxus.macrocosm.util.median
+import space.maxus.macrocosm.util.runCatchingReporting
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
+import kotlin.collections.Collection
+import kotlin.collections.average
+import kotlin.collections.forEach
+import kotlin.collections.map
+import kotlin.collections.maxByOrNull
+import kotlin.collections.minByOrNull
+import kotlin.collections.sumOf
+import kotlin.collections.take
+import kotlin.collections.toList
 
 /**
  * Summary of a sequence of bazaar orders
@@ -214,7 +226,7 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
      * @param item item to be queried
      * @param iterator iterator function to be applied, takes in an order and returns true if the iteration should continue and false if it should be stopped
      */
-    fun iterateThroughOrdersBuy(item: Identifier, iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
+    fun iterateThroughOrdersBuy(item: Identifier, iterator: (BazaarBuyOrder) -> Boolean) {
         val data = itemData[item]!!
         data.iterateBuy(iterator)
     }
@@ -225,7 +237,7 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
      * @param item item to be queried
      * @param iterator iterator function to be applied, takes in an order and returns true if the iteration should continue and false if it should be stopped
      */
-    fun iterateThroughOrdersSell(item: Identifier, iterator: FnArgRet<BazaarSellOrder, Boolean>) {
+    fun iterateThroughOrdersSell(item: Identifier, iterator: (BazaarSellOrder) -> Boolean) {
         val data = itemData[item]!!
         data.iterateSell(iterator)
     }
@@ -345,7 +357,7 @@ class BazaarItemData private constructor(
     /**
      * Iterates through buy orders
      */
-    fun iterateBuy(iterator: FnArgRet<BazaarBuyOrder, Boolean>) {
+    fun iterateBuy(iterator: (BazaarBuyOrder) -> Boolean) {
         for (order in this.buy) {
             if (iterator(order))
                 return
@@ -355,7 +367,7 @@ class BazaarItemData private constructor(
     /**
      * Iterates through sell orders
      */
-    fun iterateSell(iterator: FnArgRet<BazaarSellOrder, Boolean>) {
+    fun iterateSell(iterator: (BazaarSellOrder) -> Boolean) {
         for (order in this.sell) {
             if (iterator(order))
                 return

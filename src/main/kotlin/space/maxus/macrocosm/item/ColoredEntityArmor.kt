@@ -70,7 +70,6 @@ class SkullEntityHead(private var eskin: String) : AbstractMacrocosmItem(id("sku
 
     override fun addPotatoBooks(amount: Int) {
         // should not be modified, visual only
-
     }
 
     override fun addExtraNbt(cmp: CompoundTag) {

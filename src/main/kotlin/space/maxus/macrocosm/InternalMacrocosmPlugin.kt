@@ -8,6 +8,9 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import space.maxus.macrocosm.ability.Ability
+import space.maxus.macrocosm.accessory.AccessoryBag
+import space.maxus.macrocosm.accessory.power.AccessoryPowers
+import space.maxus.macrocosm.accessory.ui.LearnPower
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
@@ -196,6 +199,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             TrophyFishes::init,
             PyroclasticToadPet::init,
             WaspPet::init,
+            AccessoryPowers::init
         )
 
         DataListener.joinLeave()
@@ -221,6 +225,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(CustomBlockHandlers, this@InternalMacrocosmPlugin)
         server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(AccessoryBag.Handlers, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(LearnPower, this@InternalMacrocosmPlugin)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
@@ -274,6 +280,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         petsCommand()
         placeBlockCommand()
         addSlayerExpCommand()
+        accessoriesCommand()
+        thaumaturgyTest()
+        handDebug()
+        testJacobus()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

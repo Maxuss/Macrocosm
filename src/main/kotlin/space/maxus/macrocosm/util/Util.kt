@@ -82,10 +82,6 @@ val GSON_PRETTY: Gson = GsonBuilder()
     .setPrettyPrinting().create()
 
 typealias NULL = Unit
-typealias Fn = () -> Unit
-typealias FnArg<A> = (A) -> Unit
-typealias FnRet<B> = () -> B
-typealias FnArgRet<A, B> = (A) -> B
 
 fun Player.getArmorIds(): List<Identifier> {
     return equipment.armorContents.filter { !it.isAirOrNull() }.map { it.macrocosmTag().getId("ID") }
@@ -100,7 +96,7 @@ inline fun <reified T> serializeBytes(data: T): String {
     return Base64.getEncoder().encodeToString(s.toByteArray())
 }
 
-inline fun <reified T : Enum<T>> ClosedRange<T>.toList(values: FnRet<Array<out T>>): List<T> {
+inline fun <reified T : Enum<T>> ClosedRange<T>.toList(values: () -> Array<out T>): List<T> {
     val intRange = this.start.ordinal..this.endInclusive.ordinal
     return values().toList().slice(intRange)
 }
@@ -155,10 +151,10 @@ fun Iterable<Double>.median(): Double {
     }
 }
 
-fun <A> identity(): FnArgRet<A, A> = { a -> a }
-fun nullFn(): FnRet<Unit> = { }
+fun <A> identity(): (A) -> A = { a -> a }
+fun nullFn(): () -> Unit = { }
 
-inline fun <reified V> aggregate(times: Int, crossinline generator: FnRet<V>): List<V> {
+inline fun <reified V> aggregate(times: Int, crossinline generator: () -> V): List<V> {
     return List(times, ignoringProducer(generator))
 }
 
@@ -216,14 +212,14 @@ fun String.camelToSnakeCase(): String {
     }.lowercase(Locale.getDefault())
 }
 
-inline fun <reified K : Any?, reified V : Any?> Iterable<K>.associateWithHashed(producer: FnArgRet<K, V>): HashMap<K, V> {
+inline fun <reified K : Any?, reified V : Any?> Iterable<K>.associateWithHashed(producer: (K) -> V): HashMap<K, V> {
     val result = hashMapOf<K, V>()
     return associateWithTo(result, producer)
 }
 
-inline fun <reified T : Any?> ignoring(ele: T): FnArgRet<Any?, T> = { ele }
-inline fun <reified T : Any?> producer(ele: T): FnRet<T> = { ele }
-inline fun <reified T : Any?> ignoringProducer(crossinline producer: FnRet<T>): FnArgRet<Any?, T> = { producer() }
+inline fun <reified T : Any?> ignoring(ele: T): (Any?) -> T = { ele }
+inline fun <reified T : Any?> producer(ele: T): () -> T = { ele }
+inline fun <reified T : Any?> ignoringProducer(crossinline producer: () -> T): (Any?) -> T = { producer() }
 
 inline fun <reified T : Any?> T.repeated(n: Int): Array<T> = Array(n) { this }
 
@@ -516,7 +512,7 @@ fun Random.nextSignedDouble(): Double {
     return if (nextBoolean()) nextDouble() else -nextDouble()
 }
 
-fun Vector.along(f: Location, times: Int, fn: FnArg<Location>) {
+fun Vector.along(f: Location, times: Int, fn: (Location) -> Unit) {
     val each = this.clone().multiply(1f / times.toFloat())
     var from = f
     for (i in 0 until times) {

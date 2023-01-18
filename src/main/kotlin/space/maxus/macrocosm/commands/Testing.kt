@@ -10,12 +10,14 @@ import net.axay.kspigot.commands.suggestList
 import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
+import space.maxus.macrocosm.accessory.ui.jacobusUi
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.ui.globalBazaarMenu
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.forge.ForgeType
 import space.maxus.macrocosm.forge.ui.displayForge
+import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.ui.petsMenu
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
@@ -24,6 +26,8 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
+import space.maxus.macrocosm.util.annotations.DevelopmentOnly
+import space.maxus.macrocosm.util.general.Debug
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
 
@@ -39,6 +43,23 @@ fun doTestEmitPost() = command("doemit") {
                     )
                 )
             }
+        }
+    }
+}
+
+fun testJacobus() = command("jacobustest") {
+    runsCatching {
+        player.openGUI(jacobusUi(player.macrocosm!!))
+    }
+}
+
+@OptIn(DevelopmentOnly::class)
+fun handDebug() = command("handdebug") {
+    runsCatching {
+        val mc = player.inventory.itemInMainHand.macrocosm!!
+        val texts = Debug.constructObjectData(mc).split("\n")
+        for (part in texts) {
+            player.sendMessage(part)
         }
     }
 }
@@ -76,15 +97,16 @@ fun setSlayerLevelCommand() = command("slayerlvl") {
     }
 }
 
-fun addSlayerExpCommand()  = command("slayerxp") {
+fun addSlayerExpCommand() = command("slayerxp") {
     argument("id", StringArgumentType.string()) {
         argument("exp", DoubleArgumentType.doubleArg(.0)) {
             runs {
                 val ty = SlayerType.valueOf(getArgument("id"))
                 val slayer = player.macrocosm!!.slayers[ty]!!
-                player.macrocosm!!.slayers[ty] = SlayerLevel(slayer.level, slayer.overflow, slayer.collectedRewards, slayer.rng.apply {
-                    this[ty]!!.expAccumulated += getArgument<Double>("exp")
-                })
+                player.macrocosm!!.slayers[ty] =
+                    SlayerLevel(slayer.level, slayer.overflow, slayer.collectedRewards, slayer.rng.apply {
+                        this[ty]!!.expAccumulated += getArgument<Double>("exp")
+                    })
             }
         }
     }

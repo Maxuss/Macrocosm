@@ -77,8 +77,8 @@ object HoneycombBulwarkAbility : AbilityBase(
                     val nmsDamager = (player as CraftLivingEntity).handle
                     nmsDamaged.knockback(
                         knockbackAmount,
-                        Mth.sin(nmsDamager.getYRot() * 0.017453292F).toDouble(),
-                        -Mth.cos(nmsDamager.getYRot() * 0.017453292F).toDouble(),
+                        Mth.sin(nmsDamager.yRot * 0.017453292F).toDouble(),
+                        -Mth.cos(nmsDamager.yRot * 0.017453292F).toDouble(),
                         nmsDamager
                     )
                     entity.macrocosm!!.damage(dmg)

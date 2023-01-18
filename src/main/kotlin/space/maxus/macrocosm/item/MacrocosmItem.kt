@@ -126,7 +126,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     }
 
     fun buildLore(player: MacrocosmPlayer?, lore: MutableList<Component>) {
-
+        // By default no extra lore is added
     }
 
     fun addExtraNbt(cmp: CompoundTag) {
@@ -134,7 +134,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     }
 
     fun addExtraMeta(meta: ItemMeta) {
-
+        // By default no extra meta is added
     }
 
     fun addDye(dye: Dye): Boolean {
