@@ -36,8 +36,8 @@ import kotlin.math.pow
  * @property family The family of accessory
  * @property rarity The rarity of accessory
  */
-class AccessoryContainer(var item: Identifier, var family: String, var rarity: Rarity): Externalizable {
-    constructor(): this(Identifier.NULL, "null", Rarity.COMMON)
+class AccessoryContainer(var item: Identifier, var family: String, var rarity: Rarity) : Externalizable {
+    constructor() : this(Identifier.NULL, "null", Rarity.COMMON)
 
     override fun writeExternal(out: ObjectOutput) {
         out.writeObject(item.toString())
@@ -69,7 +69,7 @@ val rarityToMp = hashMapOf(
 /**
  * A container for player accessory bag
  */
-class AccessoryBag: Serializable {
+class AccessoryBag : Serializable {
     /**
      * Selected [AccessoryPower] for this bag
      */
@@ -124,7 +124,7 @@ class AccessoryBag: Serializable {
      * @return `true` if added the accessory, `false` if failed to add (not enough space/accessory already present/accessory of same family already present)
      */
     fun addAccessory(item: AccessoryItem): Boolean {
-        if(accessories.size + 1 > capacity || accessories.any { it.item == item.id } || accessories.any { it.family == item.family })
+        if (accessories.size + 1 > capacity || accessories.any { it.item == item.id } || accessories.any { it.family == item.family })
             return false
         accessories.add(item.container)
         return true
@@ -134,7 +134,7 @@ class AccessoryBag: Serializable {
      * Loads the accessory UI for player
      */
     fun ui(player: MacrocosmPlayer): GUI<*> {
-        val (size, beginCompound, endCompound) = when(capacity) {
+        val (size, beginCompound, endCompound) = when (capacity) {
             in 1..9 -> Triple(GUIType.TWO_BY_NINE, Slots.RowTwoSlotOne, Slots.RowTwoSlotNine)
             in 10..18 -> Triple(GUIType.THREE_BY_NINE, Slots.RowTwoSlotOne, Slots.RowThreeSlotNine)
             in 19..27 -> Triple(GUIType.FOUR_BY_NINE, Slots.RowTwoSlotOne, Slots.RowFourSlotNine)
@@ -147,7 +147,7 @@ class AccessoryBag: Serializable {
 
             val partitioned = accessories.padNullsForward(capacity).chunked(45)
 
-            for((index, accs) in partitioned.withIndex()) {
+            for ((index, accs) in partitioned.withIndex()) {
                 page(index) {
                     placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
                     button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
@@ -157,7 +157,7 @@ class AccessoryBag: Serializable {
 
                     val compound = createCompound<Pair<Int, ItemStack>>({ it.second }) { e, (index, item) ->
                         e.bukkitEvent.isCancelled = true
-                        if(index != -1 && e.player.inventory.emptySlots != 0) {
+                        if (index != -1 && e.player.inventory.emptySlots != 0) {
                             accessories.removeAt(index)
                             e.player.giveOrDrop(item)
                             e.player.openGUI(ui(player))
@@ -165,9 +165,12 @@ class AccessoryBag: Serializable {
                     }
 
                     @Suppress("UNCHECKED_CAST")
-                    compoundSpace((beginCompound rectTo endCompound) as InventorySlotCompound<ForInventoryTwoByNine>, compound)
+                    compoundSpace(
+                        (beginCompound rectTo endCompound) as InventorySlotCompound<ForInventoryTwoByNine>,
+                        compound
+                    )
 
-                    if(capacity > 45) {
+                    if (capacity > 45) {
                         if (page != partitioned.size - 1)
                             pageChanger(
                                 Slots.RowOneSlotNine,
@@ -190,14 +193,20 @@ class AccessoryBag: Serializable {
                     val grayGlass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
                     val unoccupied = accs.count { it == null }
                     runCatchingReporting(player.paper ?: return@page) {
-                        val mapped = accs.mapIndexedNotNull { index, item -> index to run {
-                            val base = Registry.ITEM.findOrNull(item?.item ?: return@mapIndexedNotNull null) ?: return@run ItemValue.NULL.item.build(player)!!
-                            if(item.rarity != base.rarity) {
-                                base.rarity = item.rarity
-                                base.rarityUpgraded = true
+                        val mapped = accs.mapIndexedNotNull { index, item ->
+                            index to run {
+                                val base = Registry.ITEM.findOrNull(item?.item ?: return@mapIndexedNotNull null)
+                                    ?: return@run ItemValue.NULL.item.build(player)!!
+                                if (item.rarity != base.rarity) {
+                                    base.rarity = item.rarity
+                                    base.rarityUpgraded = true
+                                }
+                                base.build(player) ?: ItemValue.NULL.item.build(player)!!
                             }
-                            base.build(player) ?: ItemValue.NULL.item.build(player)!!
-                        } }.let { it.padForward(it.size + unoccupied, Pair(-1, lightGrayGlass)).padForward(45, Pair(-1, grayGlass)) }
+                        }.let {
+                            it.padForward(it.size + unoccupied, Pair(-1, lightGrayGlass))
+                                .padForward(45, Pair(-1, grayGlass))
+                        }
                         compound.addContent(mapped)
                     }
                 }
@@ -213,7 +222,7 @@ class AccessoryBag: Serializable {
          * Calculates a power stat modifier with provided magic power value
          */
         fun statModifier(mp: Int): Double {
-            if(cachedResults.containsKey(mp))
+            if (cachedResults.containsKey(mp))
                 return cachedResults[mp]!!
             val res = (29.97 * (ln(.0019 * mp + 1))).pow(1.2)
             cachedResults[mp] = res
@@ -222,20 +231,22 @@ class AccessoryBag: Serializable {
 
     }
 
-    object Handlers: Listener {
+    object Handlers : Listener {
         @EventHandler(ignoreCancelled = true)
         fun onClick(e: InventoryClickEvent) {
             val clicker = e.whoClicked
-            if(e.view.title().str() != "Accessories" || e.clickedInventory == e.view.topInventory || clicker !is Player)
+            if (e.view.title()
+                    .str() != "Accessories" || e.clickedInventory == e.view.topInventory || clicker !is Player
+            )
                 return
             e.isCancelled = true
             val clickedItem = e.currentItem
             clickedItem?.amount = 1
             val clicked = clickedItem?.macrocosm
-            if(clicked == null || clicked !is AccessoryItem)
+            if (clicked == null || clicked !is AccessoryItem)
                 return
             val bag = clicker.macrocosm?.accessoryBag ?: return
-            if(!bag.addAccessory(clicked)) {
+            if (!bag.addAccessory(clicked)) {
                 sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                     pitch = 0f
                     playFor(clicker)

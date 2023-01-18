@@ -86,9 +86,16 @@ object AOTSAbility : AbilityBase(
                         continue
 
                     val mc = entity.macrocosm!!
-                    val event = PlayerDealDamageEvent(e.player, entity, DamageCalculator.calculateStandardReceived(dmg, mc.calculateStats()), false, DamageKind.MELEE, false)
+                    val event = PlayerDealDamageEvent(
+                        e.player,
+                        entity,
+                        DamageCalculator.calculateStandardReceived(dmg, mc.calculateStats()),
+                        false,
+                        DamageKind.MELEE,
+                        false
+                    )
                     event.callEvent()
-                    if(!event.isCancelled) {
+                    if (!event.isCancelled) {
                         mc.damage(event.damage, p, event.kind)
                         DamageHandlers.summonDamageIndicator(entity.location, event.damage)
                     }

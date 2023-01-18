@@ -8,10 +8,14 @@ import space.maxus.macrocosm.entity.macrocosm
 import space.maxus.macrocosm.events.PlayerKillEntityEvent
 import kotlin.math.ceil
 
-class ScavengerTalisman(applicable: String, private val modifier: Float, description: String = "Monsters drop coins when killed"): AccessoryAbility(applicable, description) {
+class ScavengerTalisman(
+    applicable: String,
+    private val modifier: Float,
+    description: String = "Monsters drop coins when killed"
+) : AccessoryAbility(applicable, description) {
     override fun registerListeners() {
         listen<PlayerKillEntityEvent> { e ->
-            if(!hasAccs(e.player))
+            if (!hasAccs(e.player))
                 return@listen
             val mc = e.killed.macrocosm ?: return@listen
             val amount = ceil(mc.level * .05f) * modifier

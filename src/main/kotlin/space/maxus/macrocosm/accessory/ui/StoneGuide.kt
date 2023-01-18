@@ -15,7 +15,10 @@ fun powerStonesGuide(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpi
     page(0) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Learn Power From Stones")) { e ->
+        button(
+            Slots.RowOneSlotFive,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Learn Power From Stones")
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(learnPowerUi(player, mutableListOf()))
         }
@@ -25,6 +28,8 @@ fun powerStonesGuide(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpi
         }
 
         compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
-        compound.addContent(Registry.ACCESSORY_POWER.iter().values.filterIsInstance<StoneAccessoryPower>().sortedByDescending { it.combatLevel })
+        compound.addContent(
+            Registry.ACCESSORY_POWER.iter().values.filterIsInstance<StoneAccessoryPower>()
+                .sortedByDescending { it.combatLevel })
     }
 }

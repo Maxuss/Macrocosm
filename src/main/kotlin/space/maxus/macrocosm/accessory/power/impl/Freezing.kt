@@ -7,7 +7,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-object Freezing: StoneAccessoryPower(
+object Freezing : StoneAccessoryPower(
     "freezing",
     "Freezing",
     "Frigid Urchin",
@@ -24,7 +24,7 @@ object Freezing: StoneAccessoryPower(
 ) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player))
+            if (!ensureRequirements(e.player))
                 return@listen
             e.stats.abilityDamage += 25
         }

@@ -38,7 +38,7 @@ abstract class StoneAccessoryPower(
     val obtaining: String,
     override val stats: Statistics,
     private val stoneTexture: String,
-    ): AccessoryPower, AutoRegister<MacrocosmItem> {
+) : AccessoryPower, AutoRegister<MacrocosmItem> {
     override val id: Identifier = id(id)
     override val displayItem: Material = Material.PLAYER_HEAD
 
@@ -61,7 +61,7 @@ abstract class StoneAccessoryPower(
             "",
             "Combat level required: <green>$combatLevel",
             "",
-            "Learned: ${if(player.memory.knownPowers.contains(id)) "<green>Yes ✓" else "<red>Not Yet ❌"}"
+            "Learned: ${if (player.memory.knownPowers.contains(id)) "<green>Yes ✓" else "<red>Not Yet ❌"}"
         )
     }
 
@@ -73,7 +73,7 @@ abstract class StoneAccessoryPower(
             "",
             "Stats:",
             *statsForMp.iter().filter { it.value != 0f }.map { (stat, value) ->
-                val mod = if(value < 0f) "" else "+"
+                val mod = if (value < 0f) "" else "+"
                 val sValue = ceil(value).roundToInt()
                 "<${stat.color.asHexString()}>$mod$sValue${stat.display}"
             }.toTypedArray(),
@@ -83,9 +83,9 @@ abstract class StoneAccessoryPower(
             "",
             "You have: <gold>$mp Magic Power",
             "",
-            if(selected) "<green>Power is selected!" else "<yellow>Click to select power!"
+            if (selected) "<green>Power is selected!" else "<yellow>Click to select power!"
         )
-        return if(selected)
+        return if (selected)
             ItemValue.placeholderDescriptedGlow(Material.LIME_STAINED_GLASS_PANE, "<green>$name", *lore)
         else
             ItemValue.placeholderHeadDesc(stoneTexture, "<green>$name", *lore)

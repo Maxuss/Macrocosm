@@ -45,7 +45,11 @@ fun slayerChooseMenu(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSp
                     it.slayer.item,
                     "<red>\uD83D\uDC80 <yellow>${it.slayer.name.stripTags()}",
                     *it.slayer.description.reduceToList(20).toMutableList()
-                        .apply { add(""); add("<gray>${it.slayer.entityKind} Slayer: <yellow>LVL ${player.slayers[it]!!.level + 1}"); add(""); add("<yellow>Click to view boss.") }
+                        .apply {
+                            add(""); add("<gray>${it.slayer.entityKind} Slayer: <yellow>LVL ${player.slayers[it]!!.level + 1}"); add(
+                            ""
+                        ); add("<yellow>Click to view boss.")
+                        }
                         .toTypedArray()
                 )
             else

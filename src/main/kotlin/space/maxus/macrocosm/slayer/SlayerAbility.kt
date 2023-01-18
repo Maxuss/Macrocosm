@@ -21,7 +21,8 @@ class SlayerAbility(
     val listenerRegister: SlayerAbility.() -> Unit
 ) {
     companion object {
-        val bosses: ConcurrentHashMap<SlayerType, ConcurrentLinkedQueue<UUID>> = ConcurrentHashMap(EnumMap(SlayerType::class.java))
+        val bosses: ConcurrentHashMap<SlayerType, ConcurrentLinkedQueue<UUID>> =
+            ConcurrentHashMap(EnumMap(SlayerType::class.java))
     }
 
     fun descript(tier: Int): List<Component> {

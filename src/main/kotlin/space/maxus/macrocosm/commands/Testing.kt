@@ -58,7 +58,7 @@ fun handDebug() = command("handdebug") {
     runsCatching {
         val mc = player.inventory.itemInMainHand.macrocosm!!
         val texts = Debug.constructObjectData(mc).split("\n")
-        for(part in texts) {
+        for (part in texts) {
             player.sendMessage(part)
         }
     }
@@ -97,15 +97,16 @@ fun setSlayerLevelCommand() = command("slayerlvl") {
     }
 }
 
-fun addSlayerExpCommand()  = command("slayerxp") {
+fun addSlayerExpCommand() = command("slayerxp") {
     argument("id", StringArgumentType.string()) {
         argument("exp", DoubleArgumentType.doubleArg(.0)) {
             runs {
                 val ty = SlayerType.valueOf(getArgument("id"))
                 val slayer = player.macrocosm!!.slayers[ty]!!
-                player.macrocosm!!.slayers[ty] = SlayerLevel(slayer.level, slayer.overflow, slayer.collectedRewards, slayer.rng.apply {
-                    this[ty]!!.expAccumulated += getArgument<Double>("exp")
-                })
+                player.macrocosm!!.slayers[ty] =
+                    SlayerLevel(slayer.level, slayer.overflow, slayer.collectedRewards, slayer.rng.apply {
+                        this[ty]!!.expAccumulated += getArgument<Double>("exp")
+                    })
             }
         }
     }

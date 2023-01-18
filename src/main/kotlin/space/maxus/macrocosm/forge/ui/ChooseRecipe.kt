@@ -81,7 +81,7 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
 
                             playFor(e.player)
                         }
-                        val addMillis = if(OldBlueprints.hasAccs(player)) recipe.length * 250 else 0
+                        val addMillis = if (OldBlueprints.hasAccs(player)) recipe.length * 250 else 0
                         player.activeForgeRecipes.add(
                             ActiveForgeRecipe(
                                 Registry.FORGE_RECIPE.byValue(recipe)!!,

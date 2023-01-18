@@ -151,7 +151,7 @@ fun Iterable<Double>.median(): Double {
     }
 }
 
-fun <A> identity(): (A) -> A  = { a -> a }
+fun <A> identity(): (A) -> A = { a -> a }
 fun nullFn(): () -> Unit = { }
 
 inline fun <reified V> aggregate(times: Int, crossinline generator: () -> V): List<V> {

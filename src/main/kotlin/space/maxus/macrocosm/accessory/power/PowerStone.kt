@@ -31,7 +31,14 @@ private val roundMpValues = listOf(100, 250, 500, 750, 1000)
 /**
  * A power stone item, containing an accessory item
  */
-class PowerStone(id: Identifier, name: String, val powerId: Identifier, override var rarity: Rarity, private val headSkin: String, protected var uuid: UUID = UUID.randomUUID()): AbstractMacrocosmItem(id, ItemType.OTHER) {
+class PowerStone(
+    id: Identifier,
+    name: String,
+    val powerId: Identifier,
+    override var rarity: Rarity,
+    private val headSkin: String,
+    protected var uuid: UUID = UUID.randomUUID()
+) : AbstractMacrocosmItem(id, ItemType.OTHER) {
     override val base: Material = Material.PLAYER_HEAD
     override var name: Component = text(name)
 
@@ -54,16 +61,16 @@ class PowerStone(id: Identifier, name: String, val powerId: Identifier, override
         val modifier = AccessoryBag.statModifier(closestMagicalPower)
         val stats = power.stats.clone()
         stats.multiply(modifier.toFloat())
-        for((stat, value) in stats.iter()) {
-            if(value != 0f) {
+        for ((stat, value) in stats.iter()) {
+            if (value != 0f) {
                 val approx = floor(value).roundToInt()
-                val mod = if(value < 0f) "" else "+"
+                val mod = if (value < 0f) "" else "+"
                 buffer.add("<${stat.color.asHexString()}>$mod$approx${stat.display}")
             }
         }
         buffer.add("")
         buffer.add("Unique Power Bonus:")
-        for(part in power.specialBonus.split("<br>")) {
+        for (part in power.specialBonus.split("<br>")) {
             buffer.add(part)
         }
         buffer.add("")

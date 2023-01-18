@@ -17,7 +17,8 @@ object Formatting {
      * @return Formatted number string
      */
     fun stats(num: BigDecimal, isInteger: Boolean = false, scale: Int = 1): String {
-        val format = if (isInteger || num.toDouble() % 1 == 0.0) DecimalFormat("#") else DecimalFormat("#0.${"0".repeat(scale)}")
+        val format =
+            if (isInteger || num.toDouble() % 1 == 0.0) DecimalFormat("#") else DecimalFormat("#0.${"0".repeat(scale)}")
         return format.format(num.setScale(scale, RoundingMode.DOWN).toDouble())
     }
 

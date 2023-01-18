@@ -66,7 +66,7 @@ open class SlayerBase(
 
     override fun spawn(at: Location): LivingEntity {
         val e = super.spawn(at)
-        if(SlayerAbility.bosses[slayer] == null)
+        if (SlayerAbility.bosses[slayer] == null)
             SlayerAbility.bosses[slayer] = ConcurrentLinkedQueue()
         SlayerAbility.bosses[slayer]!!.add(e.uniqueId)
         return e

@@ -23,10 +23,15 @@ import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.stripTags
 
 internal fun formatChance(chance: Float): String {
-    return "<gray>(" + Formatting.stats((chance * 100).toBigDecimal(), scale = if(chance * 100 <= .2) 4 else 1) + "%)"
+    return "<gray>(" + Formatting.stats((chance * 100).toBigDecimal(), scale = if (chance * 100 <= .2) 4 else 1) + "%)"
 }
 
-internal fun buildDropItem(player: MacrocosmPlayer, playerLevel: SlayerLevel, drop: SlayerDrop, newChance: Float = -1f): ItemStack {
+internal fun buildDropItem(
+    player: MacrocosmPlayer,
+    playerLevel: SlayerLevel,
+    drop: SlayerDrop,
+    newChance: Float = -1f
+): ItemStack {
     if (drop.requiredLevel > playerLevel.level)
         return ItemValue.placeholderDescripted(
             Material.COAL_BLOCK,
@@ -54,8 +59,15 @@ internal fun buildDropItem(player: MacrocosmPlayer, playerLevel: SlayerLevel, dr
         }
         bufferedLore.add("")
         bufferedLore.add("Minimum: <${colorFromTier(drop.minTier).asHexString()}>Tier ${roman(drop.minTier)}")
-        if(newChance != -1f) {
-            bufferedLore.add("Odds: ${drop.drop.rarity.odds} <strikethrough>${formatChance(drop.drop.chance.toFloat()).replace("<gray>", "<dark_gray>")}</strikethrough> ${formatChance(newChance)}")
+        if (newChance != -1f) {
+            bufferedLore.add(
+                "Odds: ${drop.drop.rarity.odds} <strikethrough>${
+                    formatChance(drop.drop.chance.toFloat()).replace(
+                        "<gray>",
+                        "<dark_gray>"
+                    )
+                }</strikethrough> ${formatChance(newChance)}"
+            )
         } else {
             bufferedLore.add("Odds: ${drop.drop.rarity.odds} ${formatChance(drop.drop.chance.toFloat())}")
         }

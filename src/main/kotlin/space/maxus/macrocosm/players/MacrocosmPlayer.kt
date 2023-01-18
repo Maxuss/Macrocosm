@@ -97,7 +97,16 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> =
-        SlayerType.values().asIterable().associateWithHashed(ignoring(SlayerLevel(0, .0, listOf(), HashMap(SlayerType.values().associateWith { RngStatus(.0, -1) }))))
+        SlayerType.values().asIterable().associateWithHashed(
+            ignoring(
+                SlayerLevel(
+                    0,
+                    .0,
+                    listOf(),
+                    HashMap(SlayerType.values().associateWith { RngStatus(.0, -1) })
+                )
+            )
+        )
     var boundSlayerBoss: UUID? = null
     var summons: MutableList<UUID> = mutableListOf()
     var summonSlotsUsed: Int = 0
@@ -463,7 +472,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         cloned.vitality += (currentHealth / 100f)
         cloned.vigor += (currentMana / 50f)
         @Suppress("SENSELESS_COMPARISON") // NPEs actually do happen on player join
-        if(accessoryBag != null) {
+        if (accessoryBag != null) {
             for (accessory in accessoryBag.accessories) {
                 val item = Registry.ITEM.find(accessory.item)
                 if (item.rarity != accessory.rarity) {

@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.db.impl
 
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import space.maxus.macrocosm.db.*
 import space.maxus.macrocosm.registry.Identifier

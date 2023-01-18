@@ -7,7 +7,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-object Warping: StoneAccessoryPower(
+object Warping : StoneAccessoryPower(
     "warping",
     "Warping",
     "Twisted Urchin",
@@ -25,7 +25,7 @@ object Warping: StoneAccessoryPower(
 ) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player))
+            if (!ensureRequirements(e.player))
                 return@listen
             e.stats.magicFind += 20
         }

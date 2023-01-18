@@ -21,19 +21,19 @@ class LootPool private constructor(val drops: List<Drop>) {
         fun of(vararg drops: Drop) = LootPool(drops.toList().filter { it.amount.last > 0 })
     }
 
-    fun roll(mf: Float = 0f, player: MacrocosmPlayer? = null, ) = drops.filter { drop ->
+    fun roll(mf: Float = 0f, player: MacrocosmPlayer? = null) = drops.filter { drop ->
         val mfMod = mf / 100.0
-        val chance = if(player == null) drop.chance * (1 + mfMod) else {
+        val chance = if (player == null) drop.chance * (1 + mfMod) else {
             val base = drop.chance * (1 + mfMod)
             val slayer = player.slayerQuest
-            if(slayer == null)
+            if (slayer == null)
                 base
             else {
                 val slayerLevel = player.slayers[slayer.type]!!
                 val rngSelected = slayerLevel.rng[slayer.type]!!
                 val dropSelected = rngSelected.selectedRngDrop
                 val actualDrop = slayer.type.slayer.drops[dropSelected].drop
-                if(actualDrop == drop) {
+                if (actualDrop == drop) {
                     // applying calculations
                     val expToDrop = (((1 / base) * 900) * slayerLevelBuff[slayerLevel.level]).roundToInt()
                     val newChance = base + (rngSelected.expAccumulated / expToDrop) * .03

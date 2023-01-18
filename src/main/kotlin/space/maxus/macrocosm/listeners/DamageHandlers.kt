@@ -127,8 +127,8 @@ object DamageHandlers : Listener {
         val nmsDamager = (damager as CraftLivingEntity).handle
         nmsDamaged.knockback(
             knockbackAmount,
-            Mth.sin(nmsDamager.getYRot() * 0.017453292F).toDouble(),
-            -Mth.cos(nmsDamager.getYRot() * 0.017453292F).toDouble(),
+            Mth.sin(nmsDamager.yRot * 0.017453292F).toDouble(),
+            -Mth.cos(nmsDamager.yRot * 0.017453292F).toDouble(),
             nmsDamager
         )
         nmsDamager.deltaMovement = nmsDamager.deltaMovement.multiply(.6, 1.0, 0.6)

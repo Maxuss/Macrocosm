@@ -8,14 +8,16 @@ data class PlayerMemory(
     val knownPowers: MutableList<Identifier>
 ) : Serializable {
     companion object {
-        fun nullMemory() = PlayerMemory(mutableListOf(), mutableListOf(
-            "fortuitous",
-            "pretty",
-            "protected",
-            "simple",
-            "warrior",
-            "inspired",
-            "ominous",
-        ).map(Identifier::macro).toMutableList())
+        fun nullMemory() = PlayerMemory(
+            mutableListOf(), mutableListOf(
+                "fortuitous",
+                "pretty",
+                "protected",
+                "simple",
+                "warrior",
+                "inspired",
+                "ominous",
+            ).map(Identifier::macro).toMutableList()
+        )
     }
 }

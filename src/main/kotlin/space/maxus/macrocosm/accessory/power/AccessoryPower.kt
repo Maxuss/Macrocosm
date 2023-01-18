@@ -67,23 +67,24 @@ interface AccessoryPower {
     fun thaumaturgyPlaceholder(player: MacrocosmPlayer, mp: Int, selected: Boolean = false): ItemStack {
         val statsForMp = stats.clone()
         statsForMp.multiply(AccessoryBag.statModifier(mp).toFloat())
-        val method: (Material, String, Array<out String>) -> ItemStack = if(selected) ItemValue::placeholderDescriptedGlow else ItemValue::placeholderDescripted
+        val method: (Material, String, Array<out String>) -> ItemStack =
+            if (selected) ItemValue::placeholderDescriptedGlow else ItemValue::placeholderDescripted
         return method(
-            if(selected) Material.LIME_STAINED_GLASS_PANE else displayItem,
+            if (selected) Material.LIME_STAINED_GLASS_PANE else displayItem,
             "<green>$name",
             arrayOf(
-            "<dark_gray>$tier Power",
-            "",
-            "Stats:",
-            *statsForMp.iter().filter { it.value != 0f }.map { (stat, value) ->
-                val mod = if(value < 0f) "" else "+"
-                val sValue = ceil(value).roundToInt()
-                "<${stat.color.asHexString()}>$mod$sValue${stat.display}"
-            }.toTypedArray(),
-            "",
-            "You have: <gold>$mp Magic Power",
-            "",
-            if(selected) "<green>Power is selected!" else "<yellow>Click to select power!"
+                "<dark_gray>$tier Power",
+                "",
+                "Stats:",
+                *statsForMp.iter().filter { it.value != 0f }.map { (stat, value) ->
+                    val mod = if (value < 0f) "" else "+"
+                    val sValue = ceil(value).roundToInt()
+                    "<${stat.color.asHexString()}>$mod$sValue${stat.display}"
+                }.toTypedArray(),
+                "",
+                "You have: <gold>$mp Magic Power",
+                "",
+                if (selected) "<green>Power is selected!" else "<yellow>Click to select power!"
             )
         )
     }

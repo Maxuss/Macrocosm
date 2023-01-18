@@ -73,7 +73,7 @@ open class EntityBase(
         if (Registry.DISGUISE.has(id)) {
             val skin = Registry.DISGUISE.find(id)
             val disguise = PlayerDisguise(nameMm(buildName()), skin)
-            if(disguiseProfile != null) {
+            if (disguiseProfile != null) {
                 disguise.gameProfile = disguiseProfile
             }
 

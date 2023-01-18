@@ -8,7 +8,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-object Bloody: StoneAccessoryPower(
+object Bloody : StoneAccessoryPower(
     "bloody",
     "Bloody",
     "Giant Heart",
@@ -26,7 +26,7 @@ object Bloody: StoneAccessoryPower(
 ) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent>(priority = EventPriority.LOWEST) { e ->
-            if(!ensureRequirements(e.player))
+            if (!ensureRequirements(e.player))
                 return@listen
             e.stats.health *= 1.15f
         }

@@ -7,7 +7,7 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.stats
 
-object Blazing: StoneAccessoryPower(
+object Blazing : StoneAccessoryPower(
     "blazing",
     "Blazing",
     "Magma Urchin",
@@ -24,7 +24,7 @@ object Blazing: StoneAccessoryPower(
 ) {
     override fun registerListeners() {
         listen<PlayerCalculateStatsEvent> { e ->
-            if(!ensureRequirements(e.player))
+            if (!ensureRequirements(e.player))
                 return@listen
             e.stats.attackSpeed += 15
         }

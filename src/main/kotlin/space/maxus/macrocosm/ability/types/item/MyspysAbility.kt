@@ -39,7 +39,7 @@ import java.time.Duration
 import java.util.*
 import kotlin.math.min
 
-object  MyspysAbility : AbilityBase(
+object MyspysAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,
     "Myspys",
     "Transform yourself into<br><gradient:#DC8F16:#3C2502:#DC8F16>Angel of Hatred<gray> for <red>5 seconds<gray>.<br>In this form you take <red>[0.5:0.2]%<gray> less damage, can fly but can not do physical damage. Instead, each hit on enemy will burst out Hatred Geysers that deal <red>[3500:0.1] ${Statistic.DAMAGE.display}<gray> for <green>2 seconds<gray>."

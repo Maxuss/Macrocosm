@@ -99,12 +99,13 @@ object SlayerHandlers : Listener {
         var accumulated = rngStatus.expAccumulated + expForTier
         val oldChance = selectedDrop.drop.chance
         val expToDrop = (((1 / oldChance) * 900) * slayerLevelBuff[currentLevel.level]).roundToInt()
-        if(accumulated >= expToDrop) {
+        if (accumulated >= expToDrop) {
             selectedDrop.drop.dropRngesusReward(player)
             accumulated = expForTier
         }
         if (SlayerTable.shouldLevelUp(currentLevel.level, newExp, .0)) {
-            player.slayers[quest.type] = SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, currentLevel.rng)
+            player.slayers[quest.type] =
+                SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, currentLevel.rng)
             player.sendMessage(
                 "<green><bold>LVL UP! <dark_purple>▶ </bold><yellow>${
                     quest.type.name.replace("_", " ").capitalized()
@@ -130,9 +131,10 @@ object SlayerHandlers : Listener {
                     )
             )
         } else {
-            player.slayers[quest.type] = SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, currentLevel.rng.apply {
-                this[quest.type]!!.expAccumulated = accumulated
-            })
+            player.slayers[quest.type] =
+                SlayerLevel(currentLevel.level, newExp, currentLevel.collectedRewards, currentLevel.rng.apply {
+                    this[quest.type]!!.expAccumulated = accumulated
+                })
             if (currentLevel.level == 9)
                 player.sendMessage(
                     "<yellow>${

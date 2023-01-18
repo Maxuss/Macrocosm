@@ -9,7 +9,8 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.text
 
-abstract class AccessoryAbility(accs: String, description: String): AbilityBase(AbilityType.PASSIVE, "null", description) {
+abstract class AccessoryAbility(accs: String, description: String) :
+    AbilityBase(AbilityType.PASSIVE, "null", description) {
     private val acc: Identifier = Identifier.parse(accs)
     fun hasAccs(player: MacrocosmPlayer): Boolean {
         @Suppress("SENSELESS_COMPARISON") // NPEs are possible for accessory bag (for some reason)

@@ -25,7 +25,7 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
         val bag = player.accessoryBag
 
         val nextAmount = slotAmounts[bag.jacobusSlots % 3]
-        val nextPrice = when(bag.jacobusSlots) {
+        val nextPrice = when (bag.jacobusSlots) {
             in 42..198 -> 20_000_000
             in 22..42 -> 10_000_000
             in 15..22 -> 8_000_000
@@ -39,28 +39,30 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
             e.player.closeInventory()
         }
 
-        button(Slots.RowThreeSlotThree, ItemValue.placeholderHeadDesc(
-            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2I2NDhiOWE0NGUyODBiY2RmMjVmNGE2NmE5N2JkNWMzMzU0MmU1ZTgyNDE1ZTE1YjQ3NWM2Yjk5OWI4ZDYzNSJ9fX0=",
-            "<green>Accessory Bag Upgrades",
-            "Increases the size of your",
-            "accessory bag.",
-            "",
-            "Redstone collection: <red>+${bag.redstoneCollSlots} Slots",
-            "Mithril collection: <aqua>+${bag.mithrilCollSlots} Slots",
-            "Jacobus: <gold>+${bag.jacobusSlots} Slots",
-            "Total: <green>${bag.capacity} Slots",
-            "",
-            "Buying: <gold>+${nextAmount} Slots",
-            "Cost: <gold>${Formatting.withCommas(nextPrice.toBigDecimal(), true)} Coins",
-            "",
-            "<yellow>Click to buy!"
-        )) { e ->
+        button(
+            Slots.RowThreeSlotThree, ItemValue.placeholderHeadDesc(
+                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2I2NDhiOWE0NGUyODBiY2RmMjVmNGE2NmE5N2JkNWMzMzU0MmU1ZTgyNDE1ZTE1YjQ3NWM2Yjk5OWI4ZDYzNSJ9fX0=",
+                "<green>Accessory Bag Upgrades",
+                "Increases the size of your",
+                "accessory bag.",
+                "",
+                "Redstone collection: <red>+${bag.redstoneCollSlots} Slots",
+                "Mithril collection: <aqua>+${bag.mithrilCollSlots} Slots",
+                "Jacobus: <gold>+${bag.jacobusSlots} Slots",
+                "Total: <green>${bag.capacity} Slots",
+                "",
+                "Buying: <gold>+${nextAmount} Slots",
+                "Cost: <gold>${Formatting.withCommas(nextPrice.toBigDecimal(), true)} Coins",
+                "",
+                "<yellow>Click to buy!"
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
-            if(player.purse >= nextPrice.toBigDecimal()) {
+            if (player.purse >= nextPrice.toBigDecimal()) {
                 player.purse -= transact(nextPrice.toBigDecimal(), player.ref, Transaction.Kind.OUTGOING)
                 bag.jacobusSlots += nextAmount
                 bag.capacity += nextAmount
-                if(bag.jacobusSlots == 8) {
+                if (bag.jacobusSlots == 8) {
                     // award a register on 5th purchase
                     e.player.giveOrDrop(Registry.ITEM.find(id("jacobus_register")).build(player)!!)
                     player.sendMessage("<green>You have been awarded by <gold>Jacqueefis<green> with a <gold>Jacqueefis Register<green>!")
@@ -73,7 +75,7 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                         pitch = 1 + count * .1f
                         playAt(e.player.location)
                     }
-                    if(count >= 6) {
+                    if (count >= 6) {
                         it.cancel()
                         sound(Sound.BLOCK_ANVIL_USE) {
                             pitch = 2f
@@ -83,7 +85,14 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                         return@task
                     }
                 }
-                player.sendMessage("<yellow>Upgraded accessory bag size by <gold>+${nextAmount} Slots<green> for <gold>${Formatting.withCommas(nextPrice.toBigDecimal(), true)} Coins<yellow>!")
+                player.sendMessage(
+                    "<yellow>Upgraded accessory bag size by <gold>+${nextAmount} Slots<green> for <gold>${
+                        Formatting.withCommas(
+                            nextPrice.toBigDecimal(),
+                            true
+                        )
+                    } Coins<yellow>!"
+                )
                 e.player.openGUI(jacobusUi(player))
             } else {
                 sound(Sound.ENTITY_VILLAGER_NO) {
@@ -95,13 +104,17 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
             }
         }
 
-        button(Slots.RowThreeSlotSeven,
-            ItemValue.placeholderHeadDesc("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYxYTkxOGMwYzQ5YmE4ZDA1M2U1MjJjYjkxYWJjNzQ2ODkzNjdiNGQ4YWEwNmJmYzFiYTkxNTQ3MzA5ODVmZiJ9fX0=",
+        button(
+            Slots.RowThreeSlotSeven,
+            ItemValue.placeholderHeadDesc(
+                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYxYTkxOGMwYzQ5YmE4ZDA1M2U1MjJjYjkxYWJjNzQ2ODkzNjdiNGQ4YWEwNmJmYzFiYTkxNTQ3MzA5ODVmZiJ9fX0=",
                 "<green>Accessory Bag Shortcut",
                 "Quickly access your accessory",
                 "bag from right here!",
                 "",
-                "<yellow>Click to open!")) { e ->
+                "<yellow>Click to open!"
+            )
+        ) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.openGUI(player.accessoryBag.ui(player))
         }

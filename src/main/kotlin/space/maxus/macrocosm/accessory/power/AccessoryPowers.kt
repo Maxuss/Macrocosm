@@ -75,36 +75,41 @@ enum class AccessoryPowers(val power: AccessoryPower) {
             strength = 4.5f
         }
     )),
+
     // Intermediate
-    INSPIRED(SimpleAccessoryPower(
-        "inspired",
-        Material.LAPIS_LAZULI,
-        "Inspired",
-        stats {
-            critChance = .5f
-            critDamage = 2f
-            health = 1f
-            defense = .5f
-            strength = 2f
-            intelligence = 7f
-        },
-        "Intermediate"
-    )),
-    OMINOUS(SimpleAccessoryPower(
-        "ominous",
-        Material.PRISMARINE_CRYSTALS,
-        "Ominous",
-        stats {
-            critChance = .7f
-            speed = .5f
-            attackSpeed = .7f
-            critDamage = 2f
-            health = 2.5f
-            strength = 2f
-            intelligence = 2f
-        },
-        "Intermediate"
-    )),
+    INSPIRED(
+        SimpleAccessoryPower(
+            "inspired",
+            Material.LAPIS_LAZULI,
+            "Inspired",
+            stats {
+                critChance = .5f
+                critDamage = 2f
+                health = 1f
+                defense = .5f
+                strength = 2f
+                intelligence = 7f
+            },
+            "Intermediate"
+        )
+    ),
+    OMINOUS(
+        SimpleAccessoryPower(
+            "ominous",
+            Material.PRISMARINE_CRYSTALS,
+            "Ominous",
+            stats {
+                critChance = .7f
+                speed = .5f
+                attackSpeed = .7f
+                critDamage = 2f
+                health = 2.5f
+                strength = 2f
+                intelligence = 2f
+            },
+            "Intermediate"
+        )
+    ),
 
     // Stones
     SILKY(Silky),
