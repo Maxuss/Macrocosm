@@ -8,7 +8,7 @@ import space.maxus.macrocosm.stats.Statistic
 
 object ReaperOrb : AccessoryAbility(
     "reaper_orb",
-    "Gain <red>+2${Statistic.STRENGTH}<gray> for <green>5 seconds<gray> after killing a mob."
+    "Gain <red>+2${Statistic.STRENGTH.display}<gray> for <green>5 seconds<gray> after killing a mob."
 ) {
     override fun registerListeners() {
         listen<PlayerKillEntityEvent> { e ->

@@ -18,7 +18,7 @@ class ScavengerTalisman(
             if (!hasAccs(e.player))
                 return@listen
             val mc = e.killed.macrocosm ?: return@listen
-            val amount = ceil(mc.level * .05f) * modifier
+            val amount = ceil(mc.level * .25f) * modifier
             e.player.purse += amount.toBigDecimal()
             sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP) {
                 pitch = 2f

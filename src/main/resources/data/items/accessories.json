@@ -119,5 +119,315 @@
         },
         "rarity": "legendary",
         "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2I2NDhiOWE0NGUyODBiY2RmMjVmNGE2NmE5N2JkNWMzMzU0MmU1ZTgyNDE1ZTE1YjQ3NWM2Yjk5OWI4ZDYzNSJ9fX0="
+    },
+    "night_vision_charm": {
+        "type": "accessory",
+        "abilities": [
+            "night_vision_charm"
+        ],
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjk1MzRhZjE0YTdjYTVmMmM5ZTRmZDVkZGVlYmY3MzQxODFiOWI5ZTUzZTM2ZDAzOGM1MGU0NzNmYmVmNzRlMSJ9fX0="
+    },
+    "haste_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "haste_t1"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTA3NjY2MThiM2ZhN2FjYTUxMDU3NTZhYTNlMjNiODQ0OGIyYmJlNTZkMzlkOTcyMTc0ODZhMzA4NjUyZWRjNiJ9fX0="
+    },
+    "haste_ring": {
+        "type": "accessory",
+        "abilities": [
+            "haste_t2"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmI0YWI2NTc0ZTFjYzlmMGI4ZmUxNmM3YWNmNWY3ODQyMzEwYThjNzQxYTUzYjRiY2U4YzU2MzRkYmYwOTAzZSJ9fX0="
+    },
+    "haste_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "haste_t3"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhjOTJiNDk5MjNjZTI3OTI1NTNmZjI2YmI3YWVhOTMzM2RhNzQ4MTM5ODI4ZGY3OTNiYTE1MWU2ZGQ1ZDc1In19fQ=="
+    },
+    "haste_relic": {
+        "type": "accessory",
+        "abilities": [
+            "haste_t4"
+        ],
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTk3ZTMxNzdhZjFlNTBmMmQ2MjM1NWVmM2MyNmMwMDI2ZWVkYTdlMmJmOGNmMmI1YWI3MTUyN2MwMDZjNWRkMSJ9fX0="
+    },
+    "experience_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "experience_artifact"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGZjM2MyNDNmYzA4OTRhYTQwMjhkMzJiMTlhODMwYTJmY2FkYzI5MzI3MGI0Y2IzMmMxYmFlNDJjNzhjMDhiZSJ9fX0="
+    },
+    "night_crystal_talisman": {
+        "type": "accessory",
+        "name": "Night Crystal",
+        "abilities": [
+            "night_crystal"
+        ],
+        "rarity": "rare",
+        "material": "nether_star"
+    },
+    "day_crystal_talisman": {
+        "type": "accessory",
+        "name": "Day Crystal",
+        "abilities": [
+            "day_crystal"
+        ],
+        "rarity": "rare",
+        "material": "nether_star"
+    },
+    "emerald_ring_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "emerald_ring"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM2YjgyMWMxYWZkZDVhNWQxNGUzYjNiZDBhMzIyNjNjOGRmNWRmNWRiNmUxZTg4YmY2NWU5N2IyN2E4NTMwIn19fQ=="
+    },
+    "emerald_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "emerald_artifact"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGY0MjEwOGI5ZGIzOTdlMzQxNmE1YjEyN2I5Njg0YjdkODM0MTViMjllMDg0YjYxNDQ3NTZjMGM3N2E0MzIifX19"
+    },
+    "fire_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "fire_talisman"
+        ],
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjgyZWUyODliOTFmZjM5YTk3ZDM5YjlhYzVmYjlhOGU0MzQ4NDA0ZjI3NjQzYWYyNDk1ODU5MDI3YjM0NDUwMyJ9fX0="
+    },
+    "feather_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "feather_talisman"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDY2YjEwYmY2ZWUyY2Q3ZTNhYzk2ZDk3NDllYTYxNmFhOWM3MzAzMGJkY2FlZmZhZWQyNDllNTVjODQ5OTRhYyJ9fX0="
+    },
+    "feather_ring": {
+        "type": "accessory",
+        "abilities": [
+            "feather_ring"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDY2YjEwYmY2ZWUyY2Q3ZTNhYzk2ZDk3NDllYTYxNmFhOWM3MzAzMGJkY2FlZmZhZWQyNDllNTVjODQ5OTRhYyJ9fX0="
+    },
+    "feather_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "feather_artifact"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDY2YjEwYmY2ZWUyY2Q3ZTNhYzk2ZDk3NDllYTYxNmFhOWM3MzAzMGJkY2FlZmZhZWQyNDllNTVjODQ5OTRhYyJ9fX0="
+    },
+    "titanium_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "titanium_talisman"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTBmZWRhNTM1NzZjOGE2ZTU3NDY2ZjVkYmRiOTllYTQ4MGVkMTIyYTA5ZmRkODUwZWQ4YzJlNzU1ZjU1Y2FjMiJ9fX0="
+    },
+    "titanium_ring": {
+        "type": "accessory",
+        "abilities": [
+            "titanium_ring"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmMzZWRkOTE5YzBjYzZkOTY2OGZmZDIxMGU0NmQyYzA3ZmUwODhjNDRkODVmNDdkMjUxYjRmODc0ODExNzRmNSJ9fX0="
+    },
+    "titanium_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "titanium_artifact"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThlYzIxZDIwZjFhYWY1NjM1ZjQ4YmVkYTg4NjI2NDAzYzYzODViODE2NzNmYjdjZmE3ZmY4MjE3OWM2M2UzOSJ9fX0="
+    },
+    "titanium_relic": {
+        "type": "accessory",
+        "abilities": [
+            "titanium_relic"
+        ],
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDJmMjQwNWE3YjhkZWZkZGIwYjgyNjhiZWE4ZjJlMTJmYzA5YmJjN2RlMTI5ODFmODVkYjJhNzAwMWFjODFlYiJ9fX0="
+    },
+    "piggy_bank": {
+        "type": "accessory",
+        "abilities": [
+            "piggy_bank"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTk4ZGY0MmY0NzdmMjEzZmY1ZTlkN2ZhNWE0Y2M0YTY5ZjIwZDljZWYyYjkwYzRhZTRmMjliZDE3Mjg3YjUifX19"
+    },
+    "piggy_vault": {
+        "type": "accessory",
+        "abilities": [
+            "piggy_vault"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2Q4ODk2NmY0M2IzMTljMWY2MjM0MmY4ZmNjMjVkYWFmNzljNzlhYTNmNDE0YTdlODA0MDdiYWEwZWY5N2NmOSJ9fX0="
+    },
+    "scavenger_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "scavenger_talisman"
+        ],
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODdmYWRmNGEyYWExNzA1ZDE4Y2E3MDM0OTcwMWNhOGJhZWEzNjhkNGYyZmVlYThmN2RlMjM0MGE5Mzc2MWVmNSJ9fX0="
+    },
+    "scavenger_ring": {
+        "type": "accessory",
+        "abilities": [
+            "scavenger_ring"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTJlMWY3ZjZhN2U0OGQ3MGQ5ZGNhY2Y2MTZkNTc0MGJhZmMyMjE2MTI4Mzk5OTUwNmJlNmQxOTQ0YWU3ZTk1NSJ9fX0="
+    },
+    "zombie_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "zombie_talisman"
+        ],
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTZmYzg1NGJiODRjZjRiNzY5NzI5Nzk3M2UwMmI3OWJjMTA2OTg0NjBiNTFhNjM5YzYwZTVlNDE3NzM0ZTExIn19fQ=="
+    },
+    "zombie_ring": {
+        "type": "accessory",
+        "abilities": [
+            "zombie_ring"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTVkOTk2Y2I1YThlNWE3MWEyNzQyNzVmNDY5NDRiOTQ0ZWVlYWNkMmUxY2FkZWY5MThiMDViODc5YTAzMzM2ZiJ9fX0="
+    },
+    "zombie_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "zombie_artifact"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzNmYjRlNWRiOTdmNDc5YzY2YTQyYmJkOGE3ZDc4MWRhZjIwMWE4ZGRhZjc3YWZjZjRhZWY4Nzc3OWFhOGI0In19fQ=="
+    },
+    "wither_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "wither_artifact"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWRhOTdjMDZjMDdhMDM1YmQ4NzQ2YjQ4ZDMyZGMwNGU4NDE2MGJkMTYxZjI2YmUxMjcyYjYyNzEyNTFhYWE3In19fQ=="
+    },
+    "wither_relic": {
+        "type": "accessory",
+        "abilities": [
+            "wither_relic"
+        ],
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTE2OWM5MGM4ODc0YWI1NzViMjAxYjYxNmE2OWVhYzdlMGI1YWM2OWJiY2NjYmIyNzcyZTM2Nzc2ZmU2OTQ0MSJ9fX0="
+    },
+    "spider_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "spider_talisman"
+        ],
+        "rarity": "common",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzVlMjQ4ZGEyZTEwOGYwOTgxM2E2Yjg0OGEwZmNlZjExMTMwMDk3ODE4MGVkYTQxZDNkMWE3YThlNGRiYTNjMyJ9fX0="
+    },
+    "spider_ring": {
+        "type": "accessory",
+        "abilities": [
+            "spider_ring"
+        ],
+        "rarity": "uncommon",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWNjYzRhMzJkNDVkNzRlOGIxNGVmMWZmZDU1Y2Q1ZjM4MWEwNmQ0OTk5MDgxZDUyZWFlYTEyZTEzMjkzZTIwOSJ9fX0="
+    },
+    "spider_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "spider_artifact"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjMzMzdlYTg4MDUwODRkYjhiYmM4ZmM1ZGFiZGZlNTdmZDNiYWFmZjFjN2M5ZGVjZDdhYjg2MDJmMWIwNGI1ZSJ9fX0="
+    },
+    "ender_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "ender_artifact"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY5ZGE0ZTdiOGQ1NThhZjAyZTgwZTJlMTY2OWNlYjYwODQ4OThkYjU1OTA3ZWYzZTY2ZDlhMzI5MzI5ZTk0MSJ9fX0="
+    },
+    "ender_relic": {
+        "type": "accessory",
+        "abilities": [
+            "ender_relic"
+        ],
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJlODcwODlmOTMyOWI1NGM5YTU5NjU2MjUzNTQxMDdjN2Y5NmIzMDU0ZjFkZWY4Y2VlYTJiOTBjZTZmOGQifX19"
+    },
+    "spelunker_ring": {
+        "type": "accessory",
+        "abilities": [
+            "spelunker_ring"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjA3ZGZmNjU3ZDYxZjMwMmM3ZDJlNzI1MjY1ZDE3YjY0YWE3MzY0MjM5MTk2NGZiNDhmYzE1YmU5NTA4MzFkOCJ9fX0="
+    },
+    "spelunker_artifact": {
+        "type": "accessory",
+        "abilities": [
+            "spelunker_artifact"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTE1ZmNlYmJiZTAyZmRiNzJhY2QyMDk1ZDllZGZjZWEwOTVlNjA0YjM2ODJkYjg4OTYzYjViODNiMjkzOWI2NyJ9fX0="
+    },
+    "tarantula_talisman": {
+        "type": "accessory",
+        "abilities": [
+            "tarantula_talisman"
+        ],
+        "rarity": "epic",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQyY2Y4Y2U0ODdiNzhmYTIwM2Q1NmNmMDE0OTE0MzRiNGMzM2U1ZDIzNjgwMmM2ZDY5MTQ2YTUxNDM1YjAzZCJ9fX0="
+    },
+    "tarantula_ring": {
+        "type": "accessory",
+        "name": "Glacier Tarantula Talisman",
+        "abilities": [
+            "glacier_tarantula_talisman"
+        ],
+        "rarity": "legendary",
+        "head_skin": "ewogICJ0aW1lc3RhbXAiIDogMTY3NDA2NjMzOTAwOCwKICAicHJvZmlsZUlkIiA6ICIxM2U3NjczMGRlNTI0MTk3OTA5YTZkNTBlMGEyMjAzYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtX3h1cyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9hNzFlOTI3ZTBkZjk3ZWVjZDA2OGZlNDU1OTE0OTM0MjVhYThhOGZiYjU3MmI2ZmM5OWE5MTliMzMwMWI5NjEyIgogICAgfQogIH0KfQ=="
+    },
+    "reaper_orb": {
+        "type": "accessory",
+        "abilities": [
+            "reaper_orb"
+        ],
+        "stats": {
+            "ferocity": 1
+        },
+        "rarity": "legendary",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2E3Y2RhOTAwNGZjMTk3ZDY2YWZiYzJiMDAzYTViOWVmMTNjZjQ2MDBiMWZjNzQ5MDA2NzU5MGYwNDcxODFlIn19fQ=="
+    },
+    "research_pile": {
+        "type": "accessory",
+        "abilities": [
+            "research_pile"
+        ],
+        "rarity": "rare",
+        "head_skin": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODNkODc0ZWI4YzRjNjk3YjNmODMyYmQ4NzQ0MjZmZGY2ZDIxYmFlMzM5ZjMxNzExMDgxZmRlNTk4MzgzODZlMSJ9fX0="
     }
 }

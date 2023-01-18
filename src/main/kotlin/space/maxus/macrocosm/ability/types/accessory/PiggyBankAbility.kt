@@ -2,6 +2,8 @@ package space.maxus.macrocosm.ability.types.accessory
 
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.runnables.task
+import net.axay.kspigot.sound.sound
+import org.bukkit.Sound
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import space.maxus.macrocosm.Macrocosm
@@ -29,10 +31,20 @@ class PiggyBankAbility(applicable: String, private val times: Int) : AccessoryAb
                 playerData[mc.ref] = times
         }
         listen<PlayerDeathEvent> { e ->
+            if(hasAccs(e.player) && !playerData.contains(e.player.ref))
+                playerData[e.player.ref] = times
             playerData.takeMut(e.player.ref) {
                 if (it <= 0)
                     return@listen
                 e.reduceCoins = 0f.toBigDecimal()
+                sound(Sound.BLOCK_GLASS_BREAK) {
+                    pitch = 0f
+                    volume = 5f
+                    playAt(e.player.paper!!.location)
+                }
+                if(it - 1 <= 0) {
+                    e.player.sendMessage("<bold><red>Your piggy ${if(times == 3) "Piggy Vault" else "Piggy Bank"} broke!")
+                }
                 it - 1
             }
         }

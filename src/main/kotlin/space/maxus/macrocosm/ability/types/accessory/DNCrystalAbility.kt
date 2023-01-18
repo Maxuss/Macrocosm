@@ -7,7 +7,7 @@ import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
 import space.maxus.macrocosm.stats.Statistic
 
 object NightCrystalAbility : AccessoryAbility(
-    "night_crystal",
+    "night_crystal_talisman",
     "Increases your ${Statistic.STRENGTH.display}<gray> and ${Statistic.DEFENSE.display}<gray> by <green>+5<gray> during the Night."
 ) {
     override fun registerListeners() {
@@ -21,7 +21,7 @@ object NightCrystalAbility : AccessoryAbility(
 }
 
 object DayCrystalAbility : AccessoryAbility(
-    "day_crystal",
+    "day_crystal_talisman",
     "Increases your ${Statistic.STRENGTH.display}<gray> and ${Statistic.DEFENSE.display}<gray> by <green>+5<gray> during the Day."
 ) {
     override fun registerListeners() {

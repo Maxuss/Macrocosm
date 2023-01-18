@@ -7,7 +7,7 @@ import kotlin.math.roundToInt
 
 class FeatherTalisman(applicable: String, private val amount: Float) : AccessoryAbility(
     applicable,
-    "Decreases all <blue>Fall Damage<gray> taken <gold>Fire<gray> and by <red>${(amount * 100f).roundToInt()}%<gray>."
+    "Decreases all <blue>Fall Damage<gray> taken by <red>${(amount * 100f).roundToInt()}%<gray>."
 ) {
     override fun registerListeners() {
         listen<PlayerCalculateSpecialStatsEvent> { e ->
