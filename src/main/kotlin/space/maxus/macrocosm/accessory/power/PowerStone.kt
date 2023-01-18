@@ -28,6 +28,9 @@ import kotlin.math.roundToInt
 
 private val roundMpValues = listOf(100, 250, 500, 750, 1000)
 
+/**
+ * A power stone item, containing an accessory item
+ */
 class PowerStone(id: Identifier, name: String, val powerId: Identifier, override var rarity: Rarity, private val headSkin: String, protected var uuid: UUID = UUID.randomUUID()): AbstractMacrocosmItem(id, ItemType.OTHER) {
     override val base: Material = Material.PLAYER_HEAD
     override var name: Component = text(name)

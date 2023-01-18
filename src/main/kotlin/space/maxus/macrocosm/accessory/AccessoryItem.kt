@@ -20,6 +20,9 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import java.util.*
 
+/**
+ * Extracts family from accessory item ID
+ */
 fun extractAccessoryFamily(id: String): String {
     return if(id.contains("(talisman|ring|artifact|relic|orb)".toRegex()))
         id.split("_").toMutableList().let {
@@ -31,6 +34,12 @@ fun extractAccessoryFamily(id: String): String {
     else id
 }
 
+/**
+ * An accessory item
+ *
+ * @param id ID of accessory
+ * @param name Name of acccessory
+ */
 open class AccessoryItem(id: String, name: String, override var rarity: Rarity, override var stats: Statistics, override val abilities: MutableList<RegistryPointer>, private val headSkin: String? = null, override val base: Material = if(headSkin == null) error("Unassigned Material for accessory") else Material.PLAYER_HEAD, protected var uuid: UUID = UUID.randomUUID(), val family: String = extractAccessoryFamily(id)): AbstractMacrocosmItem(id(id), ItemType.ACCESSORY) {
     override var name: Component = text(name)
 

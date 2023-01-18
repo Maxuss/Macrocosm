@@ -6,6 +6,9 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.stats
 import space.maxus.macrocosm.util.general.id
 
+/**
+ * Enum for all pre-made accessory powers
+ */
 enum class AccessoryPowers(val power: AccessoryPower) {
     // Starter
     FORTUITOUS(SimpleAccessoryPower(

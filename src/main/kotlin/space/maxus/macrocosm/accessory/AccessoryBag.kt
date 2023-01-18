@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
+import space.maxus.macrocosm.accessory.power.AccessoryPower
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
@@ -28,6 +29,13 @@ import kotlin.collections.set
 import kotlin.math.ln
 import kotlin.math.pow
 
+/**
+ * A container for accessories, stored inside the accessory bag
+ *
+ * @property item The ID of accessory item
+ * @property family The family of accessory
+ * @property rarity The rarity of accessory
+ */
 class AccessoryContainer(var item: Identifier, var family: String, var rarity: Rarity): Externalizable {
     constructor(): this(Identifier.NULL, "null", Rarity.COMMON)
 
@@ -58,22 +66,63 @@ val rarityToMp = hashMapOf(
     Rarity.UNOBTAINABLE to 30,
 )
 
+/**
+ * A container for player accessory bag
+ */
 class AccessoryBag: Serializable {
+    /**
+     * Selected [AccessoryPower] for this bag
+     */
     var power: Identifier = Identifier.NULL
+
+    /**
+     * Maximum capacity of this accessory bag
+     */
     var capacity: Int = 9
+
+    /**
+     * Slots obtained from the redstone collection
+     */
     var redstoneCollSlots: Int = 0
+
+    /**
+     * Slots obtained from Jacqueefis (Jacobus)
+     */
     var jacobusSlots: Int = 0
+
+    /**
+     * Slots obtained from the mithril collection
+     */
     var mithrilCollSlots: Int = 0
+
+    /**
+     * Actual accessories stored inside this bag
+     */
     val accessories: MutableList<AccessoryContainer> = mutableListOf()
 
+    /**
+     * Serialization version control
+     */
     val serialVersionUID = 1_100_000_000L
 
+    /**
+     * Gets total magic power of this bag
+     */
     val magicPower get() = accessories.sumOf { rarityToMp[it.rarity]!! }
 
+    /**
+     * Gets power stat modifier for this bag
+     */
     fun statModifier(): Double {
         return Companion.statModifier(magicPower)
     }
 
+    /**
+     * Adds an accessory to this bag
+     *
+     * @param item Accessory to be added
+     * @return `true` if added the accessory, `false` if failed to add (not enough space/accessory already present/accessory of same family already present)
+     */
     fun addAccessory(item: AccessoryItem): Boolean {
         if(accessories.size + 1 > capacity || accessories.any { it.item == item.id } || accessories.any { it.family == item.family })
             return false
@@ -81,6 +130,9 @@ class AccessoryBag: Serializable {
         return true
     }
 
+    /**
+     * Loads the accessory UI for player
+     */
     fun ui(player: MacrocosmPlayer): GUI<*> {
         val (size, beginCompound, endCompound) = when(capacity) {
             in 1..9 -> Triple(GUIType.TWO_BY_NINE, Slots.RowTwoSlotOne, Slots.RowTwoSlotNine)
@@ -157,6 +209,9 @@ class AccessoryBag: Serializable {
     companion object {
         private val cachedResults = ConcurrentHashMap<Int, Double>()
 
+        /**
+         * Calculates a power stat modifier with provided magic power value
+         */
         fun statModifier(mp: Int): Double {
             if(cachedResults.containsKey(mp))
                 return cachedResults[mp]!!
@@ -193,14 +248,3 @@ class AccessoryBag: Serializable {
     }
 }
 
-enum class BagCapacityBonus(val amount: Int) {
-    LARGE(15),
-    GREATER(21),
-    GIANT(27),
-    MASSIVE(33),
-    HUMONGOUS(39),
-    COLOSSAL(45),
-    TITANIC(51),
-    PREPOSTEROUS(57),
-    MAXIMAL(60)
-}

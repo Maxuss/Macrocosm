@@ -15,14 +15,26 @@ import space.maxus.macrocosm.util.general.id
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
+/**
+ * An accessory power that is unlocked by combining power stones
+ */
 abstract class StoneAccessoryPower(
     id: String,
     override val name: String,
     private val stoneName: String,
     private val rarity: Rarity,
     override val tier: String,
+    /**
+     * Required combat level to use this accessory power
+     */
     val combatLevel: Int,
+    /**
+     * Special bonus description for this accessory power
+     */
     val specialBonus: String,
+    /**
+     * The way to obtain this accessory power
+     */
     val obtaining: String,
     override val stats: Statistics,
     private val stoneTexture: String,
