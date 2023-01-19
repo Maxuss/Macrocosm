@@ -9,6 +9,7 @@ import org.litote.kmongo.KMongo
 import org.litote.kmongo.util.KMongoJacksonFeature
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.db.mongo.data.MongoBazaarData
+import space.maxus.macrocosm.db.mongo.data.MongoLimitedEditionItem
 import space.maxus.macrocosm.db.mongo.data.MongoPlayerData
 import java.util.concurrent.Executor
 
@@ -19,6 +20,7 @@ object MongoDb {
 
     lateinit var players: MongoCollection<MongoPlayerData>; private set
     lateinit var bazaar: MongoCollection<MongoBazaarData>; private set
+    lateinit var limitedItems: MongoCollection<MongoLimitedEditionItem>; private set
 
     fun init() {
         mongoPool.execute {
@@ -36,13 +38,9 @@ object MongoDb {
             )
             val db = client.getDatabase("macrocosm")
             this.db = db
-            val colls = db.listCollectionNames()
-            if(!colls.contains("players"))
-                db.createCollection("players")
-            if(!colls.contains("bazaar"))
-                db.createCollection("bazaar")
             this.players = db.getCollection("players", MongoPlayerData::class.java)
             this.bazaar = db.getCollection("bazaar", MongoBazaarData::class.java)
+            this.limitedItems = db.getCollection("limitedEdition", MongoLimitedEditionItem::class.java)
         }
     }
 

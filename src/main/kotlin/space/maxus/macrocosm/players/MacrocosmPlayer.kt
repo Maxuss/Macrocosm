@@ -75,7 +75,7 @@ import kotlin.math.roundToInt
 val Player.macrocosm get() = Macrocosm.loadedPlayers[uniqueId]
 
 @Suppress("unused")
-class MacrocosmPlayer(val ref: UUID) : DatabaseStore, MongoConvert<MongoPlayerData> {
+class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     val paper: Player? get() = Bukkit.getServer().getPlayer(ref)
 
     var equipment: PlayerEquipment = PlayerEquipment()

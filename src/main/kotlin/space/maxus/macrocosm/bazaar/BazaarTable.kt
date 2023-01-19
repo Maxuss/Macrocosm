@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder
 import com.mongodb.client.model.UpdateOptions
 import org.litote.kmongo.eq
 import org.litote.kmongo.updateOne
-import space.maxus.macrocosm.db.DatabaseStore
+import space.maxus.macrocosm.db.Store
 import space.maxus.macrocosm.db.mongo.MongoConvert
 import space.maxus.macrocosm.db.mongo.MongoDb
 import space.maxus.macrocosm.db.mongo.data.MongoBazaarData
@@ -81,7 +81,7 @@ data class BazaarItemSummary(
 /**
  * LOB-like bazaar order table
  */
-class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : DatabaseStore, MongoConvert<List<MongoBazaarData>> {
+class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : Store, MongoConvert<List<MongoBazaarData>> {
     companion object {
         /**
          * Constructs new empty bazaar table

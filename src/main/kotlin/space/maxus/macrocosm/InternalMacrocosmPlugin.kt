@@ -21,8 +21,6 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.datagen.DataGenerators
 import space.maxus.macrocosm.db.Accessor
-import space.maxus.macrocosm.db.DataStorage
-import space.maxus.macrocosm.db.impl.postgres.PostgresDatabaseImpl
 import space.maxus.macrocosm.db.mongo.MongoDb
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.display.SidebarRenderer
@@ -84,7 +82,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
         lateinit var PACKET_MANAGER: ProtocolManager; private set
         lateinit var UNSAFE: Unsafe; private set
-        lateinit var DATABASE: DataStorage; private set
         lateinit var TRANSACTION_HISTORY: TransactionHistory
 
         lateinit var FONT_MINECRAFT: Font; private set
@@ -138,13 +135,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         MongoDb.init()
         Threading.runAsync {
-            DATABASE =
-//                if (isInDevEnvironment)
-//                    SqliteDatabaseImpl
-//                else
-                PostgresDatabaseImpl(System.getProperty("macrocosm.postgres.remote"))
-            DATABASE.connect()
-            playersLazy = DATABASE.readPlayers().toMutableList()
+            playersLazy = MongoDb.players.find().map { it.uuid }.toMutableList()
         }
         Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
@@ -375,7 +366,6 @@ class InternalMacrocosmPlugin : KSpigot() {
 
 val protocolManager by lazy { InternalMacrocosmPlugin.PACKET_MANAGER }
 val Macrocosm by lazy { InternalMacrocosmPlugin.INSTANCE }
-val database by lazy { InternalMacrocosmPlugin.DATABASE }
 val logger by lazy { Macrocosm.logger }
 val currentIp by lazy { MacrocosmConstants.CURRENT_IP }
 val discordBotToken by lazy { MacrocosmConstants.DISCORD_BOT_TOKEN }
