@@ -2,17 +2,15 @@ package space.maxus.macrocosm.bazaar
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import org.jetbrains.exposed.sql.replace
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
-import space.maxus.macrocosm.database
-import space.maxus.macrocosm.db.BazaarDataTable
-import space.maxus.macrocosm.db.DataStorage
+import com.mongodb.client.model.UpdateOptions
+import org.litote.kmongo.eq
+import org.litote.kmongo.updateOne
 import space.maxus.macrocosm.db.DatabaseStore
-import space.maxus.macrocosm.db.impl.AbstractSQLDatabase
+import space.maxus.macrocosm.db.mongo.MongoConvert
+import space.maxus.macrocosm.db.mongo.MongoDb
+import space.maxus.macrocosm.db.mongo.data.MongoBazaarData
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.insteadOfNaN
 import space.maxus.macrocosm.util.median
@@ -23,15 +21,6 @@ import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
-import kotlin.collections.Collection
-import kotlin.collections.average
-import kotlin.collections.forEach
-import kotlin.collections.map
-import kotlin.collections.maxByOrNull
-import kotlin.collections.minByOrNull
-import kotlin.collections.sumOf
-import kotlin.collections.take
-import kotlin.collections.toList
 
 /**
  * Summary of a sequence of bazaar orders
@@ -92,7 +81,7 @@ data class BazaarItemSummary(
 /**
  * LOB-like bazaar order table
  */
-class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : DatabaseStore {
+class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier, BazaarItemData>) : DatabaseStore, MongoConvert<List<MongoBazaarData>> {
     companion object {
         /**
          * Constructs new empty bazaar table
@@ -105,14 +94,13 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
             )
 
         /**
-         * Reads itself from the provided [DataStorage]
+         * Reads itself from MongoDB
          */
-        fun readSelf(data: DataStorage): BazaarTable {
+        fun read(): BazaarTable {
             val outMap = ConcurrentHashMap<Identifier, BazaarItemData>()
-            data.transact {
-                BazaarDataTable.selectAll().forEach {
-                    val orders = it[BazaarDataTable.orders]
-                    outMap[Identifier.parse(it[BazaarDataTable.item])] = BazaarItemData.deserialize(orders)
+            MongoDb.execute {
+                it.bazaar.find().forEach { bd ->
+                    outMap[Identifier.parse(bd.item)] = bd.actual
                 }
             }
             BazaarElement.allKeys.forEach {
@@ -250,25 +238,22 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
         data.popOrder(order)
     }
 
-    /**
-     * Saves itself at the provided [DataStorage]
-     */
-    override fun storeSelf(data: DataStorage) {
-        transaction((database as AbstractSQLDatabase).connection) {
-            itemData.entries.forEach { (key, value) ->
-                BazaarDataTable.replace {
-                    it[item] = key.toString()
-                    it[orders] = value.serialize()
-                }
+    override fun store() {
+        MongoDb.execute {
+            mongo.forEach {  bd ->
+                it.bazaar.updateOne(MongoBazaarData::item eq bd.item, bd, UpdateOptions().upsert(true))
             }
         }
     }
+
+    override val mongo: List<MongoBazaarData>
+        get() = this.itemData.entries.map { MongoBazaarData(it.key.toString(), it.value.buy.map(BazaarBuyOrder::mongo), it.value.sell.map(BazaarSellOrder::mongo)) }
 }
 
 /**
  * Bazaar data for a single item
  */
-class BazaarItemData private constructor(
+class BazaarItemData constructor(
     /**
      * All the buy orders in a priority queue
      */
@@ -286,35 +271,9 @@ class BazaarItemData private constructor(
             PriorityBlockingQueue(1) { a, b -> a.pricePer.compareTo(b.pricePer) },
             PriorityBlockingQueue(1) { a, b -> b.pricePer.compareTo(a.pricePer) },
         )
-
-        /**
-         * Deserializes itself from a JSON string
-         *
-         * note: this is a rather unoptimized method, more compact approach is possible (see [this issue](https://github.com/Maxuss/Macrocosm/issues/3))
-         */
-        fun deserialize(data: String): BazaarItemData {
-            val cmp: BazaarOrderCompound = Bytes.deserialize(data).obj()
-            val empty = empty()
-            for (buy in cmp.buy.parallelStream()) {
-                empty.buy.put(buy)
-            }
-            for (sell in cmp.sell.parallelStream()) {
-                empty.sell.put(sell)
-            }
-            return empty
-        }
     }
 
     val amount = buy.size + sell.size
-
-    /**
-     * Saves itself to a JSON string
-     *
-     * note: this is a rather unoptimized method, more compact approach is possible (see [this issue](https://github.com/Maxuss/Macrocosm/issues/3))
-     */
-    fun serialize(): String {
-        return Bytes.serialize().obj(BazaarOrderCompound(buy.toList(), sell.toList())).end()
-    }
 
     /**
      * Pushes an order to this queue

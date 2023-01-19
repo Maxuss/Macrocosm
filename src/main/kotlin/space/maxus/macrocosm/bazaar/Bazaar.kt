@@ -11,7 +11,6 @@ import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.ops.InstantBuyResult
 import space.maxus.macrocosm.bazaar.ops.InstantSellResult
 import space.maxus.macrocosm.chat.Formatting
-import space.maxus.macrocosm.database
 import space.maxus.macrocosm.exceptions.MacrocosmThrowable
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.banking.Transaction
@@ -42,9 +41,8 @@ object Bazaar {
      * This init function is **Thread Safe** and can be used in [Threading.runEachConcurrently]
      */
     fun init() {
-        Threading.runAsync {
-            table = BazaarTable.readSelf(database)
-        }
+        table = BazaarTable.read()
+        table.store()
     }
 
     /**

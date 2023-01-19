@@ -136,6 +136,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             info("Starting REST API Server")
             AsyncLauncher.launchApi()
         }
+        MongoDb.init()
         Threading.runAsync {
             DATABASE =
 //                if (isInDevEnvironment)
@@ -334,10 +335,6 @@ class InternalMacrocosmPlugin : KSpigot() {
                     Discord.sendVersionDiff(previousVersion)
             }
         }
-
-        taskRunLater(1 * 20L) {
-            MongoDb.init()
-        }
     }
 
     private val dumpTestData: Boolean = false
@@ -347,7 +344,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         storageExecutor.execute {
             for ((_, v) in loadedPlayers) {
-                v.storeMongo()
+                v.store()
             }
         }
         storageExecutor.execute {
@@ -357,7 +354,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             TRANSACTION_HISTORY.storeSelf()
         }
         storageExecutor.execute {
-            Bazaar.table.storeSelf(database)
+            Bazaar.table.store()
         }
         storageExecutor.execute { KeyManager.store() }
         storageExecutor.execute { Discord.storeSelf() }

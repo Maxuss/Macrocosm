@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.players
 
+import com.mongodb.client.model.UpdateOptions
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.async
 import net.axay.kspigot.runnables.task
@@ -17,13 +18,9 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import org.jetbrains.annotations.ApiStatus.Experimental
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import org.jetbrains.exposed.sql.update
 import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
 import org.litote.kmongo.updateOne
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.AccessoryBag
@@ -32,7 +29,6 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.clamp
-import space.maxus.macrocosm.database
 import space.maxus.macrocosm.db.*
 import space.maxus.macrocosm.db.mongo.MongoConvert
 import space.maxus.macrocosm.db.mongo.MongoDb
@@ -57,7 +53,6 @@ import space.maxus.macrocosm.players.chat.ChatChannel
 import space.maxus.macrocosm.ranks.Rank
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.serde.Bytes
 import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.slayer.*
@@ -70,7 +65,6 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
-import space.maxus.macrocosm.util.runCatchingReporting
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -582,62 +576,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore, MongoConvert<MongoPlayerDa
         return specialCache ?: recalculateSpecialStats()
     }
 
-    fun storeMongo() {
-        MongoDb.players.updateOne(MongoPlayerData::uuid eq this.ref, this.mongo)
-    }
-
-    override fun storeSelf(data: DataStorage) {
-        val player = paper
-        if (player == null) {
-            Macrocosm.logger.warning("Tried to store offline player $ref")
-            return
-        }
-        val p = this
-        data.transact {
-            if (PlayersTable.update({ PlayersTable.uuid eq p.ref }) {
-                    dump(it, p, false)
-                } <= 0) {
-                PlayersTable.insert {
-                    dump(it, p, true)
-                }
-                StatsTable.insert {
-                    it[uuid] = p.ref
-                    it[StatsTable.data] = Bytes.serialize().obj(baseStats).end()
-                }
-            } else {
-                StatsTable.update {
-                    it[StatsTable.data] = Bytes.serialize().obj(baseStats).end()
-                }
-            }
-        }
-    }
-
-    private fun dump(it: UpdateBuilder<*>, p: MacrocosmPlayer, id: Boolean) {
-        val newPlaytime = playtime + (Instant.now().toEpochMilli() - lastJoin)
-        if (id)
-            it[PlayersTable.uuid] = p.ref
-        it[PlayersTable.rank] = p.rank.id()
-        it[PlayersTable.firstJoin] = p.firstJoin
-        it[PlayersTable.lastJoin] = p.lastJoin
-        it[PlayersTable.playtime] = newPlaytime
-        it[PlayersTable.purse] = p.purse
-        it[PlayersTable.bank] = p.bank
-        it[PlayersTable.memory] = Bytes.serialize().obj(p.memory).end()
-        it[PlayersTable.forge] = Bytes.serialize().obj(p.activeForgeRecipes).end()
-        it[PlayersTable.collections] = p.collections.serialize()
-        it[PlayersTable.skills] = p.skills.serialize()
-        it[PlayersTable.recipes] = Bytes.serialize().obj(p.unlockedRecipes).end()
-        it[PlayersTable.necklace] =
-            if (p.equipment.necklace == null) "NULL" else p.equipment.necklace!!.serializeToBytes(this)
-        it[PlayersTable.cloak] = if (p.equipment.cloak == null) "NULL" else p.equipment.cloak!!.serializeToBytes(this)
-        it[PlayersTable.belt] = if (p.equipment.belt == null) "NULL" else p.equipment.belt!!.serializeToBytes(this)
-        it[PlayersTable.gloves] =
-            if (p.equipment.gloves == null) "NULL" else p.equipment.gloves!!.serializeToBytes(this)
-        it[PlayersTable.slayers] = Bytes.serialize().obj(p.slayers).end()
-        it[PlayersTable.activePet] = p.activePet?.hashKey ?: ""
-        it[PlayersTable.pets] = Bytes.serialize().obj(p.ownedPets).end()
-        it[PlayersTable.essence] = Bytes.serialize().obj(availableEssence).end()
-        it[PlayersTable.accessories] = Bytes.serialize().obj(accessoryBag).end()
+    override fun store() {
+        MongoDb.execute { it.players.updateOne(MongoPlayerData::uuid eq this.ref, this.mongo, UpdateOptions().upsert(true)) }
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
@@ -654,15 +594,18 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore, MongoConvert<MongoPlayerDa
             Macrocosm.playersLazy.add(id)
             Macrocosm.loadedPlayers[id] = player
             async {
-                player.storeSelf(database)
+                player.store()
             }
             return player
         }
 
-        @Experimental
-        fun loadPlayer(mongo: MongoPlayerData): MacrocosmPlayer? {
-            if(Macrocosm.loadedPlayers.containsKey(mongo.uuid))
-                return Macrocosm.loadedPlayers[mongo.uuid]
+        fun loadPlayer(uuid: UUID): MacrocosmPlayer? {
+            if(Macrocosm.loadedPlayers.containsKey(uuid))
+                return Macrocosm.loadedPlayers[uuid]
+            return loadPlayer(MongoDb.players.findOne(MongoPlayerData::uuid eq uuid) ?: return null)
+        }
+
+        fun loadPlayer(mongo: MongoPlayerData): MacrocosmPlayer {
             val player = MacrocosmPlayer(mongo.uuid)
             player.rank = mongo.rank
             player.firstJoin = mongo.firstJoin
@@ -686,51 +629,8 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore, MongoConvert<MongoPlayerDa
             }
             player.availableEssence = mongo.essence
             player.accessoryBag = mongo.accessories.actual
-            player.baseStats = mongo.baseStats
+            player.baseStats = Statistics(TreeMap(mongo.baseStats.map { Statistic.valueOf(it.key) to it.value }.toMap()))
 
-            return player
-        }
-
-        fun loadPlayer(id: UUID): MacrocosmPlayer? {
-            if (Macrocosm.loadedPlayers.containsKey(id))
-                return Macrocosm.loadedPlayers[id]
-            val sql = runCatchingReporting(Bukkit.getPlayer(id)) {
-                database.transact {
-                    PlayersTable.select { PlayersTable.uuid eq id }.map { SqlPlayerData.fromRes(it) }.firstOrNull()
-                }
-            }.getOrNull() ?: return null
-
-            val player = MacrocosmPlayer(id)
-            player.rank = sql.rank
-            player.firstJoin = sql.firstJoin
-            player.lastJoin = Instant.now().toEpochMilli()
-            player.playtime = sql.playtime
-            player.purse = sql.purse
-            player.bank = sql.bank
-            player.memory = sql.memory
-            player.activeForgeRecipes = sql.forge.toMutableList()
-            player.collections = sql.collections
-            player.skills = sql.skills
-            player.unlockedRecipes = sql.recipes.toMutableList()
-            player.equipment = sql.equipment
-            player.slayers = sql.slayerExp
-            player.ownedPets = sql.pets
-            if (sql.activePet.isNotEmpty()) {
-                val pet = player.ownedPets[sql.activePet]!!
-                // delaying spawning pet, to prevent weird bugs
-                task(delay = 20L) {
-                    player.activePet = Registry.PET.find(pet.id).spawn(player, sql.activePet)
-                }
-            }
-            player.availableEssence = sql.essence
-            player.accessoryBag = sql.accessories
-
-            val stats = runCatchingReporting(Bukkit.getPlayer(id)) {
-                database.transact {
-                    StatsTable.select { StatsTable.uuid eq id }.map { it[StatsTable.data] }.firstOrNull()
-                }
-            }.getOrNull() ?: return null
-            player.baseStats = Bytes.deserializeObject(stats) ?: return null
             return player
         }
     }
@@ -743,7 +643,7 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore, MongoConvert<MongoPlayerDa
             firstJoin,
             lastJoin,
             playtime,
-            baseStats,
+            baseStats.iter().map { it.key.name to it.value }.toMap(),
             purse,
             bank,
             skills,

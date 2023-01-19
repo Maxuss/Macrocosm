@@ -19,7 +19,6 @@ import space.maxus.macrocosm.skills.Skills
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.spell.essence.EssenceType
-import space.maxus.macrocosm.stats.Statistics
 import java.math.BigDecimal
 import java.util.*
 
@@ -134,7 +133,7 @@ data class MongoPlayerData(
     val firstJoin: Long,
     val lastJoin: Long,
     val playtime: Long,
-    val baseStats: Statistics,
+    val baseStats: Map<String, Float>,
     val purse: BigDecimal,
     val bank: BigDecimal,
     val skills: Skills,
@@ -148,7 +147,7 @@ data class MongoPlayerData(
     val essence: HashMap<EssenceType, Int>,
     val accessories: MongoAccessoryBag,
 ): MongoRepr<MacrocosmPlayer?> {
-    override val actual: MacrocosmPlayer?
+    override val actual: MacrocosmPlayer
         @JsonIgnore
         get() = MacrocosmPlayer.loadPlayer(this)
 }

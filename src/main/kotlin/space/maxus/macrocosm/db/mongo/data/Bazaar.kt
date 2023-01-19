@@ -5,11 +5,13 @@ import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.Id
 import org.litote.kmongo.newId
 import space.maxus.macrocosm.bazaar.BazaarBuyOrder
+import space.maxus.macrocosm.bazaar.BazaarItemData
 import space.maxus.macrocosm.bazaar.BazaarOrder
 import space.maxus.macrocosm.bazaar.BazaarSellOrder
 import space.maxus.macrocosm.db.mongo.MongoRepr
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
+import java.util.concurrent.PriorityBlockingQueue
 
 data class MongoBazaarOrder(
     val kind: MongoBazaarOrderKind,
@@ -35,4 +37,15 @@ data class MongoBazaarOrder(
 enum class MongoBazaarOrderKind {
     BUY,
     SELL
+}
+
+data class MongoBazaarData(
+    @BsonId
+    val item: String,
+    val buy: List<MongoBazaarOrder>,
+    val sell: List<MongoBazaarOrder>
+): MongoRepr<BazaarItemData> {
+    override val actual: BazaarItemData
+        @JsonIgnore
+        get() = BazaarItemData(PriorityBlockingQueue(buy.map { it.actual as BazaarBuyOrder }), PriorityBlockingQueue(sell.map { it.actual as BazaarSellOrder }))
 }
