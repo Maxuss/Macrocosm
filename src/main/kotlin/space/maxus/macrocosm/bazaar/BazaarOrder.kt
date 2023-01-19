@@ -2,9 +2,9 @@
 
 package space.maxus.macrocosm.bazaar
 
-import space.maxus.macrocosm.db.mongo.MongoConvert
-import space.maxus.macrocosm.db.mongo.data.MongoBazaarOrder
-import space.maxus.macrocosm.db.mongo.data.MongoBazaarOrderKind
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.data.MongoBazaarOrder
+import space.maxus.macrocosm.mongo.data.MongoBazaarOrderKind
 import space.maxus.macrocosm.registry.Identifier
 import java.io.Serializable
 import java.math.BigDecimal

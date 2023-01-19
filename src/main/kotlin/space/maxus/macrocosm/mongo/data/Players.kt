@@ -1,11 +1,11 @@
-package space.maxus.macrocosm.db.mongo.data
+package space.maxus.macrocosm.mongo.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.bson.codecs.pojo.annotations.BsonId
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.AccessoryContainer
 import space.maxus.macrocosm.collections.CollectionCompound
-import space.maxus.macrocosm.db.mongo.MongoRepr
+import space.maxus.macrocosm.mongo.MongoRepr
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity

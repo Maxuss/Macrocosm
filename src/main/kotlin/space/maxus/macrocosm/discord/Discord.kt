@@ -54,7 +54,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.db.Accessor
+import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.discord.emitters.BossInfoEmitter
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.discord.emitters.MacrocosmLevelEmitter
@@ -63,6 +63,8 @@ import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.graphics.ItemRenderBuffer
 import space.maxus.macrocosm.graphics.StackRenderer
 import space.maxus.macrocosm.item.*
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.data.MongoDiscordAuthentication
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.PlayerEquipment
 import space.maxus.macrocosm.players.isAirOrNull
@@ -264,17 +266,16 @@ object Discord : ListenerAdapter() {
      * Reads itself from the local file (`discord_auth.json`)
      */
     fun readSelf() {
-        Accessor.readIfExists("discord_auth.json").then {
-            val json = fromJson<HashMap<UUID, Long>>(it)!!
-            authenticated.putAll(json)
-        }.call()
+        authenticated.putAll(MongoDb.discordAuth.find().map { it.playerId to it.discordUID })
     }
 
     /**
      * Stores itself in the local file (`discord_auth.json`)
      */
     fun storeSelf() {
-        Accessor.overwrite("discord_auth.json", toJson(authenticated.toMap()))
+        if(authenticated.isEmpty())
+            return
+        MongoDb.discordAuth.insertMany(authenticated.map { MongoDiscordAuthentication(it.key, it.value) })
         bot.shutdown()
     }
 

@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.db.mongo.data
+package space.maxus.macrocosm.mongo.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.bson.codecs.pojo.annotations.BsonId
@@ -8,7 +8,7 @@ import space.maxus.macrocosm.bazaar.BazaarBuyOrder
 import space.maxus.macrocosm.bazaar.BazaarItemData
 import space.maxus.macrocosm.bazaar.BazaarOrder
 import space.maxus.macrocosm.bazaar.BazaarSellOrder
-import space.maxus.macrocosm.db.mongo.MongoRepr
+import space.maxus.macrocosm.mongo.MongoRepr
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 import java.util.concurrent.PriorityBlockingQueue

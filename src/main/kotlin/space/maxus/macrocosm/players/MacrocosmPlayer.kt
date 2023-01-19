@@ -29,11 +29,11 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.clamp
-import space.maxus.macrocosm.db.*
-import space.maxus.macrocosm.db.mongo.MongoConvert
-import space.maxus.macrocosm.db.mongo.MongoDb
-import space.maxus.macrocosm.db.mongo.data.MongoActiveForgeRecipe
-import space.maxus.macrocosm.db.mongo.data.MongoPlayerData
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.Store
+import space.maxus.macrocosm.mongo.data.MongoActiveForgeRecipe
+import space.maxus.macrocosm.mongo.data.MongoPlayerData
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer

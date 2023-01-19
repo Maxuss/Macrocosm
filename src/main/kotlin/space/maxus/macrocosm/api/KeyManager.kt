@@ -3,7 +3,7 @@ package space.maxus.macrocosm.api
 import com.google.gson.reflect.TypeToken
 import io.ktor.server.application.*
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.db.Accessor
+import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.util.GSON
 import java.nio.ByteBuffer
 import java.time.Instant

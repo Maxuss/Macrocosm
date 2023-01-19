@@ -1,14 +1,15 @@
 package space.maxus.macrocosm.forge
 
-import space.maxus.macrocosm.db.mongo.MongoConvert
-import space.maxus.macrocosm.db.mongo.data.MongoActiveForgeRecipe
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.data.MongoActiveForgeRecipe
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import java.io.Serializable
 import java.time.Duration
 import java.time.Instant
 
-data class ActiveForgeRecipe(val id: Identifier, val startTime: Long) : Serializable, MongoConvert<MongoActiveForgeRecipe> {
+data class ActiveForgeRecipe(val id: Identifier, val startTime: Long) : Serializable,
+    MongoConvert<MongoActiveForgeRecipe> {
     fun isDoneByNow(): Boolean {
         val duration = Duration.ofSeconds(Registry.FORGE_RECIPE.find(id).length).toMillis()
         val requiredStamp = startTime + duration

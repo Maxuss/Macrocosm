@@ -1,7 +1,7 @@
 package space.maxus.macrocosm.players
 
-import space.maxus.macrocosm.db.mongo.MongoConvert
-import space.maxus.macrocosm.db.mongo.data.MongoPlayerMemory
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.data.MongoPlayerMemory
 import space.maxus.macrocosm.registry.Identifier
 import java.io.Serializable
 

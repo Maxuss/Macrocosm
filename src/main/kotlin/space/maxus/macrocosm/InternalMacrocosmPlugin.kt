@@ -19,9 +19,8 @@ import space.maxus.macrocosm.block.CustomBlockHandlers
 import space.maxus.macrocosm.block.MiningHandler
 import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
-import space.maxus.macrocosm.datagen.DataGenerators
-import space.maxus.macrocosm.db.Accessor
-import space.maxus.macrocosm.db.mongo.MongoDb
+import space.maxus.macrocosm.data.Accessor
+import space.maxus.macrocosm.data.DataGenerators
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
@@ -38,6 +37,7 @@ import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
+import space.maxus.macrocosm.mongo.MongoDb
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
@@ -69,6 +69,7 @@ import java.awt.Font
 import java.net.URL
 import java.nio.ByteBuffer
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
@@ -82,7 +83,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         lateinit var INSTANCE: InternalMacrocosmPlugin; private set
         lateinit var PACKET_MANAGER: ProtocolManager; private set
         lateinit var UNSAFE: Unsafe; private set
-        lateinit var TRANSACTION_HISTORY: TransactionHistory
+        val TRANSACTION_HISTORY: TransactionHistory = TransactionHistory(ConcurrentLinkedDeque())
 
         lateinit var FONT_MINECRAFT: Font; private set
         lateinit var FONT_MINECRAFT_BOLD: Font; private set
@@ -103,7 +104,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     val macrocosmColor: TextColor = TextColor.color(0x4A26BB)
     val isOnline by lazy { !MacrocosmConstants.OFFLINE_MODE }
     lateinit var integratedServer: MacrocosmServer; private set
-    lateinit var playersLazy: MutableList<UUID>; private set
+    lateinit var playersLazy: MutableList<UUID>
 
     override fun load() {
         try {
@@ -135,9 +136,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         MongoDb.init()
         Threading.runAsync {
-            playersLazy = MongoDb.players.find().map { it.uuid }.toMutableList()
-        }
-        Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
             if (!rendersDir.exists())
                 rendersDir.createDirectories()
@@ -159,8 +157,6 @@ class InternalMacrocosmPlugin : KSpigot() {
             }
         }
         Threading.runAsync {
-            Discord.readSelf()
-            TransactionHistory.readSelf()
             Calendar.readSelf()
         }
     }

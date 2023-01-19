@@ -94,25 +94,13 @@ Contains all the item cosmetics
 
 Contains code for damage calculations and displaying
 
-# Package space.maxus.macrocosm.datagen
+# Package space.maxus.macrocosm.data
 
 Runtime data generation/dumping utilities
 
-# Package space.maxus.macrocosm.db
+# Package space.maxus.macrocosm.data
 
-Database and filesystem access utilities
-
-# Package space.maxus.macrocosm.db.impl
-
-Implementations for database system
-
-# Package space.maxus.macrocosm.db.impl.local
-
-Local file storage (SQLite) database implementation
-
-# Package space.maxus.macrocosm.db.impl.postgres
-
-A Postgres database implementation
+Filesystem utilities
 
 # Package space.maxus.macrocosm.discord
 
@@ -133,3 +121,11 @@ Contains logic related to enchantments
 # Package space.maxus.macrocosm.type
 
 Contains all the implemented enchantment types
+
+# Package space.maxus.macrocosm.mongo
+
+Contains MongoDB related code
+
+# Package space.maxus.macrocosm.data
+
+Contains MongoDB data models

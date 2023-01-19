@@ -16,8 +16,8 @@ import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.litote.kmongo.eq
-import space.maxus.macrocosm.db.mongo.MongoDb
-import space.maxus.macrocosm.db.mongo.data.MongoLimitedEditionItem
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.data.MongoLimitedEditionItem
 import space.maxus.macrocosm.item.LimitedEditionItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.item.types.WitherBlade

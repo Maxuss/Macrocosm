@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.db.mongo
+package space.maxus.macrocosm.mongo
 
 import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
@@ -7,10 +7,10 @@ import com.mongodb.client.MongoDatabase
 import org.bson.UuidRepresentation
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.util.KMongoJacksonFeature
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.db.mongo.data.MongoBazaarData
-import space.maxus.macrocosm.db.mongo.data.MongoLimitedEditionItem
-import space.maxus.macrocosm.db.mongo.data.MongoPlayerData
+import space.maxus.macrocosm.discord.Discord
+import space.maxus.macrocosm.mongo.data.*
 import java.util.concurrent.Executor
 
 object MongoDb {
@@ -21,6 +21,8 @@ object MongoDb {
     lateinit var players: MongoCollection<MongoPlayerData>; private set
     lateinit var bazaar: MongoCollection<MongoBazaarData>; private set
     lateinit var limitedItems: MongoCollection<MongoLimitedEditionItem>; private set
+    lateinit var transactions: MongoCollection<MongoTransaction>; private set
+    lateinit var discordAuth: MongoCollection<MongoDiscordAuthentication>; private set
 
     fun init() {
         mongoPool.execute {
@@ -37,10 +39,15 @@ object MongoDb {
                     .build()
             )
             val db = client.getDatabase("macrocosm")
-            this.db = db
-            this.players = db.getCollection("players", MongoPlayerData::class.java)
-            this.bazaar = db.getCollection("bazaar", MongoBazaarData::class.java)
-            this.limitedItems = db.getCollection("limitedEdition", MongoLimitedEditionItem::class.java)
+            MongoDb.db = db
+            players = db.getCollection("players", MongoPlayerData::class.java)
+            bazaar = db.getCollection("bazaar", MongoBazaarData::class.java)
+            limitedItems = db.getCollection("limitedEdition", MongoLimitedEditionItem::class.java)
+            transactions = db.getCollection("transactions", MongoTransaction::class.java)
+            discordAuth = db.getCollection("discord", MongoDiscordAuthentication::class.java)
+
+            Macrocosm.playersLazy = players.find().map { it.uuid }.toMutableList()
+            Discord.readSelf()
         }
     }
 

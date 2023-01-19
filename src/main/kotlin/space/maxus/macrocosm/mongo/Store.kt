@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.db
+package space.maxus.macrocosm.mongo
 
 /**
  * An interface used to identify classes that can store themselves into a mongo database

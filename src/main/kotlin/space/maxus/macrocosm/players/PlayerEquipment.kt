@@ -11,7 +11,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.db.mongo.data.MongoPlayerEquipment
+import space.maxus.macrocosm.mongo.data.MongoPlayerEquipment
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MacrocosmItem

@@ -10,9 +10,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.accessory.power.AccessoryPower
-import space.maxus.macrocosm.db.mongo.MongoConvert
-import space.maxus.macrocosm.db.mongo.data.MongoAccessoryBag
-import space.maxus.macrocosm.db.mongo.data.MongoAccessoryContainer
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.data.MongoAccessoryBag
+import space.maxus.macrocosm.mongo.data.MongoAccessoryContainer
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm

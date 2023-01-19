@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.datagen
+package space.maxus.macrocosm.data
 
 import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.registry.Registry

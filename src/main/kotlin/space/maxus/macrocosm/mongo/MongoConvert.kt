@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.db.mongo
+package space.maxus.macrocosm.mongo
 
 interface MongoConvert<O> {
     val mongo: O
