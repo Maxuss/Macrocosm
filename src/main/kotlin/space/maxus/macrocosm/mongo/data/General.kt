@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.mongo.data
 
 import org.bson.codecs.pojo.annotations.BsonId
+import space.maxus.macrocosm.api.InlinedKeyData
 import space.maxus.macrocosm.players.banking.Transaction
 import java.time.Instant
 import java.util.*
@@ -24,4 +25,9 @@ data class MongoDiscordAuthentication(
     @BsonId
     val playerId: UUID,
     val discordUID: Long
+)
+
+data class MongoKeyData(
+    val key: String,
+    val data: InlinedKeyData
 )

@@ -1,17 +1,14 @@
 package space.maxus.macrocosm.api
 
-import com.google.gson.reflect.TypeToken
 import io.ktor.server.application.*
 import space.maxus.macrocosm.Macrocosm
-import space.maxus.macrocosm.data.Accessor
-import space.maxus.macrocosm.util.GSON
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.data.MongoKeyData
 import java.nio.ByteBuffer
+import java.security.SecureRandom
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ThreadLocalRandom
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
 
 /**
  * Represents current API state
@@ -30,24 +27,17 @@ object KeyManager {
     val requests: ConcurrentHashMap<String, Int> = ConcurrentHashMap()
 
     /**
-     * Reads this key manager data from the local file
+     * Reads this key manager data from MongoDB
      */
     fun load() {
-        try {
-            owned = GSON.fromJson(
-                Accessor.access("keys.json").readText(),
-                object : TypeToken<HashMap<UUID, String>>() {}.type
-            )
-        } catch (ignored: Exception) {
-            // first time access, don't care
-        }
+        owned = MongoDb.apiKeys.find().map { KeyData(it.key, it.data) }.toMutableList()
     }
 
     /**
-     * Stores key data in the local file, "keys.json" by default
+     * Stores key data in MongoDB
      */
     fun store() {
-        Accessor.access("keys.json").writeText(GSON.toJson(owned))
+        MongoDb.apiKeys.insertMany(owned.map { MongoKeyData(it.key, it.data) })
     }
 
     /**
@@ -58,10 +48,7 @@ object KeyManager {
      * @return Generated key data
      */
     fun generateRandomKey(belongs: UUID, permissions: List<APIPermission>): String {
-        val r = ThreadLocalRandom.current()
-        val now = Instant.now().toEpochMilli()
-        val uniqueIdentifier = r.nextInt()
-        val mostSignificantBits = belongs.mostSignificantBits
+        val r = SecureRandom.getInstanceStrong()
 
         val buf = ByteBuffer.allocate(2 + Long.SIZE_BYTES * 3)
         // header
@@ -69,18 +56,11 @@ object KeyManager {
         buf.putLong(r.nextLong() ushr 3)
         buf.putLong(r.nextLong() ushr 2)
         buf.putLong(r.nextLong() ushr 1)
-        // previous key data was too generic, we store enough data in the inlined value
-//        buf.put(currentState.toByte())
-//        buf.putLong(now)
-//        buf.putInt(uniqueIdentifier)
-//        buf.put(permissions.size.toByte())
-//        permissions.forEach {
-//            buf.put(it.ordinal.toByte())
-//        }
-//        buf.putLong(mostSignificantBits)
+        // previous key data was too generic, we have stored enough data in the inlined value
 
-        val s = Base64.getUrlEncoder().encodeToString(buf.array())
-        val data = KeyData(s, InlinedKeyData(currentApiState, now, uniqueIdentifier, permissions, mostSignificantBits))
+        val s = Base64.getUrlEncoder().encodeToString(buf.array()).trimEnd('=')
+        val data = KeyData(s, InlinedKeyData(currentApiState, Instant.now(), permissions, belongs))
+        owned.removeIf { it.data.owner == belongs }
         owned.add(data)
         return s
     }

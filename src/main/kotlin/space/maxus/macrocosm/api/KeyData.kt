@@ -1,5 +1,8 @@
 package space.maxus.macrocosm.api
 
+import java.time.Instant
+import java.util.*
+
 /**
  * Macrocosm API Access Key data
  *
@@ -12,16 +15,14 @@ data class KeyData(val key: String, val data: InlinedKeyData)
  * Represents byte-inlined data (previously) stored in the key as base64
  *
  * @property createdAt Unix epoch timestamp of when the key was created
- * @property keyIdentifierUnique Unique random number associated with this key
  * @property permissions Permissions allowed for this key
- * @property ownerMostBits Most significant bits of owner's UUID
+ * @property owner Key owner's UUID
  */
 data class InlinedKeyData(
     val format: APIState,
-    val createdAt: Long,
-    val keyIdentifierUnique: Int,
+    val createdAt: Instant,
     val permissions: List<APIPermission>,
-    val ownerMostBits: Long
+    val owner: UUID
 )
 
 /**

@@ -8,6 +8,7 @@ import org.bson.UuidRepresentation
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.util.KMongoJacksonFeature
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.mongo.data.*
@@ -23,6 +24,7 @@ object MongoDb {
     lateinit var limitedItems: MongoCollection<MongoLimitedEditionItem>; private set
     lateinit var transactions: MongoCollection<MongoTransaction>; private set
     lateinit var discordAuth: MongoCollection<MongoDiscordAuthentication>; private set
+    lateinit var apiKeys: MongoCollection<MongoKeyData>; private set
 
     fun init() {
         mongoPool.execute {
@@ -45,9 +47,11 @@ object MongoDb {
             limitedItems = db.getCollection("limitedEdition", MongoLimitedEditionItem::class.java)
             transactions = db.getCollection("transactions", MongoTransaction::class.java)
             discordAuth = db.getCollection("discord", MongoDiscordAuthentication::class.java)
+            apiKeys = db.getCollection("apiKeys", MongoKeyData::class.java)
 
             Macrocosm.playersLazy = players.find().map { it.uuid }.toMutableList()
             Discord.readSelf()
+            KeyManager.load()
         }
     }
 

@@ -8,6 +8,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.gson.JsonObject
+import com.mongodb.client.model.InsertManyOptions
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.axay.kspigot.extensions.server
 import net.axay.kspigot.runnables.taskRunLater
@@ -273,10 +274,17 @@ object Discord : ListenerAdapter() {
      * Stores itself in the local file (`discord_auth.json`)
      */
     fun storeSelf() {
+        Threading.runAsync {
+            bot.shutdown()
+        }
         if(authenticated.isEmpty())
             return
-        MongoDb.discordAuth.insertMany(authenticated.map { MongoDiscordAuthentication(it.key, it.value) })
-        bot.shutdown()
+        val auth = authenticated.map { MongoDiscordAuthentication(it.key, it.value) }.toMutableList()
+        val found = MongoDb.discordAuth.find().map { it.playerId }
+        auth.removeIf { found.contains(it.playerId) }
+        if(auth.isEmpty())
+            return
+        MongoDb.discordAuth.insertMany(auth, InsertManyOptions().ordered(false))
     }
 
     /**

@@ -128,7 +128,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         )!!
         MacrocosmConstants.API_VERSION = SemanticVersion.fromString(versionInfo.apiVersion)
         MacrocosmConstants.VERSION = SemanticVersion.fromString(versionInfo.version)
-        KeyManager.load()
         BazaarElement.init()
         Threading.contextBoundedRunAsync {
             info("Starting REST API Server")
