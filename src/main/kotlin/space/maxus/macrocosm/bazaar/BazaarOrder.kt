@@ -2,6 +2,9 @@
 
 package space.maxus.macrocosm.bazaar
 
+import space.maxus.macrocosm.db.mongo.MongoConvert
+import space.maxus.macrocosm.db.mongo.data.MongoBazaarOrder
+import space.maxus.macrocosm.db.mongo.data.MongoBazaarOrderKind
 import space.maxus.macrocosm.registry.Identifier
 import java.io.Serializable
 import java.math.BigDecimal
@@ -64,8 +67,10 @@ class BazaarBuyOrder(
     createdBy: UUID,
     originalAmount: Int,
     createdAt: Long = Instant.now().toEpochMilli()
-) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable {
+) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable, MongoConvert<MongoBazaarOrder> {
     override val totalPrice: BigDecimal = pricePer.toBigDecimal() * qty.toBigDecimal()
+    override val mongo: MongoBazaarOrder
+        get() = MongoBazaarOrder(MongoBazaarOrderKind.BUY, item.toString(), createdBy, originalAmount, createdAt, qty, pricePer, bought, sellers)
 }
 
 /**
@@ -92,6 +97,10 @@ class BazaarSellOrder(
     createdBy: UUID,
     originalAmount: Int,
     createdAt: Long = Instant.now().toEpochMilli()
-) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable {
+) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable, MongoConvert<MongoBazaarOrder> {
     override val totalPrice: BigDecimal = pricePer.toBigDecimal() * qty.toBigDecimal()
+
+    override val mongo: MongoBazaarOrder
+        get() = MongoBazaarOrder(MongoBazaarOrderKind.SELL, item.toString(), createdBy, originalAmount, createdAt, qty, pricePer, sold, buyers)
+
 }

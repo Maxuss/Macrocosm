@@ -23,6 +23,7 @@ import space.maxus.macrocosm.datagen.DataGenerators
 import space.maxus.macrocosm.db.Accessor
 import space.maxus.macrocosm.db.DataStorage
 import space.maxus.macrocosm.db.impl.postgres.PostgresDatabaseImpl
+import space.maxus.macrocosm.db.mongo.MongoDb
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
@@ -332,6 +333,10 @@ class InternalMacrocosmPlugin : KSpigot() {
                 if (this.version != previousVersion)
                     Discord.sendVersionDiff(previousVersion)
             }
+        }
+
+        taskRunLater(1 * 20L) {
+            MongoDb.init()
         }
     }
 

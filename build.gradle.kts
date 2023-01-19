@@ -41,6 +41,7 @@ dependencies {
         exclude(module = "opus-java")
     }
     implementation("club.minnced:discord-webhooks:0.8.2")
+    implementation("org.litote.kmongo:kmongo:4.8.0")
     implementation(kotlin("stdlib-jdk8"))
 }
 
