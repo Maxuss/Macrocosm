@@ -17,11 +17,14 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import org.jetbrains.annotations.ApiStatus.Experimental
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.update
+import org.litote.kmongo.eq
+import org.litote.kmongo.updateOne
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.async.Threading
@@ -31,6 +34,10 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.database
 import space.maxus.macrocosm.db.*
+import space.maxus.macrocosm.db.mongo.MongoConvert
+import space.maxus.macrocosm.db.mongo.MongoDb
+import space.maxus.macrocosm.db.mongo.data.MongoActiveForgeRecipe
+import space.maxus.macrocosm.db.mongo.data.MongoPlayerData
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer
@@ -74,7 +81,7 @@ import kotlin.math.roundToInt
 val Player.macrocosm get() = Macrocosm.loadedPlayers[uniqueId]
 
 @Suppress("unused")
-class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
+class MacrocosmPlayer(val ref: UUID) : DatabaseStore, MongoConvert<MongoPlayerData> {
     val paper: Player? get() = Bukkit.getServer().getPlayer(ref)
 
     var equipment: PlayerEquipment = PlayerEquipment()
@@ -575,6 +582,10 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
         return specialCache ?: recalculateSpecialStats()
     }
 
+    fun storeMongo() {
+        MongoDb.players.updateOne(MongoPlayerData::uuid eq this.ref, this.mongo)
+    }
+
     override fun storeSelf(data: DataStorage) {
         val player = paper
         if (player == null) {
@@ -648,6 +659,38 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             return player
         }
 
+        @Experimental
+        fun loadPlayer(mongo: MongoPlayerData): MacrocosmPlayer? {
+            if(Macrocosm.loadedPlayers.containsKey(mongo.uuid))
+                return Macrocosm.loadedPlayers[mongo.uuid]
+            val player = MacrocosmPlayer(mongo.uuid)
+            player.rank = mongo.rank
+            player.firstJoin = mongo.firstJoin
+            player.lastJoin = mongo.lastJoin
+            player.playtime = mongo.playtime
+            player.purse = mongo.purse
+            player.bank = mongo.bank
+            player.memory = mongo.memory.actual
+            player.activeForgeRecipes = mongo.forge.map(MongoActiveForgeRecipe::actual).toMutableList()
+            player.collections = mongo.collections
+            player.skills = mongo.skills
+            player.unlockedRecipes = mongo.unlockedRecipes.map(Identifier::parse).toMutableList()
+            player.equipment = mongo.equipment.actual
+            player.slayers = mongo.slayers
+            player.ownedPets = HashMap(mongo.ownedPets.map { it.key to it.value.actual }.toMap())
+            if(mongo.activePet.isNotEmpty()) {
+                val pet = player.ownedPets[mongo.activePet]!!
+                task(delay = 20L) {
+                    player.activePet = Registry.PET.find(pet.id).spawn(player, mongo.activePet)
+                }
+            }
+            player.availableEssence = mongo.essence
+            player.accessoryBag = mongo.accessories.actual
+            player.baseStats = mongo.baseStats
+
+            return player
+        }
+
         fun loadPlayer(id: UUID): MacrocosmPlayer? {
             if (Macrocosm.loadedPlayers.containsKey(id))
                 return Macrocosm.loadedPlayers[id]
@@ -691,5 +734,28 @@ class MacrocosmPlayer(val ref: UUID) : DatabaseStore {
             return player
         }
     }
+
+    override val mongo: MongoPlayerData
+        get() = MongoPlayerData(
+            ref,
+            equipment.mongo(this),
+            rank,
+            firstJoin,
+            lastJoin,
+            playtime,
+            baseStats,
+            purse,
+            bank,
+            skills,
+            collections,
+            HashMap(ownedPets.map { it.key to it.value.mongo }.toMap()),
+            activePet?.hashKey ?: "",
+            memory.mongo,
+            activeForgeRecipes.map(ActiveForgeRecipe::mongo),
+            unlockedRecipes.map(Identifier::toString),
+            slayers,
+            availableEssence,
+            accessoryBag.mongo
+        )
 
 }

@@ -347,7 +347,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         storageExecutor.execute {
             for ((_, v) in loadedPlayers) {
-                v.storeSelf(database)
+                v.storeMongo()
             }
         }
         storageExecutor.execute {

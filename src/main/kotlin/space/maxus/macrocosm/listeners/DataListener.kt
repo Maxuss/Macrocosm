@@ -39,6 +39,8 @@ object DataListener {
             player?.summons?.forEach { summon ->
                 e.player.world.getEntity(summon)?.remove()
             }
+            val mongo = player?.mongo ?: return@listen
         }
+
     }
 }

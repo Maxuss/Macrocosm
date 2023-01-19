@@ -10,6 +10,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.accessory.power.AccessoryPower
+import space.maxus.macrocosm.db.mongo.MongoConvert
+import space.maxus.macrocosm.db.mongo.data.MongoAccessoryBag
+import space.maxus.macrocosm.db.mongo.data.MongoAccessoryContainer
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
@@ -69,7 +72,7 @@ val rarityToMp = hashMapOf(
 /**
  * A container for player accessory bag
  */
-class AccessoryBag : Serializable {
+class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
     /**
      * Selected [AccessoryPower] for this bag
      */
@@ -257,5 +260,8 @@ class AccessoryBag : Serializable {
             clicker.openGUI(bag.ui(clicker.macrocosm!!))
         }
     }
+
+    override val mongo: MongoAccessoryBag
+        get() = MongoAccessoryBag(power.toString(), capacity, redstoneCollSlots, mithrilCollSlots, jacobusSlots, accessories.map { MongoAccessoryContainer(it.item.toString(), it.family, it.rarity) })
 }
 

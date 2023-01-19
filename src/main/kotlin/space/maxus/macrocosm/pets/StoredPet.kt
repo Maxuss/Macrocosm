@@ -1,3 +1,5 @@
+@file:Suppress("UNNECESSARY_SAFE_CALL")
+
 package space.maxus.macrocosm.pets
 
 import com.destroystokyo.paper.profile.ProfileProperty
@@ -15,6 +17,8 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.truncateBigNumber
+import space.maxus.macrocosm.db.mongo.MongoConvert
+import space.maxus.macrocosm.db.mongo.data.MongoOwnedPet
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -32,7 +36,7 @@ data class StoredPet(
     var level: Int,
     var overflow: Double,
     val skin: Identifier? = null
-) : Serializable {
+) : Serializable, MongoConvert<MongoOwnedPet> {
     fun menuItem(player: MacrocosmPlayer): ItemStack {
         val base = Registry.PET.find(id)
         val name = text("<gray>[Lvl ${level}] <${rarity.color.asHexString()}>${base.name}").noitalic()
@@ -96,4 +100,7 @@ data class StoredPet(
             }
         }
     }
+
+    override val mongo: MongoOwnedPet
+        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, id?.toString())
 }
