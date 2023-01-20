@@ -96,6 +96,7 @@ fun Application.module() {
 
         // upgraded api version to V2
         route("v2") {
+
             // status
             get("/status") {
                 call.respondSuccess(

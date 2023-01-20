@@ -37,6 +37,7 @@ import space.maxus.macrocosm.item.buffs.Buffs
 import space.maxus.macrocosm.item.json.ItemParser
 import space.maxus.macrocosm.item.runes.StatRune
 import space.maxus.macrocosm.listeners.*
+import space.maxus.macrocosm.metrics.MacrocosmMetrics
 import space.maxus.macrocosm.mongo.MongoDb
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.pack.PackDescription
@@ -134,6 +135,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             AsyncLauncher.launchApi()
         }
         MongoDb.init()
+        MacrocosmMetrics.init()
         Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
             if (!rendersDir.exists())
@@ -345,6 +347,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         storageExecutor.execute { KeyManager.store() }
         storageExecutor.execute { Discord.storeSelf() }
         storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version.toString()) } }
+        storageExecutor.execute { MacrocosmMetrics.shutdown() }
 
         storageExecutor.shutdown()
 

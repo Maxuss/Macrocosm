@@ -34,14 +34,13 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:2.2.1")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.2.1")
     implementation("io.ktor:ktor-server-status-pages-jvm:2.2.1")
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("net.dv8tion:JDA:5.0.0-beta.2") {
         exclude(module = "opus-java")
     }
     implementation("club.minnced:discord-webhooks:0.8.2")
     implementation("org.litote.kmongo:kmongo:4.8.0")
+    implementation("io.prometheus:simpleclient:0.16.0")
+    implementation("io.prometheus:simpleclient_httpserver:0.16.0")
     implementation(kotlin("stdlib-jdk8"))
 }
 

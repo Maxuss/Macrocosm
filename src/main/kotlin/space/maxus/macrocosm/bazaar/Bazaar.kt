@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.bazaar
 
+import io.prometheus.client.Gauge
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.axay.kspigot.sound.sound
@@ -12,6 +13,7 @@ import space.maxus.macrocosm.bazaar.ops.InstantBuyResult
 import space.maxus.macrocosm.bazaar.ops.InstantSellResult
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.exceptions.MacrocosmThrowable
+import space.maxus.macrocosm.metrics.MacrocosmMetrics
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.banking.Transaction
 import space.maxus.macrocosm.players.banking.transact
@@ -29,6 +31,16 @@ import java.util.concurrent.CompletableFuture
  */
 object Bazaar {
     private val bazaarOpPool = Threading.newFixedPool(8)
+    private val bazaarCoinsTotal by lazy { MacrocosmMetrics.gauge("bazaar_coins", "Total coins in Bazaar") }
+    private val bazaarItemsTotal by lazy { MacrocosmMetrics.gauge("bazaar_items", "Total Items accumulated in Bazaar") }
+
+    private fun metricsBuyAccumulatedQty(item: Identifier): Gauge {
+        return MacrocosmMetrics.gauge("bazaar_buy_qty_${item.path}", "Bazaar Buy total $item quantity")
+    }
+
+    private fun metricsSellAccumulatedQty(item: Identifier): Gauge {
+        return MacrocosmMetrics.gauge("bazaar_sell_qty_${item.path}", "Bazaar Sell total $item quantity")
+    }
 
     /**
      * The containing table for bazaar operations
@@ -234,6 +246,7 @@ object Bazaar {
                     player.ref,
                     Transaction.Kind.OUTGOING
                 )
+                bazaarCoinsTotal.inc(transacted.toDouble())
 
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Setting up Buy Order...")
                 try {
@@ -265,6 +278,8 @@ object Bazaar {
                         playFor(paper)
                     }
                 }
+
+                metricsBuyAccumulatedQty(item).inc(amount.toDouble())
             }
         }
     }
@@ -307,6 +322,8 @@ object Bazaar {
                                 )
                             }<yellow> of ${name.name.str()}<yellow> for <gold>${Formatting.withCommas(pricePer.toBigDecimal())} coins<yellow> each setup!"
                         )
+                        bazaarItemsTotal.inc(amount.toDouble())
+                        metricsSellAccumulatedQty(item).inc(amount.toDouble())
                     }
                 }
 
@@ -365,6 +382,8 @@ object Bazaar {
                 // checking if order quantity exceeds needed
                 if (order.qty + satisfiedAmount > amount) {
                     if (mutate) {
+                        bazaarItemsTotal.dec((amount - satisfiedAmount).toDouble())
+                        metricsSellAccumulatedQty(order.item).dec((amount - satisfiedAmount).toDouble())
                         order.sold += (amount - satisfiedAmount)
                         order.qty -= (amount - satisfiedAmount)
                         if (!order.buyers.contains(player.ref))
@@ -380,12 +399,17 @@ object Bazaar {
                     // adding amount
                     satisfiedAmount = amount
                     currentPrice += toAdd
+                    if(mutate)
+                        bazaarCoinsTotal.inc(toAdd.toDouble())
                     return@iterateThroughOrdersSell true
                 }
                 // otherwise just adding possible amount and price
                 satisfiedAmount += order.qty
                 currentPrice += order.totalPrice
                 if (mutate) {
+                    bazaarItemsTotal.dec(satisfiedAmount.toDouble())
+                    metricsSellAccumulatedQty(order.item).dec(satisfiedAmount.toDouble())
+                    bazaarCoinsTotal.inc(order.totalPrice.toDouble())
                     order.sold += order.qty
                     order.qty = 0
                     order.buyers.add(player.ref)
@@ -436,6 +460,9 @@ object Bazaar {
                 if (order.qty > leftToSell) {
                     currentProfit += order.pricePer.toBigDecimal() * leftToSell.toBigDecimal()
                     if (mutate) {
+                        bazaarItemsTotal.dec(leftToSell.toDouble())
+                        metricsBuyAccumulatedQty(order.item).dec(leftToSell.toDouble())
+                        bazaarCoinsTotal.dec(order.pricePer * leftToSell)
                         order.qty -= leftToSell
                         order.bought += leftToSell
                         if (order.sellers.contains(player.ref))
@@ -450,6 +477,9 @@ object Bazaar {
                 val diff = order.qty
                 leftToSell -= order.qty
                 if (mutate) {
+                    bazaarItemsTotal.dec(leftToSell.toDouble())
+                    metricsBuyAccumulatedQty(order.item).dec(leftToSell.toDouble())
+                    bazaarCoinsTotal.dec(order.totalPrice.toDouble())
                     order.qty = 0
                     order.bought += diff
                 }

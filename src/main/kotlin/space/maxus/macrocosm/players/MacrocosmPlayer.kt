@@ -29,11 +29,6 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.clamp
-import space.maxus.macrocosm.mongo.MongoConvert
-import space.maxus.macrocosm.mongo.MongoDb
-import space.maxus.macrocosm.mongo.Store
-import space.maxus.macrocosm.mongo.data.MongoActiveForgeRecipe
-import space.maxus.macrocosm.mongo.data.MongoPlayerData
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer
@@ -47,6 +42,12 @@ import space.maxus.macrocosm.item.Items
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.metrics.MacrocosmMetrics
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.Store
+import space.maxus.macrocosm.mongo.data.MongoActiveForgeRecipe
+import space.maxus.macrocosm.mongo.data.MongoPlayerData
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.chat.ChatChannel
@@ -209,7 +210,8 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     fun startSlayerQuest(type: SlayerType, tier: Int) {
         val p = paper ?: return
 
-        slayerQuest = SlayerQuest(type, tier, 0f, SlayerStatus.COLLECT_EXPERIENCE)
+        MacrocosmMetrics.counter("slayer_${type.name.lowercase()}").inc()
+        slayerQuest = SlayerQuest(type, tier, 0f, SlayerStatus.COLLECT_EXPERIENCE, MacrocosmMetrics.summary("slayer_time", "Time spent doing a slayer quest", .95, .05).startTimer())
         val requiredExp = type.slayer.requiredExp[tier - 1]
         sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {
             pitch = 2f
