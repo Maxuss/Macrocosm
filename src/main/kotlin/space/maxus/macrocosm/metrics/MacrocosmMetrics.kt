@@ -12,10 +12,20 @@ import space.maxus.macrocosm.async.Threading
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executor
 
+/**
+ * An object that does metrics for Macrocosm
+ */
 object MacrocosmMetrics {
     private lateinit var server: HTTPServer
 
+    /**
+     * Metrics logger
+     */
     val logger: Logger = LoggerFactory.getLogger("MacrocosmMetrics")
+
+    /**
+     * Metrics thread executor
+     */
     val metricThread: Executor = Threading.newFixedPool(16)
 
     private val gauges: ConcurrentHashMap<String, Gauge> = ConcurrentHashMap()
@@ -23,6 +33,9 @@ object MacrocosmMetrics {
     private val histograms: ConcurrentHashMap<String, Histogram> = ConcurrentHashMap()
     private val summaries: ConcurrentHashMap<String, Summary> = ConcurrentHashMap()
 
+    /**
+     * Constructs or gets a gauge from cache with provided configuration
+     */
     fun gauge(id: String, description: String? = null): Gauge {
         if(!gauges.containsKey(id))
             return Gauge.build(id, description ?: id).register().let {
@@ -32,6 +45,9 @@ object MacrocosmMetrics {
         return gauges[id]!!
     }
 
+    /**
+     * Constructs or gets a counter from cache with provided configuration
+     */
     fun counter(id: String, description: String? = null): Counter {
         if(!counters.containsKey(id))
             return Counter.build(id, description ?: id).register().let {
@@ -41,6 +57,9 @@ object MacrocosmMetrics {
         return counters[id]!!
     }
 
+    /**
+     * Constructs or gets a histogram from cache with provided configuration
+     */
     fun histogram(id: String, description: String? = null): Histogram {
         if(!histograms.containsKey(id))
             return Histogram.build().name(id).help(description!!).register().let {
@@ -50,6 +69,9 @@ object MacrocosmMetrics {
         return histograms[id]!!
     }
 
+    /**
+     * Constructs or gets a summary from cache with provided configuration
+     */
     fun summary(id: String, description: String? = null, quantile: Double? = null, error: Double? = null): Summary {
         if(!summaries.containsKey(id))
             return Summary.build().name(id).help(description!!).quantile(quantile!!, error!!).register().let {
@@ -59,10 +81,16 @@ object MacrocosmMetrics {
         return summaries[id]!!
     }
 
+    /**
+     * Initializes Metrics on port 3438
+     */
     fun init() {
         server = HTTPServer(3438)
     }
 
+    /**
+     * Shuts down Metrics server
+     */
     fun shutdown() {
         server.closeQuietly()
     }

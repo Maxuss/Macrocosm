@@ -126,6 +126,10 @@ Contains all the implemented enchantment types
 
 Contains MongoDB related code
 
-# Package space.maxus.macrocosm.data
+# Package space.maxus.macrocosm.mongo.data
 
 Contains MongoDB data models
+
+# Package space.maxus.macrocosm.metrics
+
+Contains Prometheus Metrics related data
