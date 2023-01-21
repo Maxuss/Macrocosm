@@ -3,7 +3,7 @@ package space.maxus.macrocosm.mongo
 /**
  * Represents an object that can be converted to MongoDB data representation
  */
-interface MongoConvert<O: MongoRepr<out MongoConvert<O>>> {
+interface MongoConvert<O> {
     /**
      * Gets MongoDB representation of this object
      */
