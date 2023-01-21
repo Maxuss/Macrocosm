@@ -39,7 +39,7 @@ object Entities {
     }
 
     fun toMacrocosm(entity: LivingEntity): MacrocosmEntity? {
-        if (entity is Player || entity.isDead)
+        if (entity is Player)
             return null
         val handle = (entity as? CraftEntity)?.handle
         if (handle is NativeMacrocosmSummon)

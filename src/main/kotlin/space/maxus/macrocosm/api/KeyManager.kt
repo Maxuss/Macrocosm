@@ -37,7 +37,10 @@ object KeyManager {
      * Stores key data in MongoDB
      */
     fun store() {
-        MongoDb.apiKeys.insertMany(owned.map { MongoKeyData(it.key, it.data) })
+        val allKeys = MongoDb.apiKeys.find().map { it.key }
+        val keys = owned.map { MongoKeyData(it.key, it.data) }.filter { !allKeys.contains(it.key) }
+        if(keys.isNotEmpty())
+            MongoDb.apiKeys.insertMany(owned.map { MongoKeyData(it.key, it.data) })
     }
 
     /**

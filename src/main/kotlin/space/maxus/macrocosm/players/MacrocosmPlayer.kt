@@ -296,17 +296,15 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         collections.increase(collection, amount)
         if (collection.inst.table.shouldLevelUp(
                 collections.level(collection),
-                collections[collection].toDouble(),
-                amount.toDouble()
-            )
+                collections[collection]
+            ) && !collections.isMaxLevel(collection)
         ) {
             val lvl = collections.level(collection) + 1
             collections.setLevel(collection, lvl)
             // todo: rewards!!
-            // sendCollectionLevelUp(collection)
-            // collection.inst.rewards[lvl - 1].reward(this, lvl)
+            sendCollectionLevelUp(collection)
+            collection.inst.rewards[lvl - 1].reward(this, lvl)
         }
-
     }
 
     fun sendSkillLevelUp(skill: SkillType) {

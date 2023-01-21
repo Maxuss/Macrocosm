@@ -64,7 +64,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         val amt = if (prototype.preferredSkill != skill) amount * .4 else amount
         modifySave(player) {
             this.overflow += amt
-            if (this.level < 100 && table(player).shouldLevelUp(this.level, this.overflow, .0)) {
+            if (this.level < 100 && table(player).shouldLevelUp(this.level, this.overflow)) {
                 this.level++
                 this.overflow = .0
                 player.sendMessage("<green>Your <${rarity.color.asHexString()}>${prototype.name}<green> leveled up to level $level!")

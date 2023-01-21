@@ -113,7 +113,7 @@ object SlayerHandlers : Listener {
             selectedDrop.drop.dropRngesusReward(player)
             accumulated = expForTier
         }
-        if (SlayerTable.shouldLevelUp(currentLevel.level, newExp, .0)) {
+        if (SlayerTable.shouldLevelUp(currentLevel.level, newExp)) {
             player.slayers[quest.type] =
                 SlayerLevel(currentLevel.level + 1, .0, currentLevel.collectedRewards, currentLevel.rng)
             player.sendMessage(

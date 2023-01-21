@@ -587,11 +587,6 @@ object DamageHandlers : Listener {
                 text("<white>⚡ <yellow>$damageDisplay<white> ⚡")
             }
 
-            @Suppress("DEPRECATION")
-            DamageType.MAGIC -> {
-                text("<dark_purple>✧ <light_purple>$damageDisplay<dark_purple> ✧")
-            }
-
             else -> {
                 damageDisplay.toComponent().color(NamedTextColor.GRAY)
             }

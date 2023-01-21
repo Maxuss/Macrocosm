@@ -1,89 +1,88 @@
 package space.maxus.macrocosm.collections
 
 import org.bukkit.Material
-import space.maxus.macrocosm.collections.Section.*
+import space.maxus.macrocosm.collections.CollectionSection.*
+import space.maxus.macrocosm.collections.table.CollectionTables.*
 import space.maxus.macrocosm.registry.Identifier
-import space.maxus.macrocosm.util.math.SkillTable
 import java.io.Serializable
 
 /**
  * A type of collection, which is associated with items that are collected for this collection
  */
 // todo: collection recipes
-// todo: implement an actual collection leveling table instead of a SkillTable
 enum class CollectionType(val inst: Collection) : Serializable {
     // combat
-    ROTTEN_FLESH(Collection("Rotten Flesh", listOf(), COMBAT, SkillTable)),
-    BONE(Collection("Bone", listOf(), COMBAT, SkillTable)),
-    SLIME_BALL(Collection("Slime Ball", listOf(), COMBAT, SkillTable)),
-    STRING(Collection("String", listOf(), COMBAT, SkillTable)),
-    GUNPOWDER(Collection("Gunpowder", listOf(), COMBAT, SkillTable)),
-    MAGMA_CREAM(Collection("Magma Cream", listOf(), COMBAT, SkillTable)),
-    BLAZE_ROD(Collection("Blaze Rod", listOf(), COMBAT, SkillTable)),
-    ENDER_PEARL(Collection("Ender Pearl", listOf(), COMBAT, SkillTable)),
-    GHAST_TEAR(Collection("Ghast Tear", listOf(), COMBAT, SkillTable)),
+    ROTTEN_FLESH(Collection("Rotten Flesh", listOf(), COMBAT, GENERIC_COMBAT)),
+    BONE(Collection("Bone", listOf(), COMBAT, GENERIC_COMBAT)),
+    SLIME_BALL(Collection("Slime Ball", listOf(), COMBAT, GENERIC_COMBAT)),
+    STRING(Collection("String", listOf(), COMBAT, GENERIC_COMBAT)),
+    GUNPOWDER(Collection("Gunpowder", listOf(), COMBAT, GREEDY_TABLE)),
+    MAGMA_CREAM(Collection("Magma Cream", listOf(), COMBAT, GENERIC_COMBAT)),
+    BLAZE_ROD(Collection("Blaze Rod", listOf(), COMBAT, GENERIC_COMBAT)),
+    ENDER_PEARL(Collection("Ender Pearl", listOf(), COMBAT, GENERIC_COMBAT)),
+    GHAST_TEAR(Collection("Ghast Tear", listOf(), COMBAT, GREEDY_TABLE)),
 
     // mining
-    COBBLESTONE(Collection("Cobblestone", listOf(), MINING, SkillTable)),
-    COAL(Collection("Coal", listOf(), MINING, SkillTable)),
-    COPPER_INGOT(Collection("Copper Ingot", listOf(), MINING, SkillTable)),
-    REDSTONE(Collection("Redstone", listOf(), MINING, SkillTable)),
-    GOLD_INGOT(Collection("Gold Ingot", listOf(), MINING, SkillTable)),
-    IRON_INGOT(Collection("Iron Ingot", listOf(), MINING, SkillTable)),
-    DIAMOND(Collection("Diamond", listOf(), MINING, SkillTable)),
-    GEMSTONE(Collection("Gemstone", listOf(), MINING, SkillTable)),
-    EMERALD(Collection("Emerald", listOf(), MINING, SkillTable)),
-    ICE(Collection("Ice", listOf(), MINING, SkillTable)),
-    END_STONE(Collection("Endstone", listOf(), MINING, SkillTable)),
-    SILVER(Collection("Silver", listOf(), MINING, SkillTable)),
-    MITHRIL(Collection("Mithril", listOf(), MINING, SkillTable)),
-    ADAMANTITE(Collection("Adamantite", listOf(), MINING, SkillTable)),
-    TITANIUM(Collection("Titanium", listOf(), MINING, SkillTable)),
+    COBBLESTONE(Collection("Cobblestone", listOf(), MINING, GENERIC)),
+    COAL(Collection("Coal", listOf(), MINING, GENERIC)),
+    COPPER_INGOT(Collection("Copper Ingot", listOf(), MINING, GENERIC)),
+    REDSTONE(Collection("Redstone", listOf(), MINING, COLOSSAL_TABLE)),
+    GOLD_INGOT(Collection("Gold Ingot", listOf(), MINING, GENERIC)),
+    IRON_INGOT(Collection("Iron Ingot", listOf(), MINING, GENERIC)),
+    DIAMOND(Collection("Diamond", listOf(), MINING, STEEPER)),
+    GEMSTONE(Collection("Gemstone", listOf(), MINING, COLOSSAL_TABLE)),
+    EMERALD(Collection("Emerald", listOf(), MINING, GENERIC)),
+    ICE(Collection("Ice", listOf(), MINING, COLOSSAL_TABLE)),
+    END_STONE(Collection("Endstone", listOf(), MINING, GENERIC)),
+    SILVER(Collection("Silver", listOf(), MINING, GREEDY_TABLE)),
+    MITHRIL(Collection("Mithril", listOf(), MINING, GREEDY_TABLE)),
+    ADAMANTITE(Collection("Adamantite", listOf(), MINING, GREEDY_TABLE)),
+    TITANIUM(Collection("Titanium", listOf(), MINING, GREEDY_TABLE)),
 
     // farming
-    WHEAT(Collection("Wheat", listOf(), FARMING, SkillTable)),
-    CARROT(Collection("Carrot", listOf(), FARMING, SkillTable)),
-    POTATO(Collection("Potato", listOf(), FARMING, SkillTable)),
-    SUGAR_CANE(Collection("Sugar Cane", listOf(), FARMING, SkillTable)),
-    CACTUS(Collection("Cactus", listOf(), FARMING, SkillTable)),
-    MUSHROOM(Collection("Mushroom", listOf(), FARMING, SkillTable)),
-    CHICKEN(Collection("Chicken", listOf(), FARMING, SkillTable)),
-    PORK(Collection("Pork", listOf(), FARMING, SkillTable)),
-    BEEF(Collection("Beef", listOf(), FARMING, SkillTable)),
-    MUTTON(Collection("Mutton", listOf(), FARMING, SkillTable)),
-    NETHER_WART(Collection("Nether Wart", listOf(), FARMING, SkillTable)),
-    CHORUS(Collection("Chorus", listOf(), FARMING, SkillTable)),
+    WHEAT(Collection("Wheat", listOf(), FARMING, GREEDY_TABLE)),
+    CARROT(Collection("Carrot", listOf(), FARMING, GREEDY_TABLE)),
+    POTATO(Collection("Potato", listOf(), FARMING, GREEDY_TABLE)),
+    SUGAR_CANE(Collection("Sugar Cane", listOf(), FARMING, GREEDY_TABLE)),
+    CACTUS(Collection("Cactus", listOf(), FARMING, GREEDY_TABLE)),
+    MUSHROOM(Collection("Mushroom", listOf(), FARMING, GREEDY_TABLE)),
+    CHICKEN(Collection("Chicken", listOf(), FARMING, GREEDY_TABLE)),
+    PORK(Collection("Pork", listOf(), FARMING, GREEDY_TABLE)),
+    BEEF(Collection("Beef", listOf(), FARMING, GREEDY_TABLE)),
+    MUTTON(Collection("Mutton", listOf(), FARMING, GREEDY_TABLE)),
+    NETHER_WART(Collection("Nether Wart", listOf(), FARMING, LESS)),
+    CHORUS(Collection("Chorus", listOf(), FARMING, GREEDY_TABLE)),
 
     // fishing
-    COD(Collection("Cod", listOf(), FISHING, SkillTable)),
-    SALMON(Collection("Salmon", listOf(), FISHING, SkillTable)),
-    PUFFERFISH(Collection("Cod", listOf(), FISHING, SkillTable)),
-    TROPICAL_FISH(Collection("Cod", listOf(), FISHING, SkillTable)),
-    SPONGE(Collection("Cod", listOf(), FISHING, SkillTable)),
-    INK_SAC(Collection("Ink Sac", listOf(), FISHING, SkillTable)),
-    PRISMARINE(Collection("Prismarine", listOf(), FISHING, SkillTable)),
-    SEAWEED(Collection("Seaweed", listOf(), FISHING, SkillTable)),
-    MAGMAFISH(Collection("Magmafish", listOf(), FISHING, SkillTable)),
+    COD(Collection("Cod", listOf(), FISHING, GENERIC_FISHING)),
+    SALMON(Collection("Salmon", listOf(), FISHING, GENERIC_FISHING)),
+    PUFFERFISH(Collection("Cod", listOf(), FISHING, FISHING_LEAST)),
+    TROPICAL_FISH(Collection("Cod", listOf(), FISHING, FISHING_LEAST)),
+    SPONGE(Collection("Cod", listOf(), FISHING, GREEDY_TABLE)),
+    INK_SAC(Collection("Ink Sac", listOf(), FISHING, GREEDY_TABLE)),
+    PRISMARINE(Collection("Prismarine", listOf(), FISHING, FISHING_PRISMARINE)),
+    SEAWEED(Collection("Seaweed", listOf(), FISHING, GREEDY_TABLE)),
+    MAGMAFISH(Collection("Magmafish", listOf(), FISHING, FISHING_MAGMA)),
 
     // foraging
-    OAK(Collection("Oak", listOf(), FORAGING, SkillTable)),
-    SPRUCE(Collection("Spruce", listOf(), FORAGING, SkillTable)),
-    JUNGLE_WOOD(Collection("Jungle Wood", listOf(), FORAGING, SkillTable)),
-    DARK_OAK(Collection("Dark Oak", listOf(), FORAGING, SkillTable)),
-    BIRCH(Collection("Birch", listOf(), FORAGING, SkillTable)),
-    CRIMSON_WOOD(Collection("Crimson Wood", listOf(), FORAGING, SkillTable)),
-    WARPED_WOOD(Collection("Warped Wood", listOf(), FORAGING, SkillTable)),
-    STEELWOOD(Collection("Steelwood", listOf(), FORAGING, SkillTable)),
-    CRYSTALWOOD(Collection("Crystalwood", listOf(), FORAGING, SkillTable)),
-    SHADEWOOD(Collection("Shadewood", listOf(), FORAGING, SkillTable)),
+    OAK(Collection("Oak", listOf(), FORAGING, GENERIC)),
+    SPRUCE(Collection("Spruce", listOf(), FORAGING, GENERIC)),
+    JUNGLE_WOOD(Collection("Jungle Wood", listOf(), FORAGING, GENERIC)),
+    DARK_OAK(Collection("Dark Oak", listOf(), FORAGING, GENERIC)),
+    BIRCH(Collection("Birch", listOf(), FORAGING, GENERIC)),
+    CRIMSON_WOOD(Collection("Crimson Wood", listOf(), FORAGING, STEEPER)),
+    WARPED_WOOD(Collection("Warped Wood", listOf(), FORAGING, STEEPER)),
+    STEELWOOD(Collection("Steelwood", listOf(), FORAGING, GREEDY_FORAGING)),
+    CRYSTALWOOD(Collection("Crystalwood", listOf(), FORAGING, GREEDY_FORAGING)),
+    SHADEWOOD(Collection("Shadewood", listOf(), FORAGING, GREEDY_FORAGING)),
 
     // excavating
-    DIRT(Collection("Dirt", listOf(), EXCAVATING, SkillTable)),
-    SAND(Collection("Sand", listOf(), EXCAVATING, SkillTable)),
-    GRAVEL(Collection("Gravel", listOf(), EXCAVATING, SkillTable)),
-    NYLIUM(Collection("Nylium", listOf(), EXCAVATING, SkillTable)),
-    NETHERRACK(Collection("Netherrack", listOf(), EXCAVATING, SkillTable)),
-    MOONSTONE_DUST(Collection("Moonstone Dust", listOf(), EXCAVATING, SkillTable)),
+    DIRT(Collection("Dirt", listOf(), EXCAVATING, APPROX_EXCAVATING)),
+    SAND(Collection("Sand", listOf(), EXCAVATING, APPROX_EXCAVATING)),
+    GRAVEL(Collection("Gravel", listOf(), EXCAVATING, APPROX_EXCAVATING)),
+    NYLIUM(Collection("Nylium", listOf(), EXCAVATING, APPROX_EXCAVATING)),
+    NETHERRACK(Collection("Netherrack", listOf(), EXCAVATING, STEEPER)),
+    MOONSTONE_DUST(Collection("Moonstone Dust", listOf(), EXCAVATING, GREEDY_TABLE)),
 
     ;
 

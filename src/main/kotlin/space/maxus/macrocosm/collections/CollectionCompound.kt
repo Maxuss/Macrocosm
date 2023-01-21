@@ -29,7 +29,7 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) :
      */
     fun increase(coll: CollectionType, amount: Int): Boolean {
         colls[coll]!!.total = colls[coll]!!.total + amount
-        return coll.inst.table.shouldLevelUp(colls[coll]!!.lvl, colls[coll]!!.total.toDouble(), amount.toDouble())
+        return coll.inst.table.shouldLevelUp(colls[coll]!!.lvl, colls[coll]!!.total)
     }
 
     /**
@@ -37,6 +37,10 @@ class CollectionCompound(val colls: HashMap<CollectionType, PlayerCollection>) :
      */
     fun level(coll: CollectionType): Int {
         return colls[coll]!!.lvl
+    }
+
+    fun isMaxLevel(coll: CollectionType): Boolean {
+        return coll.inst.rewards.size <= colls[coll]!!.lvl
     }
 
     /**
