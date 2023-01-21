@@ -46,13 +46,12 @@ import java.util.*
  * Spins up the macrocosm Rest API, basically wrapping [serverSpin] in coroutine scope
  */
 @Suppress("DeferredResultUnused")
-suspend fun spinApi() {
+suspend fun spinApi() =
     coroutineScope {
         async {
             serverSpin()
         }
     }
-}
 
 private val offlineInventoryCompoundCache = MutableContainer.empty<String>()
 private val onlineInventoryCompoundCache = ExpiringContainer.empty<String>(Duration.ofMinutes(5).toMillis())

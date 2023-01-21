@@ -674,8 +674,7 @@ object Discord : ListenerAdapter() {
             e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue()
         )
         val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(
-            genericErrorEmbed(
-                "Not Found",
+            notFoundEmbed(
                 "Could not find event of id `$emitterId` to subscribe you!"
             ).build()
         ).setEphemeral(true).queue()
@@ -694,8 +693,7 @@ object Discord : ListenerAdapter() {
             e.getOption("event")?.asString ?: return e.replyEmbeds(argMissingEmbed("event")).setEphemeral(true).queue()
         )
         val emitter = Registry.DISCORD_EMITTERS.findOrNull(emitterId) ?: return e.replyEmbeds(
-            genericErrorEmbed(
-                "Not Found",
+            notFoundEmbed(
                 "Could not find event of id `$emitterId` to subscribe you!"
             ).build()
         ).setEphemeral(true).queue()
@@ -886,8 +884,7 @@ object Discord : ListenerAdapter() {
 
     private fun profileCommand0(e: GenericCommandInteractionEvent, user: User, ephemeral: Boolean) {
         val uuid = authenticated.entries.firstOrNull { (_, id) -> id == user.idLong }?.key ?: return e.replyEmbeds(
-            genericErrorEmbed(
-                "Not Found",
+            notFoundEmbed(
                 "Could not find profile for user ${user.asTag}!\n*The `profile` command only works with authenticated users*"
             ).build()
         ).setEphemeral(true).queue()
@@ -928,8 +925,7 @@ object Discord : ListenerAdapter() {
                 val summary = Bazaar.table.summary(product) ?: run {
                     msg.editOriginal(
                         MessageEditData.fromEmbeds(
-                            genericErrorEmbed(
-                                "Not Found",
+                            notFoundEmbed(
                                 "Could not find item of type `$product` in the bazaar!"
                             ).build()
                         )
@@ -989,8 +985,7 @@ object Discord : ListenerAdapter() {
                             val queue = bazaarBuyCache.getIfPresent(item) ?: Bazaar.table.topBuyOrders(item, 5)
                                 .let { val q = it.toList().listIterator(); bazaarBuyCache.put(item, q); q }
                             val order = (if (queue.hasNext()) queue.next() else return e.replyEmbeds(
-                                genericErrorEmbed(
-                                    "Not Found",
+                                notFoundEmbed(
                                     "Could not find any buy orders for this product!"
                                 ).build()
                             ).setEphemeral(true).queue())
@@ -1005,8 +1000,7 @@ object Discord : ListenerAdapter() {
                             val queue = bazaarSellCache.getIfPresent(item) ?: Bazaar.table.topSellOrders(item, 5)
                                 .let { val q = it.toList().listIterator(); bazaarSellCache.put(item, q); q }
                             val order = (if (queue.hasNext()) queue.next() else return e.replyEmbeds(
-                                genericErrorEmbed(
-                                    "Not Found",
+                                notFoundEmbed(
                                     "Could not find any sell orders for this product!"
                                 ).build()
                             ).setEphemeral(true).queue())
@@ -1027,8 +1021,7 @@ object Discord : ListenerAdapter() {
                         bazaarUserCache.getIfPresent(uuid) ?: Bazaar.getOrdersForPlayer(uuid).take(10).listIterator()
                             .let { bazaarUserCache.put(uuid, it); it }
                     val order = (if (orders.hasNext()) orders.next() else return e.replyEmbeds(
-                        genericErrorEmbed(
-                            "Not Found",
+                        notFoundEmbed(
                             "Could not find any orders for this user!"
                         ).build()
                     ).setEphemeral(true).queue())
@@ -1063,8 +1056,7 @@ object Discord : ListenerAdapter() {
         val fitting = authenticationBridge.entries.firstOrNull { (_, p) -> p.second == key }
         if (fitting == null) {
             return e.replyEmbeds(
-                genericErrorEmbed(
-                    "Not Found",
+                notFoundEmbed(
                     "You have not begun authentication process yet! Run `/discordauth <discord username>` to start!"
                 ).build()
             ).setEphemeral(true).queue()
@@ -1113,6 +1105,10 @@ object Discord : ListenerAdapter() {
         val now = System.currentTimeMillis()
         e.reply("Pong!").setEphemeral(true)
             .flatMap { e.hook.editOriginal("Bot Ping: **${System.currentTimeMillis() - now}ms**") }.queue()
+    }
+
+    private fun notFoundEmbed(message: String): EmbedBuilder {
+        return genericErrorEmbed("Not Found", message)
     }
 
     private fun genericErrorEmbed(error: String, message: String): EmbedBuilder {

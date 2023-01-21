@@ -1,8 +1,5 @@
 package space.maxus.macrocosm.api
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-
 /**
  * Utility object to be called from [space.maxus.macrocosm.workarounds.AsyncLauncher]
  */
@@ -17,10 +14,6 @@ object AsyncLauncherKotlin {
     @Suppress("DeferredResultUnused")
     @JvmStatic
     suspend fun loadApi() {
-        coroutineScope {
-            async {
-                spinApi()
-            }
-        }
+        spinApi().await()
     }
 }
