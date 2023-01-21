@@ -9,6 +9,10 @@ import space.maxus.macrocosm.api.AsyncLauncherKotlin;
  * An asynchronous coroutine scope launcher
  */
 public class AsyncLauncher {
+    private AsyncLauncher() {
+        // utility class
+    }
+
     /**
      * Launch a single imitated kotlin coroutine scope from java
      *
@@ -28,9 +32,5 @@ public class AsyncLauncher {
      */
     public static void launchApi() {
         launchCoroutine(((coroutineScope, continuation) -> AsyncLauncherKotlin.loadApi(continuation)));
-    }
-
-    private AsyncLauncher() {
-        // utility class
     }
 }

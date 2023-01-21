@@ -37,7 +37,7 @@ object MacrocosmMetrics {
      * Constructs or gets a gauge from cache with provided configuration
      */
     fun gauge(id: String, description: String? = null): Gauge {
-        if(!gauges.containsKey(id))
+        if (!gauges.containsKey(id))
             return Gauge.build(id, description ?: id).register().let {
                 gauges[id] = it
                 it
@@ -49,7 +49,7 @@ object MacrocosmMetrics {
      * Constructs or gets a counter from cache with provided configuration
      */
     fun counter(id: String, description: String? = null): Counter {
-        if(!counters.containsKey(id))
+        if (!counters.containsKey(id))
             return Counter.build(id, description ?: id).register().let {
                 counters[id] = it
                 it
@@ -61,7 +61,7 @@ object MacrocosmMetrics {
      * Constructs or gets a histogram from cache with provided configuration
      */
     fun histogram(id: String, description: String? = null): Histogram {
-        if(!histograms.containsKey(id))
+        if (!histograms.containsKey(id))
             return Histogram.build().name(id).help(description!!).register().let {
                 histograms[id] = it
                 it
@@ -73,7 +73,7 @@ object MacrocosmMetrics {
      * Constructs or gets a summary from cache with provided configuration
      */
     fun summary(id: String, description: String? = null, quantile: Double? = null, error: Double? = null): Summary {
-        if(!summaries.containsKey(id))
+        if (!summaries.containsKey(id))
             return Summary.build().name(id).help(description!!).quantile(quantile!!, error!!).register().let {
                 summaries[id] = it
                 it

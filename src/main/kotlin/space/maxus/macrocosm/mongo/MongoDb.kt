@@ -104,5 +104,5 @@ object MongoDb {
     /**
      * Executes an operation with MongoDB thread executor if MongoDB is enabled
      */
-    fun execute(executor: (db: MongoDb) -> Unit) = if(enabled) mongoPool.execute { executor(this) } else Unit
+    fun execute(executor: (db: MongoDb) -> Unit) = if (enabled) mongoPool.execute { executor(this) } else Unit
 }

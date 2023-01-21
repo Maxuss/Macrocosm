@@ -16,12 +16,12 @@ import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.litote.kmongo.eq
-import space.maxus.macrocosm.mongo.MongoDb
-import space.maxus.macrocosm.mongo.data.MongoLimitedEditionItem
 import space.maxus.macrocosm.item.LimitedEditionItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.item.types.WitherScrollAbility
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.data.MongoLimitedEditionItem
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
@@ -59,7 +59,11 @@ fun giveAdminItemCommand() = command("giveadminstuff") {
                 val to = getArgument<EntitySelector>("to").findSinglePlayer(this.nmsContext.source).bukkitEntity
                 val toDisplay = to.displayName()
                 val fromDisplay = player.displayName()
-                val edition = MongoDb.limitedItems.findOneAndUpdate(MongoLimitedEditionItem::item eq id.toString(), Updates.inc("count", 1), FindOneAndUpdateOptions().upsert(true))?.count ?: 1
+                val edition = MongoDb.limitedItems.findOneAndUpdate(
+                    MongoLimitedEditionItem::item eq id.toString(),
+                    Updates.inc("count", 1),
+                    FindOneAndUpdateOptions().upsert(true)
+                )?.count ?: 1
                 item.givenTo = toDisplay
                 item.givenBy = fromDisplay
                 item.edition = edition

@@ -6,7 +6,9 @@ import space.maxus.macrocosm.metrics.MacrocosmMetrics
 import space.maxus.macrocosm.util.general.Callback
 
 @Internal
-val counterErrors: Counter = Counter.build().name("macrocosm_errors").help("Macrocosm Errors").labelNames("Error").register()
+val counterErrors: Counter =
+    Counter.build().name("macrocosm_errors").help("Macrocosm Errors").labelNames("Error").register()
+
 inline fun <R> report(message: String, callback: () -> R): R {
     return Callback {
         MacrocosmMetrics.logger.error(message)

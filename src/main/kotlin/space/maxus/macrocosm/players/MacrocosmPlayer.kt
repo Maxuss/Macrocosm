@@ -211,7 +211,13 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         val p = paper ?: return
 
         MacrocosmMetrics.counter("slayer_${type.name.lowercase()}").inc()
-        slayerQuest = SlayerQuest(type, tier, 0f, SlayerStatus.COLLECT_EXPERIENCE, MacrocosmMetrics.summary("slayer_time", "Time spent doing a slayer quest", .95, .05).startTimer())
+        slayerQuest = SlayerQuest(
+            type,
+            tier,
+            0f,
+            SlayerStatus.COLLECT_EXPERIENCE,
+            MacrocosmMetrics.summary("slayer_time", "Time spent doing a slayer quest", .95, .05).startTimer()
+        )
         val requiredExp = type.slayer.requiredExp[tier - 1]
         sound(Sound.ENTITY_ENDER_DRAGON_GROWL) {
             pitch = 2f
@@ -579,7 +585,13 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     override fun store() {
-        MongoDb.execute { it.players.updateOne(MongoPlayerData::uuid eq this.ref, this.mongo, UpdateOptions().upsert(true)) }
+        MongoDb.execute {
+            it.players.updateOne(
+                MongoPlayerData::uuid eq this.ref,
+                this.mongo,
+                UpdateOptions().upsert(true)
+            )
+        }
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
@@ -602,7 +614,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         }
 
         fun loadPlayer(uuid: UUID): MacrocosmPlayer? {
-            if(Macrocosm.loadedPlayers.containsKey(uuid))
+            if (Macrocosm.loadedPlayers.containsKey(uuid))
                 return Macrocosm.loadedPlayers[uuid]
             return loadPlayer(MongoDb.players.findOne(MongoPlayerData::uuid eq uuid) ?: return null)
         }
@@ -623,7 +635,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.equipment = mongo.equipment.actual
             player.slayers = mongo.slayers
             player.ownedPets = HashMap(mongo.ownedPets.map { it.key to it.value.actual }.toMap())
-            if(mongo.activePet.isNotEmpty()) {
+            if (mongo.activePet.isNotEmpty()) {
                 val pet = player.ownedPets[mongo.activePet]!!
                 task(delay = 20L) {
                     player.activePet = Registry.PET.find(pet.id).spawn(player, mongo.activePet)
@@ -631,7 +643,8 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             }
             player.availableEssence = mongo.essence
             player.accessoryBag = mongo.accessories.actual
-            player.baseStats = Statistics(TreeMap(mongo.baseStats.map { Statistic.valueOf(it.key) to it.value }.toMap()))
+            player.baseStats =
+                Statistics(TreeMap(mongo.baseStats.map { Statistic.valueOf(it.key) to it.value }.toMap()))
 
             return player
         }

@@ -67,10 +67,21 @@ class BazaarBuyOrder(
     createdBy: UUID,
     originalAmount: Int,
     createdAt: Long = Instant.now().toEpochMilli()
-) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable, MongoConvert<MongoBazaarOrder>, Comparable<BazaarBuyOrder> {
+) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable, MongoConvert<MongoBazaarOrder>,
+    Comparable<BazaarBuyOrder> {
     override val totalPrice: BigDecimal = pricePer.toBigDecimal() * qty.toBigDecimal()
     override val mongo: MongoBazaarOrder
-        get() = MongoBazaarOrder(MongoBazaarOrderKind.BUY, item.toString(), createdBy, originalAmount, createdAt, qty, pricePer, bought, sellers)
+        get() = MongoBazaarOrder(
+            MongoBazaarOrderKind.BUY,
+            item.toString(),
+            createdBy,
+            originalAmount,
+            createdAt,
+            qty,
+            pricePer,
+            bought,
+            sellers
+        )
 
     override fun compareTo(other: BazaarBuyOrder): Int {
         return pricePer.compareTo(other.pricePer)
@@ -101,11 +112,22 @@ class BazaarSellOrder(
     createdBy: UUID,
     originalAmount: Int,
     createdAt: Long = Instant.now().toEpochMilli()
-) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable, MongoConvert<MongoBazaarOrder>, Comparable<BazaarSellOrder> {
+) : BazaarOrder(item, createdBy, originalAmount, createdAt), Serializable, MongoConvert<MongoBazaarOrder>,
+    Comparable<BazaarSellOrder> {
     override val totalPrice: BigDecimal = pricePer.toBigDecimal() * qty.toBigDecimal()
 
     override val mongo: MongoBazaarOrder
-        get() = MongoBazaarOrder(MongoBazaarOrderKind.SELL, item.toString(), createdBy, originalAmount, createdAt, qty, pricePer, sold, buyers)
+        get() = MongoBazaarOrder(
+            MongoBazaarOrderKind.SELL,
+            item.toString(),
+            createdBy,
+            originalAmount,
+            createdAt,
+            qty,
+            pricePer,
+            sold,
+            buyers
+        )
 
     override fun compareTo(other: BazaarSellOrder): Int {
         return other.pricePer.compareTo(pricePer)

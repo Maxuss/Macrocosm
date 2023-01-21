@@ -17,9 +17,9 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.truncateBigNumber
+import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.mongo.MongoConvert
 import space.maxus.macrocosm.mongo.data.MongoOwnedPet
-import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry

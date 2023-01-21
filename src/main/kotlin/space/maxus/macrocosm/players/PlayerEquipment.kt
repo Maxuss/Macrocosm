@@ -11,11 +11,11 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.mongo.data.MongoPlayerEquipment
 import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.mongo.data.MongoPlayerEquipment
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.metrics.report
 
@@ -57,7 +57,7 @@ class PlayerEquipment {
             cloak?.serializeToBytesRaw(player),
             belt?.serializeToBytesRaw(player),
             gloves?.serializeToBytesRaw(player),
-            )
+        )
     }
 }
 

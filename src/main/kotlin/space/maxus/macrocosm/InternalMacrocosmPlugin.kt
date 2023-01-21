@@ -119,7 +119,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         config.load(cfgFile)
 
         isSandbox = config.getBoolean("game.sandbox")
-        if(!config.getBoolean("connections.mongo.enabled")) {
+        if (!config.getBoolean("connections.mongo.enabled")) {
             disableImmediately = true
             return
         }
@@ -182,7 +182,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     override fun startup() {
-        if(disableImmediately) {
+        if (disableImmediately) {
             logger.warning("======================================================")
             logger.warning("Macrocosm requires you to fill out configs")
             logger.warning("Fill out the config at `plugins/Macrocosm/config.yml`")
@@ -240,7 +240,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(ItemUpdateHandlers, this)
         server.pluginManager.registerEvents(EquipmentHandler, this)
         server.pluginManager.registerEvents(InventoryListeners, this)
-        if(config.getBoolean("connections.discord.enabled"))
+        if (config.getBoolean("connections.discord.enabled"))
             server.pluginManager.registerEvents(Discord.ConnectionLoop, this)
         server.pluginManager.registerEvents(CustomBlockHandlers, this)
         server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this)
@@ -318,7 +318,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
 
         MacrocosmConstants.DISCORD_BOT_TOKEN = config.getString("connections.discord.bot-token")
-        if (MacrocosmConstants.DISCORD_BOT_TOKEN != null && MacrocosmConstants.DISCORD_BOT_TOKEN != "NULL" && config.getBoolean("connections.discord.enabled")) {
+        if (MacrocosmConstants.DISCORD_BOT_TOKEN != null && MacrocosmConstants.DISCORD_BOT_TOKEN != "NULL" && config.getBoolean(
+                "connections.discord.enabled"
+            )
+        ) {
             connectDiscordCommand()
         }
 
@@ -347,7 +350,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     private val dumpTestData: Boolean = false
 
     override fun shutdown() {
-        if(disableImmediately)
+        if (disableImmediately)
             return
         val storageExecutor = Threading.newFixedPool(16)
 

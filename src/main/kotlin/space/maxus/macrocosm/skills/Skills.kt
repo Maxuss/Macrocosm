@@ -20,7 +20,7 @@ class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) : Serializable {
         skill.overflow += exp
         MacrocosmMetrics.metricThread.execute {
             val skillMetrics = metrics(sk)
-            if(skillMetrics.get() < skill.overflow)
+            if (skillMetrics.get() < skill.overflow)
                 skillMetrics.inc(skill.overflow - skillMetrics.get())
             else
                 metrics(sk).inc(exp)
@@ -45,7 +45,10 @@ class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) : Serializable {
     companion object {
         val totalSkillExperience by lazy { MacrocosmMetrics.counter("skills_total_exp", "Total Skill Experience") }
         private fun metrics(skill: SkillType): Counter {
-            return MacrocosmMetrics.counter("skills_${skill.name.lowercase()}_total_exp", "Total experience for certain skill")
+            return MacrocosmMetrics.counter(
+                "skills_${skill.name.lowercase()}_total_exp",
+                "Total experience for certain skill"
+            )
         }
 
         fun default(): Skills = Skills(HashMap(SkillType.values().associateWith { PlayerSkill(1, .0) }))

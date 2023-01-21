@@ -31,7 +31,7 @@ class PiggyBankAbility(applicable: String, private val times: Int) : AccessoryAb
                 playerData[mc.ref] = times
         }
         listen<PlayerDeathEvent> { e ->
-            if(hasAccs(e.player) && !playerData.contains(e.player.ref))
+            if (hasAccs(e.player) && !playerData.contains(e.player.ref))
                 playerData[e.player.ref] = times
             playerData.takeMut(e.player.ref) {
                 if (it <= 0)
@@ -42,8 +42,8 @@ class PiggyBankAbility(applicable: String, private val times: Int) : AccessoryAb
                     volume = 5f
                     playAt(e.player.paper!!.location)
                 }
-                if(it - 1 <= 0) {
-                    e.player.sendMessage("<bold><red>Your ${if(times == 3) "Piggy Vault" else "Piggy Bank"} broke!")
+                if (it - 1 <= 0) {
+                    e.player.sendMessage("<bold><red>Your ${if (times == 3) "Piggy Vault" else "Piggy Bank"} broke!")
                 }
                 it - 1
             }

@@ -11,7 +11,7 @@ class TransactionHistory(private val transactions: ConcurrentLinkedDeque<Transac
     }
 
     fun remember(transaction: Transaction) {
-        if(transactions.size >= memoryThreshold)
+        if (transactions.size >= memoryThreshold)
             MongoDb.execute { it.transactions.insertMany(transactions.drain(memoryThreshold).map(Transaction::mongo)) }
         transactions.add(transaction)
     }
@@ -19,7 +19,7 @@ class TransactionHistory(private val transactions: ConcurrentLinkedDeque<Transac
     fun storeSelf() {
         MongoDb.execute { db ->
             runCatchingReporting {
-                if(transactions.isEmpty())
+                if (transactions.isEmpty())
                     return@execute
                 db.transactions.insertMany(transactions.drain(memoryThreshold).map(Transaction::mongo))
             }

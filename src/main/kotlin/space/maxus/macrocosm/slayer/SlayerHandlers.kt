@@ -60,7 +60,15 @@ object SlayerHandlers : Listener {
         e.player.sendMessage("<gray>Good luck next time!")
 
         quest.timer.observeDuration()
-        e.player.updateSlayerQuest(SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.FAIL, quest.timer))
+        e.player.updateSlayerQuest(
+            SlayerQuest(
+                quest.type,
+                quest.tier,
+                quest.collectedExp,
+                SlayerStatus.FAIL,
+                quest.timer
+            )
+        )
     }
 
     @EventHandler

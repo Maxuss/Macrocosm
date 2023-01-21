@@ -7,7 +7,8 @@ import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
 
-class Transaction(val player: UUID, val kind: Kind, val amount: BigDecimal, val at: Instant = Instant.now()): MongoConvert<MongoTransaction> {
+class Transaction(val player: UUID, val kind: Kind, val amount: BigDecimal, val at: Instant = Instant.now()) :
+    MongoConvert<MongoTransaction> {
     enum class Kind {
         INCOMING,
         OUTGOING

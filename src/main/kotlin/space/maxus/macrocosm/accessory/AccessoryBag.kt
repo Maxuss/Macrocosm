@@ -10,12 +10,12 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.accessory.power.AccessoryPower
-import space.maxus.macrocosm.mongo.MongoConvert
-import space.maxus.macrocosm.mongo.data.MongoAccessoryBag
-import space.maxus.macrocosm.mongo.data.MongoAccessoryContainer
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.data.MongoAccessoryBag
+import space.maxus.macrocosm.mongo.data.MongoAccessoryContainer
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
@@ -262,6 +262,12 @@ class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
     }
 
     override val mongo: MongoAccessoryBag
-        get() = MongoAccessoryBag(power.toString(), capacity, redstoneCollSlots, mithrilCollSlots, jacobusSlots, accessories.map { MongoAccessoryContainer(it.item.toString(), it.family, it.rarity) })
+        get() = MongoAccessoryBag(
+            power.toString(),
+            capacity,
+            redstoneCollSlots,
+            mithrilCollSlots,
+            jacobusSlots,
+            accessories.map { MongoAccessoryContainer(it.item.toString(), it.family, it.rarity) })
 }
 

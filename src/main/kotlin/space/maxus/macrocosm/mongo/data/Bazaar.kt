@@ -25,12 +25,30 @@ data class MongoBazaarOrder(
     val buyersOrSellers: MutableList<UUID>,
     @BsonId
     val key: Id<MongoBazaarOrder> = newId(),
-    ): MongoRepr<BazaarOrder> {
+) : MongoRepr<BazaarOrder> {
     @JsonIgnore
-    override val actual: BazaarOrder = if(kind == MongoBazaarOrderKind.BUY) {
-        BazaarBuyOrder(Identifier.parse(item), quantity, pricePer, boughtOrSold, buyersOrSellers, createdBy, originalAmount, createdAt)
+    override val actual: BazaarOrder = if (kind == MongoBazaarOrderKind.BUY) {
+        BazaarBuyOrder(
+            Identifier.parse(item),
+            quantity,
+            pricePer,
+            boughtOrSold,
+            buyersOrSellers,
+            createdBy,
+            originalAmount,
+            createdAt
+        )
     } else {
-        BazaarSellOrder(Identifier.parse(item), quantity, pricePer, boughtOrSold, buyersOrSellers, createdBy, originalAmount, createdAt)
+        BazaarSellOrder(
+            Identifier.parse(item),
+            quantity,
+            pricePer,
+            boughtOrSold,
+            buyersOrSellers,
+            createdBy,
+            originalAmount,
+            createdAt
+        )
     }
 }
 
@@ -44,8 +62,11 @@ data class MongoBazaarData(
     val item: String,
     val buy: List<MongoBazaarOrder>,
     val sell: List<MongoBazaarOrder>
-): MongoRepr<BazaarItemData> {
+) : MongoRepr<BazaarItemData> {
     override val actual: BazaarItemData
         @JsonIgnore
-        get() = BazaarItemData(PriorityBlockingQueue(buy.map { it.actual as BazaarBuyOrder }), PriorityBlockingQueue(sell.map { it.actual as BazaarSellOrder }))
+        get() = BazaarItemData(
+            PriorityBlockingQueue(buy.map { it.actual as BazaarBuyOrder }),
+            PriorityBlockingQueue(sell.map { it.actual as BazaarSellOrder })
+        )
 }

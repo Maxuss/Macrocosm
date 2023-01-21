@@ -241,14 +241,20 @@ class BazaarTable private constructor(val itemData: ConcurrentHashMap<Identifier
 
     override fun store() {
         MongoDb.execute {
-            mongo.forEach {  bd ->
+            mongo.forEach { bd ->
                 it.bazaar.updateOne(MongoBazaarData::item eq bd.item, bd, UpdateOptions().upsert(true))
             }
         }
     }
 
     override val mongo: List<MongoBazaarData>
-        get() = this.itemData.entries.map { MongoBazaarData(it.key.toString(), it.value.buy.map(BazaarBuyOrder::mongo), it.value.sell.map(BazaarSellOrder::mongo)) }
+        get() = this.itemData.entries.map {
+            MongoBazaarData(
+                it.key.toString(),
+                it.value.buy.map(BazaarBuyOrder::mongo),
+                it.value.sell.map(BazaarSellOrder::mongo)
+            )
+        }
 }
 
 /**

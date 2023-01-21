@@ -399,7 +399,7 @@ object Bazaar {
                     // adding amount
                     satisfiedAmount = amount
                     currentPrice += toAdd
-                    if(mutate)
+                    if (mutate)
                         bazaarCoinsTotal.inc(toAdd.toDouble())
                     return@iterateThroughOrdersSell true
                 }

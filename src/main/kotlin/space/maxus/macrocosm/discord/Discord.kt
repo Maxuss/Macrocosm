@@ -278,12 +278,12 @@ object Discord : ListenerAdapter() {
         Threading.runAsync {
             bot.shutdown()
         }
-        if(authenticated.isEmpty())
+        if (authenticated.isEmpty())
             return
         val auth = authenticated.map { MongoDiscordAuthentication(it.key, it.value) }.toMutableList()
         val found = MongoDb.discordAuth.find().map { it.playerId }
         auth.removeIf { found.contains(it.playerId) }
-        if(auth.isEmpty())
+        if (auth.isEmpty())
             return
         MongoDb.discordAuth.insertMany(auth, InsertManyOptions().ordered(false))
     }
@@ -292,7 +292,7 @@ object Discord : ListenerAdapter() {
      * Performs initial setup for the discord bot
      */
     fun setupBot() {
-        if(!Macrocosm.config.getBoolean("connections.discord.enabled"))
+        if (!Macrocosm.config.getBoolean("connections.discord.enabled"))
             return
         Threading.runAsync {
             var botBuilder =

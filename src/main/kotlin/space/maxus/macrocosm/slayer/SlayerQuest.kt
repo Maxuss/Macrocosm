@@ -17,7 +17,13 @@ import space.maxus.macrocosm.registry.Clone
 import space.maxus.macrocosm.util.stripTags
 import kotlin.math.min
 
-class SlayerQuest(val type: SlayerType, val tier: Int, val collectedExp: Float, val status: SlayerStatus, val timer: Summary.Timer) : Clone {
+class SlayerQuest(
+    val type: SlayerType,
+    val tier: Int,
+    val collectedExp: Float,
+    val status: SlayerStatus,
+    val timer: Summary.Timer
+) : Clone {
     override fun clone(): Clone {
         return SlayerQuest(type, tier, collectedExp, status, timer)
     }
