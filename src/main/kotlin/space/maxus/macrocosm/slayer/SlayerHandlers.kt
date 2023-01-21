@@ -36,13 +36,13 @@ object SlayerHandlers : Listener {
         val newExp = quest.collectedExp + e.experience
         if (newExp >= quest.type.slayer.requiredExp[quest.tier - 1] && quest.status == SlayerStatus.COLLECT_EXPERIENCE) {
             // spawning boss and changing status to kill the boss
-            val newQuest = SlayerQuest(quest.type, quest.tier, newExp.toFloat(), SlayerStatus.SLAY_BOSS)
+            val newQuest = SlayerQuest(quest.type, quest.tier, newExp.toFloat(), SlayerStatus.SLAY_BOSS, quest.timer)
             e.player.updateSlayerQuest(newQuest)
             newQuest.summonBoss(e.player.paper!!)
             return
         } else if (quest.status == SlayerStatus.COLLECT_EXPERIENCE) {
             // otherwise giving combat experience and updating display
-            val newQuest = SlayerQuest(quest.type, quest.tier, newExp.toFloat(), quest.status)
+            val newQuest = SlayerQuest(quest.type, quest.tier, newExp.toFloat(), quest.status, quest.timer)
             e.player.updateSlayerQuest(newQuest)
         }
     }
@@ -59,7 +59,16 @@ object SlayerHandlers : Listener {
         e.player.sendMessage("<red><bold>SLAYER QUEST FAILED! YOU DIED!")
         e.player.sendMessage("<gray>Good luck next time!")
 
-        e.player.updateSlayerQuest(SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.FAIL))
+        quest.timer.observeDuration()
+        e.player.updateSlayerQuest(
+            SlayerQuest(
+                quest.type,
+                quest.tier,
+                quest.collectedExp,
+                SlayerStatus.FAIL,
+                quest.timer
+            )
+        )
     }
 
     @EventHandler
@@ -79,7 +88,8 @@ object SlayerHandlers : Listener {
             return
 
         // player has killed the boss, update status and give experience
-        val newQuest = SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.SUCCESS)
+        quest.timer.observeDuration()
+        val newQuest = SlayerQuest(quest.type, quest.tier, quest.collectedExp, SlayerStatus.SUCCESS, quest.timer)
         player.updateSlayerQuest(newQuest)
         player.boundSlayerBoss = null
 

@@ -639,11 +639,19 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         return Base64.getEncoder().encodeToString(build(player)!!.serializeAsBytes())
     }
 
+    fun serializeToBytesRaw(player: MacrocosmPlayer?): ByteArray {
+        return build(player)!!.serializeAsBytes()
+    }
+
     companion object {
         fun deserializeFromBytes(bytes: String): MacrocosmItem? {
             return if (bytes == "NULL")
                 null
             else ItemStack.deserializeBytes(Base64.getDecoder().decode(bytes)).macrocosm
+        }
+
+        fun deserializeFromBytes(bytes: ByteArray): MacrocosmItem? {
+            return ItemStack.deserializeBytes(bytes).macrocosm
         }
     }
 }

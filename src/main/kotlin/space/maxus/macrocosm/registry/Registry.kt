@@ -12,7 +12,7 @@ import space.maxus.macrocosm.accessory.power.AccessoryPower
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.cosmetic.Cosmetic
-import space.maxus.macrocosm.db.Accessor
+import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.discord.DiscordEmitter
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.entity.EntityBase

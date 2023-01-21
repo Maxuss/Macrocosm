@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.db
+package space.maxus.macrocosm.data
 
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.util.general.ConditionalValueCallback

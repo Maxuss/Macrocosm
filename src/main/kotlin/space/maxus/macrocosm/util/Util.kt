@@ -541,3 +541,9 @@ class DeprecatedDelegate(val message: String = "This element is deprecated!") {
         throw IllegalAccessException(message)
     }
 }
+
+fun <V> MutableCollection<V>.drain(count: Int): List<V> {
+    val items = this.take(count)
+    this.removeAll(items.toSet())
+    return items
+}

@@ -164,7 +164,7 @@ object ItemParser {
             )
         else
             Model(
-                732_0000 + obj["to"].asString.hashCode() % 3500,
+                732_0000 + obj["to"].hashCode() % 3500,
                 if (obj.has("from")) obj["from"].asString else "item/paper",
                 obj["to"].asString,
                 if (obj.has("parent"))

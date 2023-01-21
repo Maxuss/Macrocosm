@@ -2,6 +2,8 @@ package space.maxus.macrocosm.commands
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mongodb.client.model.FindOneAndUpdateOptions
+import com.mongodb.client.model.Updates
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
@@ -13,11 +15,13 @@ import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.database
+import org.litote.kmongo.eq
 import space.maxus.macrocosm.item.LimitedEditionItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.item.types.WitherBlade
 import space.maxus.macrocosm.item.types.WitherScrollAbility
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.data.MongoLimitedEditionItem
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
@@ -55,7 +59,11 @@ fun giveAdminItemCommand() = command("giveadminstuff") {
                 val to = getArgument<EntitySelector>("to").findSinglePlayer(this.nmsContext.source).bukkitEntity
                 val toDisplay = to.displayName()
                 val fromDisplay = player.displayName()
-                val edition = database.incrementLimitedEdition(id)
+                val edition = MongoDb.limitedItems.findOneAndUpdate(
+                    MongoLimitedEditionItem::item eq id.toString(),
+                    Updates.inc("count", 1),
+                    FindOneAndUpdateOptions().upsert(true)
+                )?.count ?: 1
                 item.givenTo = toDisplay
                 item.givenBy = fromDisplay
                 item.edition = edition

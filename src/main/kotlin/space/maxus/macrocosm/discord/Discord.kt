@@ -8,6 +8,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.gson.JsonObject
+import com.mongodb.client.model.InsertManyOptions
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.axay.kspigot.extensions.server
 import net.axay.kspigot.runnables.taskRunLater
@@ -54,7 +55,7 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.db.Accessor
+import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.discord.emitters.BossInfoEmitter
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.discord.emitters.MacrocosmLevelEmitter
@@ -63,6 +64,8 @@ import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.graphics.ItemRenderBuffer
 import space.maxus.macrocosm.graphics.StackRenderer
 import space.maxus.macrocosm.item.*
+import space.maxus.macrocosm.mongo.MongoDb
+import space.maxus.macrocosm.mongo.data.MongoDiscordAuthentication
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.PlayerEquipment
 import space.maxus.macrocosm.players.isAirOrNull
@@ -183,6 +186,7 @@ object Discord : ListenerAdapter() {
     private val authenticated: HashMap<UUID, Long> = hashMapOf()
 
     private val commandPool: ExecutorService = Threading.newFixedPool(8)
+    private var internalEnabled: Boolean = false
 
     /**
      * The JDA bot instance
@@ -199,7 +203,7 @@ object Discord : ListenerAdapter() {
      */
     val enabled: Boolean
         get() {
-            return Macrocosm.isOnline && ::bot.isInitialized
+            return internalEnabled && Macrocosm.isOnline && ::bot.isInitialized
         }
     private var communicationChannel: Long? = null
     private var webhookLink: String? = null
@@ -264,24 +268,32 @@ object Discord : ListenerAdapter() {
      * Reads itself from the local file (`discord_auth.json`)
      */
     fun readSelf() {
-        Accessor.readIfExists("discord_auth.json").then {
-            val json = fromJson<HashMap<UUID, Long>>(it)!!
-            authenticated.putAll(json)
-        }.call()
+        authenticated.putAll(MongoDb.discordAuth.find().map { it.playerId to it.discordUID })
     }
 
     /**
      * Stores itself in the local file (`discord_auth.json`)
      */
     fun storeSelf() {
-        Accessor.overwrite("discord_auth.json", toJson(authenticated.toMap()))
-        bot.shutdown()
+        Threading.runAsync {
+            bot.shutdown()
+        }
+        if (authenticated.isEmpty())
+            return
+        val auth = authenticated.map { MongoDiscordAuthentication(it.key, it.value) }.toMutableList()
+        val found = MongoDb.discordAuth.find().map { it.playerId }
+        auth.removeIf { found.contains(it.playerId) }
+        if (auth.isEmpty())
+            return
+        MongoDb.discordAuth.insertMany(auth, InsertManyOptions().ordered(false))
     }
 
     /**
      * Performs initial setup for the discord bot
      */
     fun setupBot() {
+        if (!Macrocosm.config.getBoolean("connections.discord.enabled"))
+            return
         Threading.runAsync {
             var botBuilder =
                 JDABuilder.create(discordBotToken, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
@@ -298,6 +310,7 @@ object Discord : ListenerAdapter() {
 
 
             taskRunLater(3 * 20L, sync = false) {
+                internalEnabled = true
                 val guild = bot.getGuildById(Macrocosm.config.getLong("connections.discord.guild-id"))!!
 
                 val commands = guild.updateCommands()

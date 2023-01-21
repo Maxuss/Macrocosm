@@ -44,6 +44,8 @@ abstract class DiscordEmitter<S>(
      * Posts an event of type [S] to this emitter
      */
     fun post(subject: S) {
+        if (!Discord.enabled)
+            return
         SHARED_EMITTER_POOL.execute {
             runCatchingReporting {
                 handle(subject, Discord.bot)

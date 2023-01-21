@@ -7,6 +7,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.metrics.MacrocosmMetrics
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.banking.Transaction
 import space.maxus.macrocosm.players.banking.transact
@@ -14,6 +15,8 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.giveOrDrop
+
+val jacobusCoinsSpent by lazy { MacrocosmMetrics.counter("jacobus_coins_spent", "Coins spent on Jacobus upgrades") }
 
 fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
     defaultPage = 0
@@ -59,7 +62,10 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
         ) { e ->
             e.bukkitEvent.isCancelled = true
             if (player.purse >= nextPrice.toBigDecimal()) {
-                player.purse -= transact(nextPrice.toBigDecimal(), player.ref, Transaction.Kind.OUTGOING)
+                val amount = transact(nextPrice.toBigDecimal(), player.ref, Transaction.Kind.OUTGOING)
+                jacobusCoinsSpent.inc(amount.toDouble())
+
+                player.purse -= amount
                 bag.jacobusSlots += nextAmount
                 bag.capacity += nextAmount
                 if (bag.jacobusSlots == 8) {

@@ -13,6 +13,9 @@ import space.maxus.macrocosm.accessory.power.AccessoryPower
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.mongo.MongoConvert
+import space.maxus.macrocosm.mongo.data.MongoAccessoryBag
+import space.maxus.macrocosm.mongo.data.MongoAccessoryContainer
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
@@ -69,7 +72,7 @@ val rarityToMp = hashMapOf(
 /**
  * A container for player accessory bag
  */
-class AccessoryBag : Serializable {
+class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
     /**
      * Selected [AccessoryPower] for this bag
      */
@@ -257,5 +260,14 @@ class AccessoryBag : Serializable {
             clicker.openGUI(bag.ui(clicker.macrocosm!!))
         }
     }
+
+    override val mongo: MongoAccessoryBag
+        get() = MongoAccessoryBag(
+            power.toString(),
+            capacity,
+            redstoneCollSlots,
+            mithrilCollSlots,
+            jacobusSlots,
+            accessories.map { MongoAccessoryContainer(it.item.toString(), it.family, it.rarity) })
 }
 

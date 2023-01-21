@@ -15,6 +15,7 @@ import space.maxus.macrocosm.item.ItemType
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
+import space.maxus.macrocosm.mongo.data.MongoPlayerEquipment
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.metrics.report
 
@@ -48,6 +49,15 @@ class PlayerEquipment {
             ItemType.GLOVES -> belt = item
             else -> return
         }
+    }
+
+    fun mongo(player: MacrocosmPlayer): MongoPlayerEquipment {
+        return MongoPlayerEquipment(
+            necklace?.serializeToBytesRaw(player),
+            cloak?.serializeToBytesRaw(player),
+            belt?.serializeToBytesRaw(player),
+            gloves?.serializeToBytesRaw(player),
+        )
     }
 }
 

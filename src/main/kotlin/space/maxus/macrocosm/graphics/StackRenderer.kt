@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.translation.GlobalTranslator
 import space.maxus.macrocosm.InternalMacrocosmPlugin
-import space.maxus.macrocosm.db.Accessor
+import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.stripTags
 import space.maxus.macrocosm.util.unreachable
