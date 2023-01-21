@@ -186,6 +186,7 @@ object Discord : ListenerAdapter() {
     private val authenticated: HashMap<UUID, Long> = hashMapOf()
 
     private val commandPool: ExecutorService = Threading.newFixedPool(8)
+    private var internalEnabled: Boolean = false
 
     /**
      * The JDA bot instance
@@ -202,7 +203,7 @@ object Discord : ListenerAdapter() {
      */
     val enabled: Boolean
         get() {
-            return Macrocosm.isOnline && ::bot.isInitialized
+            return internalEnabled && Macrocosm.isOnline && ::bot.isInitialized
         }
     private var communicationChannel: Long? = null
     private var webhookLink: String? = null
@@ -291,6 +292,8 @@ object Discord : ListenerAdapter() {
      * Performs initial setup for the discord bot
      */
     fun setupBot() {
+        if(!Macrocosm.config.getBoolean("connections.discord.enabled"))
+            return
         Threading.runAsync {
             var botBuilder =
                 JDABuilder.create(discordBotToken, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
@@ -307,6 +310,7 @@ object Discord : ListenerAdapter() {
 
 
             taskRunLater(3 * 20L, sync = false) {
+                internalEnabled = true
                 val guild = bot.getGuildById(Macrocosm.config.getLong("connections.discord.guild-id"))!!
 
                 val commands = guild.updateCommands()

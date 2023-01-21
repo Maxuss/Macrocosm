@@ -2,6 +2,7 @@ package space.maxus.macrocosm
 
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
+import net.axay.kspigot.extensions.pluginManager
 import net.axay.kspigot.extensions.worlds
 import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
@@ -106,8 +107,23 @@ class InternalMacrocosmPlugin : KSpigot() {
     val isOnline by lazy { !MacrocosmConstants.OFFLINE_MODE }
     lateinit var integratedServer: MacrocosmServer; private set
     lateinit var playersLazy: MutableList<UUID>
+    private var disableImmediately: Boolean = false
 
     override fun load() {
+        val cfgFile = dataFolder.resolve("config.yml")
+        if (!cfgFile.exists()) {
+            saveDefaultConfig()
+            reloadConfig()
+        }
+
+        config.load(cfgFile)
+
+        isSandbox = config.getBoolean("game.sandbox")
+        if(!config.getBoolean("connections.mongo.enabled")) {
+            disableImmediately = true
+            return
+        }
+
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
             MacrocosmConstants.CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
@@ -122,6 +138,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             MacrocosmServer((if (isInDevEnvironment) "devMini" else "mini") + Random.nextBytes(1)[0].toString(16))
         INSTANCE = this
         UNSAFE = Unsafe(Random.nextInt())
+
         Accessor.init()
         val versionInfo: VersionInfo = fromJson(
             Charsets.UTF_8.decode(ByteBuffer.wrap(this.getResource("MACROCOSM_VERSION_INFO")!!.readAllBytes()))
@@ -134,6 +151,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             info("Starting REST API Server")
             AsyncLauncher.launchApi()
         }
+        System.setProperty("mongo.user", config.getString("connections.mongo.username")!!)
+        System.setProperty("mongo.pass", config.getString("connections.mongo.password")!!)
         MongoDb.init()
         MacrocosmMetrics.init()
         Threading.runAsync {
@@ -163,6 +182,15 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     override fun startup() {
+        if(disableImmediately) {
+            logger.warning("======================================================")
+            logger.warning("Macrocosm requires you to fill out configs")
+            logger.warning("Fill out the config at `plugins/Macrocosm/config.yml`")
+            logger.warning("Disabling Macrocosm...")
+            logger.warning("======================================================")
+            pluginManager.disablePlugin(this)
+            return
+        }
 
         // required to be sync
         Ability.init()
@@ -193,30 +221,31 @@ class InternalMacrocosmPlugin : KSpigot() {
         )
 
         DataListener.joinLeave()
-        server.pluginManager.registerEvents(ChatHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(AbilityTriggers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(EntityHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(RecipeMenu, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(BlockClickListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(PickupListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(AlchemyReward, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(MiningHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(DamageHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(FishingHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(FallingBlockListener, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(PackProvider, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(SidebarRenderer, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(SlayerHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(Calendar, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(ItemUpdateHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(EquipmentHandler, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(InventoryListeners, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(Discord.ConnectionLoop, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(CustomBlockHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(AccessoryBag.Handlers, this@InternalMacrocosmPlugin)
-        server.pluginManager.registerEvents(LearnPower, this@InternalMacrocosmPlugin)
+        server.pluginManager.registerEvents(ChatHandler, this)
+        server.pluginManager.registerEvents(AbilityTriggers, this)
+        server.pluginManager.registerEvents(DamageHandlers, this)
+        server.pluginManager.registerEvents(EntityHandlers, this)
+        server.pluginManager.registerEvents(RecipeMenu, this)
+        server.pluginManager.registerEvents(BlockClickListener, this)
+        server.pluginManager.registerEvents(PickupListener, this)
+        server.pluginManager.registerEvents(AlchemyReward, this)
+        server.pluginManager.registerEvents(MiningHandler, this)
+        server.pluginManager.registerEvents(DamageHandlers, this)
+        server.pluginManager.registerEvents(FishingHandler, this)
+        server.pluginManager.registerEvents(FallingBlockListener, this)
+        server.pluginManager.registerEvents(PackProvider, this)
+        server.pluginManager.registerEvents(SidebarRenderer, this)
+        server.pluginManager.registerEvents(SlayerHandlers, this)
+        server.pluginManager.registerEvents(Calendar, this)
+        server.pluginManager.registerEvents(ItemUpdateHandlers, this)
+        server.pluginManager.registerEvents(EquipmentHandler, this)
+        server.pluginManager.registerEvents(InventoryListeners, this)
+        if(config.getBoolean("connections.discord.enabled"))
+            server.pluginManager.registerEvents(Discord.ConnectionLoop, this)
+        server.pluginManager.registerEvents(CustomBlockHandlers, this)
+        server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this)
+        server.pluginManager.registerEvents(AccessoryBag.Handlers, this)
+        server.pluginManager.registerEvents(LearnPower, this)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
@@ -288,18 +317,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             }
         }
 
-        val cfgFile = dataFolder.resolve("config.yml")
-        if (!cfgFile.exists()) {
-            saveDefaultConfig()
-            reloadConfig()
-        }
-
-        config.load(cfgFile)
-
-        isSandbox = config.getBoolean("game.sandbox")
-
-        MacrocosmConstants.DISCORD_BOT_TOKEN = config.getString("connections.discord-bot-token")
-        if (MacrocosmConstants.DISCORD_BOT_TOKEN != null && MacrocosmConstants.DISCORD_BOT_TOKEN != "NULL") {
+        MacrocosmConstants.DISCORD_BOT_TOKEN = config.getString("connections.discord.bot-token")
+        if (MacrocosmConstants.DISCORD_BOT_TOKEN != null && MacrocosmConstants.DISCORD_BOT_TOKEN != "NULL" && config.getBoolean("connections.discord.enabled")) {
             connectDiscordCommand()
         }
 
@@ -328,6 +347,8 @@ class InternalMacrocosmPlugin : KSpigot() {
     private val dumpTestData: Boolean = false
 
     override fun shutdown() {
+        if(disableImmediately)
+            return
         val storageExecutor = Threading.newFixedPool(16)
 
         storageExecutor.execute {
@@ -354,7 +375,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         ZombieAbilities.doomCounter.iter { id ->
             worlds[0].getEntity(id)?.remove()
         }
-
 
         storageExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
 

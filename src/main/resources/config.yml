@@ -1,9 +1,13 @@
 connections:
-    discord-bot-token: 'NULL'
+    mongo:
+        enabled: false
+        username: '<your username here>'
+        password: '<your password here>'
     discord:
+        enabled: false
+        bot-token: '<your bot token here>'
         communication-channel: 0
-        communication-webhook: 'NULL'
-        media-channel: 0
+        communication-webhook: ''
         guild-id: 0
 game:
     sandbox: false
