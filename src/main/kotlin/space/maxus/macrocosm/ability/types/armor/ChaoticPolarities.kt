@@ -47,7 +47,7 @@ object SpiritsPolaritySetBonus : FullSetBonus(
         listen<PlayerDealDamageEvent> { e ->
             if (e.kind != DamageKind.MELEE || !ensureSetRequirement(e.player))
                 return@listen
-            e.player.currentMana += min(e.player.stats()!!.intelligence, e.player.currentMana + 50)
+            e.player.currentMana += min(e.player.stats()?.intelligence ?: return@listen, e.player.currentMana + 50)
             currentBonus.setOrTakeMut(e.player.ref) { bonus ->
                 if (bonus == null || bonus != 50f) {
                     e.player.tempStats.abilityDamage += 2.5f
@@ -130,7 +130,7 @@ object VoidPolaritySetBonus : FullSetBonus(
                 val p = e.player.paper ?: return
                 val damage = DamageCalculator.calculateStandardDealt(
                     p.inventory.itemInMainHand.macrocosm!!.stats(e.player).damage,
-                    e.player.stats()!!
+                    e.player.stats() ?: return
                 )
                 taskRunLater(1L) {
                     // we need to specifically set it on the next tick
@@ -188,9 +188,9 @@ object ChaosPolaritySetBonus1 : FullSetBonus(
             }
         }
         listen<PlayerCalculateStatsEvent>(priority = EventPriority.LOWEST) { e ->
-            if (!ensureSetRequirement(e.player))
+            if (!ensureSetRequirement(e.player) || e.player.statCache == null)
                 return@listen
-            val manaPercentage = e.player.currentMana / e.player.stats()!!.intelligence
+            val manaPercentage = e.player.currentMana / (e.player.stats()?.intelligence ?: return@listen)
             if (manaPercentage <= .2f) {
                 e.stats.abilityDamage += 30f
             } else {

@@ -175,11 +175,11 @@ fun enchantCommand() = command("enchantme") {
                 ench.levels.map { it.toString() }
             }
 
-            runs {
+            runsCatching {
                 val item = player.inventory.itemInMainHand
                 if (item.type == Material.AIR) {
                     player.sendMessage(text("<red>Hold the item you want to enchant!"))
-                    return@runs
+                    return@runsCatching
                 }
                 val level = getArgument<Int>("level")
                 val macrocosm = item.macrocosm
@@ -203,7 +203,7 @@ fun itemCommand() = command("getitem") {
                 }
             }
 
-            runs {
+            runsCatching {
                 val player = getArgument<EntitySelector>("player").findSinglePlayer(this.nmsContext.source).bukkitEntity
                 val item = getArgument<ResourceLocation>("item").macrocosm
 

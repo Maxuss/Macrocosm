@@ -180,6 +180,7 @@ inline fun <R> runCatchingWithPlayer(player: Player, block: () -> R): Result<R> 
         },
         onFailure = { err ->
             val mc = err.macrocosm
+            Macrocosm.logger.severe(err.stackTraceToString())
             player.sendMessage(mc.component)
             return Result.failure(mc)
         }
@@ -195,6 +196,7 @@ inline fun <R> runCatchingReporting(player: Player? = null, block: () -> R): Res
         onFailure = { err ->
             val mc = err.macrocosm
             player?.sendMessage(mc.component)
+            Macrocosm.logger.severe(err.stackTraceToString())
             report("${mc.code}: ${mc.message}", nullFn())
             return Result.failure(mc)
         }

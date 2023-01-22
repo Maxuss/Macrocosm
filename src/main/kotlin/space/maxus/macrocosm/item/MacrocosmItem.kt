@@ -7,6 +7,7 @@ import net.axay.kspigot.extensions.bukkit.toComponent
 import net.axay.kspigot.items.customModel
 import net.axay.kspigot.items.flags
 import net.axay.kspigot.items.meta
+import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
@@ -183,7 +184,10 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
         val e = ItemCalculateStatsEvent(player, this, base)
         if (player != null) {
-            e.callEvent()
+            task {
+                // drift to sync environment
+                e.callEvent()
+            }
         }
         return e.stats
     }
@@ -408,7 +412,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
 
             // enchants
             if (enchantments.isNotEmpty()) {
-                val cloned = enchantments.clone() as HashMap<Enchantment, Int>
+                val cloned = HashMap((enchantments.clone() as HashMap<Identifier, Int>).map { Registry.ENCHANT.find(it.key) to it.value }.toMap())
                 if (cloned.size >= 6) {
                     val cmp = StringBuilder()
                     if (cloned.size >= 12) {

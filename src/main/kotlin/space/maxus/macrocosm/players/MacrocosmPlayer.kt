@@ -118,7 +118,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var accessoryBag: AccessoryBag = AccessoryBag()
 
     private var slayerRenderId: UUID? = null
-    private var statCache: Statistics? = null
+    var statCache: Statistics? = null; private set
     private var specialCache: SpecialStatistics? = null
 
     val activeEffects get() = paper?.activePotionEffects?.map { it.type }
@@ -589,6 +589,10 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
                 this.mongo,
                 UpdateOptions().upsert(true)
             )
+            task {
+                // drifting to main thread
+                activePet?.despawn(this)
+            }
         }
     }
 
@@ -633,7 +637,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.equipment = mongo.equipment.actual
             player.slayers = mongo.slayers
             player.ownedPets = HashMap(mongo.ownedPets.map { it.key to it.value.actual }.toMap())
-            if (mongo.activePet.isNotEmpty()) {
+            if (mongo.activePet.isNotBlank()) {
                 val pet = player.ownedPets[mongo.activePet]!!
                 task(delay = 20L) {
                     player.activePet = Registry.PET.find(pet.id).spawn(player, mongo.activePet)

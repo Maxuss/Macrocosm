@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder
 import net.axay.kspigot.gui.GUIType
 import net.axay.kspigot.gui.Slots
 import net.axay.kspigot.gui.kSpigotGUI
+import net.axay.kspigot.gui.openGUI
 import org.bukkit.Material
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
@@ -59,7 +60,7 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             val allRelated = allCollections.filter { it.inst.section == section }
             val unlocked = allRelated.filter { player.collections[it] > 0 }
 
-            changeGUI(sectionSlots[i], ItemValue.placeholderDescripted(
+            button(sectionSlots[i], ItemValue.placeholderDescripted(
                 section.mat,
                 "<aqua>${section.name.capitalized()} Collection",
                 "View your ${section.name.capitalized()} Collection!",
@@ -70,7 +71,10 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                     buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
                 "",
                 "<yellow>Click to view!"
-            ), { sectionUi(player, section) }, null, null)
+            )) {
+                it.bukkitEvent.isCancelled = true
+                it.player.openGUI(sectionUi(player, section, allRelated, unlocked))
+            }
         }
 
         button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
@@ -90,7 +94,7 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             "in Macrocosm. Collect more of an",
             "item to unlock rewards on your",
             "way to becoming a master of",
-            "Macroocsm!",
+            "Macrocosm!",
             "",
             *(if(unlockedCollections.size == allCollections.size)
                 buildBar(allCollections.size, maxedCollections.size).toList().toTypedArray()
@@ -104,7 +108,7 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
             val allRelated = allCollections.filter { it.inst.section == section }
             val unlocked = allRelated.filter { player.collections[it] > 0 }
 
-            changeGUI(sectionSlots[i], ItemValue.placeholderDescriptedGlow(
+            button(sectionSlots[i], ItemValue.placeholderDescriptedGlow(
                 section.mat,
                 "<aqua>${section.name.capitalized()} Collection",
                 "View your ${section.name.capitalized()} Collection!",
@@ -120,7 +124,10 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                 "<dark_gray>Requires 25k in collection to be ranked.",
                 "",
                 "<yellow>Click to view!"
-            ), { sectionUi(player, section) }, null, null)
+            )) {
+                it.bukkitEvent.isCancelled = true
+                it.player.openGUI(sectionUi(player, section, allRelated, unlocked))
+            }
         }
 
         button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->

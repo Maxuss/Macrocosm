@@ -3,14 +3,19 @@ package space.maxus.macrocosm.collections
 import org.bukkit.Material
 import space.maxus.macrocosm.collections.CollectionSection.*
 import space.maxus.macrocosm.collections.table.CollectionTables.*
+import space.maxus.macrocosm.item.MacrocosmItem
+import space.maxus.macrocosm.item.VanillaItem
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.reward.SkillExperienceReward
+import space.maxus.macrocosm.skills.SkillType
 import java.io.Serializable
 
 /**
  * A type of collection, which is associated with items that are collected for this collection
  */
 // todo: collection recipes
-enum class CollectionType(val inst: Collection) : Serializable {
+enum class CollectionType(val inst: Collection, displayItem: String? = null) : Serializable {
     // combat
     ROTTEN_FLESH(Collection("Rotten Flesh", listOf(), COMBAT, GENERIC_COMBAT)),
     BONE(Collection("Bone", listOf(), COMBAT, GENERIC_COMBAT)),
@@ -30,14 +35,16 @@ enum class CollectionType(val inst: Collection) : Serializable {
     GOLD_INGOT(Collection("Gold Ingot", listOf(), MINING, GENERIC)),
     IRON_INGOT(Collection("Iron Ingot", listOf(), MINING, GENERIC)),
     DIAMOND(Collection("Diamond", listOf(), MINING, STEEPER)),
-    GEMSTONE(Collection("Gemstone", listOf(), MINING, COLOSSAL_TABLE)),
+    GEMSTONE(Collection("Gemstone", listOf(), MINING, COLOSSAL_TABLE), "prismatic_shard"),
     EMERALD(Collection("Emerald", listOf(), MINING, GENERIC)),
     ICE(Collection("Ice", listOf(), MINING, COLOSSAL_TABLE)),
     END_STONE(Collection("Endstone", listOf(), MINING, GENERIC)),
-    SILVER(Collection("Silver", listOf(), MINING, GREEDY_TABLE)),
-    MITHRIL(Collection("Mithril", listOf(), MINING, GREEDY_TABLE)),
-    ADAMANTITE(Collection("Adamantite", listOf(), MINING, GREEDY_TABLE)),
-    TITANIUM(Collection("Titanium", listOf(), MINING, GREEDY_TABLE)),
+    SILVER(Collection("Silver", listOf(), MINING, GREEDY_TABLE), "silver_ingot"),
+    MITHRIL(Collection("Mithril", listOf(), MINING, GREEDY_TABLE), "mithril_bar"),
+    ADAMANTINE(Collection("Adamantine", listOf(
+        SkillExperienceReward(SkillType.MINING, 12000.0, false)
+    ), MINING, GREEDY_TABLE), "adamantine_bar"),
+    TITANIUM(Collection("Titanium", listOf(), MINING, GREEDY_TABLE), "titanium_ingot"),
 
     // farming
     WHEAT(Collection("Wheat", listOf(), FARMING, GREEDY_TABLE)),
@@ -51,7 +58,7 @@ enum class CollectionType(val inst: Collection) : Serializable {
     BEEF(Collection("Beef", listOf(), FARMING, GREEDY_TABLE)),
     MUTTON(Collection("Mutton", listOf(), FARMING, GREEDY_TABLE)),
     NETHER_WART(Collection("Nether Wart", listOf(), FARMING, LESS)),
-    CHORUS(Collection("Chorus", listOf(), FARMING, GREEDY_TABLE)),
+    CHORUS(Collection("Chorus", listOf(), FARMING, GREEDY_TABLE), "\$CHORUS_FRUIT"),
 
     // fishing
     COD(Collection("Cod", listOf(), FISHING, GENERIC_FISHING)),
@@ -61,8 +68,8 @@ enum class CollectionType(val inst: Collection) : Serializable {
     SPONGE(Collection("Cod", listOf(), FISHING, GREEDY_TABLE)),
     INK_SAC(Collection("Ink Sac", listOf(), FISHING, GREEDY_TABLE)),
     PRISMARINE(Collection("Prismarine", listOf(), FISHING, FISHING_PRISMARINE)),
-    SEAWEED(Collection("Seaweed", listOf(), FISHING, GREEDY_TABLE)),
-    MAGMAFISH(Collection("Magmafish", listOf(), FISHING, FISHING_MAGMA)),
+    SEAWEED(Collection("Seaweed", listOf(), FISHING, GREEDY_TABLE), "\$KELP"),
+    MAGMAFISH(Collection("Magmafish", listOf(), FISHING, FISHING_MAGMA), "\$BARRIER"),
 
     // foraging
     OAK(Collection("Oak", listOf(), FORAGING, GENERIC)),
@@ -70,21 +77,23 @@ enum class CollectionType(val inst: Collection) : Serializable {
     JUNGLE_WOOD(Collection("Jungle Wood", listOf(), FORAGING, GENERIC)),
     DARK_OAK(Collection("Dark Oak", listOf(), FORAGING, GENERIC)),
     BIRCH(Collection("Birch", listOf(), FORAGING, GENERIC)),
-    CRIMSON_WOOD(Collection("Crimson Wood", listOf(), FORAGING, STEEPER)),
-    WARPED_WOOD(Collection("Warped Wood", listOf(), FORAGING, STEEPER)),
-    STEELWOOD(Collection("Steelwood", listOf(), FORAGING, GREEDY_FORAGING)),
-    CRYSTALWOOD(Collection("Crystalwood", listOf(), FORAGING, GREEDY_FORAGING)),
-    SHADEWOOD(Collection("Shadewood", listOf(), FORAGING, GREEDY_FORAGING)),
+    CRIMSON_WOOD(Collection("Crimson Wood", listOf(), FORAGING, STEEPER), "\$CRIMSON_STEM"),
+    WARPED_WOOD(Collection("Warped Wood", listOf(), FORAGING, STEEPER), "\$WARPED_STEM"),
+    STEELWOOD(Collection("Steelwood", listOf(), FORAGING, GREEDY_FORAGING), "\$BARRIER"),
+    CRYSTALWOOD(Collection("Crystalwood", listOf(), FORAGING, GREEDY_FORAGING), "\$BARRIER"),
+    SHADEWOOD(Collection("Shadewood", listOf(), FORAGING, GREEDY_FORAGING), "\$BARRIER"),
 
     // excavating
     DIRT(Collection("Dirt", listOf(), EXCAVATING, APPROX_EXCAVATING)),
     SAND(Collection("Sand", listOf(), EXCAVATING, APPROX_EXCAVATING)),
     GRAVEL(Collection("Gravel", listOf(), EXCAVATING, APPROX_EXCAVATING)),
-    NYLIUM(Collection("Nylium", listOf(), EXCAVATING, APPROX_EXCAVATING)),
+    NYLIUM(Collection("Nylium", listOf(), EXCAVATING, APPROX_EXCAVATING), "\$CRIMSON_NYLIUM"),
     NETHERRACK(Collection("Netherrack", listOf(), EXCAVATING, STEEPER)),
-    MOONSTONE_DUST(Collection("Moonstone Dust", listOf(), EXCAVATING, GREEDY_TABLE)),
+    MOONSTONE_DUST(Collection("Moonstone Dust", listOf(), EXCAVATING, GREEDY_TABLE), "\$WHITE_CONCRETE_POWDER"),
 
     ;
+
+    val displayItem: MacrocosmItem by lazy { if(displayItem == null) VanillaItem(Material.valueOf(name)) else if(displayItem.startsWith("$")) VanillaItem(Material.valueOf(name.trimStart('\$'))) else Registry.ITEM.find(Identifier.macro(displayItem)) }
 
     companion object {
         private val matToColl = hashMapOf(
@@ -186,7 +195,7 @@ enum class CollectionType(val inst: Collection) : Serializable {
                         "shadewood" -> SHADEWOOD
                         "silver" -> SILVER
                         "mithril" -> MITHRIL
-                        "adamantite" -> ADAMANTITE
+                        "adamantine" -> ADAMANTINE
                         "titanium" -> TITANIUM
                         else -> null
                     }
@@ -199,7 +208,7 @@ enum class CollectionType(val inst: Collection) : Serializable {
                 "shadewood" -> SHADEWOOD
                 "silver" -> SILVER
                 "mithril" -> MITHRIL
-                "adamantite" -> ADAMANTITE
+                "adamantine" -> ADAMANTINE
                 "titanium" -> TITANIUM
                 else -> null
             }
