@@ -76,9 +76,9 @@ object RecipeMenu : Listener {
         val player = e.whoClicked as? Player ?: return
 
         val grid: MutableList<ItemStack?> = collect(
-            inv.getItems(10..12),
-            inv.getItems(19..21),
-            inv.getItems(28..30)
+            e.view.topInventory.getItems(10..12),
+            e.view.topInventory.getItems(19..21),
+            e.view.topInventory.getItems(28..30)
         )
 
         if (e.view.topInventory != inv) {
@@ -127,7 +127,7 @@ object RecipeMenu : Listener {
 
         val p = e.player as? Player ?: return
 
-        val inv = e.inventory
+        val inv = e.view.topInventory
         val grid: MutableList<ItemStack?> = collect(
             inv.getItems(10..12),
             inv.getItems(19..21),

@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import space.maxus.macrocosm.item.macrocosmTag
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.recipes.Recipes
 import space.maxus.macrocosm.recipes.recipesUsing
 import space.maxus.macrocosm.util.general.getId
 
@@ -30,8 +31,12 @@ object BlockClickListener : Listener {
     fun openRecipeBrowser(e: PlayerInteractEvent) {
         val mc = e.item?.macrocosmTag() ?: return
         if (mc.contains("ViewRecipes")) {
-            e.player.openGUI(recipesUsing(mc.getId("ViewRecipes"), e.player.macrocosm!!))
             e.isCancelled = true
+            val id = mc.getId("ViewRecipes")
+            val p = e.player.macrocosm!!
+            val allRecipes = Recipes.using(id).filter { p.unlockedRecipes.contains(it.id) }
+            if(allRecipes.isNotEmpty())
+                e.player.openGUI(recipesUsing(mc.getId("ViewRecipes"), e.player.macrocosm!!))
         }
     }
 }

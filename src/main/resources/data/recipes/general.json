@@ -1,9 +1,9 @@
 {
     "aspect_of_the_end": {
         "pattern": [
-            "P",
-            "P",
-            "D"
+            " P ",
+            " P ",
+            " D "
         ],
         "matrix": {
             "P": {

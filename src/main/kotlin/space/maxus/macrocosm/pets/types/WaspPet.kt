@@ -110,7 +110,7 @@ object WaspPet : Pet(
                     pitch = 0f
                     playAt(nearest.location)
                 }
-                nearest.macrocosm!!.damage(dmg)
+                nearest.macrocosm?.damage(dmg)
                 DamageHandlers.summonDamageIndicator(nearest.location, dmg)
             }
         }

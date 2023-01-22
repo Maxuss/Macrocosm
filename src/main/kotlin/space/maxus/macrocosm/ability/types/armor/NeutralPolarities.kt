@@ -52,6 +52,11 @@ object WaterPolaritySetBonus : FullSetBonus(
                 return@listen
             e.stats.vigor *= 2.5f
         }
+        listen<PlayerDealDamageEvent> { e ->
+            if(!ensureSetRequirement(e.player) || e.kind != DamageKind.MELEE)
+                return@listen
+            e.isCancelled = true
+        }
     }
 }
 

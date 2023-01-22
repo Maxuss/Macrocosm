@@ -26,7 +26,7 @@ class Skills(val skillExp: HashMap<SkillType, PlayerSkill>) : Serializable {
                 metrics(sk).inc(exp)
             totalSkillExperience.inc(exp)
         }
-        return sk.inst.table.shouldLevelUp(skill.lvl, skill.overflow, .0)
+        return sk.inst.table.shouldLevelUp(skill.lvl, skill.overflow)
     }
 
     fun level(sk: SkillType): Int {

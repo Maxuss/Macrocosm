@@ -118,7 +118,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var accessoryBag: AccessoryBag = AccessoryBag()
 
     private var slayerRenderId: UUID? = null
-    private var statCache: Statistics? = null
+    var statCache: Statistics? = null; private set
     private var specialCache: SpecialStatistics? = null
 
     val activeEffects get() = paper?.activePotionEffects?.map { it.type }
@@ -296,17 +296,15 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         collections.increase(collection, amount)
         if (collection.inst.table.shouldLevelUp(
                 collections.level(collection),
-                collections[collection].toDouble(),
-                amount.toDouble()
-            )
+                collections[collection]
+            ) && !collections.isMaxLevel(collection)
         ) {
             val lvl = collections.level(collection) + 1
             collections.setLevel(collection, lvl)
             // todo: rewards!!
-            // sendCollectionLevelUp(collection)
-            // collection.inst.rewards[lvl - 1].reward(this, lvl)
+            sendCollectionLevelUp(collection)
+            collection.inst.rewards[lvl - 1].reward(this, lvl)
         }
-
     }
 
     fun sendSkillLevelUp(skill: SkillType) {
@@ -585,13 +583,12 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     override fun store() {
-        MongoDb.execute {
-            it.players.updateOne(
-                MongoPlayerData::uuid eq this.ref,
-                this.mongo,
-                UpdateOptions().upsert(true)
-            )
-        }
+        MongoDb.players.updateOne(
+            MongoPlayerData::uuid eq this.ref,
+            this.mongo,
+            UpdateOptions().upsert(true)
+        )
+        activePet?.despawn(this)
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)
@@ -635,7 +632,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.equipment = mongo.equipment.actual
             player.slayers = mongo.slayers
             player.ownedPets = HashMap(mongo.ownedPets.map { it.key to it.value.actual }.toMap())
-            if (mongo.activePet.isNotEmpty()) {
+            if (mongo.activePet.isNotBlank()) {
                 val pet = player.ownedPets[mongo.activePet]!!
                 task(delay = 20L) {
                     player.activePet = Registry.PET.find(pet.id).spawn(player, mongo.activePet)

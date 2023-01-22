@@ -102,5 +102,5 @@ data class StoredPet(
     }
 
     override val mongo: MongoOwnedPet
-        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, id?.toString())
+        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, skin?.toString())
 }

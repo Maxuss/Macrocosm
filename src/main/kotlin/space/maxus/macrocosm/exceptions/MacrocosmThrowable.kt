@@ -36,7 +36,7 @@ val Throwable.macrocosm: MacrocosmThrowable
         } else {
             MacrocosmThrowable(
                 this.javaClass.simpleName.replaceFirstChar(Char::lowercase).camelToSnakeCase().uppercase(),
-                this.message ?: "Unknown error! Please report this."
+                this.message ?: this.cause?.message ?: "Unknown error! Please report this."
             )
         }
     }

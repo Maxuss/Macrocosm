@@ -4,7 +4,7 @@ import net.minecraft.util.Mth
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.collections.CollectionType
-import space.maxus.macrocosm.collections.Section
+import space.maxus.macrocosm.collections.CollectionSection
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
@@ -59,10 +59,10 @@ class LootPool private constructor(val drops: List<Drop>) {
                         player?.addCollectionAmount(collType, amount)
                         var boost = 1
                         val fortune = when (collType.inst.section) {
-                            Section.FARMING -> stats?.farmingFortune
-                            Section.MINING -> stats?.miningFortune
-                            Section.FORAGING -> stats?.foragingFortune
-                            Section.EXCAVATING -> stats?.excavatingFortune
+                            CollectionSection.FARMING -> stats?.farmingFortune
+                            CollectionSection.MINING -> stats?.miningFortune
+                            CollectionSection.FORAGING -> stats?.foragingFortune
+                            CollectionSection.EXCAVATING -> stats?.excavatingFortune
                             else -> null
                         } ?: 0f
                         boost += (fortune / 100).roundToInt()
@@ -95,10 +95,10 @@ class LootPool private constructor(val drops: List<Drop>) {
                     player?.addCollectionAmount(collType, amount)
                     var boost = 1
                     var fortune = when (collType.inst.section) {
-                        Section.FARMING -> stats?.farmingFortune
-                        Section.MINING -> stats?.miningFortune
-                        Section.FORAGING -> stats?.foragingFortune
-                        Section.EXCAVATING -> stats?.excavatingFortune
+                        CollectionSection.FARMING -> stats?.farmingFortune
+                        CollectionSection.MINING -> stats?.miningFortune
+                        CollectionSection.FORAGING -> stats?.foragingFortune
+                        CollectionSection.EXCAVATING -> stats?.excavatingFortune
                         else -> null
                     } ?: 0f
 

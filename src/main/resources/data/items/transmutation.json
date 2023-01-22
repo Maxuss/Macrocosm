@@ -13,7 +13,7 @@
         "description": "It is said that this gemstone can produce solar energy out of nothing.",
         "model": {
             "id": 203,
-            "to": "macrocosm:item/sapphire_shard"
+            "to": "macrocosm:item/prismatic_shard"
         },
         "animation": {
             "frames": 11

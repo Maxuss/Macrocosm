@@ -23,8 +23,8 @@ class ProgressivePetTable(val modifier: Float) : LevelingTable {
         return (BASE[lvl - 1] - BASE[lvl - 2]) * modifier
     }
 
-    override fun shouldLevelUp(lvl: Int, overflow: Double, next: Double): Boolean {
+    override fun shouldLevelUp(lvl: Int, overflow: Double): Boolean {
         val nextLvl = expForLevel(lvl + 1)
-        return nextLvl - overflow - next <= .0
+        return nextLvl - overflow <= .0
     }
 }
