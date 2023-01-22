@@ -166,7 +166,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializabl
         }
 
     var vigor: Float
-        get() = self[Statistic.VIGOR]!! + self[Statistic.INTELLIGENCE]!!
+        get() = self[Statistic.VIGOR]!!
         set(value) {
             self[Statistic.VIGOR] = value
         }
