@@ -528,8 +528,8 @@
         ],
         "matrix": {
             "A": {
-                "item": "enchanted_adamantite",
-                "amount": 32
+                "item": "enchanted_adamantine_bar",
+                "amount": 4
             },
             "R": "revived_heart",
             "N": {

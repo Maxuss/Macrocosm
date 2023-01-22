@@ -304,6 +304,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         handDebug()
         testJacobus()
         collectionsCommand()
+        adminEnchanting()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

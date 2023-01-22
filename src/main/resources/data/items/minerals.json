@@ -70,5 +70,66 @@
             "id": 58,
             "to": "macrocosm:item/titanium_ingot"
         }
+    },
+    "raw_silver": {
+        "rarity": "uncommon",
+        "description": "A chunk of unprocessed Silver.",
+        "model": {
+            "id": 59,
+            "to": "macrocosm:item/raw_silver"
+        }
+    },
+    "raw_mithril": {
+        "rarity": "uncommon",
+        "description": "A chunk of unprocessed Mithril.",
+        "model": {
+            "id": 60,
+            "to": "macrocosm:item/raw_mithril"
+        }
+    },
+    "enchanted_adamantine_bar": {
+        "rarity": "legendary",
+        "description": "Dwarves lost their mind over this.",
+        "glow": true,
+        "model": {
+            "id": 61,
+            "to": "macrocosm:item/adamantine_bar"
+        }
+    },
+    "enchanted_mithril_bar": {
+        "rarity": "epic",
+        "description": "A bar of concentrated Mithril",
+        "glow": true,
+        "model": {
+            "id": 62,
+            "to": "macrocosm:item/mithril_bar"
+        }
+    },
+    "enchanted_silver_ingot": {
+        "rarity": "epic",
+        "description": "An ingot of concentrated Silver.",
+        "glow": true,
+        "model": {
+            "id": 63,
+            "to": "macrocosm:item/silver_ingot"
+        }
+    },
+    "enchanted_lumium_bar": {
+        "rarity": "epic",
+        "description": "This bar of concentrated Lumium pulsates with Magical energy.",
+        "glow": true,
+        "model": {
+            "id": 64,
+            "to": "macrocosm:item/lumium_bar"
+        }
+    },
+    "enchanted_titanium_ingot": {
+        "rarity": "epic",
+        "description": "Unimaginably tough ingot of concentrated Titanium.",
+        "glow": true,
+        "model": {
+            "id": 65,
+            "to": "macrocosm:item/titanium_ingot"
+        }
     }
 }

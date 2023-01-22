@@ -583,17 +583,12 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     override fun store() {
-        MongoDb.execute {
-            it.players.updateOne(
-                MongoPlayerData::uuid eq this.ref,
-                this.mongo,
-                UpdateOptions().upsert(true)
-            )
-            task {
-                // drifting to main thread
-                activePet?.despawn(this)
-            }
-        }
+        MongoDb.players.updateOne(
+            MongoPlayerData::uuid eq this.ref,
+            this.mongo,
+            UpdateOptions().upsert(true)
+        )
+        activePet?.despawn(this)
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)

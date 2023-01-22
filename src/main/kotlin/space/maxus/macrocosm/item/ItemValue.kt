@@ -164,17 +164,6 @@ enum class ItemValue(
 
     SPELL_SCROLL(SpellScroll()),
 
-    // indev
-    ENCHANTED_ADAMANTITE(
-        RecipeItem(
-            Material.REDSTONE,
-            Rarity.EPIC,
-            "Enchanted Adamantite",
-            description = "Dwarves thought this metal was a myth...",
-            glow = true
-        )
-    ),
-
     INFERNAL_GREATSWORD(InfernalGreatsword()),
     ;
 

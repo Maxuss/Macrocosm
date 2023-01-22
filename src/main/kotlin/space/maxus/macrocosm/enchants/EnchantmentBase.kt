@@ -123,7 +123,7 @@ abstract class EnchantmentBase(
         base.multiply(multiplier * level)
         special.multiply(multiplier * level)
         val mm = MiniMessage.miniMessage()
-        val regulatedDescription = "\\[\\d.]+".toRegex().replace(description) {
+        val regulatedDescription = "\\[[\\d.]+]".toRegex().replace(description) {
             Formatting.stats(
                 BigDecimal.valueOf(
                     java.lang.Double.parseDouble(

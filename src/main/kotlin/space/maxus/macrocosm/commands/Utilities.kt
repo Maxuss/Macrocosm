@@ -7,18 +7,20 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.axay.kspigot.commands.*
-import net.axay.kspigot.gui.GUIType
-import net.axay.kspigot.gui.Slots
-import net.axay.kspigot.gui.kSpigotGUI
-import net.axay.kspigot.gui.openGUI
+import net.axay.kspigot.gui.*
 import net.axay.kspigot.sound.sound
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.conversations.ConversationContext
+import org.bukkit.conversations.ConversationFactory
+import org.bukkit.conversations.Prompt
+import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.ui.thaumaturgyUi
@@ -35,6 +37,7 @@ import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.discord.Discord
+import space.maxus.macrocosm.enchants.ui.adminEnchantUi
 import space.maxus.macrocosm.events.YearChangeEvent
 import space.maxus.macrocosm.exceptions.MacrocosmThrowable
 import space.maxus.macrocosm.item.*
@@ -56,12 +59,17 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
-import space.maxus.macrocosm.util.general.Debug
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
 import java.net.InetAddress
 import java.util.*
 import kotlin.math.roundToInt
+
+fun adminEnchanting() = command("enchantui") {
+    runsCatching {
+        player.openGUI(adminEnchantUi(player.inventory.itemInMainHand.macrocosm ?: return@runsCatching))
+    }
+}
 
 fun collectionsCommand() = command("collections") {
     runsCatching {
@@ -655,7 +663,7 @@ fun addSpellCommand() = command("addspell") {
     }
 }
 
-fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
+fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     title = text("Item Browser")
     defaultPage = 0
     val mc = player.macrocosm!!
@@ -679,17 +687,39 @@ fun allItems(player: Player) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                 e.bukkitEvent.isCancelled = true
             }
         )
-        compound.addContent(Registry.ITEM.iter().keys.toList())
+        compound.addContent(Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }.map { it.key })
         compound.sortContentBy { it.path }
-        compoundScroll(
-            Slots.RowOneSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Next"), compound, scrollTimes = 1
-        )
-        compoundScroll(
-            Slots.RowSixSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Back"), compound, scrollTimes = 1, reverse = true
-        )
 
+        compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"), compound, scrollTimes = 1)
+        compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"), compound, reverse = true, scrollTimes = 1)
+
+        compoundScroll(Slots.RowSixSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"), compound, scrollTimes = 4)
+        compoundScroll(Slots.RowSixSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"), compound, reverse = true, scrollTimes = 4)
+
+        button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
+            e.bukkitEvent.isCancelled = true
+            e.player.closeInventory()
+            val inputFilterPrompt = object: ValidatingPrompt() {
+                override fun getPromptText(context: ConversationContext): String {
+                    return ChatColor.YELLOW.toString() + "Input item name to search:"
+                }
+
+                override fun isInputValid(context: ConversationContext, input: String): Boolean {
+                    return true
+                }
+
+                override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
+                    e.player.openGUI(
+                        allItems(player, input)
+                    )
+                    return Prompt.END_OF_CONVERSATION
+                }
+
+            }
+
+            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.player)
+            conv.begin()
+        }
     }
 }
 

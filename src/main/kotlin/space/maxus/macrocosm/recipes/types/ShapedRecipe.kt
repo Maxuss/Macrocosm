@@ -65,6 +65,7 @@ class ShapedRecipe(
                 // [ 0 0 0 ]
                 val (expectedId, expectedAmount) = ingredients[x][y]
                 val itemIndex = gridIndices[x][y]
+
                 val item = grid[itemIndex] ?: if (expectedId == Identifier.NULL) continue else return Pair(
                     false,
                     hashMapOf()
