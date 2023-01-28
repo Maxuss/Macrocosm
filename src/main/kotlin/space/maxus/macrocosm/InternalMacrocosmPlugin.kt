@@ -22,6 +22,7 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.data.DataGenerators
+import space.maxus.macrocosm.data.level.LevelDatabase
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
@@ -118,11 +119,11 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         config.load(cfgFile)
 
-        isSandbox = config.getBoolean("game.sandbox")
         if (!config.getBoolean("connections.mongo.enabled")) {
             disableImmediately = true
             return
         }
+        isSandbox = config.getBoolean("game.sandbox")
 
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
@@ -155,6 +156,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         System.setProperty("mongo.pass", config.getString("connections.mongo.password")!!)
         MongoDb.init()
         MacrocosmMetrics.init()
+        Threading.runAsync { LevelDatabase.load() }
+
         Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
             if (!rendersDir.exists())
@@ -347,6 +350,9 @@ class InternalMacrocosmPlugin : KSpigot() {
                     Discord.sendVersionDiff(previousVersion)
             }
         }
+
+        // Collect all the side-produced garbage
+        System.gc()
     }
 
     private val dumpTestData: Boolean = false
@@ -356,24 +362,19 @@ class InternalMacrocosmPlugin : KSpigot() {
             return
         val storageExecutor = Threading.newFixedPool(16)
 
+        storageExecutor.execute(LevelDatabase::save)
         storageExecutor.execute {
             for ((_, v) in loadedPlayers) {
                 v.store()
             }
         }
-        storageExecutor.execute {
-            Calendar.save()
-        }
-        storageExecutor.execute {
-            TRANSACTION_HISTORY.storeSelf()
-        }
-        storageExecutor.execute {
-            Bazaar.table.store()
-        }
-        storageExecutor.execute { KeyManager.store() }
-        storageExecutor.execute { Discord.storeSelf() }
+        storageExecutor.execute(Calendar::save)
+        storageExecutor.execute(TRANSACTION_HISTORY::storeSelf)
+        storageExecutor.execute(Bazaar.table::store)
+        storageExecutor.execute(KeyManager::store)
+        storageExecutor.execute(Discord::storeSelf)
         storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version.toString()) } }
-        storageExecutor.execute { MacrocosmMetrics.shutdown() }
+        storageExecutor.execute(MacrocosmMetrics::shutdown)
 
         storageExecutor.shutdown()
 

@@ -21,7 +21,7 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.stripTags
 import kotlin.math.roundToInt
 
-val slayerLevelBuff = arrayOf(1.0, 1.0, 1.0, .95, .95, .9, .85, .85, .8)
+val slayerLevelBuff = arrayOf(1.0, 1.0, 1.0, .95, .95, .9, .85, .85, .85, .9)
 fun rngMeterButton(slayer: SlayerLevel, slayerType: SlayerType): ItemStack {
     return itemStack(Material.PAINTING) {
         meta {

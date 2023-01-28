@@ -110,6 +110,7 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     REVENANT_ARMOR_BONUS(
         EntityKillCounterBonus(
+            "revenant_armor_bonus",
             "Undead Bulwark",
             listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK),
             Statistic.DEFENSE
@@ -117,6 +118,7 @@ enum class Ability(val ability: MacrocosmAbility) {
     ),
     REAPER_ARMOR_BONUS(
         EntityKillCounterBonus(
+            "reaper_armor_bonus",
             "Reaper Bulwark", listOf(EntityType.ZOMBIE, EntityType.DROWNED, EntityType.HUSK), Statistic.DEFENSE, listOf(
                 0,
                 30,
@@ -139,6 +141,7 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     HEAT_RESISTANT_ARMOR_BONUS(
         EntityKillCounterBonus(
+            "heat_resistant_armor_bonus",
             "Heat Resistance",
             listOf(EntityType.WITHER_SKELETON),
             Statistic.DEFENSE
@@ -146,6 +149,7 @@ enum class Ability(val ability: MacrocosmAbility) {
     ),
     VOLCANO_STRIDER_ARMOR_BONUS(
         EntityKillCounterBonus(
+            "volcano_strider_armor_bonus",
             "Volcano Strider", listOf(EntityType.WITHER_SKELETON), Statistic.DEFENSE, listOf(
                 0,
                 30,

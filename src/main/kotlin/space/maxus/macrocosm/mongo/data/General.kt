@@ -28,6 +28,7 @@ data class MongoDiscordAuthentication(
 )
 
 data class MongoKeyData(
+    @BsonId
     val key: String,
     val data: InlinedKeyData
 )

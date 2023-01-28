@@ -131,7 +131,7 @@ object ItemParser {
                     rarity,
                     type,
                     stats,
-                    abils.mapNotNull { Registry.ABILITY.findOrNull(it) }.toMutableList(),
+                    abils.map { Registry.ABILITY.point(it) },
                     specialStats,
                     bp,
                     runes.map { RuneSlot.fromId(it) },

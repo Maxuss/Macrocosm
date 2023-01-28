@@ -4,16 +4,16 @@ import net.minecraft.nbt.CompoundTag
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.RegistryPointer
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
 class KillCountingItem(
     type: ItemType, itemName: String, rarity: Rarity, base: Material,
     stats: Statistics,
-    abilities: MutableList<MacrocosmAbility> = mutableListOf(),
+    abilities: MutableList<RegistryPointer> = mutableListOf(),
     specialStats: SpecialStatistics = SpecialStatistics(),
     breakingPower: Int = 0,
     runeTypes: List<RuneSlot> = listOf(),
@@ -46,7 +46,7 @@ class KillCountingItem(
             rarity,
             base,
             stats.clone(),
-            abilities.mapNotNull { it.get<MacrocosmAbility>() }.toMutableList(),
+            abilities,
             specialStats.clone(),
             metaModifier = metaModifier,
             description = description

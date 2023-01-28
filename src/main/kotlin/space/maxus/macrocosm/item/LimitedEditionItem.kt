@@ -12,6 +12,7 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -33,7 +34,7 @@ class LimitedEditionItem(
     rarity,
     base,
     stats,
-    abilities,
+    abilities.map { Registry.ABILITY.point(it.id) },
     specialStats,
     breakingPower,
     runeTypes,

@@ -24,7 +24,7 @@ abstract class AbilityBase(
     /**
      * ID of this ability, got from the [Registry.ABILITY])
      */
-    val id: Identifier get() = Registry.ABILITY.byValue(this) ?: Identifier.NULL
+    override val id: Identifier by lazy { Registry.ABILITY.byValue(this) ?: Identifier.NULL }
 
     /**
      * Ensures that the provided [player] has item with this ability in the [slot], as well as doing
