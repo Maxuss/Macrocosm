@@ -18,7 +18,7 @@ import space.maxus.macrocosm.item.KillStorageItem
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.registry.anyPoints
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.text
 import java.util.*
@@ -49,6 +49,7 @@ private fun descriptAbility(family: MutableList<EntityType>): String {
 }
 
 open class EntityKillCounterBonus(
+    id: String,
     name: String,
     private val entities: List<EntityType>,
     private val stat: Statistic,
@@ -81,6 +82,8 @@ open class EntityKillCounterBonus(
         )
     )
 ) : AbilityBase(AbilityType.PASSIVE, name, "") {
+    override val id: Identifier = Identifier.parse(id)
+
     open fun addLore(item: MacrocosmItem): List<Component> {
         val (index, kills) = counterBuff(item)
         if (index == 8)
@@ -128,7 +131,7 @@ open class EntityKillCounterBonus(
 
     override fun registerListeners() {
         listen<ItemCalculateStatsEvent> { e ->
-            if (!e.item.abilities.anyPoints(this))
+            if (!e.item.abilities.any { it.pointer == this.id })
                 return@listen
             val (index, _) = counterBuff(e.item)
             e.stats[stat] = e.stats[stat] + rewardTable[index]

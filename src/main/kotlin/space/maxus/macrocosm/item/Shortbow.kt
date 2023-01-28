@@ -4,6 +4,7 @@ import org.bukkit.Material
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 
@@ -22,8 +23,8 @@ open class Shortbow(
     origin,
     stats,
     mutableListOf(
-        Ability.SHORTBOW_GENERIC.ability,
-        *extraAbilities.toTypedArray()
+        Registry.ABILITY.point(Ability.SHORTBOW_GENERIC.ability.id),
+        *extraAbilities.map { Registry.ABILITY.point(it.id) }.toTypedArray()
     ),
     specials,
     0,

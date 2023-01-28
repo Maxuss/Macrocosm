@@ -588,7 +588,9 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             this.mongo,
             UpdateOptions().upsert(true)
         )
-        activePet?.despawn(this)
+        task {
+            activePet?.despawn(this)
+        }
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)

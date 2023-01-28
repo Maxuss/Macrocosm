@@ -8,6 +8,7 @@ import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.damage.DamageCalculator
 import space.maxus.macrocosm.players.MacrocosmPlayer
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.text
 import kotlin.math.roundToInt
 
@@ -51,6 +52,11 @@ interface MacrocosmAbility {
             }
         }
     }
+
+    /**
+     * The ID of this ability
+     */
+    val id: Identifier
 
     /**
      * Name of this ability, supports MiniMessage tags

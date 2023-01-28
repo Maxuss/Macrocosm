@@ -58,6 +58,10 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         return if (value is Identified) value.id else iter().filter { it.value == value }.map { it.key }.firstOrNull()
     }
 
+    fun point(to: Identifier): RegistryPointer {
+        return RegistryPointer(this.name, to)
+    }
+
     open fun find(id: Identifier): T = iter()[id]!!
     open fun findOrNull(id: Identifier?): T? = if (id == null) null else iter()[id]
     open fun has(id: Identifier): Boolean = iter().containsKey(id)

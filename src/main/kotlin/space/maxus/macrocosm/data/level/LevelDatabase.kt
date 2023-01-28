@@ -9,7 +9,7 @@ import space.maxus.macrocosm.util.data.SemanticVersion
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.deleteExisting
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
 
 object LevelDatabase {
@@ -31,7 +31,7 @@ object LevelDatabase {
         return@lazy path.resolve("leveldb")
     }
 
-    private val localPath = Accessor.access("leveldb")
+    private val localPath by lazy { Accessor.access("leveldb") }
 
     fun backup() {
         if(!localPath.exists())
@@ -54,8 +54,9 @@ object LevelDatabase {
             adapter.save(cmp)
             baseCompound.put(adapter.name, cmp)
         }
-        localPath.deleteExisting()
+        localPath.deleteIfExists()
         NbtIo.writeCompressed(baseCompound, localPath.toFile())
+        backup()
     }
 
     fun load() {

@@ -125,8 +125,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         }
         isSandbox = config.getBoolean("game.sandbox")
 
-        Threading.runAsync { LevelDatabase.load() }
-
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
             MacrocosmConstants.CURRENT_IP = conn.inputStream.readAllBytes().decodeToString()
@@ -158,6 +156,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         System.setProperty("mongo.pass", config.getString("connections.mongo.password")!!)
         MongoDb.init()
         MacrocosmMetrics.init()
+        Threading.runAsync { LevelDatabase.load() }
+
         Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
             if (!rendersDir.exists())
@@ -350,6 +350,9 @@ class InternalMacrocosmPlugin : KSpigot() {
                     Discord.sendVersionDiff(previousVersion)
             }
         }
+
+        // Collect all the side-produced garbage
+        System.gc()
     }
 
     private val dumpTestData: Boolean = false

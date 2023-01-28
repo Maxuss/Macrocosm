@@ -10,6 +10,7 @@ import org.bukkit.block.data.Bisected
 import org.bukkit.block.data.type.Door
 import org.bukkit.block.data.type.NoteBlock
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -133,6 +134,10 @@ object CustomBlockHandlers : Listener {
         @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
         fun onStepFall(e: GenericGameEvent) {
             val entity: Entity = e.entity ?: return
+            if(entity !is Player)
+                return
+            if(e.event != GameEvent.HIT_GROUND && e.event != GameEvent.STEP)
+                return
             val eLoc: Location = entity.location
             if (!e.location.chunk.isLoaded || !eLoc.chunk.isLoaded) return
 
