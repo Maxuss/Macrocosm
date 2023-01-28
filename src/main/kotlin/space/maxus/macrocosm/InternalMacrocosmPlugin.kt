@@ -22,6 +22,7 @@ import space.maxus.macrocosm.commands.*
 import space.maxus.macrocosm.cosmetic.Cosmetics
 import space.maxus.macrocosm.data.Accessor
 import space.maxus.macrocosm.data.DataGenerators
+import space.maxus.macrocosm.data.level.LevelDatabase
 import space.maxus.macrocosm.discord.Discord
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.Enchant
@@ -118,11 +119,13 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         config.load(cfgFile)
 
-        isSandbox = config.getBoolean("game.sandbox")
         if (!config.getBoolean("connections.mongo.enabled")) {
             disableImmediately = true
             return
         }
+        isSandbox = config.getBoolean("game.sandbox")
+
+        Threading.runAsync { LevelDatabase.load() }
 
         try {
             val conn = URL("https://api.ipify.org").openConnection() as HttpsURLConnection
@@ -356,24 +359,19 @@ class InternalMacrocosmPlugin : KSpigot() {
             return
         val storageExecutor = Threading.newFixedPool(16)
 
+        storageExecutor.execute(LevelDatabase::save)
         storageExecutor.execute {
             for ((_, v) in loadedPlayers) {
                 v.store()
             }
         }
-        storageExecutor.execute {
-            Calendar.save()
-        }
-        storageExecutor.execute {
-            TRANSACTION_HISTORY.storeSelf()
-        }
-        storageExecutor.execute {
-            Bazaar.table.store()
-        }
-        storageExecutor.execute { KeyManager.store() }
-        storageExecutor.execute { Discord.storeSelf() }
+        storageExecutor.execute(Calendar::save)
+        storageExecutor.execute(TRANSACTION_HISTORY::storeSelf)
+        storageExecutor.execute(Bazaar.table::store)
+        storageExecutor.execute(KeyManager::store)
+        storageExecutor.execute(Discord::storeSelf)
         storageExecutor.execute { Accessor.overwrite(".VERSION") { os -> os.writeBytes(this.version.toString()) } }
-        storageExecutor.execute { MacrocosmMetrics.shutdown() }
+        storageExecutor.execute(MacrocosmMetrics::shutdown)
 
         storageExecutor.shutdown()
 
