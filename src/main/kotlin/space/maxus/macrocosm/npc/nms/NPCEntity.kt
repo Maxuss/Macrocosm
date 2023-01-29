@@ -23,7 +23,7 @@ class NPCEntity(level: Level, override val id: Identifier, val standId: UUID): Z
     }
 
     override fun registerGoals() {
-        goalSelector.addGoal(1, LookAtPlayerGoal(this, Player::class.java, 8.0f, .1f, true))
-        goalSelector.addGoal(2, RandomLookAroundGoal(this))
+        goalSelector.addGoal(1, RandomLookAroundGoal(this))
+        goalSelector.addGoal(2, LookAtPlayerGoal(this, Player::class.java, 8.0f, 1f, true))
     }
 }

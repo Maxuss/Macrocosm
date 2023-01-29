@@ -32,14 +32,12 @@ import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.damage.clamp
+import space.maxus.macrocosm.discord.emitters.DevEnvironGoalEmitter
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
 import space.maxus.macrocosm.display.RenderPriority
 import space.maxus.macrocosm.display.SidebarRenderer
 import space.maxus.macrocosm.enchants.roman
-import space.maxus.macrocosm.events.PlayerCalculateSpecialStatsEvent
-import space.maxus.macrocosm.events.PlayerCalculateStatsEvent
-import space.maxus.macrocosm.events.PlayerDeathEvent
-import space.maxus.macrocosm.events.PlayerTickEvent
+import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.Items
 import space.maxus.macrocosm.item.MacrocosmItem
@@ -72,6 +70,7 @@ import space.maxus.macrocosm.util.ignoring
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -119,6 +118,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var activeForgeRecipes: MutableList<ActiveForgeRecipe> = mutableListOf()
     var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
     var accessoryBag: AccessoryBag = AccessoryBag()
+    var goals: ConcurrentLinkedQueue<String> = ConcurrentLinkedQueue()
 
     private var slayerRenderId: UUID? = null
     var statCache: Statistics? = null; private set
@@ -483,6 +483,25 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         sendStatBar(stats)
     }
 
+    fun reachGoal(goal: String) {
+        if(!goals.contains(goal)) {
+            task(sync = false) {
+                // Running the event asynchronously
+                val event = PlayerReachGoalEvent(this, goal)
+                event.callEvent()
+                this.goals.add(goal)
+                if(Macrocosm.isInDevEnvironment)
+                    Registry.DISCORD_EMITTERS.tryUse(id("goal_reached")) { emitter ->
+                        (emitter as DevEnvironGoalEmitter).post(DevEnvironGoalEmitter.Context(this, goal))
+                    }
+            }
+        }
+    }
+
+    fun hasReachedGoal(goal: String): Boolean {
+        return goals.contains(goal)
+    }
+
     private fun recalculateStats(): Statistics {
         val cloned = baseStats.clone()
         // vitality + vigor
@@ -642,6 +661,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.equipment = mongo.equipment.actual
             player.slayers = mongo.slayers
             player.ownedPets = HashMap(mongo.ownedPets.map { it.key to it.value.actual }.toMap())
+            player.goals = ConcurrentLinkedQueue(mongo.goals)
             if (mongo.activePet.isNotBlank()) {
                 val pet = player.ownedPets[mongo.activePet]!!
                 task(delay = 20L) {
@@ -677,7 +697,8 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             unlockedRecipes.map(Identifier::toString),
             slayers,
             availableEssence,
-            accessoryBag.mongo
+            accessoryBag.mongo,
+            goals.toList()
         )
 
 }
