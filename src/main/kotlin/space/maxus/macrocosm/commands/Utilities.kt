@@ -41,6 +41,8 @@ import space.maxus.macrocosm.enchants.ui.adminEnchantUi
 import space.maxus.macrocosm.events.YearChangeEvent
 import space.maxus.macrocosm.exceptions.MacrocosmThrowable
 import space.maxus.macrocosm.item.*
+import space.maxus.macrocosm.npc.NPCInstance
+import space.maxus.macrocosm.npc.NPCLevelDbAdapter
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.banking.Transaction
@@ -68,6 +70,27 @@ import kotlin.math.roundToInt
 fun adminEnchanting() = command("enchantui") {
     runsCatching {
         player.openGUI(adminEnchantUi(player.inventory.itemInMainHand.macrocosm ?: return@runsCatching))
+    }
+}
+
+fun addNpc() = command("addnpc") {
+    argument("npc", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.NPC.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "npc"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val id = getArgument<ResourceLocation>("npc").macrocosm
+            val npc = NPCInstance(player.location, id)
+            val uuid = npc.summon()
+            NPCLevelDbAdapter.addNpc(npc, uuid)
+        }
     }
 }
 

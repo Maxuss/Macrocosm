@@ -13,10 +13,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerQuitEvent
 import space.maxus.macrocosm.ability.TieredSetBonus
 import space.maxus.macrocosm.entity.EntityValue
-import space.maxus.macrocosm.nms.AbsFollowOwnerGoal
-import space.maxus.macrocosm.nms.AttackOwnerHurtGoal
-import space.maxus.macrocosm.nms.MimicOwnerAttackGoal
-import space.maxus.macrocosm.nms.NativeMacrocosmSummon
+import space.maxus.macrocosm.nms.*
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.general.id
@@ -56,7 +53,7 @@ object MasterNecromancerBonus : TieredSetBonus(
                     if (baby.containsKey(player))
                         return@listen
                     val entity = Youngling(level, player)
-                    NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_YOUNGLING.entity)
+                    NativeMacrocosmEntity.summon(entity, pos, EntityValue.ZOMBIE_YOUNGLING.entity)
                     baby[e.player.uniqueId] = entity.uuid
                 }
 
@@ -69,7 +66,7 @@ object MasterNecromancerBonus : TieredSetBonus(
                         return@listen
 
                     val entity = Golden(level, player)
-                    NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_GOLDEN.entity)
+                    NativeMacrocosmEntity.summon(entity, pos, EntityValue.ZOMBIE_GOLDEN.entity)
                     golden[e.player.uniqueId] = entity.uuid
                 }
 
@@ -82,7 +79,7 @@ object MasterNecromancerBonus : TieredSetBonus(
                         return@listen
 
                     val entity = Giant(level, player)
-                    NativeMacrocosmSummon.summon(entity, pos, EntityValue.ZOMBIE_GIANT.entity)
+                    NativeMacrocosmEntity.summon(entity, pos, EntityValue.ZOMBIE_GIANT.entity)
                     giant[e.player.uniqueId] = entity.uuid
                 }
             }
@@ -105,7 +102,7 @@ object MasterNecromancerBonus : TieredSetBonus(
     }
 
     class Youngling(level: Level, override val owner: UUID) : Zombie(level), NativeMacrocosmSummon {
-        override val delegateId: Identifier = id("zombie_youngling")
+        override val id: Identifier = id("zombie_youngling")
 
         init {
             isBaby = true
@@ -124,7 +121,7 @@ object MasterNecromancerBonus : TieredSetBonus(
     }
 
     class Golden(level: Level, override val owner: UUID) : Zombie(level), NativeMacrocosmSummon {
-        override val delegateId: Identifier = id("zombie_golden")
+        override val id: Identifier = id("zombie_golden")
 
         override fun registerGoals() {
             goalSelector.addGoal(1, FloatGoal(this))
@@ -140,7 +137,7 @@ object MasterNecromancerBonus : TieredSetBonus(
 
     class Giant(level: Level, override val owner: UUID) :
         net.minecraft.world.entity.monster.Giant(EntityType.GIANT, level), NativeMacrocosmSummon {
-        override val delegateId: Identifier = id("zombie_giant")
+        override val id: Identifier = id("zombie_giant")
 
         override fun registerGoals() {
             goalSelector.addGoal(1, FloatGoal(this))
@@ -148,8 +145,8 @@ object MasterNecromancerBonus : TieredSetBonus(
             goalSelector.addGoal(1, MimicOwnerAttackGoal(this))
             goalSelector.addGoal(3, MeleeAttackGoal(this, 1.0, true))
             goalSelector.addGoal(4, LeapAtTargetGoal(this, 0.6f))
-            goalSelector.addGoal(4, AbsFollowOwnerGoal(this, 0.9, 25f, 6f, false))
-            goalSelector.addGoal(10, LookAtPlayerGoal(this, Player::class.java, 3f))
+            goalSelector.addGoal(4, AbsFollowOwnerGoal(this, 0.9, 20f, 4f, false))
+            goalSelector.addGoal(10, LookAtPlayerGoal(this, Player::class.java, 5f))
             goalSelector.addGoal(10, RandomLookAroundGoal(this))
         }
     }

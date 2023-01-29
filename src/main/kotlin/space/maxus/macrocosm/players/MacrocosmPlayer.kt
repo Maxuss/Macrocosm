@@ -8,6 +8,9 @@ import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.Tag
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import org.bukkit.Bukkit
@@ -379,8 +382,15 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         sendStatBar(stats)
     }
 
+    fun configuredMiniMessage(): TagResolver {
+        return TagResolver.resolver(TagResolver.resolver(
+            "player_name",
+            Tag.inserting(Component.text(this.paper?.name ?: "null").color(NamedTextColor.YELLOW)))
+        )
+    }
+
     fun sendMessage(message: String) {
-        paper?.sendMessage(text(message))
+        paper?.sendMessage(MiniMessage.miniMessage().deserialize(message, configuredMiniMessage()))
     }
 
     fun sendMessage(channel: ChatChannel, message: String) {
@@ -588,9 +598,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             this.mongo,
             UpdateOptions().upsert(true)
         )
-        task {
-            activePet?.despawn(this)
-        }
+        activePet?.despawn(this)
     }
 
     fun playtimeMillis() = playtime + (Instant.now().toEpochMilli() - lastJoin)

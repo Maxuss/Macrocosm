@@ -21,7 +21,7 @@ object TestSummon : SummoningAbility(
 ) {
     private class TestSummonEntity(level: Level, override val owner: UUID) : Spider(EntityType.SPIDER, level),
         NativeMacrocosmSummon {
-        override val delegateId: Identifier = id("test_summon")
+        override val id: Identifier = id("test_summon")
 
         override fun registerGoals() {
             goalSelector.addGoal(3, FloatGoal(this))
