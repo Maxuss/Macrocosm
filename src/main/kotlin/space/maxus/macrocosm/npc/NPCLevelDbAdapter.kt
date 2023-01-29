@@ -23,6 +23,7 @@ import space.maxus.macrocosm.npc.nms.NPCEntity
 import space.maxus.macrocosm.npc.ops.NPCOperationData
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.util.general.getId
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -47,7 +48,9 @@ object NPCLevelDbAdapter: LevelDbAdapter("NPC"), Listener {
             // Need this to be synchronous environment
             val values = from.getList("value", CompoundTag.TAG_COMPOUND.toInt())
             for (tag in values) {
-                val instance = NPCInstance.read(tag as CompoundTag)
+                if(!Registry.NPC.has((tag as CompoundTag).getId("Kind")))
+                    continue
+                val instance = NPCInstance.read(tag)
                 val uuid = instance.summon()
                 npcs[uuid] = instance
             }
