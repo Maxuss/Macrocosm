@@ -2,6 +2,9 @@ package space.maxus.macrocosm.npc.ops
 
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Branches the operation logic into two paths based on predicate result
+ */
 data class NPCOpBranch(
     val condition: (NPCOperationData) -> Boolean,
     val trueBranch: List<NPCOp>,

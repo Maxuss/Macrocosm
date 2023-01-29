@@ -26,10 +26,25 @@ import space.maxus.macrocosm.stats.SpecialStatistics
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
 
+/**
+ * A Macrocosm NPC with a player skin
+ */
 open class MacrocosmNPC(
+    /**
+     * Name of this NPC
+     */
     val name: String,
+    /**
+     * ID of this NPC
+     */
     id: String,
+    /**
+     * Profile texture for this NPC
+     */
     private val profile: WrappedGameProfile,
+    /**
+     * Dialogue operations for this NPC
+     */
     private val operations: List<NPCOp>,
     private var mainHand: MacrocosmItem? = null,
     private var offHand: MacrocosmItem? = null,
@@ -40,6 +55,9 @@ open class MacrocosmNPC(
 ): Identified, AutoRegister<MacrocosmEntity> {
     override val id: Identifier = Identifier.parse(id)
 
+    /**
+     * Executes all dialogue operations for this entity
+     */
     fun executeOperations(data: NPCOperationData) {
         for(op in operations) {
             // Waiting for completion
@@ -47,6 +65,9 @@ open class MacrocosmNPC(
         }
     }
 
+    /**
+     * Summons this NPC at provided location
+     */
     fun summon(at: Location): NPCEntity {
         if(!at.isChunkLoaded)
             at.world.loadChunk(at.chunk)
@@ -62,7 +83,6 @@ open class MacrocosmNPC(
         NativeMacrocosmEntity.summon(native, at, Registry.ENTITY.find(id))
         return native
     }
-
     override fun register(registry: Registry<MacrocosmEntity>) {
         registry.register(id, MacrocosmNPCEntity(mainHand, offHand, helmet, chestplate, leggings, boots, profile))
         Registry.DISGUISE.register(id, "")

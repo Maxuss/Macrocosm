@@ -6,6 +6,9 @@ import space.maxus.macrocosm.npc.dsl.beginDialogue
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 
+/**
+ * Contains all pre-made NPCs
+ */
 enum class NPCs(val npc: MacrocosmNPC) {
     TEST_NPC(MacrocosmNPC(
         "Test NPC",

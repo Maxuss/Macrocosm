@@ -10,6 +10,9 @@ import space.maxus.macrocosm.nms.NativeMacrocosmEntity
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
 
+/**
+ * An implementation of an entity using NMS
+ */
 class NPCEntity(level: Level, override val id: Identifier, val standId: UUID): Zombie(EntityType.ZOMBIE, level), NativeMacrocosmEntity {
     init {
         this.setShouldBurnInDay(false)
@@ -24,6 +27,6 @@ class NPCEntity(level: Level, override val id: Identifier, val standId: UUID): Z
 
     override fun registerGoals() {
         goalSelector.addGoal(1, RandomLookAroundGoal(this))
-        goalSelector.addGoal(2, LookAtPlayerGoal(this, Player::class.java, 8.0f, 1f, true))
+        goalSelector.addGoal(2, LookAtPlayerGoal(this, Player::class.java, 4.0f, 1f))
     }
 }

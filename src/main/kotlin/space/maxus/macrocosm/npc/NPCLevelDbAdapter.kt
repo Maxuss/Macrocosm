@@ -27,6 +27,9 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
+/**
+ * A LevelDB adapter for NPC storage
+ */
 object NPCLevelDbAdapter: LevelDbAdapter("NPC"), Listener {
     private val npcs: ConcurrentHashMap<UUID, NPCInstance> = ConcurrentHashMap()
     private val playerInDialogue: ConcurrentLinkedQueue<UUID> = ConcurrentLinkedQueue()
@@ -51,10 +54,16 @@ object NPCLevelDbAdapter: LevelDbAdapter("NPC"), Listener {
         }
     }
 
+    /**
+     * Adds an NPC to world
+     */
     fun addNpc(instance: NPCInstance, id: UUID) {
         this.npcs[id] = instance
     }
 
+    /**
+     * Saves all NPCs
+     */
     fun close() {
         for(npc in this.npcs) {
             val entity = Bukkit.getWorlds().first().getEntity(npc.key) as? LivingEntity ?: continue

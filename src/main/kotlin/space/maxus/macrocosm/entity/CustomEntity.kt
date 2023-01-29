@@ -16,6 +16,7 @@ import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.loot.GlobalLootPool
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.nms.NativeMacrocosmEntity
+import space.maxus.macrocosm.npc.nms.NPCEntity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
@@ -149,6 +150,10 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
             return
 
         val entity = paper!!
+        val nmsEntity = (entity as? CraftEntity)?.handle
+        if(nmsEntity is NPCEntity)
+            return
+
         val loc = paper!!.location
 
         currentHealth = 0f

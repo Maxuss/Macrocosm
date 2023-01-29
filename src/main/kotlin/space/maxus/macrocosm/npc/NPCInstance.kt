@@ -9,6 +9,9 @@ import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
 import java.util.*
 
+/**
+ * An instance of a summoned NPC, also stored in the LevelDB file
+ */
 data class NPCInstance(val location: Location, val kind: Identifier) {
     companion object {
         fun read(from: CompoundTag): NPCInstance {
