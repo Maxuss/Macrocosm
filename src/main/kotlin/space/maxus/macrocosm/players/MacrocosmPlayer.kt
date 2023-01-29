@@ -383,10 +383,12 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     fun configuredMiniMessage(): TagResolver {
-        return TagResolver.resolver(TagResolver.resolver(
-            "player_name",
-            Tag.inserting(Component.text(this.paper?.name ?: "null").color(NamedTextColor.YELLOW)))
-        )
+        return TagResolver.resolver(
+            TagResolver.caching(
+                TagResolver.resolver(
+                "player_name",
+                    Tag.inserting(text("<yellow>${paper!!.name}</yellow>"))
+        )))
     }
 
     fun sendMessage(message: String) {
