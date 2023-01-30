@@ -317,6 +317,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         adminEnchanting()
         addNpc()
 
+        addLocVertex()
+        finishLoc()
+        insideLoc()
+
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
         Registry.RESOURCE_GENERATORS.register(id("model_data"), CMDGenerator)
