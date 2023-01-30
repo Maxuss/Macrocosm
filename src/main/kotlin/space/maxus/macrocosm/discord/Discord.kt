@@ -56,10 +56,7 @@ import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.data.Accessor
-import space.maxus.macrocosm.discord.emitters.BossInfoEmitter
-import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
-import space.maxus.macrocosm.discord.emitters.MacrocosmLevelEmitter
-import space.maxus.macrocosm.discord.emitters.RareDropEmitter
+import space.maxus.macrocosm.discord.emitters.*
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.graphics.ItemRenderBuffer
 import space.maxus.macrocosm.graphics.StackRenderer
@@ -376,6 +373,7 @@ object Discord : ListenerAdapter() {
                     }
                     guild.getRolesByName("Macrocosm Level Up", false).firstOrNull()?.apply {
                         Registry.DISCORD_EMITTERS.register(id("macrocosm_lvl_up"), MacrocosmLevelEmitter(this, c))
+                        Registry.DISCORD_EMITTERS.register(id("goal_reached"), DevEnvironGoalEmitter(this, c))
                     } ?: run {
                         guild.createRole()
                             .setMentionable(true).setName("Macrocosm Level Up").submit().thenAccept { role ->
@@ -383,6 +381,7 @@ object Discord : ListenerAdapter() {
                                     id("macrocosm_lvl_up"),
                                     MacrocosmLevelEmitter(role, c)
                                 )
+                                Registry.DISCORD_EMITTERS.register(id("goal_reached"), DevEnvironGoalEmitter(role, c))
                             }
                     }
                 }

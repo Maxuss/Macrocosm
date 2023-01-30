@@ -42,6 +42,8 @@ import space.maxus.macrocosm.listeners.*
 import space.maxus.macrocosm.metrics.MacrocosmMetrics
 import space.maxus.macrocosm.mongo.MongoDb
 import space.maxus.macrocosm.net.MacrocosmServer
+import space.maxus.macrocosm.npc.NPCLevelDbAdapter
+import space.maxus.macrocosm.npc.NPCs
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
@@ -156,7 +158,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         System.setProperty("mongo.pass", config.getString("connections.mongo.password")!!)
         MongoDb.init()
         MacrocosmMetrics.init()
-        Threading.runAsync { LevelDatabase.load() }
 
         Threading.runAsync {
             val rendersDir = Accessor.access("item_renders")
@@ -202,6 +203,11 @@ class InternalMacrocosmPlugin : KSpigot() {
         ItemValue.init()
         Armor.init()
         Bazaar.init()
+        NPCs.init()
+
+        // LevelDB
+        LevelDatabase.registerAdapter(NPCLevelDbAdapter)
+        Threading.runAsync { LevelDatabase.load() }
 
         Threading.runEachConcurrently(
             Executors.newFixedThreadPool(8),
@@ -220,7 +226,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             TrophyFishes::init,
             PyroclasticToadPet::init,
             WaspPet::init,
-            AccessoryPowers::init
+            AccessoryPowers::init,
         )
 
         DataListener.joinLeave()
@@ -249,6 +255,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this)
         server.pluginManager.registerEvents(AccessoryBag.Handlers, this)
         server.pluginManager.registerEvents(LearnPower, this)
+        server.pluginManager.registerEvents(NPCLevelDbAdapter, this)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
@@ -308,6 +315,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         testJacobus()
         collectionsCommand()
         adminEnchanting()
+        addNpc()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
@@ -362,12 +370,11 @@ class InternalMacrocosmPlugin : KSpigot() {
             return
         val storageExecutor = Threading.newFixedPool(16)
 
-        storageExecutor.execute(LevelDatabase::save)
-        storageExecutor.execute {
-            for ((_, v) in loadedPlayers) {
-                v.store()
-            }
+        for ((_, v) in loadedPlayers) {
+            v.store()
         }
+
+        storageExecutor.execute(LevelDatabase::save)
         storageExecutor.execute(Calendar::save)
         storageExecutor.execute(TRANSACTION_HISTORY::storeSelf)
         storageExecutor.execute(Bazaar.table::store)
@@ -381,6 +388,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         ZombieAbilities.doomCounter.iter { id ->
             worlds[0].getEntity(id)?.remove()
         }
+
+        NPCLevelDbAdapter.close()
 
         storageExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
 

@@ -61,7 +61,7 @@ object ReaperMaskAbility :
     }
 
     class SupportZombie(level: Level, override val owner: UUID) : Zombie(level), OwnableEntity, NativeMacrocosmSummon {
-        override val delegateId: Identifier = id("reaper_mask_zombie")
+        override val id: Identifier = id("reaper_mask_zombie")
 
         override fun registerGoals() {
             goalSelector.addGoal(1, FloatGoal(this))

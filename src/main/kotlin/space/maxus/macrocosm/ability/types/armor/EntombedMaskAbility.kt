@@ -71,7 +71,7 @@ object EntombedMaskAbility :
     }
 
     class SupportZombie(level: Level, override val owner: UUID) : Zombie(level), OwnableEntity, NativeMacrocosmSummon {
-        override val delegateId: Identifier = id("entombed_mask_zombie")
+        override val id: Identifier = id("entombed_mask_zombie")
 
         override fun registerGoals() {
             goalSelector.addGoal(1, FloatGoal(this))

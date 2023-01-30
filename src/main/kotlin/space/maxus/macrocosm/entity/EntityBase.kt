@@ -35,7 +35,7 @@ open class EntityBase(
     private val sounds: EntitySoundBank? = null,
     override val rewardingSkill: SkillType = SkillType.COMBAT,
     override val playerFriendly: Boolean = false,
-    private val disguiseProfile: WrappedGameProfile? = null
+    val disguiseProfile: WrappedGameProfile? = null
 ) : MacrocosmEntity {
     override var currentHealth: Float = baseStats.health
 

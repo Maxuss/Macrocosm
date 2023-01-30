@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.mongo.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.codecs.pojo.annotations.BsonId
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.AccessoryContainer
@@ -128,6 +129,7 @@ data class MongoAccessoryBag(
 
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class MongoPlayerData(
     @BsonId
     val uuid: UUID,
@@ -149,6 +151,7 @@ data class MongoPlayerData(
     val slayers: HashMap<SlayerType, SlayerLevel>,
     val essence: HashMap<EssenceType, Int>,
     val accessories: MongoAccessoryBag,
+    val goals: List<String>
 ) : MongoRepr<MacrocosmPlayer?> {
     override val actual: MacrocosmPlayer
         @JsonIgnore
