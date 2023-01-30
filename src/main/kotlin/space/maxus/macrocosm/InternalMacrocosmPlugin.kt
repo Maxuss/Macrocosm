@@ -70,6 +70,7 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.walkDataResources
 import space.maxus.macrocosm.workarounds.AsyncLauncher
+import space.maxus.macrocosm.zone.ZoneLevelDbAdapter
 import java.awt.Font
 import java.net.URL
 import java.nio.ByteBuffer
@@ -207,6 +208,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         // LevelDB
         LevelDatabase.registerAdapter(NPCLevelDbAdapter)
+        LevelDatabase.registerAdapter(ZoneLevelDbAdapter)
         Threading.runAsync { LevelDatabase.load() }
 
         Threading.runEachConcurrently(
@@ -256,6 +258,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AccessoryBag.Handlers, this)
         server.pluginManager.registerEvents(LearnPower, this)
         server.pluginManager.registerEvents(NPCLevelDbAdapter, this)
+        server.pluginManager.registerEvents(ZoneLevelDbAdapter, this)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
@@ -319,7 +322,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         addLocVertex()
         finishLoc()
-        insideLoc()
+        finishLocRestrictive()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

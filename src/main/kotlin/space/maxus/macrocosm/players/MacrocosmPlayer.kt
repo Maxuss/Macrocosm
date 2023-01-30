@@ -67,6 +67,9 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
+import space.maxus.macrocosm.zone.RestrictiveZone
+import space.maxus.macrocosm.zone.Zone
+import space.maxus.macrocosm.zone.ZoneType
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -119,6 +122,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
     var accessoryBag: AccessoryBag = AccessoryBag()
     var goals: ConcurrentLinkedQueue<String> = ConcurrentLinkedQueue()
+    var zone: Zone = ZoneType.OVERWORLD.zone; private set
 
     private var slayerRenderId: UUID? = null
     var statCache: Statistics? = null; private set
@@ -209,6 +213,32 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             return item.macrocosm
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build(this)) ?: Unit
+
+    fun calculateZone(): Zone {
+        val p = paper ?: return ZoneType.NONE.zone
+        val old = zone
+        val zone = Registry.ZONE.iter().values.firstOrNull { it.contains(p.location) } ?: ZoneType.OVERWORLD.zone
+        if(old.id != zone.id) {
+            // We have entered a new zone
+            val event = PlayerEnterZoneEvent(this, p, zone, old)
+            if(!event.callEvent()) {
+                // The event was cancelled, the player can not enter the zone yet
+                if(zone is RestrictiveZone) {
+                    // Teleport the player away
+                    sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
+                        pitch = 0f
+                        volume = 3f
+                        playFor(p)
+                    }
+                    p.teleport(zone.exit)
+                    return old
+                }
+                return old
+            }
+        }
+        this.zone = zone
+        return zone
+    }
 
     fun startSlayerQuest(type: SlayerType, tier: Int) {
         val p = paper ?: return

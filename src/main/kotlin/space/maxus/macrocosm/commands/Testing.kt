@@ -10,7 +10,6 @@ import net.axay.kspigot.commands.suggestList
 import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
-import org.bukkit.Location
 import space.maxus.macrocosm.accessory.ui.jacobusUi
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.ui.globalBazaarMenu
@@ -27,41 +26,12 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
-import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.DevelopmentOnly
 import space.maxus.macrocosm.util.general.Debug
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
-import space.maxus.macrocosm.zone.PolygonalZone
 
-private val vertices = mutableListOf<Location>()
-private var testLocation: PolygonalZone? = null
 
-fun addLocVertex() = command("locaddvertex") {
-    runsCatching {
-        val pos = player.location
-        vertices.add(pos)
-        player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Added a location vertex at <green>${pos.blockX} ${pos.blockY} ${pos.blockZ}"))
-    }
-}
-
-fun finishLoc() = command("locfinish") {
-    runsCatching {
-        testLocation = PolygonalZone("_test", "test", vertices)
-        vertices.clear()
-        player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a test location, run <green>/locinside</green> to check if the player is inside this location!"))
-    }
-}
-
-fun insideLoc() = command("locinside") {
-    runsCatching {
-        if(testLocation == null)
-            return@runsCatching
-
-        val contains = testLocation!!.contains(player.location)
-        player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Does location contain a player? <green>$contains"))
-    }
-}
 
 fun doTestEmitPost() = command("doemit") {
     runsCatching {

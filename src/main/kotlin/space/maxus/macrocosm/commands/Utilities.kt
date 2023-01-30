@@ -15,6 +15,7 @@ import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.conversations.ConversationContext
@@ -63,9 +64,50 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
+import space.maxus.macrocosm.util.stripTags
+import space.maxus.macrocosm.zone.PolygonalZone
+import space.maxus.macrocosm.zone.RestrictiveZone
 import java.net.InetAddress
 import java.util.*
 import kotlin.math.roundToInt
+
+private val vertices = mutableListOf<Location>()
+
+fun addLocVertex() = command("zonevertex") {
+    runsCatching {
+        val pos = player.location
+        vertices.add(pos)
+        player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Added a zone vertex at <green>${pos.blockX} ${pos.blockY} ${pos.blockZ}"))
+    }
+}
+
+fun finishLoc() = command("zonesave") {
+    argument("name", StringArgumentType.greedyString()) {
+        runsCatching {
+            val name = getArgument<String>("name")
+            val id = name.stripTags().lowercase().replace(" ", "_")
+            val loc = PolygonalZone(name, id, vertices.toMutableList())
+            Registry.ZONE.register(Identifier.parse(id), loc)
+            vertices.clear()
+            player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a zone!"))
+        }
+
+    }
+}
+
+fun finishLocRestrictive() = command("zonerestrict") {
+    argument("name", StringArgumentType.greedyString()) {
+        runsCatching {
+            val name = getArgument<String>("name")
+            val id = name.stripTags().lowercase().replace(" ", "_")
+            val loc = RestrictiveZone(PolygonalZone(name, id, vertices.toMutableList()), player.location)
+            Registry.ZONE.register(Identifier.parse(id), loc)
+            vertices.clear()
+            player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a restrictive zone!"))
+        }
+    }
+}
+
 
 fun adminEnchanting() = command("enchantui") {
     runsCatching {

@@ -5,7 +5,7 @@ import space.maxus.macrocosm.registry.Identifier
 import java.awt.Polygon
 
 
-class PolygonalZone(name: String, id: String, vertices: List<Location>): Zone(Identifier.parse(id), name) {
+class PolygonalZone(name: String, id: String, val vertices: List<Location>): Zone(Identifier.parse(id), name) {
     private val polygon: Polygon
     private val lowestPoint: Double
     private val highestPoint: Double
