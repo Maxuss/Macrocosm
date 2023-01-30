@@ -65,8 +65,8 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
 import space.maxus.macrocosm.util.stripTags
-import space.maxus.macrocosm.zone.PolygonalZone
-import space.maxus.macrocosm.zone.RestrictiveZone
+import space.maxus.macrocosm.area.PolygonalArea
+import space.maxus.macrocosm.area.RestrictedArea
 import java.net.InetAddress
 import java.util.*
 import kotlin.math.roundToInt
@@ -86,8 +86,8 @@ fun finishLoc() = command("zonesave") {
         runsCatching {
             val name = getArgument<String>("name")
             val id = name.stripTags().lowercase().replace(" ", "_")
-            val loc = PolygonalZone(name, id, vertices.toMutableList())
-            Registry.ZONE.register(Identifier.parse(id), loc)
+            val loc = PolygonalArea(name, id, vertices.toMutableList())
+            Registry.AREA.register(Identifier.parse(id), loc)
             vertices.clear()
             player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a zone!"))
         }
@@ -100,8 +100,8 @@ fun finishLocRestrictive() = command("zonerestrict") {
         runsCatching {
             val name = getArgument<String>("name")
             val id = name.stripTags().lowercase().replace(" ", "_")
-            val loc = RestrictiveZone(PolygonalZone(name, id, vertices.toMutableList()), player.location)
-            Registry.ZONE.register(Identifier.parse(id), loc)
+            val loc = RestrictedArea(PolygonalArea(name, id, vertices.toMutableList()), player.location)
+            Registry.AREA.register(Identifier.parse(id), loc)
             vertices.clear()
             player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a restrictive zone!"))
         }

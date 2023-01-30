@@ -4,14 +4,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import space.maxus.macrocosm.area.Area
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.zone.Zone
 
-class PlayerEnterZoneEvent(
+class PlayerEnterAreaEvent(
     val player: MacrocosmPlayer,
     val paper: Player,
-    val newZone: Zone,
-    val oldZone: Zone
+    val newArea: Area,
+    val oldArea: Area
 ) : Event(), Cancellable {
     private var eventCancelled = false
 

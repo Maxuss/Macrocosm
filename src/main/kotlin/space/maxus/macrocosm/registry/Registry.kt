@@ -39,7 +39,7 @@ import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoringProducer
-import space.maxus.macrocosm.zone.Zone
+import space.maxus.macrocosm.area.Area
 import java.io.BufferedInputStream
 import java.io.DataInputStream
 import java.nio.file.Path
@@ -146,7 +146,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         }
         val DISGUISE = makeDefaulted<String>(id("entity_disguise"))
         val SOUND = makeDefaulted<EntitySoundBank>(id("entity_sound"))
-        val ZONE = makeDefaulted<Zone>(id("zone"))
+        val AREA = makeDefaulted<Area>(id("zone"))
         val REFORGE = makeDelegated<Reforge>(id("reforge")) { _, v ->
             pluginManager.registerEvents(v, Macrocosm)
         }

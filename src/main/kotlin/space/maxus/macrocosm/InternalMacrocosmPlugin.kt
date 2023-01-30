@@ -70,7 +70,7 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.walkDataResources
 import space.maxus.macrocosm.workarounds.AsyncLauncher
-import space.maxus.macrocosm.zone.ZoneLevelDbAdapter
+import space.maxus.macrocosm.area.AreaLevelDbAdapter
 import java.awt.Font
 import java.net.URL
 import java.nio.ByteBuffer
@@ -208,7 +208,7 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         // LevelDB
         LevelDatabase.registerAdapter(NPCLevelDbAdapter)
-        LevelDatabase.registerAdapter(ZoneLevelDbAdapter)
+        LevelDatabase.registerAdapter(AreaLevelDbAdapter)
         Threading.runAsync { LevelDatabase.load() }
 
         Threading.runEachConcurrently(
@@ -258,7 +258,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AccessoryBag.Handlers, this)
         server.pluginManager.registerEvents(LearnPower, this)
         server.pluginManager.registerEvents(NPCLevelDbAdapter, this)
-        server.pluginManager.registerEvents(ZoneLevelDbAdapter, this)
+        server.pluginManager.registerEvents(AreaLevelDbAdapter, this)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)

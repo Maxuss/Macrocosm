@@ -1,4 +1,4 @@
-package space.maxus.macrocosm.zone
+package space.maxus.macrocosm.area
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
@@ -8,17 +8,17 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import space.maxus.macrocosm.data.level.LevelDbAdapter
-import space.maxus.macrocosm.events.PlayerEnterZoneEvent
+import space.maxus.macrocosm.events.PlayerEnterAreaEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 
-object ZoneLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
+object AreaLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
     override fun save(to: CompoundTag) {
-        for((id, zone) in Registry.ZONE.iter()) {
+        for((id, zone) in Registry.AREA.iter()) {
             val cmp = CompoundTag()
             cmp.putString("Name", zone.name)
-            if(zone is PolygonalZone) {
+            if(zone is PolygonalArea) {
                 val list = ListTag()
                 for(vertex in zone.vertices) {
                     val vertexCompound = CompoundTag()
@@ -28,7 +28,7 @@ object ZoneLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
                     list.add(vertexCompound)
                 }
                 cmp.put("Vertices", list)
-            } else if(zone is RestrictiveZone) {
+            } else if(zone is RestrictedArea) {
                 val list = ListTag()
                 for(vertex in zone.inner.vertices) {
                     val vertexCompound = CompoundTag()
@@ -61,17 +61,17 @@ object ZoneLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
                 val z = each.getInt("Z")
                 Location(world, x.toDouble(), y.toDouble(), z.toDouble())
             }
-            val final: Zone = if(cmp.contains("RestrictionExit")) {
+            val final: Area = if(cmp.contains("RestrictionExit")) {
                 val each = cmp.getCompound("RestrictionExit")
                 val x = each.getInt("X")
                 val y = each.getInt("Y")
                 val z = each.getInt("Z")
                 val exit = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-                RestrictiveZone(PolygonalZone(name, key, vertices), exit)
+                RestrictedArea(PolygonalArea(name, key, vertices), exit)
             } else {
-                PolygonalZone(name, key, vertices)
+                PolygonalArea(name, key, vertices)
             }
-            Registry.ZONE.register(id, final)
+            Registry.AREA.register(id, final)
         }
     }
 
@@ -84,8 +84,8 @@ object ZoneLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
     }
 
     @EventHandler
-    fun onEnterZone(e: PlayerEnterZoneEvent) {
-        if(e.newZone is RestrictiveZone)
+    fun onEnterZone(e: PlayerEnterAreaEvent) {
+        if(e.newArea is RestrictedArea)
             e.isCancelled = true
     }
 }

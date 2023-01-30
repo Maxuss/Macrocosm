@@ -67,9 +67,9 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
-import space.maxus.macrocosm.zone.RestrictiveZone
-import space.maxus.macrocosm.zone.Zone
-import space.maxus.macrocosm.zone.ZoneType
+import space.maxus.macrocosm.area.RestrictedArea
+import space.maxus.macrocosm.area.Area
+import space.maxus.macrocosm.area.AreaType
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -122,7 +122,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
     var accessoryBag: AccessoryBag = AccessoryBag()
     var goals: ConcurrentLinkedQueue<String> = ConcurrentLinkedQueue()
-    var zone: Zone = ZoneType.OVERWORLD.zone; private set
+    var area: Area = AreaType.OVERWORLD.area; private set
 
     private var slayerRenderId: UUID? = null
     var statCache: Statistics? = null; private set
@@ -214,16 +214,16 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build(this)) ?: Unit
 
-    fun calculateZone(): Zone {
-        val p = paper ?: return ZoneType.NONE.zone
-        val old = zone
-        val zone = Registry.ZONE.iter().values.firstOrNull { it.contains(p.location) } ?: ZoneType.OVERWORLD.zone
+    fun calculateZone(): Area {
+        val p = paper ?: return AreaType.NONE.area
+        val old = area
+        val zone = Registry.AREA.iter().values.firstOrNull { it.contains(p.location) } ?: AreaType.OVERWORLD.area
         if(old.id != zone.id) {
             // We have entered a new zone
-            val event = PlayerEnterZoneEvent(this, p, zone, old)
+            val event = PlayerEnterAreaEvent(this, p, zone, old)
             if(!event.callEvent()) {
                 // The event was cancelled, the player can not enter the zone yet
-                if(zone is RestrictiveZone) {
+                if(zone is RestrictedArea) {
                     // Teleport the player away
                     sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                         pitch = 0f
@@ -236,7 +236,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
                 return old
             }
         }
-        this.zone = zone
+        this.area = zone
         return zone
     }
 

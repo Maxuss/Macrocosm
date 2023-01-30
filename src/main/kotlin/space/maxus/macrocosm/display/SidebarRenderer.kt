@@ -186,7 +186,7 @@ object SidebarRenderer : Listener {
             e.player,
             RenderComponent.dynamic(Calendar::renderDate) { listOf(
                 calculateDayTime(),
-                text(" <gray>⏣ ${e.player.macrocosm?.zone?.name}")
+                text(" <gray>⏣ ${e.player.macrocosm?.area?.name}")
                 ) },
             RenderPriority.HIGHEST
         )
