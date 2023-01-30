@@ -1,5 +1,7 @@
 package space.maxus.macrocosm.npc.dsl
 
+import net.axay.kspigot.gui.ForInventory
+import net.axay.kspigot.gui.GUI
 import org.bukkit.Sound
 import space.maxus.macrocosm.npc.ops.*
 import kotlin.time.Duration
@@ -71,6 +73,17 @@ class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
     @NPCDSL
     fun branch(predicate: (NPCOperationData) -> Boolean): NPCDialogueBranchBuilder = NPCDialogueBranchBuilder(this, predicate, mutableListOf(), mutableListOf())
 
+    /**
+     * Opens a KSpigot GUI for player
+     */
+    @NPCDSL
+    fun openUi(uiProvider: (NPCOperationData) -> GUI<out ForInventory>) = dialogueElements.add(NPCOpOpenUI(uiProvider))
+
+    /**
+     * Executes the provided code
+     */
+    fun execute(code: (NPCOperationData) -> Unit) = dialogueElements.add(NPCOpExecute(code))
+
     @NPCDSL
     class NPCDialogueBranchBuilder(val builder: NPCDialogueBuilder, val predicate: (NPCOperationData) -> Boolean, val trueBranch: MutableList<NPCOp>, val elseBranch: MutableList<NPCOp>) {
         /**
@@ -82,6 +95,14 @@ class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
             builder.apply(branch)
             this.trueBranch.addAll(builder.dialogueElements)
             return this
+        }
+
+        /**
+         * Closes this branch statement
+         */
+        @NPCDSL
+        fun done() {
+            this.builder.dialogueElements.add(NPCOpBranch(predicate, trueBranch, elseBranch))
         }
 
         /**
