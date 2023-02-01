@@ -13,6 +13,8 @@ import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
 import space.maxus.macrocosm.accessory.ui.LearnPower
 import space.maxus.macrocosm.api.KeyManager
+import space.maxus.macrocosm.area.AreaLevelDbAdapter
+import space.maxus.macrocosm.area.AreaType
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
@@ -70,7 +72,6 @@ import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.walkDataResources
 import space.maxus.macrocosm.workarounds.AsyncLauncher
-import space.maxus.macrocosm.area.AreaLevelDbAdapter
 import java.awt.Font
 import java.net.URL
 import java.nio.ByteBuffer
@@ -205,6 +206,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Armor.init()
         Bazaar.init()
         NPCs.init()
+        AreaType.init()
 
         // LevelDB
         LevelDatabase.registerAdapter(NPCLevelDbAdapter)

@@ -27,6 +27,9 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.updateOne
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.AccessoryBag
+import space.maxus.macrocosm.area.Area
+import space.maxus.macrocosm.area.AreaType
+import space.maxus.macrocosm.area.RestrictedArea
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
@@ -67,9 +70,6 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
-import space.maxus.macrocosm.area.RestrictedArea
-import space.maxus.macrocosm.area.Area
-import space.maxus.macrocosm.area.AreaType
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
@@ -217,10 +217,11 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     fun calculateZone(): Area {
         val p = paper ?: return AreaType.NONE.area
         val old = area
-        val zone = Registry.AREA.iter().values.firstOrNull { it.contains(p.location) } ?: AreaType.OVERWORLD.area
+        val zone = Registry.AREA.iter().values.lastOrNull { it.contains(p.location) } ?: AreaType.OVERWORLD.area
         if(old.id != zone.id) {
             // We have entered a new zone
-            val event = PlayerEnterAreaEvent(this, p, zone, old)
+            val event = PlayerEnterAreaEvent(this, p, zone, old, !goals.contains("area.${zone.id.path}"))
+            zone.model.onEnter(event)
             if(!event.callEvent()) {
                 // The event was cancelled, the player can not enter the zone yet
                 if(zone is RestrictedArea) {
@@ -234,6 +235,13 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
                     return old
                 }
                 return old
+            }
+
+            // Everything is fine
+            if(event.firstEnter) {
+                // Player has entered a new area!
+                reachGoal("area.${zone.id.path}")
+                zone.model.announce(p)
             }
         }
         this.area = zone

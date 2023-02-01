@@ -173,7 +173,7 @@ object SidebarRenderer : Listener {
         // only update time every few minutes or so in game
         if (time % minute > 4)
             return cachedDayTime
-        cachedDayTime = text(ticksToTime(time) + (if (world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> ")
+        cachedDayTime = text("<gray> ${ticksToTime(time)} ${(if (world.isDayTime) "<gold>☀" else "<dark_aqua>☽")}")
         return cachedDayTime
     }
 
@@ -186,7 +186,7 @@ object SidebarRenderer : Listener {
             e.player,
             RenderComponent.dynamic(Calendar::renderDate) { listOf(
                 calculateDayTime(),
-                text(" <gray>⏣ ${e.player.macrocosm?.area?.name}")
+                text(" <gray>⏣ ${e.player.macrocosm?.area?.model?.name}")
                 ) },
             RenderPriority.HIGHEST
         )

@@ -27,6 +27,8 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.ui.thaumaturgyUi
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
+import space.maxus.macrocosm.area.PolygonalArea
+import space.maxus.macrocosm.area.RestrictedArea
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.bazaar.BazaarIntrinsics
@@ -64,9 +66,6 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
-import space.maxus.macrocosm.util.stripTags
-import space.maxus.macrocosm.area.PolygonalArea
-import space.maxus.macrocosm.area.RestrictedArea
 import java.net.InetAddress
 import java.util.*
 import kotlin.math.roundToInt
@@ -82,28 +81,45 @@ fun addLocVertex() = command("zonevertex") {
 }
 
 fun finishLoc() = command("zonesave") {
-    argument("name", StringArgumentType.greedyString()) {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.AREA_MODEL.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "id"
+                    )?.path ?: ""
+                )
+            }
+        }
+
         runsCatching {
-            val name = getArgument<String>("name")
-            val id = name.stripTags().lowercase().replace(" ", "_")
-            val loc = PolygonalArea(name, id, vertices.toMutableList())
-            Registry.AREA.register(Identifier.parse(id), loc)
+            val id = getArgument<ResourceLocation>("id")
+            val loc = PolygonalArea(id.path, vertices.toMutableList())
+            Registry.AREA.register(id.macrocosm, loc)
             vertices.clear()
             player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a zone!"))
         }
-
     }
 }
 
 fun finishLocRestrictive() = command("zonerestrict") {
-    argument("name", StringArgumentType.greedyString()) {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.AREA_MODEL.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "id"
+                    )?.path ?: ""
+                )
+            }
+        }
+
         runsCatching {
-            val name = getArgument<String>("name")
-            val id = name.stripTags().lowercase().replace(" ", "_")
-            val loc = RestrictedArea(PolygonalArea(name, id, vertices.toMutableList()), player.location)
-            Registry.AREA.register(Identifier.parse(id), loc)
+            val id = getArgument<ResourceLocation>("id")
+            val loc = RestrictedArea(PolygonalArea(id.path, vertices.toMutableList()), player.location)
+            Registry.AREA.register(id.macrocosm, loc)
             vertices.clear()
-            player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a restrictive zone!"))
+            player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a restricted zone!"))
         }
     }
 }

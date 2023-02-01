@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.accessory.power.AccessoryPower
+import space.maxus.macrocosm.area.Area
+import space.maxus.macrocosm.area.AreaModel
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.block.MacrocosmBlock
 import space.maxus.macrocosm.cosmetic.Cosmetic
@@ -39,7 +41,6 @@ import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoringProducer
-import space.maxus.macrocosm.area.Area
 import java.io.BufferedInputStream
 import java.io.DataInputStream
 import java.nio.file.Path
@@ -146,7 +147,10 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         }
         val DISGUISE = makeDefaulted<String>(id("entity_disguise"))
         val SOUND = makeDefaulted<EntitySoundBank>(id("entity_sound"))
-        val AREA = makeDefaulted<Area>(id("zone"))
+        val AREA = makeDefaulted<Area>(id("area"))
+        val AREA_MODEL = makeDelegated<AreaModel>(id("area_model"), true) { _, v ->
+            v.registerListeners()
+        }
         val REFORGE = makeDelegated<Reforge>(id("reforge")) { _, v ->
             pluginManager.registerEvents(v, Macrocosm)
         }

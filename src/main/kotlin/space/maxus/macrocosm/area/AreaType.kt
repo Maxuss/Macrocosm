@@ -1,35 +1,36 @@
 package space.maxus.macrocosm.area
 
 import com.google.common.base.Predicates
-import org.bukkit.Location
-import org.bukkit.block.Biome
-import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 
-enum class AreaType(val area: Area) {
+enum class AreaType(val area: Area, val model: AreaModel) {
     // these only contains special zones, others are just biomes mostly
-    NONE(Area.impl(id("null"), "<dark_gray>None", Predicates.alwaysTrue())),
+    NONE(Area.impl(id("none"), Predicates.alwaysTrue()), AreaModel.impl("none", "<gray>None")),
     OVERWORLD(
         Area.impl(
             id("overworld"),
-            "<green>Overworld"
-        ) { return@impl it.world.environment == org.bukkit.World.Environment.NORMAL }),
-    NETHER(
-        Area.impl(
-            id("nether"),
-            "<red>Nether"
-        ) { return@impl it.world.environment == org.bukkit.World.Environment.NETHER }),
-    THE_END(
-        Area.impl(
-            id("the_end"),
-            "<dark_purple>The End"
-        ) { return@impl it.world.environment == org.bukkit.World.Environment.THE_END }),
+        ) { return@impl it.world.environment == org.bukkit.World.Environment.NORMAL },
+        AreaModel.impl("overworld", "<green>Macrocosm")
+    ),
+
+    MY_TEST_AREA(
+        Area.Null,
+        AreaModel.impl("my_test_area", "<blue>Test Area", listOf(
+            "Do something",
+            "Maybe like testing",
+            "idk really",
+            "<rainbow>weeeeeeeeeeeeeeeeeeeeeeee"
+        ))
+    )
 
     ;
-}
 
-class BiomeArea(id: Identifier, name: String, private val biome: Biome) : Area(id, name) {
-    override fun contains(location: Location): Boolean {
-        return location.block.biome == biome
+    companion object {
+        fun init() {
+            Registry.AREA.delegateRegistration(values().mapNotNull { if(it.area is Area.Null) null else id(it.name.lowercase()) to it.area })
+            Registry.AREA_MODEL.delegateRegistration(values().map { id(it.name.lowercase()) to it.model })
+        }
     }
 }
+

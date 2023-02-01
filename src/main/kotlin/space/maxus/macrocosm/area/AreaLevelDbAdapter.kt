@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import space.maxus.macrocosm.data.level.LevelDbAdapter
-import space.maxus.macrocosm.events.PlayerEnterAreaEvent
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -17,7 +16,6 @@ object AreaLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
     override fun save(to: CompoundTag) {
         for((id, zone) in Registry.AREA.iter()) {
             val cmp = CompoundTag()
-            cmp.putString("Name", zone.name)
             if(zone is PolygonalArea) {
                 val list = ListTag()
                 for(vertex in zone.vertices) {
@@ -53,7 +51,6 @@ object AreaLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
         for(key in from.allKeys) {
             val id = Identifier.parse(key)
             val cmp = from.getCompound(key)
-            val name = cmp.getString("Name")
             val vertices = cmp.getList("Vertices", CompoundTag.TAG_COMPOUND.toInt()).map {
                 val each = it as CompoundTag
                 val x = each.getInt("X")
@@ -67,9 +64,9 @@ object AreaLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
                 val y = each.getInt("Y")
                 val z = each.getInt("Z")
                 val exit = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-                RestrictedArea(PolygonalArea(name, key, vertices), exit)
+                RestrictedArea(PolygonalArea(key, vertices), exit)
             } else {
-                PolygonalArea(name, key, vertices)
+                PolygonalArea(key, vertices)
             }
             Registry.AREA.register(id, final)
         }
@@ -81,12 +78,6 @@ object AreaLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
             return
 
         e.player.macrocosm?.calculateZone()
-    }
-
-    @EventHandler
-    fun onEnterZone(e: PlayerEnterAreaEvent) {
-        if(e.newArea is RestrictedArea)
-            e.isCancelled = true
     }
 }
 

@@ -11,7 +11,8 @@ class PlayerEnterAreaEvent(
     val player: MacrocosmPlayer,
     val paper: Player,
     val newArea: Area,
-    val oldArea: Area
+    val oldArea: Area,
+    val firstEnter: Boolean
 ) : Event(), Cancellable {
     private var eventCancelled = false
 
