@@ -23,6 +23,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.Vector
 import space.maxus.macrocosm.Macrocosm
@@ -548,4 +549,30 @@ fun <V> MutableCollection<V>.drain(count: Int): List<V> {
     val items = this.take(count)
     this.removeAll(items.toSet())
     return items
+}
+
+fun PlayerInventory.containsAtLeast(item: Identifier, amount: Int): Boolean = this.sumOf { stack: ItemStack? ->
+    if(stack.isAirOrNull())
+        return@sumOf 0
+    val id = stack!!.macrocosmTag().getId("ID")
+    if(id == item)
+        stack.amount
+    else 0
+} >= amount
+
+fun PlayerInventory.removeAnySlot(item: Identifier, amount: Int) {
+    var count: Int = amount
+    val iter = this.iterator()
+    while(iter.hasNext()) {
+        val stack = iter.next()
+        if (stack == null || count == -1 || stack.macrocosmTag().getId("ID") != item)
+            continue
+        if (count < stack.amount) {
+            stack.amount -= count
+            count = -1
+            continue
+        }
+        count -= stack.amount
+        stack.amount = 0
+    }
 }

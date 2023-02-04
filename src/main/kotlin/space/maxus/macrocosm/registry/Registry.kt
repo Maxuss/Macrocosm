@@ -32,6 +32,7 @@ import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.writeIdentifier
 import space.maxus.macrocosm.loot.LootPool
 import space.maxus.macrocosm.npc.MacrocosmNPC
+import space.maxus.macrocosm.npc.shop.ShopModel
 import space.maxus.macrocosm.pets.Pet
 import space.maxus.macrocosm.recipes.MacrocosmRecipe
 import space.maxus.macrocosm.reforge.Reforge
@@ -213,6 +214,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         val NPC = makeDelegated<MacrocosmNPC>(id("npc"), true) { _, npc ->
             (npc as? AutoRegister<MacrocosmEntity>)?.register(ENTITY)
         }
+        val SHOP = makeDefaulted<ShopModel>(id("shop"), true)
 
         override fun dumpToFile(file: Path) {
             // Global registry can not dump data to file
