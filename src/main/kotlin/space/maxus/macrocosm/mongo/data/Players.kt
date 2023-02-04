@@ -3,6 +3,7 @@ package space.maxus.macrocosm.mongo.data
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.codecs.pojo.annotations.BsonId
+import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.AccessoryContainer
 import space.maxus.macrocosm.collections.CollectionCompound
@@ -10,6 +11,7 @@ import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.mongo.MongoRepr
+import space.maxus.macrocosm.npc.shop.ShopHistory
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.PlayerEquipment
@@ -126,7 +128,15 @@ data class MongoAccessoryBag(
             it.accessories.addAll(accessories.map(MongoAccessoryContainer::actual))
             it
         }
+}
 
+data class MongoShopHistory(
+    val limit: Int,
+    val history: List<ByteArray>
+): MongoRepr<ShopHistory> {
+    override val actual: ShopHistory
+        @JsonIgnore
+        get() = ShopHistory(limit, history.map { bytes -> ItemStack.deserializeBytes(bytes) }.toMutableList())
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -151,7 +161,8 @@ data class MongoPlayerData(
     val slayers: HashMap<SlayerType, SlayerLevel>,
     val essence: HashMap<EssenceType, Int>,
     val accessories: MongoAccessoryBag,
-    val goals: List<String>
+    val goals: List<String>,
+    val shopHistory: MongoShopHistory?
 ) : MongoRepr<MacrocosmPlayer?> {
     override val actual: MacrocosmPlayer
         @JsonIgnore

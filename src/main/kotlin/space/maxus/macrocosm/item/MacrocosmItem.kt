@@ -28,6 +28,7 @@ import space.maxus.macrocosm.ability.types.armor.EntityKillCounterBonus
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
+import space.maxus.macrocosm.damage.clamp
 import space.maxus.macrocosm.enchants.Enchantment
 import space.maxus.macrocosm.enchants.UltimateEnchantment
 import space.maxus.macrocosm.events.CostCompileEvent
@@ -38,6 +39,7 @@ import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.item.runes.RuneState
 import space.maxus.macrocosm.item.runes.RuneType
 import space.maxus.macrocosm.item.runes.StatRune
+import space.maxus.macrocosm.npc.shop.Sellable
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.recipes.Ingredient
 import space.maxus.macrocosm.reforge.Reforge
@@ -74,7 +76,7 @@ fun ItemStack.macrocosmTag(): CompoundTag {
     return CompoundTag()
 }
 
-interface MacrocosmItem : Ingredient, Clone, Identified {
+interface MacrocosmItem : Ingredient, Clone, Identified, Sellable {
     var stats: Statistics
     var specialStats: SpecialStatistics
     var amount: Int
@@ -94,13 +96,13 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
     var breakingPower: Int
     var dye: Dye?
     var skin: SkullSkin?
-    val sellPrice: Double
+    override val sellPrice: Number
         get() {
-            return 1.0 + enchantments.toList()
+            return ((1.0 + enchantments.toList()
                 .sumOf { (ench, lvl) -> Registry.ENCHANT.find(ench).levels.indexOf(lvl) * 25.0 } + (stars / min(
                 maxStars,
                 1
-            ).toDouble()) * 1000 + (if (reforge != null) 1000 else 0) + if (rarityUpgraded) 15000 else 0
+            ).toDouble()) * 1000 + (if (reforge != null) 1000 else 0) + if (rarityUpgraded) 15000 else 0) * clamp(this.rarity.ordinal.toFloat(), 1f, 4f)) * amount
         }
 
 
@@ -631,7 +633,6 @@ interface MacrocosmItem : Ingredient, Clone, Identified {
         nms.tag?.put(MACROCOSM_TAG, nbt)
         return nms.asBukkitCopy()
     }
-
     override fun clone(): MacrocosmItem {
         throw IllegalStateException("Override the clone method of MacrocosmItem!")
     }

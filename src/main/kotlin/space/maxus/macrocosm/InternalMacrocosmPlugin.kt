@@ -46,6 +46,7 @@ import space.maxus.macrocosm.mongo.MongoDb
 import space.maxus.macrocosm.net.MacrocosmServer
 import space.maxus.macrocosm.npc.NPCLevelDbAdapter
 import space.maxus.macrocosm.npc.NPCs
+import space.maxus.macrocosm.npc.shop.ShopParser
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.pets.PetValue
@@ -231,6 +232,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             PyroclasticToadPet::init,
             WaspPet::init,
             AccessoryPowers::init,
+            ShopParser::init
         )
 
         DataListener.joinLeave()
@@ -321,6 +323,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         collectionsCommand()
         adminEnchanting()
         addNpc()
+        openShop()
 
         addLocVertex()
         finishLoc()

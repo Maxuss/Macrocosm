@@ -46,6 +46,7 @@ import space.maxus.macrocosm.exceptions.MacrocosmThrowable
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.npc.NPCInstance
 import space.maxus.macrocosm.npc.NPCLevelDbAdapter
+import space.maxus.macrocosm.npc.shop.shopUi
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.banking.Transaction
@@ -71,6 +72,25 @@ import java.util.*
 import kotlin.math.roundToInt
 
 private val vertices = mutableListOf<Location>()
+
+fun openShop() = command("shop") {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.SHOP.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "id"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val id = getArgument<ResourceLocation>("id")
+            player.openGUI(shopUi(player.macrocosm!!, Registry.SHOP.find(id.macrocosm)))
+        }
+    }
+}
 
 fun addLocVertex() = command("zonevertex") {
     runsCatching {

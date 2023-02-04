@@ -10,6 +10,7 @@ import space.maxus.macrocosm.chat.capitalized
 import space.maxus.macrocosm.generators.*
 import space.maxus.macrocosm.item.*
 import space.maxus.macrocosm.item.runes.RuneSlot
+import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.recipes.RecipeParser
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -27,33 +28,29 @@ import kotlin.io.path.readText
 
 object ItemParser {
     fun init() {
-        Threading.contextBoundedRunAsync(name = "Item Parser") {
-            val pool = Threading.newFixedPool(5)
-            info("Starting recipe parser...")
+        val pool = Threading.newFixedPool(5)
 
-            val amount = AtomicInteger(0)
-            walkDataResources("data", "items") { file ->
-                info("Converting items from ${file.fileName}...")
-                val data = GSON.fromJson(file.readText(), JsonObject::class.java)
-                for ((key, obj) in data.entrySet()) {
-                    pool.execute {
-                        val id = Identifier.parse(key)
-                        Registry.ITEM.register(id, parseAndPrepare(id, obj.asJsonObject))
-                        amount.incrementAndGet()
-                    }
+        val amount = AtomicInteger(0)
+        walkDataResources("data", "items") { file ->
+            val data = GSON.fromJson(file.readText(), JsonObject::class.java)
+            for ((key, obj) in data.entrySet()) {
+                pool.execute {
+                    val id = Identifier.parse(key)
+                    Registry.ITEM.register(id, parseAndPrepare(id, obj.asJsonObject))
+                    amount.incrementAndGet()
                 }
             }
-
-            pool.shutdown()
-            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
-            info("Registered ${amount.get()} items from .json definitions!")
-
-            // only starting recipe parser after all items are registered to prevent data racing
-            RecipeParser.init()
-
-            // same for blocks
-            Blocks.init()
         }
+
+        pool.shutdown()
+        pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
+        logger.info("Registered ${amount.get()} items from .json definitions!")
+
+        // only starting recipe parser after all items are registered to prevent data racing
+        RecipeParser.init()
+
+        // same for blocks
+        Blocks.init()
     }
 
     private fun parseAndPrepare(id: Identifier, obj: JsonObject): MacrocosmItem {

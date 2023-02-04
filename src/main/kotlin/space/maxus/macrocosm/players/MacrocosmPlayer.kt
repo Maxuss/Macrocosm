@@ -52,6 +52,7 @@ import space.maxus.macrocosm.mongo.MongoDb
 import space.maxus.macrocosm.mongo.Store
 import space.maxus.macrocosm.mongo.data.MongoActiveForgeRecipe
 import space.maxus.macrocosm.mongo.data.MongoPlayerData
+import space.maxus.macrocosm.npc.shop.ShopHistory
 import space.maxus.macrocosm.pets.PetInstance
 import space.maxus.macrocosm.pets.StoredPet
 import space.maxus.macrocosm.players.chat.ChatChannel
@@ -122,6 +123,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
     var accessoryBag: AccessoryBag = AccessoryBag()
     var goals: ConcurrentLinkedQueue<String> = ConcurrentLinkedQueue()
+    var shopHistory: ShopHistory = ShopHistory(16, mutableListOf())
     var area: Area = AreaType.OVERWORLD.area; private set
 
     private var slayerRenderId: UUID? = null
@@ -712,6 +714,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.accessoryBag = mongo.accessories.actual
             player.baseStats =
                 Statistics(TreeMap(mongo.baseStats.map { Statistic.valueOf(it.key) to it.value }.toMap()))
+            player.shopHistory = mongo.shopHistory?.actual ?: ShopHistory(16, mutableListOf())
 
             return player
         }
@@ -738,7 +741,8 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             slayers,
             availableEssence,
             accessoryBag.mongo,
-            goals.toList()
+            goals.toList(),
+            shopHistory.mongo
         )
 
 }

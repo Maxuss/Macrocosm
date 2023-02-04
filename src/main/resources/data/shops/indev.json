@@ -1,0 +1,25 @@
+{
+    "test_shop": {
+        "name": "Test Shop",
+        "items": [
+            {
+                "item": "enchanted_diamond",
+                "price": 5000
+            },
+            {
+                "item": "adamantine_bar",
+                "amount": 32,
+                "price": 1234567.8
+            },
+            {
+                "item": "enchanted_adamantine_bar",
+                "amount": 5,
+                "price": 200000,
+                "extra": {
+                    "adamantine_bar": 2,
+                    "lumium_bar": 3
+                }
+            }
+        ]
+    }
+}
