@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.npc
 
-import org.bukkit.Sound
 import space.maxus.macrocosm.entity.textureProfile
 import space.maxus.macrocosm.npc.dsl.beginDialogue
 import space.maxus.macrocosm.registry.Registry
@@ -10,23 +9,22 @@ import space.maxus.macrocosm.util.general.id
  * Contains all pre-made NPCs
  */
 enum class NPCs(val npc: MacrocosmNPC) {
-    TEST_NPC(MacrocosmNPC(
-        "Test NPC",
-        "test_npc",
-        textureProfile("ewogICJ0aW1lc3RhbXAiIDogMTY3NDk3OTI5MjE1NSwKICAicHJvZmlsZUlkIiA6ICIxM2U3NjczMGRlNTI0MTk3OTA5YTZkNTBlMGEyMjAzYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXh1c2RldiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9iMDU2YjhjN2U1MjAxYzI3MzliY2E1NTViNDA0MWYyM2Y0ZmM4MDVhMTFhM2M0Y2ZmMDIyODI2ZjE3NjEwODJlIgogICAgfQogIH0KfQ==", "EAToXjWiSuNsdlsYE5QNOwh52F2GpB8FKZxo9G0fdGypxO109BRumb8WWqwfzRMfWLDWGsRhRPGfKs2/Dx/ABngdw/Q2I36j4+iSnyPA9Kvq+8hE+wxAeckXYezNMKcbZKHpKXJVv9vZvto5qCJsRptYcrcbI/jw6/4jvDT3tN3JR7HAteAKv9kCvdycIF0w23MItDfVzJ9We6aZeIPV6q8Kp4w2E880l5bnRnLZjXxD+sBetHPt5cC7ALDXOINpUHLF+Pvgxdvbl9YpGqB8CqfMLy3PCLJpFEn4thFesNnDyaNTiRjdDErkgfA6mImkpYC97QifUgGt416LTj7fhk4l9J6of8NOw/RPAQRDfDDZPsk8cdskmq8Orag60kQ1YbAnPmIA8KekPN9eNXFCxZb/F6YZ/fDz8B9Hz2mDSyzwonX3nUh7po7MsFmOFwe7UECRucVW2k2U0nvzRUqHpYLwN4Ca9I9ngwy1MAkXXwMS1he6jW91oXdbRIrxjxDdsCtfyg4PQl/1p/Ru2ImkzBM3wwIhycfpJPKsCe4AtY0XdJcq6GlfpiHoRnt8KsQYBlFTejUZzzAB8Pfa8WUlhfcSlum1fMJ+ki71coK/HmkfZTKNLZF8LxiQcPBkxlRbSpwPFm9PaBAjw5TnOryAc/tqb/KGS6rLlHOslrcoMNg="),
-        beginDialogue {
-            branch(lacksGoal("npc.talk_to_test_npc_again")) then {
-                say("Hello, <player_name>!")
-                wait(1.5)
-                playSound(Sound.ITEM_GOAT_HORN_SOUND_3, volume = 3)
-                message("<rainbow>This is a test message!")
-                wait(1)
-                say("Forget about it")
-            } otherwise {
-                say("I don't want to talk with you anymore...")
+    SHOPKEEPER(
+        MacrocosmNPC(
+        "Shopkeeper",
+        "shopkeeper",
+            textureProfile("ewogICJ0aW1lc3RhbXAiIDogMTU5NjUxODI4MzY1NCwKICAicHJvZmlsZUlkIiA6ICJiZWNkZGIyOGEyYzg0OWI0YTliMDkyMmE1ODA1MTQyMCIsCiAgInByb2ZpbGVOYW1lIiA6ICJTdFR2IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzZjOWJjMDFmMjk5Zjk4ZDU2NWEyN2JhMTBhMTI5MzkxNWFlOGJlZWVmYjhhNjc4NDVlMjMzMWRiZTZmZDZmZDYiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==", "YYQm873aDPHAom07/roqkuNfJjalmLDePSnAVHSzoJT0MCEn6V1S+eJIXtTSSFbuyMPZ62f8urtEmzm0mxiOF2Bn7g3s/5pBrmtr9GVtCCOWAMpX8gp2km7cSuF6kUtMtAyvsjrckDbd23KXLzGJj/eMFQODWcBDCrk//A7Frg8Nxdun9X9L9L8erLsuQ763TAchxXNGtsCBFrskILkaT7UJ9J42PK/FdcvfjYH1VPFTFs3nP63Ob3OIiIYtw08e7YgRxTVSVCQb3cHO5ZVBfkhIt0ZLDzCedONzITXyWP+gbz72Ll6ySX5T+CjItmoAFRgInrbKxmcWZz2eSoBAo/lyTj2s+uJfLUYbWkapi49uXi4f6v94jM7CAi4LY390YKEHe4geGBwKKB07B8wB8afsEHU7kL7j6yBF4vN+DwnbQHR8OQyZcexO+EZ+OqdxbnRZVLiQyukyVyGd2tii5Y86UIqfbiXizuoNo0zgYm17DiUpTbKdNmR6elnrvvW3fkz0BhpG4V6ImJeIJ5OijntBV61/1vCIIYH19zTIwKri4is/3lnXsFPSGp7A+VETHzuHI+blIqLGgG1MOYLJCBPFijikemLPGNHx7beFRg1G8d5zhuxnLmIDIYfIbEG0XqyWKY4mcP6NRJJ/qn+ATcVGWbJ9MbgsOa6w20a/y7Q="),
+            beginDialogue {
+                branch(lacksGoal("npc.test_shopkeeper")) then {
+                    say("sho p")
+                    wait(2)
+                    shop("test_shop")
+                } otherwise {
+                    shop("test_shop")
+                }
             }
-        }
-    ))
+        )
+    )
     ;
 
     companion object {

@@ -4,6 +4,7 @@ import net.axay.kspigot.gui.ForInventory
 import net.axay.kspigot.gui.GUI
 import org.bukkit.Sound
 import space.maxus.macrocosm.npc.ops.*
+import space.maxus.macrocosm.registry.Identifier
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -82,7 +83,14 @@ class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
     /**
      * Executes the provided code
      */
+    @NPCDSL
     fun execute(code: (NPCOperationData) -> Unit) = dialogueElements.add(NPCOpExecute(code))
+
+    /**
+     * Opens a shop to player
+     */
+    @NPCDSL
+    fun shop(id: String) = dialogueElements.add(NPCOpOpenShop(Identifier.parse(id)))
 
     @NPCDSL
     class NPCDialogueBranchBuilder(val builder: NPCDialogueBuilder, val predicate: (NPCOperationData) -> Boolean, val trueBranch: MutableList<NPCOp>, val elseBranch: MutableList<NPCOp>) {
