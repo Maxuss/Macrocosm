@@ -220,9 +220,12 @@ interface MacrocosmEntity : Listener {
 }
 
 fun Entity.loadNbt(nbt: CompoundTag) {
-    this.persistentDataContainer.set(NamespacedKey(Macrocosm, "NBT_WRAPPER"), CompoundDataType, nbt)
+    this.persistentDataContainer.set(NBT_WRAPPER_KEY, CompoundDataType, nbt)
 }
 
 fun Entity.readNbt(): CompoundTag {
-    return this.persistentDataContainer.get(NamespacedKey(Macrocosm, "NBT_WRAPPER"), CompoundDataType) ?: CompoundTag()
+    return this.persistentDataContainer.get(NBT_WRAPPER_KEY, CompoundDataType) ?: CompoundTag()
 }
+
+@Suppress("PrivatePropertyName")
+private val NBT_WRAPPER_KEY = NamespacedKey(Macrocosm, "NBT_WRAPPER")

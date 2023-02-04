@@ -129,7 +129,7 @@ object SidebarRenderer : Listener {
      * This is a **Thread Safe** method
      */
     fun init() {
-        task(false, delay = 20L, period = 10L) {
+        task(false, delay = 20L, period = 20L) {
             tick()
         }
         task(false, delay = 20L, period = 5L) {
