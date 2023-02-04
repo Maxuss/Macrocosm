@@ -2,10 +2,7 @@ package space.maxus.macrocosm.npc.shop
 
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.event.unregister
-import net.axay.kspigot.gui.GUIType
-import net.axay.kspigot.gui.Slots
-import net.axay.kspigot.gui.kSpigotGUI
-import net.axay.kspigot.gui.rectTo
+import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
@@ -30,6 +27,8 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.giveOrDrop
 import space.maxus.macrocosm.util.removeAnySlot
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 import space.maxus.macrocosm.util.containsAtLeast as containsLeast
 
 private fun itemAsPurchaseHistory(item: ItemStack, model: MacrocosmItem = item.macrocosm!!): ItemStack {
@@ -70,10 +69,7 @@ private fun modifyItemMeta(next: ItemStack, mc: MacrocosmItem) {
     }
 }
 
-fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    defaultPage = 0
-    title = text(model.name)
-
+private fun GUIBuilder<ForInventorySixByNine>.setupListeners(player: MacrocosmPlayer) {
     val listener = listen<InventoryClickEvent> { e ->
         if(
             e.whoClicked.uniqueId != player.ref ||
@@ -118,6 +114,13 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
             thisIter.set(mc.build(player))
         }
     }
+}
+
+fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+    defaultPage = 0
+    title = text(model.name)
+
+    setupListeners(player)
 
     page(0) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
@@ -127,7 +130,7 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
             "<green>Sell Item",
             "Click items in your inventory to",
             "sell them to this Shop!"
-        ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last())) { e ->
+        ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last().clone())) { e ->
             e.bukkitEvent.isCancelled = true
             if(player.shopHistory.lastSold.isEmpty())
                 return@button
@@ -145,7 +148,7 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
                 "<green>Sell Item",
                 "Click items in your inventory to",
                 "sell them to this Shop!"
-            ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last())
+            ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last().clone())
 
             sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                 pitch = 2f
@@ -173,7 +176,7 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
                     "",
                     "<yellow>Click to trade!",
                 )
-                if(deal.amount < 32 && !deal.onlyOne) {
+                if(deal.amount < 32 && !deal.onlyOne && deal.additionalItems.isEmpty()) {
                     interm.add("<yellow>Right-Click for more trading")
                     interm.add("<yellow>options!")
                 }
@@ -183,8 +186,8 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
             built
         }) { e, deal ->
             e.bukkitEvent.isCancelled = true
-            if(e.bukkitEvent.isRightClick) {
-                // TODO: open specific amount choose
+            if(e.bukkitEvent.isRightClick && deal.amount < 32 && !deal.onlyOne && deal.additionalItems.isEmpty()) {
+                e.player.openGUI(chooseSpecificAmount(player, deal, model))
                 return@createCompound
             }
             val price = deal.price.toFloat().toBigDecimal()
@@ -201,6 +204,10 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
                 val toRemove = mutableListOf<Pair<Identifier, Int>>()
                 for((additional, amount) in deal.additionalItems) {
                     if(!e.player.inventory.containsLeast(additional, amount)) {
+                        sound(Sound.ENTITY_VILLAGER_NO) {
+                            volume = 2f
+                            playFor(e.player)
+                        }
                         player.sendMessage("<red>You don't have enough items!")
                         return@createCompound
                     }
@@ -226,5 +233,77 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel) = kSpigotGUI(GUIType.SIX_B
         }
         compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, cmp)
         cmp.addContent(model.items)
+    }
+}
+
+private fun chooseSpecificAmount(player: MacrocosmPlayer, deal: Purchasable, model: ShopModel): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+    defaultPage = 0
+    title = text("Shop Trading Options")
+
+    setupListeners(player)
+
+    page(0) {
+        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+
+        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
+            it.bukkitEvent.isCancelled = true
+            it.player.closeInventory()
+        }
+        button(Slots.RowOneSlotFour, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To ${model.name}")) {
+            it.bukkitEvent.isCancelled = true
+            it.player.openGUI(shopUi(player, model))
+        }
+
+        val pricePerOne = deal.price.toFloat() / deal.amount
+        val mc = Registry.ITEM.find(deal.item)
+        val cmp = createCompound<Int>({ count ->
+            val price = ceil(pricePerOne * count).roundToInt()
+            val built = mc.build(player)!!
+            built.amount = count
+            built.meta {
+                val lore = lore()!!
+                val interm = mutableListOf(
+                    "",
+                    "<gray>Cost",
+                    "<gold>${Formatting.withCommas(price.toFloat().toBigDecimal())} Coins",
+                    "",
+                    "<yellow>Click to trade!",
+                )
+                lore.addAll(interm.map { text(it).noitalic() })
+                lore(lore)
+
+                displayName(displayName()!!.append(Component.text(" x$count").color(NamedTextColor.DARK_GRAY)))
+            }
+            built
+        }) { e, count ->
+            e.bukkitEvent.isCancelled = true
+            val price = (pricePerOne * count).toBigDecimal()
+            if(player.purse < price) {
+                sound(Sound.ENTITY_VILLAGER_NO) {
+                    volume = 2f
+                    playFor(e.player)
+                }
+                player.sendMessage("<red>You don't have enough coins!")
+                return@createCompound
+            }
+
+            player.purse -= transact(price, player.ref, Transaction.Kind.OUTGOING)
+            sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
+                pitch = 2f
+                volume = 2f
+                playFor(e.player)
+            }
+            val dealItem = Registry.ITEM.find(deal.item)
+            dealItem.amount = count
+            val built = dealItem.build(player)!!
+            modifyItemMeta(built, dealItem)
+
+            e.player.giveOrDrop(built)
+        }
+
+        compoundSpace(Slots.RowFourSlotThree linTo Slots.RowFourSlotSeven, cmp)
+
+        val d = if(deal.amount == 1) 5 else deal.amount
+        cmp.addContent(listOf(1, d, d * 2, 32, 64).sorted())
     }
 }
