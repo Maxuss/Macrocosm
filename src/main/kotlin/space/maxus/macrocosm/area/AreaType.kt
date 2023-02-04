@@ -4,6 +4,9 @@ import com.google.common.base.Predicates
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 
+/**
+ * Contains all pre-defined areas in Macrocosom
+ */
 enum class AreaType(val area: Area, val model: AreaModel) {
     // these only contains special zones, others are just biomes mostly
     NONE(Area.impl(id("none"), Predicates.alwaysTrue()), AreaModel.impl("none", "<gray>None")),
@@ -27,6 +30,9 @@ enum class AreaType(val area: Area, val model: AreaModel) {
     ;
 
     companion object {
+        /**
+         * Initializes pre-defined areas
+         */
         fun init() {
             Registry.AREA.delegateRegistration(values().mapNotNull { if(it.area is Area.Null) null else id(it.name.lowercase()) to it.area })
             Registry.AREA_MODEL.delegateRegistration(values().map { id(it.name.lowercase()) to it.model })

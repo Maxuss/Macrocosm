@@ -12,7 +12,10 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 
-object AreaLevelDbAdapter: LevelDbAdapter("Zone"), Listener {
+/**
+ * A LevelDB adapter for Areas
+ */
+object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
     override fun save(to: CompoundTag) {
         for((id, zone) in Registry.AREA.iter()) {
             val cmp = CompoundTag()

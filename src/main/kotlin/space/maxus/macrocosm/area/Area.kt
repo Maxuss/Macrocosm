@@ -6,6 +6,9 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import java.util.function.Predicate
 
+/**
+ * An abstract class for areas that hold locations. Not to be confused with area models that hold actual area data
+ */
 abstract class Area(override val id: Identifier): Identified {
     val model get() = Registry.AREA_MODEL.find(id)
 

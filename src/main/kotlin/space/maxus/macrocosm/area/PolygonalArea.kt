@@ -5,7 +5,19 @@ import space.maxus.macrocosm.registry.Identifier
 import java.awt.Polygon
 
 
-class PolygonalArea(id: String, val vertices: List<Location>): Area(Identifier.parse(id)) {
+/**
+ * A polygonal (not polyhedral) area
+ */
+class PolygonalArea(
+    /**
+     * ID of this area
+     */
+    id: String,
+    /**
+     * All points of this polygon
+     */
+    val vertices: List<Location>
+): Area(Identifier.parse(id)) {
     private val polygon: Polygon
     private val lowestPoint: Double
     private val highestPoint: Double

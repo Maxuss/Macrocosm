@@ -222,7 +222,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             // We have entered a new zone
             val event = PlayerEnterAreaEvent(this, p, zone, old, !goals.contains("area.${zone.id.path}"))
             zone.model.onEnter(event)
-            if(!event.callEvent()) {
+            if(event.isCancelled || !event.callEvent()) {
                 // The event was cancelled, the player can not enter the zone yet
                 if(zone is RestrictedArea) {
                     // Teleport the player away
