@@ -27,6 +27,9 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.updateOne
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.AccessoryBag
+import space.maxus.macrocosm.area.Area
+import space.maxus.macrocosm.area.AreaType
+import space.maxus.macrocosm.area.RestrictedArea
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionCompound
@@ -119,6 +122,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var availableEssence: HashMap<EssenceType, Int> = EssenceType.values().asIterable().associateWithHashed(ignoring(0))
     var accessoryBag: AccessoryBag = AccessoryBag()
     var goals: ConcurrentLinkedQueue<String> = ConcurrentLinkedQueue()
+    var area: Area = AreaType.OVERWORLD.area; private set
 
     private var slayerRenderId: UUID? = null
     var statCache: Statistics? = null; private set
@@ -209,6 +213,40 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             return item.macrocosm
         }
         set(@NotNull value) = paper?.inventory?.setBoots(value!!.build(this)) ?: Unit
+
+    fun calculateZone(): Area {
+        val p = paper ?: return AreaType.NONE.area
+        val old = area
+        val zone = Registry.AREA.iter().values.lastOrNull { it.contains(p.location) } ?: AreaType.OVERWORLD.area
+        if(old.id != zone.id) {
+            // We have entered a new zone
+            val event = PlayerEnterAreaEvent(this, p, zone, old, !goals.contains("area.${zone.id.path}"))
+            zone.model.onEnter(event)
+            if(event.isCancelled || !event.callEvent()) {
+                // The event was cancelled, the player can not enter the zone yet
+                if(zone is RestrictedArea) {
+                    // Teleport the player away
+                    sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
+                        pitch = 0f
+                        volume = 3f
+                        playFor(p)
+                    }
+                    p.teleport(zone.exit)
+                    return old
+                }
+                return old
+            }
+
+            // Everything is fine
+            if(event.firstEnter) {
+                // Player has entered a new area!
+                reachGoal("area.${zone.id.path}")
+                zone.model.announce(p)
+            }
+        }
+        this.area = zone
+        return zone
+    }
 
     fun startSlayerQuest(type: SlayerType, tier: Int) {
         val p = paper ?: return

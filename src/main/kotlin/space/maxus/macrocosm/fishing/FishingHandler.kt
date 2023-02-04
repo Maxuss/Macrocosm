@@ -11,7 +11,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.zone.Zones
+import space.maxus.macrocosm.area.Areas
 
 object FishingHandler : Listener {
     @EventHandler
@@ -29,7 +29,7 @@ object FishingHandler : Listener {
     }
 
     private fun possibleRewards(location: Location, player: MacrocosmPlayer, hook: FishHook): FishingPool {
-        val zones = Zones.matching(location).values
+        val zones = Areas.matching(location).values
         val level = player.skills.level(SkillType.FISHING)
         val tuple: Triple<List<SeaCreature>, List<TrophyFish>, List<FishingTreasure>> = Triple(
             Registry.SEA_CREATURE.iter().values.filter { sc ->

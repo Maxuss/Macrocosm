@@ -78,7 +78,9 @@ object SidebarRenderer : Listener {
             val obj = player.scoreboard.getObjective("defaultBoard")!!
             val board = player.scoreboard
             var pos = -1
-            for ((_, cmp) in components.toList().sortedBy { (_, v) -> v.position.priority }) {
+            val last = components.size - 1
+            for ((index, data) in components.toList().sortedBy { (_, v) -> v.position.priority }.withIndex()) {
+                val cmp = data.second
                 pos++
                 if (pos > objNameMap.size - 1)
                     break
@@ -95,6 +97,9 @@ object SidebarRenderer : Listener {
 
                 // padding
                 lines.add("".toComponent())
+                if(index == last) {
+                    lines.add(text("<yellow>play.maxus.space"))
+                }
                 for (line in lines) {
                     pos++
                     val nn = objNameMap[pos]
@@ -124,7 +129,7 @@ object SidebarRenderer : Listener {
      * This is a **Thread Safe** method
      */
     fun init() {
-        task(false, delay = 20L, period = 10L) {
+        task(false, delay = 20L, period = 20L) {
             tick()
         }
         task(false, delay = 20L, period = 5L) {
@@ -168,7 +173,7 @@ object SidebarRenderer : Listener {
         // only update time every few minutes or so in game
         if (time % minute > 4)
             return cachedDayTime
-        cachedDayTime = text((if (world.isDayTime) "<gold>☀" else "<dark_aqua>☽") + "<gray> " + ticksToTime(time))
+        cachedDayTime = text("<gray> ${ticksToTime(time)} ${(if (world.isDayTime) "<gold>☀" else "<dark_aqua>☽")}")
         return cachedDayTime
     }
 
@@ -176,9 +181,13 @@ object SidebarRenderer : Listener {
     fun onJoin(e: PlayerJoinEvent) {
         preparePlayer(e.player)
 
+
         enqueue(
             e.player,
-            RenderComponent.dynamic(Calendar::renderDate) { listOf(calculateDayTime()) },
+            RenderComponent.dynamic(Calendar::renderDate) { listOf(
+                calculateDayTime(),
+                text(" <gray>⏣ ${e.player.macrocosm?.area?.model?.name}")
+                ) },
             RenderPriority.HIGHEST
         )
 
@@ -186,9 +195,9 @@ object SidebarRenderer : Listener {
             e.player,
             RenderComponent.dynamic({
                 val mc = e.player.macrocosm ?: return@dynamic text("<red><bold>ERROR!")
-                text("<gold>Purse: ${Formatting.withCommas(mc.purse)} coins")
+                text("Purse: <gold>${Formatting.withCommas(mc.purse)}")
             }) { listOf() },
-            RenderPriority.HIGH
+            RenderPriority.HIGHER
         )
     }
 

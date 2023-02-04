@@ -3,7 +3,7 @@ package space.maxus.macrocosm.fishing.predicates
 import org.bukkit.World
 import org.bukkit.entity.FishHook
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.zone.Zone
+import space.maxus.macrocosm.area.Area
 import java.util.function.Predicate
 
 object FishPredicates {
@@ -14,5 +14,5 @@ object FishPredicates {
     val NETHER = FishPredicateBuilder { _, _, h -> h.world.environment == World.Environment.NETHER }
     val END = FishPredicateBuilder { _, _, h -> h.world.environment == World.Environment.THE_END }
 
-    fun not(predicate: FishPredicate): Predicate<Triple<MacrocosmPlayer, Zone, FishHook>> = predicate.negate()
+    fun not(predicate: FishPredicate): Predicate<Triple<MacrocosmPlayer, Area, FishHook>> = predicate.negate()
 }

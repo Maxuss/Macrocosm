@@ -38,6 +38,10 @@ Abilities related to summoning minions: staves, sceptres etc.
 
 Abilities related to deployables, e.g. turrets
 
+# Package space.maxus.macrocosm.area
+
+All area-related code
+
 # Package space.maxus.macrocosm.api
 
 Contains the code related to the Macrocosm HTTP API implementation

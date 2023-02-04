@@ -13,6 +13,8 @@ import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
 import space.maxus.macrocosm.accessory.ui.LearnPower
 import space.maxus.macrocosm.api.KeyManager
+import space.maxus.macrocosm.area.AreaLevelDbAdapter
+import space.maxus.macrocosm.area.AreaType
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
@@ -204,9 +206,11 @@ class InternalMacrocosmPlugin : KSpigot() {
         Armor.init()
         Bazaar.init()
         NPCs.init()
+        AreaType.init()
 
         // LevelDB
         LevelDatabase.registerAdapter(NPCLevelDbAdapter)
+        LevelDatabase.registerAdapter(AreaLevelDbAdapter)
         Threading.runAsync { LevelDatabase.load() }
 
         Threading.runEachConcurrently(
@@ -256,6 +260,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(AccessoryBag.Handlers, this)
         server.pluginManager.registerEvents(LearnPower, this)
         server.pluginManager.registerEvents(NPCLevelDbAdapter, this)
+        server.pluginManager.registerEvents(AreaLevelDbAdapter, this)
 
         PACKET_MANAGER = ProtocolLibrary.getProtocolManager()
         protocolManager.addPacketListener(MiningHandler)
@@ -316,6 +321,10 @@ class InternalMacrocosmPlugin : KSpigot() {
         collectionsCommand()
         adminEnchanting()
         addNpc()
+
+        addLocVertex()
+        finishLoc()
+        finishLocRestrictive()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

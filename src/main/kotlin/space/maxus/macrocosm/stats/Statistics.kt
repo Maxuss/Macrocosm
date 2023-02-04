@@ -367,9 +367,7 @@ data class Statistics(private val self: TreeMap<Statistic, Float>) : Serializabl
 
     fun clone(): Statistics {
         val clone = TreeMap<Statistic, Float>()
-        for ((stat, value) in self) {
-            clone[stat] = value
-        }
+        clone.putAll(self)
         return Statistics(clone)
     }
 }

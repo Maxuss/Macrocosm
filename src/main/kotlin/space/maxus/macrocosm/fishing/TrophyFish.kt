@@ -33,12 +33,12 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.math.Chance
 import space.maxus.macrocosm.util.multimap
-import space.maxus.macrocosm.zone.Zone
+import space.maxus.macrocosm.area.Area
 import java.util.function.Predicate
 
 data class CatchConditions(
     val description: String,
-    val predicate: Predicate<Pair<MacrocosmPlayer, Zone>>,
+    val predicate: Predicate<Pair<MacrocosmPlayer, Area>>,
     val chance: Float
 )
 

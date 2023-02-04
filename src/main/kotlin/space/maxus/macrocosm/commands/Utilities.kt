@@ -15,6 +15,7 @@ import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.conversations.ConversationContext
@@ -26,6 +27,8 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.ui.thaumaturgyUi
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
+import space.maxus.macrocosm.area.PolygonalArea
+import space.maxus.macrocosm.area.RestrictedArea
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.bazaar.BazaarIntrinsics
@@ -66,6 +69,61 @@ import space.maxus.macrocosm.util.runCatchingReporting
 import java.net.InetAddress
 import java.util.*
 import kotlin.math.roundToInt
+
+private val vertices = mutableListOf<Location>()
+
+fun addLocVertex() = command("zonevertex") {
+    runsCatching {
+        val pos = player.location
+        vertices.add(pos)
+        player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Added a zone vertex at <green>${pos.blockX} ${pos.blockY} ${pos.blockZ}"))
+    }
+}
+
+fun finishLoc() = command("zonesave") {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.AREA_MODEL.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "id"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val id = getArgument<ResourceLocation>("id")
+            val loc = PolygonalArea(id.path, vertices.toMutableList())
+            Registry.AREA.register(id.macrocosm, loc)
+            vertices.clear()
+            player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a zone!"))
+        }
+    }
+}
+
+fun finishLocRestrictive() = command("zonerestrict") {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.AREA_MODEL.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "id"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val id = getArgument<ResourceLocation>("id")
+            val loc = RestrictedArea(PolygonalArea(id.path, vertices.toMutableList()), player.location)
+            Registry.AREA.register(id.macrocosm, loc)
+            vertices.clear()
+            player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Finalized a restricted zone!"))
+        }
+    }
+}
+
 
 fun adminEnchanting() = command("enchantui") {
     runsCatching {
