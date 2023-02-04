@@ -9,7 +9,13 @@ import space.maxus.macrocosm.util.typetoken
 import space.maxus.macrocosm.util.walkDataResources
 import kotlin.io.path.readText
 
+/**
+ * A JSON parser for the shop data
+ */
 object ShopParser {
+    /**
+     * Initializes this shop parser
+     */
     fun init() {
         val pool = Threading.newFixedPool(2)
 
