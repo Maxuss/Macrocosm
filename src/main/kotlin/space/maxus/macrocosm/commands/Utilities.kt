@@ -14,10 +14,7 @@ import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.commands.arguments.selector.EntitySelector
 import net.minecraft.resources.ResourceLocation
-import org.bukkit.ChatColor
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
@@ -72,6 +69,12 @@ import java.util.*
 import kotlin.math.roundToInt
 
 private val vertices = mutableListOf<Location>()
+
+fun debugDungeonTeleport() = command("tpdungeon") {
+    runsCatching {
+        player.teleport(Location(Bukkit.getWorld("catacombs-ba2840"), .0, 90.0, .0))
+    }
+}
 
 fun openShop() = command("shop") {
     argument("id", ResourceLocationArgument.id()) {

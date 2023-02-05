@@ -15,5 +15,5 @@ libraries:
     - "org.litote.kmongo:kmongo:4.8.0"
     - "io.prometheus:simpleclient:0.16.0"
     - "io.prometheus:simpleclient_httpserver:0.16.0"
-depend: [ ProtocolLib, LibsDisguises ]
+depend: [ ProtocolLib, LibsDisguises, FastAsyncWorldEdit ]
 load: POSTWORLD

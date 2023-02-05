@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.data.level.LevelDbAdapter
@@ -38,6 +39,9 @@ object NPCLevelDbAdapter: LevelDbAdapter("NPC"), Listener {
     override fun save(to: CompoundTag) {
         val list = ListTag()
         for(npc in npcs) {
+            val base = Registry.NPC.find(npc.value.kind)
+            if(base.isTemporary)
+                continue
             list.add(npc.value.save())
         }
         to.put("value", list)
@@ -69,10 +73,26 @@ object NPCLevelDbAdapter: LevelDbAdapter("NPC"), Listener {
      */
     fun close() {
         for(npc in this.npcs) {
-            val entity = Bukkit.getWorlds().first().getEntity(npc.key) as? LivingEntity ?: continue
+            val entity = Bukkit.getEntity(npc.key) as? LivingEntity ?: continue
             entity.kill()
             val npcEntity = (entity as CraftEntity).handle as NPCEntity
             (Bukkit.getEntity(npcEntity.standId) as? ArmorStand)?.kill()
+        }
+    }
+
+    @EventHandler
+    fun playerWorldChange(e: PlayerTeleportEvent) {
+        if(e.from.world.uid == e.to.world.uid)
+            return
+        for(npc in npcs) {
+            val entity = Registry.ENTITY.find(npc.value.kind) as EntityBase
+            val skin = Registry.DISGUISE.find(npc.value.kind)
+            val disguise = PlayerDisguise(nameMm((entity.buildName())), skin)
+            if (entity.disguiseProfile != null) {
+                disguise.gameProfile = entity.disguiseProfile
+            }
+
+            DisguiseAPI.disguiseEntity(e.player, Bukkit.getEntity(npc.key), disguise)
         }
     }
 

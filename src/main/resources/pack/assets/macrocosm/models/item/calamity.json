@@ -1,0 +1,18 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "macrocosm:item/calamity"
+    },
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [ 0, -90, 55 ],
+            "translation": [ 0, 6, 0.5 ],
+            "scale": [ 1.9, 1.9, 1.9 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ 0, 90, -55 ],
+            "translation": [ 0, 6, 0.5 ],
+            "scale": [ 1.9, 1.9, 1.9 ]
+        }
+    }
+}

@@ -22,7 +22,8 @@ enum class NPCs(val npc: MacrocosmNPC) {
                 } otherwise {
                     shop("test_shop")
                 }
-            }
+            },
+            isTemporary = true
         )
     )
     ;

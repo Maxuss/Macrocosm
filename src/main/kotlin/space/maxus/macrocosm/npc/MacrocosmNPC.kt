@@ -52,6 +52,10 @@ open class MacrocosmNPC(
     private var chestplate: MacrocosmItem? = null,
     private var leggings: MacrocosmItem? = null,
     private var boots: MacrocosmItem? = null,
+    /**
+     * Whether this NPC should not be saved in LevelDB
+     */
+    val isTemporary: Boolean = false
 ): Identified, AutoRegister<MacrocosmEntity> {
     override val id: Identifier = Identifier.parse(id)
 
@@ -69,8 +73,6 @@ open class MacrocosmNPC(
      * Summons this NPC at provided location
      */
     fun summon(at: Location): NPCEntity {
-        if(!at.isChunkLoaded)
-            at.world.loadChunk(at.chunk)
         val stand = at.world.spawnEntity(at.clone().add(vec(y = 1.1)), EntityType.ARMOR_STAND) as ArmorStand
         stand.isInvulnerable = true
         stand.isVisible = false
