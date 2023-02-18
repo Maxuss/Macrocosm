@@ -162,7 +162,9 @@ data class MongoPlayerData(
     val essence: HashMap<EssenceType, Int>,
     val accessories: MongoAccessoryBag,
     val goals: List<String>,
-    val shopHistory: MongoShopHistory?
+    val shopHistory: MongoShopHistory?,
+    val achievements: List<String>?,
+    val achievementExp: Int?
 ) : MongoRepr<MacrocosmPlayer?> {
     override val actual: MacrocosmPlayer
         @JsonIgnore

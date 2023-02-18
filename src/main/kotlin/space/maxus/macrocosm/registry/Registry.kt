@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.ability.MacrocosmAbility
 import space.maxus.macrocosm.accessory.power.AccessoryPower
+import space.maxus.macrocosm.achievement.Achievement
 import space.maxus.macrocosm.area.Area
 import space.maxus.macrocosm.area.AreaModel
 import space.maxus.macrocosm.async.Threading
@@ -215,6 +216,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
             (npc as? AutoRegister<MacrocosmEntity>)?.register(ENTITY)
         }
         val SHOP = makeDefaulted<ShopModel>(id("shop"), true)
+        val ACHIEVEMENT = makeDefaulted<Achievement>(id("achievement"), true)
 
         override fun dumpToFile(file: Path) {
             // Global registry can not dump data to file

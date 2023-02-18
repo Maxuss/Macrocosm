@@ -1,0 +1,17 @@
+{
+    "test_achievement": {
+        "name": "Basic Achievement"
+    },
+    "test_achievement_2": {
+        "name": "Rare Achievement",
+        "rarity": "rare"
+    },
+    "test_achievement_3": {
+        "name": "Epic Achievement",
+        "rarity": "epic"
+    },
+    "test_achievement_4": {
+        "name": "Macrocosmic Achievement",
+        "rarity": "macrocosmic"
+    }
+}

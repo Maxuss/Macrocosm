@@ -71,13 +71,32 @@ import kotlin.math.roundToInt
 
 private val vertices = mutableListOf<Location>()
 
+fun awardAchievement() = command("awardachievement") {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.ACHIEVEMENT.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "id"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val id = getArgument<ResourceLocation>("id")
+            player.macrocosm!!.giveAchievement(id.macrocosm)
+        }
+    }
+}
+
 fun addSpawnPos() = command("addspawnpos") {
     argument("id", ResourceLocationArgument.id()) {
         suggestListSuspending { ctx ->
             Registry.ENTITY.iter().keys.filter {
                 it.path.contains(
                     ctx.getArgumentOrNull<ResourceLocation>(
-                        "entity"
+                        "id"
                     )?.path ?: ""
                 )
             }
