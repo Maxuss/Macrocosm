@@ -7,6 +7,7 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
+import java.util.*
 
 data class SpawningPosition(val location: Location, val entity: Identifier) {
     var counter: Int = 0
@@ -21,13 +22,14 @@ data class SpawningPosition(val location: Location, val entity: Identifier) {
         }
     }
 
-    fun spawn() {
+    fun spawn(): UUID? {
         if(location.getNearbyEntities(7.0, 7.0, 7.0).size >= 5 || counter >= 2) {
             // Extra check not to spawn too many entities
-            return
+            return null
         }
         counter += 1
-        Registry.ENTITY.find(entity).spawn(location)
+        val e = Registry.ENTITY.find(entity).spawn(location)
+        return e.uniqueId
     }
 
     fun killed() {
