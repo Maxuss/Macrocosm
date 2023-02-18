@@ -8,6 +8,7 @@ import net.axay.kspigot.main.KSpigot
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
+import org.bukkit.Bukkit
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
@@ -55,6 +56,7 @@ import space.maxus.macrocosm.pets.types.WaspPet
 import space.maxus.macrocosm.players.EquipmentHandler
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.banking.TransactionHistory
+import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
@@ -328,6 +330,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         addLocVertex()
         finishLoc()
         finishLocRestrictive()
+        addSpawnPos()
+        doSpawnPass()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))
@@ -357,8 +361,12 @@ class InternalMacrocosmPlugin : KSpigot() {
 
         PackProvider.init()
 
-        task(period = 60 * 10L, sync = false) {
+        task(period = 120 * 20L, sync = false) {
             KeyManager.requests.clear()
+        }
+
+        task(period = 15 * 20L) {
+            doGlobalSpawnPass()
         }
 
         taskRunLater(5 * 20L, sync = false) {
@@ -376,6 +384,12 @@ class InternalMacrocosmPlugin : KSpigot() {
     }
 
     private val dumpTestData: Boolean = false
+
+    fun doGlobalSpawnPass() {
+        for(player in Bukkit.getOnlinePlayers()) {
+            player.macrocosm?.area?.doSpawnPass()
+        }
+    }
 
     override fun shutdown() {
         if (disableImmediately)

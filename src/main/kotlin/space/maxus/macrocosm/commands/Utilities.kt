@@ -26,6 +26,7 @@ import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.area.PolygonalArea
 import space.maxus.macrocosm.area.RestrictedArea
+import space.maxus.macrocosm.area.spawning.SpawningPosition
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.bazaar.BazaarIntrinsics
@@ -69,6 +70,31 @@ import java.util.*
 import kotlin.math.roundToInt
 
 private val vertices = mutableListOf<Location>()
+
+fun addSpawnPos() = command("addspawnpos") {
+    argument("id", ResourceLocationArgument.id()) {
+        suggestListSuspending { ctx ->
+            Registry.ENTITY.iter().keys.filter {
+                it.path.contains(
+                    ctx.getArgumentOrNull<ResourceLocation>(
+                        "entity"
+                    )?.path ?: ""
+                )
+            }
+        }
+
+        runsCatching {
+            val id = getArgument<ResourceLocation>("id")
+            player.macrocosm!!.area.spawns.add(SpawningPosition(player.location, id.macrocosm))
+        }
+    }
+}
+
+fun doSpawnPass() = command("dospawnpass") {
+    runsCatching {
+        Macrocosm.doGlobalSpawnPass()
+    }
+}
 
 fun debugDungeonTeleport() = command("tpdungeon") {
     runsCatching {
