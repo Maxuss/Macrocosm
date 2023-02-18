@@ -9,8 +9,18 @@ import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
 import java.util.*
 
-data class SpawningPosition(val location: Location, val entity: Identifier) {
-    var counter: Int = 0
+/**
+ * Represents a single position at which a mob can spawn
+ */
+data class SpawningPosition(
+    /**
+     * Location at which the entity spawns
+     */
+    val location: Location,
+    /**
+     * Entity that spawns at this position
+     */
+    val entity: Identifier) {
 
     companion object {
         fun read(from: CompoundTag): SpawningPosition {
@@ -22,21 +32,21 @@ data class SpawningPosition(val location: Location, val entity: Identifier) {
         }
     }
 
+    /**
+     * Spawns a new entity at this position
+     */
     fun spawn(): UUID? {
-        if(location.getNearbyEntities(7.0, 7.0, 7.0).size >= 5 || counter >= 2) {
+        if(location.getNearbyEntities(7.0, 7.0, 7.0).size >= 5) {
             // Extra check not to spawn too many entities
             return null
         }
-        counter += 1
         val e = Registry.ENTITY.find(entity).spawn(location)
         return e.uniqueId
     }
 
-    fun killed() {
-        if(this.counter > 0)
-            this.counter -= 1
-    }
-
+    /**
+     * Saves this position to compound
+     */
     fun save(): CompoundTag {
         val tag = CompoundTag()
         tag.putInt("X", location.x.toInt())
