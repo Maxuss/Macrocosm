@@ -124,6 +124,8 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var accessoryBag: AccessoryBag = AccessoryBag()
     var goals: ConcurrentLinkedQueue<String> = ConcurrentLinkedQueue()
     var shopHistory: ShopHistory = ShopHistory(16, mutableListOf())
+    var achievements: MutableList<Identifier> = mutableListOf()
+    var achievementExp: Int = 0
     var area: Area = AreaType.OVERWORLD.area; private set
 
     private var slayerRenderId: UUID? = null
@@ -250,6 +252,23 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         return zone
     }
 
+    /**
+     * Gives player achievement with the provided ID
+     */
+    fun giveAchievement(achievement: Identifier) {
+        val ach = Registry.ACHIEVEMENT.find(achievement)
+        if(!this.achievements.contains(achievement)) {
+            this.achievements.add(achievement)
+            this.achievementExp += ach.expAwarded
+            ach.award(this)
+        }
+    }
+
+    /**
+     * Gives player achievement with the provided ID in string form
+     */
+    fun giveAchievement(achievement: String) = giveAchievement(Identifier.parse(achievement))
+
     fun startSlayerQuest(type: SlayerType, tier: Int) {
         val p = paper ?: return
 
@@ -344,7 +363,6 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         ) {
             val lvl = collections.level(collection) + 1
             collections.setLevel(collection, lvl)
-            // todo: rewards!!
             sendCollectionLevelUp(collection)
             collection.inst.rewards[lvl - 1].reward(this, lvl)
         }
@@ -715,6 +733,8 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.baseStats =
                 Statistics(TreeMap(mongo.baseStats.map { Statistic.valueOf(it.key) to it.value }.toMap()))
             player.shopHistory = mongo.shopHistory?.actual ?: ShopHistory(16, mutableListOf())
+            player.achievements = mongo.achievements?.map { Identifier.parse(it) }?.toMutableList() ?: mutableListOf()
+            player.achievementExp = mongo.achievementExp ?: 0
 
             return player
         }
@@ -742,7 +762,9 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             availableEssence,
             accessoryBag.mongo,
             goals.toList(),
-            shopHistory.mongo
+            shopHistory.mongo,
+            achievements.map { it.toString() },
+            achievementExp
         )
 
 }

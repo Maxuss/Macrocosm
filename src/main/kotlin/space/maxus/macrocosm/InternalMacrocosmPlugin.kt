@@ -13,6 +13,7 @@ import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
 import space.maxus.macrocosm.accessory.ui.LearnPower
+import space.maxus.macrocosm.achievement.json.AchievementParser
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.area.AreaLevelDbAdapter
 import space.maxus.macrocosm.area.AreaType
@@ -234,7 +235,8 @@ class InternalMacrocosmPlugin : KSpigot() {
             PyroclasticToadPet::init,
             WaspPet::init,
             AccessoryPowers::init,
-            ShopParser::init
+            ShopParser::init,
+            AchievementParser::init,
         )
 
         DataListener.joinLeave()
@@ -332,6 +334,8 @@ class InternalMacrocosmPlugin : KSpigot() {
         finishLocRestrictive()
         addSpawnPos()
         doSpawnPass()
+        awardAchievement()
+        achievements()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

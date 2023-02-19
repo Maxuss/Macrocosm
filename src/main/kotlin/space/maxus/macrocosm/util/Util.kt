@@ -243,6 +243,14 @@ inline fun walkDataResources(vararg path: String, block: (Path) -> Unit) {
     for (file in PackProvider.enumerateEntries(fs.getPath(first, *mut.toTypedArray()))) {
         block(file)
     }
+
+    // Additionally, if external stuff exists, parse it too!
+    if(path[0] == "data") {
+        val extra = Macrocosm.dataFolder.resolve("data").resolve(path.last())
+        if(extra.exists())
+            for(file in PackProvider.enumerateEntries(extra.toPath()))
+                block(file)
+    }
 }
 
 inline fun Vector.advanceInstantly(loc: Location, mod: Float, times: Int, fn: (Location) -> Unit) {

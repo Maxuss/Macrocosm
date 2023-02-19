@@ -1,0 +1,21 @@
+{
+    "test_achievement": {
+        "name": "Test Achievement 1",
+        "description": "This a test achievement that showcases <italic>basic</italic> achievement rarity"
+    },
+    "test_achievement_2": {
+        "name": "Test Achievement 2",
+        "rarity": "rare",
+        "description": "This a test achievement that showcases <italic>rare</italic> achievement rarity"
+    },
+    "test_achievement_3": {
+        "name": "Test Achievement 3",
+        "rarity": "epic",
+        "description": "This a test achievement that showcases <italic>epic</italic> achievement rarity"
+    },
+    "test_achievement_4": {
+        "name": "Test Achievement 4",
+        "rarity": "macrocosmic",
+        "description": "This a test achievement that showcases <italic>macrocosmic</italic> achievement rarity"
+    }
+}
