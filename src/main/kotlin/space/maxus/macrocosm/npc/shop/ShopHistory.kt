@@ -16,7 +16,7 @@ data class ShopHistory(
      * The last sold items
      */
     val lastSold: MutableList<ItemStack>
-): MongoConvert<MongoShopHistory> {
+) : MongoConvert<MongoShopHistory> {
     override val mongo: MongoShopHistory
         get() = MongoShopHistory(limit, lastSold.map { it.serializeAsBytes() })
 }

@@ -222,13 +222,13 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         val p = paper ?: return AreaType.NONE.area
         val old = area
         val zone = Registry.AREA.iter().values.lastOrNull { it.contains(p.location) } ?: AreaType.OVERWORLD.area
-        if(old.id != zone.id) {
+        if (old.id != zone.id) {
             // We have entered a new zone
             val event = PlayerEnterAreaEvent(this, p, zone, old, !goals.contains("area.${zone.id.path}"))
             zone.model.onEnter(event)
-            if(event.isCancelled || !event.callEvent()) {
+            if (event.isCancelled || !event.callEvent()) {
                 // The event was cancelled, the player can not enter the zone yet
-                if(zone is RestrictedArea) {
+                if (zone is RestrictedArea) {
                     // Teleport the player away
                     sound(Sound.ENTITY_ENDERMAN_TELEPORT) {
                         pitch = 0f
@@ -242,7 +242,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             }
 
             // Everything is fine
-            if(event.firstEnter) {
+            if (event.firstEnter) {
                 // Player has entered a new area!
                 reachGoal("area.${zone.id.path}")
                 zone.model.announce(p)
@@ -257,7 +257,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
      */
     fun giveAchievement(achievement: Identifier) {
         val ach = Registry.ACHIEVEMENT.find(achievement)
-        if(!this.achievements.contains(achievement)) {
+        if (!this.achievements.contains(achievement)) {
             this.achievements.add(achievement)
             this.achievementExp += ach.expAwarded
             ach.award(this)
@@ -444,9 +444,11 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         return TagResolver.resolver(
             TagResolver.caching(
                 TagResolver.resolver(
-                "player_name",
+                    "player_name",
                     Tag.inserting(text("<yellow>${paper!!.name}</yellow>"))
-        )))
+                )
+            )
+        )
     }
 
     fun sendMessage(message: String) {
@@ -544,13 +546,13 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     fun reachGoal(goal: String) {
-        if(!goals.contains(goal)) {
+        if (!goals.contains(goal)) {
             task(sync = false) {
                 // Running the event asynchronously
                 val event = PlayerReachGoalEvent(this, goal)
                 event.callEvent()
                 this.goals.add(goal)
-                if(Macrocosm.isInDevEnvironment)
+                if (Macrocosm.isInDevEnvironment)
                     Registry.DISCORD_EMITTERS.tryUse(id("goal_reached")) { emitter ->
                         (emitter as DevEnvironGoalEmitter).post(DevEnvironGoalEmitter.Context(this, goal))
                     }

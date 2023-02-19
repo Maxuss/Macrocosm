@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 import space.maxus.macrocosm.Macrocosm
+import space.maxus.macrocosm.area.Area
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
 import space.maxus.macrocosm.cosmetic.Dye
@@ -33,7 +34,6 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.math.Chance
 import space.maxus.macrocosm.util.multimap
-import space.maxus.macrocosm.area.Area
 import java.util.function.Predicate
 
 data class CatchConditions(

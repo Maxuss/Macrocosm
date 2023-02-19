@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture
  */
 data class NPCOpGrantGoal(
     val goal: String
-): NPCOp {
+) : NPCOp {
     override fun operate(data: NPCOperationData): CompletableFuture<Unit> {
         data.player.reachGoal(goal)
         return CompletableFuture.completedFuture(Unit)

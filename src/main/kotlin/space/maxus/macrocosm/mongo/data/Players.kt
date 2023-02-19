@@ -133,7 +133,7 @@ data class MongoAccessoryBag(
 data class MongoShopHistory(
     val limit: Int,
     val history: List<ByteArray>
-): MongoRepr<ShopHistory> {
+) : MongoRepr<ShopHistory> {
     override val actual: ShopHistory
         @JsonIgnore
         get() = ShopHistory(limit, history.map { bytes -> ItemStack.deserializeBytes(bytes) }.toMutableList())

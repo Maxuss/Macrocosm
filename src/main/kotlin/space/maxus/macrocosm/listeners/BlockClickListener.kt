@@ -35,7 +35,7 @@ object BlockClickListener : Listener {
             val id = mc.getId("ViewRecipes")
             val p = e.player.macrocosm!!
             val allRecipes = Recipes.using(id).filter { p.unlockedRecipes.contains(it.id) }
-            if(allRecipes.isNotEmpty())
+            if (allRecipes.isNotEmpty())
                 e.player.openGUI(recipesUsing(mc.getId("ViewRecipes"), e.player.macrocosm!!))
         }
     }

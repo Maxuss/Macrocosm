@@ -102,7 +102,11 @@ interface MacrocosmItem : Ingredient, Clone, Identified, Sellable {
                 .sumOf { (ench, lvl) -> Registry.ENCHANT.find(ench).levels.indexOf(lvl) * 25.0 } + (stars / min(
                 maxStars,
                 1
-            ).toDouble()) * 1000 + (if (reforge != null) 1000 else 0) + if (rarityUpgraded) 15000 else 0) * clamp(this.rarity.ordinal.toFloat(), 1f, 4f)) * amount
+            ).toDouble()) * 1000 + (if (reforge != null) 1000 else 0) + if (rarityUpgraded) 15000 else 0) * clamp(
+                this.rarity.ordinal.toFloat(),
+                1f,
+                4f
+            )) * amount
         }
 
 
@@ -411,7 +415,9 @@ interface MacrocosmItem : Ingredient, Clone, Identified, Sellable {
 
             // enchants
             if (enchantments.isNotEmpty()) {
-                val cloned = HashMap((enchantments.clone() as HashMap<Identifier, Int>).map { Registry.ENCHANT.find(it.key) to it.value }.toMap())
+                val cloned =
+                    HashMap((enchantments.clone() as HashMap<Identifier, Int>).map { Registry.ENCHANT.find(it.key) to it.value }
+                        .toMap())
                 if (cloned.size >= 6) {
                     val cmp = StringBuilder()
                     if (cloned.size >= 12) {
@@ -633,6 +639,7 @@ interface MacrocosmItem : Ingredient, Clone, Identified, Sellable {
         nms.tag?.put(MACROCOSM_TAG, nbt)
         return nms.asBukkitCopy()
     }
+
     override fun clone(): MacrocosmItem {
         throw IllegalStateException("Override the clone method of MacrocosmItem!")
     }

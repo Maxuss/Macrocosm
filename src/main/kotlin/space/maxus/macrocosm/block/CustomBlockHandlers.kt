@@ -134,9 +134,9 @@ object CustomBlockHandlers : Listener {
         @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
         fun onStepFall(e: GenericGameEvent) {
             val entity: Entity = e.entity ?: return
-            if(entity !is Player)
+            if (entity !is Player)
                 return
-            if(e.event != GameEvent.HIT_GROUND && e.event != GameEvent.STEP)
+            if (e.event != GameEvent.HIT_GROUND && e.event != GameEvent.STEP)
                 return
             val eLoc: Location = entity.location
             if (!e.location.chunk.isLoaded || !eLoc.chunk.isLoaded) return

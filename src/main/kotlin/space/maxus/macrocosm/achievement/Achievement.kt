@@ -39,7 +39,7 @@ class Achievement(
      * Rarity of this achievement
      */
     val rarity: AchievementRarity = AchievementRarity.BASIC
-): Identified {
+) : Identified {
     override val id: Identifier = Identifier.parse(id)
 
     /**
@@ -47,25 +47,26 @@ class Achievement(
      */
     fun buildItem(player: MacrocosmPlayer): ItemStack {
         val isUnlocked = player.achievements.contains(id)
-        val mat = if(isUnlocked) rarity.openDisplay else rarity.closedDisplay
+        val mat = if (isUnlocked) rarity.openDisplay else rarity.closedDisplay
         val description = arrayOf(
             "<dark_gray>${rarity.name.capitalized()} Achievement",
             "",
-            *(if(!isUnlocked && rarity.ordinal >= 2) arrayOf("<yellow>???") else description.reduceToList().toTypedArray()),
+            *(if (!isUnlocked && rarity.ordinal >= 2) arrayOf("<yellow>???") else description.reduceToList()
+                .toTypedArray()),
             "",
-            *(if(isUnlocked) arrayOf("<aqua>+${expAwarded} Achievement EXP") else arrayOf()),
-            if(isUnlocked) "<green><bold>ACHIEVED!" else "<red>LOCKED"
+            *(if (isUnlocked) arrayOf("<aqua>+${expAwarded} Achievement EXP") else arrayOf()),
+            if (isUnlocked) "<green><bold>ACHIEVED!" else "<red>LOCKED"
         )
-        val name = if(isUnlocked) "<green>$name" else "<yellow>$name"
-        return if(rarity.hasGlint && isUnlocked) ItemValue.placeholderDescriptedGlow(mat, name, *description)
-            else ItemValue.placeholderDescripted(mat, name, *description)
+        val name = if (isUnlocked) "<green>$name" else "<yellow>$name"
+        return if (rarity.hasGlint && isUnlocked) ItemValue.placeholderDescriptedGlow(mat, name, *description)
+        else ItemValue.placeholderDescripted(mat, name, *description)
     }
 
     /**
      * Sends an award message to player
      */
     fun award(to: MacrocosmPlayer) {
-        val message = when(rarity) {
+        val message = when (rarity) {
             AchievementRarity.BASIC -> "<gold><obfuscated><bold>a</bold></obfuscated> >>><green> Achievement unlocked! <yellow>$name</yellow> <gold><<< <obfuscated><bold>a</bold></obfuscated>"
             AchievementRarity.RARE -> "<gradient:gold:yellow:white><obfuscated><bold>a</bold></obfuscated> >>><green> Achievement unlocked! <gold>$name</gold> <gradient:white:yellow:gold><<< <obfuscated><bold>a</bold></obfuscated>"
             AchievementRarity.EPIC -> "<gradient:red:gold:yellow:white><obfuscated><bold>a</bold></obfuscated> >>><yellow> Epic achievement unlocked! <red>$name</red> <gradient:white:yellow:gold:red><<< <obfuscated><bold>a</bold></obfuscated>"
@@ -73,12 +74,12 @@ class Achievement(
         }
         to.sendMessage(message)
         val p = to.paper!!
-        sound(if(rarity.ordinal >= 2) Sound.UI_TOAST_CHALLENGE_COMPLETE else Sound.ENTITY_PLAYER_LEVELUP) {
+        sound(if (rarity.ordinal >= 2) Sound.UI_TOAST_CHALLENGE_COMPLETE else Sound.ENTITY_PLAYER_LEVELUP) {
             volume = 10f
-            pitch = if(rarity.ordinal >= 2) 1f else 0f
+            pitch = if (rarity.ordinal >= 2) 1f else 0f
             playAt(p.location)
         }
-        when(rarity) {
+        when (rarity) {
             AchievementRarity.EPIC -> {
                 particle(Particle.END_ROD) {
                     amount = 50
@@ -93,6 +94,7 @@ class Achievement(
                     spawnAt(p.eyeLocation)
                 }
             }
+
             AchievementRarity.MACROCOSMIC -> {
                 particle(Particle.FIREWORKS_SPARK) {
                     amount = 50
@@ -114,6 +116,7 @@ class Achievement(
                     spawnAt(p.eyeLocation)
                 }
             }
+
             else -> {
                 particle(Particle.TOTEM) {
                     amount = 50

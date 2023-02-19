@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * An operation that opens a shop to player
  */
-class NPCOpOpenShop(val id: Identifier): NPCOp {
+class NPCOpOpenShop(val id: Identifier) : NPCOp {
     override fun operate(data: NPCOperationData): CompletableFuture<Unit> {
         task(sync = true) {
             data.playerPaper.openGUI(shopUi(data.player, Registry.SHOP.find(id)))

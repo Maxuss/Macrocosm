@@ -41,9 +41,13 @@ enum class CollectionType(val inst: Collection, displayItem: String? = null) : S
     END_STONE(Collection("Endstone", listOf(), MINING, GENERIC)),
     SILVER(Collection("Silver", listOf(), MINING, GREEDY_TABLE), "silver_ingot"),
     MITHRIL(Collection("Mithril", listOf(), MINING, GREEDY_TABLE), "mithril_bar"),
-    ADAMANTINE(Collection("Adamantine", listOf(
-        SkillExperienceReward(SkillType.MINING, 12000.0, false)
-    ), MINING, GREEDY_TABLE), "adamantine_bar"),
+    ADAMANTINE(
+        Collection(
+            "Adamantine", listOf(
+                SkillExperienceReward(SkillType.MINING, 12000.0, false)
+            ), MINING, GREEDY_TABLE
+        ), "adamantine_bar"
+    ),
     TITANIUM(Collection("Titanium", listOf(), MINING, GREEDY_TABLE), "titanium_ingot"),
 
     // farming
@@ -93,7 +97,12 @@ enum class CollectionType(val inst: Collection, displayItem: String? = null) : S
 
     ;
 
-    val displayItem: MacrocosmItem by lazy { if(displayItem == null) VanillaItem(Material.valueOf(name)) else if(displayItem.startsWith("$")) VanillaItem(Material.valueOf(name.trimStart('\$'))) else Registry.ITEM.find(Identifier.macro(displayItem)) }
+    val displayItem: MacrocosmItem by lazy {
+        if (displayItem == null) VanillaItem(Material.valueOf(name)) else if (displayItem.startsWith(
+                "$"
+            )
+        ) VanillaItem(Material.valueOf(name.trimStart('\$'))) else Registry.ITEM.find(Identifier.macro(displayItem))
+    }
 
     companion object {
         private val matToColl = hashMapOf(

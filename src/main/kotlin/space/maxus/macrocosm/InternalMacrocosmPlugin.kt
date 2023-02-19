@@ -390,7 +390,7 @@ class InternalMacrocosmPlugin : KSpigot() {
     private val dumpTestData: Boolean = false
 
     fun doGlobalSpawnPass() {
-        for(player in Bukkit.getOnlinePlayers()) {
+        for (player in Bukkit.getOnlinePlayers()) {
             player.macrocosm?.area?.doSpawnPass()
         }
     }

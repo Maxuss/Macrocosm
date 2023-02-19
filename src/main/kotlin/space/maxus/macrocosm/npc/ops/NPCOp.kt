@@ -19,4 +19,9 @@ interface NPCOp {
 /**
  * Context for an NPC dialogue operation
  */
-data class NPCOperationData(val player: MacrocosmPlayer, val playerPaper: Player, val self: MacrocosmNPC, val selfPaper: Entity)
+data class NPCOperationData(
+    val player: MacrocosmPlayer,
+    val playerPaper: Player,
+    val self: MacrocosmNPC,
+    val selfPaper: Entity
+)

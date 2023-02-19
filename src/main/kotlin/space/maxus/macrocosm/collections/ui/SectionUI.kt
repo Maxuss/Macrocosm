@@ -16,7 +16,12 @@ import space.maxus.macrocosm.text.progressBar
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 
-fun sectionUi(player: MacrocosmPlayer, section: CollectionSection, allRelated: List<CollectionType>, unlocked: List<CollectionType>): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+fun sectionUi(
+    player: MacrocosmPlayer,
+    section: CollectionSection,
+    allRelated: List<CollectionType>,
+    unlocked: List<CollectionType>
+): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     val sectionName: String = section.name.capitalized()
 
     defaultPage = 0
@@ -25,30 +30,36 @@ fun sectionUi(player: MacrocosmPlayer, section: CollectionSection, allRelated: L
     page(0) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
-        placeholder(Slots.RowSixSlotFive, ItemValue.placeholderDescripted(
-            section.mat,
-            "<green>$sectionName Collection",
-            "Your $sectionName Collection!",
-            "",
-            *(if (unlocked.size == allRelated.size)
-                buildBar(allRelated.size, allRelated.count { player.collections.isMaxLevel(it) }).toList().toTypedArray()
-            else
-                buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
-        ))
+        placeholder(
+            Slots.RowSixSlotFive, ItemValue.placeholderDescripted(
+                section.mat,
+                "<green>$sectionName Collection",
+                "Your $sectionName Collection!",
+                "",
+                *(if (unlocked.size == allRelated.size)
+                    buildBar(allRelated.size, allRelated.count { player.collections.isMaxLevel(it) }).toList()
+                        .toTypedArray()
+                else
+                    buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
+            )
+        )
 
         button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
             it.bukkitEvent.isCancelled = true
             it.player.closeInventory()
         }
 
-        button(Slots.RowOneSlotFour, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Collection")) {
+        button(
+            Slots.RowOneSlotFour,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Collection")
+        ) {
             it.bukkitEvent.isCancelled = true
             it.player.openGUI(collectionUi(player))
         }
 
         val compound = createCompound<CollectionType>({ ty ->
             val (lvl, amount) = player.collections.colls[ty]!!
-            if(lvl == 0 && amount == 0)
+            if (lvl == 0 && amount == 0)
                 return@createCompound ItemValue.placeholderDescripted(
                     Material.GRAY_DYE,
                     "<red>${ty.inst.name}",
@@ -57,20 +68,32 @@ fun sectionUi(player: MacrocosmPlayer, section: CollectionSection, allRelated: L
                     "rewards!"
                 )
 
-            val itemName = "<yellow>${ty.inst.name}${if(lvl == 0) "" else " ${roman(lvl)}"}"
+            val itemName = "<yellow>${ty.inst.name}${if (lvl == 0) "" else " ${roman(lvl)}"}"
             val lore = mutableListOf(
                 "View all your ${ty.inst.name}",
                 "Collection progress and rewards!",
                 ""
             )
 
-            if(!player.collections.isMaxLevel(ty)) {
+            if (!player.collections.isMaxLevel(ty)) {
                 val nextLevel = lvl + 1
                 val requiredItems = ty.inst.table.itemsForLevel(nextLevel)
                 val progress = amount.toFloat() / requiredItems
                 val roman = roman(nextLevel)
                 lore.add("Progress to ${ty.inst.name} $roman: <yellow>${Formatting.withCommas((progress * 100f).toBigDecimal())}<gold>%")
-                lore.add("${progressBar(amount, requiredItems, 18)} <yellow>${Formatting.withCommas(amount.toBigDecimal(), true)}<gold>/<yellow>${truncateBigNumber(requiredItems.toFloat())}")
+                lore.add(
+                    "${
+                        progressBar(
+                            amount,
+                            requiredItems,
+                            18
+                        )
+                    } <yellow>${Formatting.withCommas(amount.toBigDecimal(), true)}<gold>/<yellow>${
+                        truncateBigNumber(
+                            requiredItems.toFloat()
+                        )
+                    }"
+                )
                 lore.add("")
                 lore.add("${ty.inst.name} $roman Rewards:")
                 val rewardsForNextLevel = ty.inst.rewards[lvl]
@@ -88,7 +111,7 @@ fun sectionUi(player: MacrocosmPlayer, section: CollectionSection, allRelated: L
             base
         }, { e, ty ->
             e.bukkitEvent.isCancelled = true
-            if(player.collections.colls[ty]!!.total > 0)
+            if (player.collections.colls[ty]!!.total > 0)
                 e.player.openGUI(specificCollectionUi(player, ty))
         })
 

@@ -21,7 +21,10 @@ class InfernalGreatsword : AbilityItem(
         strength = 125f
         ferocity = 40f
     },
-    mutableListOf(Registry.ABILITY.point(FierySlashAbility.id), Registry.ABILITY.point(InfernalGreatswordThrowAbility.id)),
+    mutableListOf(
+        Registry.ABILITY.point(FierySlashAbility.id),
+        Registry.ABILITY.point(InfernalGreatswordThrowAbility.id)
+    ),
     description = "<gray>All <gold>Fire Damage<gray> inflicted by this <gray>sword deals <red>1.5x<gray> more <red>${Statistic.DAMAGE.display}<gray>.",
     runeTypes = listOf(RuneSlot.COMBAT, RuneSlot.COMBAT)
 )

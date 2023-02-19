@@ -20,15 +20,15 @@ import java.util.*
 /**
  * A LevelDB adapter for Areas
  */
-object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
+object AreaLevelDbAdapter : LevelDbAdapter("Area"), Listener {
     val spawnsPerArea: HashMultimap<Identifier, UUID> = HashMultimap.create()
 
     override fun save(to: CompoundTag) {
-        for((id, zone) in Registry.AREA.iter()) {
+        for ((id, zone) in Registry.AREA.iter()) {
             val cmp = CompoundTag()
-            if(zone is PolygonalArea) {
+            if (zone is PolygonalArea) {
                 val list = ListTag()
-                for(vertex in zone.vertices) {
+                for (vertex in zone.vertices) {
                     val vertexCompound = CompoundTag()
                     vertexCompound.putInt("X", vertex.blockX)
                     vertexCompound.putInt("Y", vertex.blockY)
@@ -36,9 +36,9 @@ object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
                     list.add(vertexCompound)
                 }
                 cmp.put("Vertices", list)
-            } else if(zone is RestrictedArea) {
+            } else if (zone is RestrictedArea) {
                 val list = ListTag()
-                for(vertex in zone.inner.vertices) {
+                for (vertex in zone.inner.vertices) {
                     val vertexCompound = CompoundTag()
                     vertexCompound.putInt("X", vertex.blockX)
                     vertexCompound.putInt("Y", vertex.blockY)
@@ -53,7 +53,7 @@ object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
                 cmp.put("RestrictionExit", restrictionCompound)
             } else continue
             val spawns = ListTag()
-            for(spawn in zone.spawns) {
+            for (spawn in zone.spawns) {
                 spawns.add(spawn.save())
             }
             cmp.put("Spawns", spawns)
@@ -63,7 +63,7 @@ object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
 
     override fun load(from: CompoundTag) {
         val world = Bukkit.getWorlds().first()
-        for(key in from.allKeys) {
+        for (key in from.allKeys) {
             val id = Identifier.parse(key)
             val cmp = from.getCompound(key)
             val vertices = cmp.getList("Vertices", CompoundTag.TAG_COMPOUND.toInt()).map {
@@ -73,7 +73,7 @@ object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
                 val z = each.getInt("Z")
                 Location(world, x.toDouble(), y.toDouble(), z.toDouble())
             }
-            val final: Area = if(cmp.contains("RestrictionExit")) {
+            val final: Area = if (cmp.contains("RestrictionExit")) {
                 val each = cmp.getCompound("RestrictionExit")
                 val x = each.getInt("X")
                 val y = each.getInt("Y")
@@ -83,7 +83,7 @@ object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
             } else {
                 PolygonalArea(key, vertices)
             }
-            for(spawn in cmp.getList("Spawns", Tag.TAG_COMPOUND.toInt())) {
+            for (spawn in cmp.getList("Spawns", Tag.TAG_COMPOUND.toInt())) {
                 val cm = spawn as CompoundTag
                 final.spawns.add(SpawningPosition.read(cm))
             }
@@ -100,7 +100,7 @@ object AreaLevelDbAdapter: LevelDbAdapter("Area"), Listener {
 
     @EventHandler
     fun onMove(e: PlayerMoveEvent) {
-        if(!e.hasChangedBlock())
+        if (!e.hasChangedBlock())
             return
 
         e.player.macrocosm?.calculateZone()

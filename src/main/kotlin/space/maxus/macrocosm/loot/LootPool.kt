@@ -3,8 +3,8 @@ package space.maxus.macrocosm.loot
 import net.minecraft.util.Mth
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.collections.CollectionSection
+import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm

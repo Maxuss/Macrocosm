@@ -36,9 +36,12 @@ object ShopParser {
             val each = it.asJsonObject
             val item = Identifier.parse(each["item"].asString)
             val price = each["price"].asNumber
-            val amount = if(each.has("amount")) each["amount"].asInt else 1
+            val amount = if (each.has("amount")) each["amount"].asInt else 1
             val onlyOne = each.has("onlyOne") && each["onlyOne"].asBoolean
-            val additionalItems = if(each.has("extra")) GSON.fromJson<HashMap<Identifier, Int>>(each["extra"].asJsonObject, typetoken<HashMap<Identifier, Int>>()) else hashMapOf()
+            val additionalItems = if (each.has("extra")) GSON.fromJson<HashMap<Identifier, Int>>(
+                each["extra"].asJsonObject,
+                typetoken<HashMap<Identifier, Int>>()
+            ) else hashMapOf()
             Purchasable(item, price, amount, additionalItems, onlyOne)
         }
         return ShopModel(name, items)

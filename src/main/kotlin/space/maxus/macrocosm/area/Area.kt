@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
 /**
  * An abstract class for areas that hold locations. Not to be confused with area models that hold actual area data
  */
-abstract class Area(override val id: Identifier, val spawns: MutableList<SpawningPosition>): Identified {
+abstract class Area(override val id: Identifier, val spawns: MutableList<SpawningPosition>) : Identified {
     /**
      * Area model for this area
      */
@@ -34,9 +34,9 @@ abstract class Area(override val id: Identifier, val spawns: MutableList<Spawnin
      */
     fun doSpawnPass() {
         // Too many entities alive in this area, ignore a spawn pass
-        if(this.spawns.isEmpty() || AreaLevelDbAdapter.spawnsPerArea.get(id).size >= (this.spawns.size.toDouble() * 1.5).roundToInt())
+        if (this.spawns.isEmpty() || AreaLevelDbAdapter.spawnsPerArea.get(id).size >= (this.spawns.size.toDouble() * 1.5).roundToInt())
             return
-        for(spawn in spawns) {
+        for (spawn in spawns) {
             val id = spawn.spawn() ?: continue
             AreaLevelDbAdapter.spawnsPerArea.put(this.id, id)
         }
@@ -49,7 +49,7 @@ abstract class Area(override val id: Identifier, val spawns: MutableList<Spawnin
     /**
      * A NULL Area
      */
-    object Null: Area(Identifier.parse("null"), mutableListOf()) {
+    object Null : Area(Identifier.parse("null"), mutableListOf()) {
         override fun contains(location: Location): Boolean = false
     }
 }

@@ -38,8 +38,9 @@ object AchievementParser {
     private fun parseAndPrepare(id: Identifier, obj: JsonObject): Achievement {
         val name = obj["name"].asString
         val description = obj["description"].asString
-        val exp = if(obj.has("exp")) obj["exp"].asInt else 10
-        val rarity = if(obj.has("rarity")) AchievementRarity.valueOf(obj["rarity"].asString.uppercase()) else AchievementRarity.BASIC
+        val exp = if (obj.has("exp")) obj["exp"].asInt else 10
+        val rarity =
+            if (obj.has("rarity")) AchievementRarity.valueOf(obj["rarity"].asString.uppercase()) else AchievementRarity.BASIC
         return Achievement(id.path, name, description, exp, rarity)
     }
 }

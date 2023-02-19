@@ -7,11 +7,11 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.player.PlayerFishEvent
+import space.maxus.macrocosm.area.Areas
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
-import space.maxus.macrocosm.area.Areas
 
 object FishingHandler : Listener {
     @EventHandler

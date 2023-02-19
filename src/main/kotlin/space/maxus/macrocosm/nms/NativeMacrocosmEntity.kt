@@ -8,7 +8,7 @@ import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.registry.Identified
 import space.maxus.macrocosm.registry.Identifier
 
-interface NativeMacrocosmEntity: Identified {
+interface NativeMacrocosmEntity : Identified {
     override val id: Identifier
 
     companion object {

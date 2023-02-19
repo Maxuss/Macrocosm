@@ -32,7 +32,6 @@ import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
 
 
-
 fun doTestEmitPost() = command("doemit") {
     runsCatching {
         Threading.runAsync {

@@ -17,16 +17,16 @@ object LevelDatabase {
 
     private val backupPath by lazy {
         val os = System.getProperty("os.name").lowercase()
-        if(os.contains("linux") || os.contains("mac")) {
+        if (os.contains("linux") || os.contains("mac")) {
             // Linux or OSX
             val path = File("${System.getProperty("user.home")}/.macrocosm")
-            if(!path.exists())
+            if (!path.exists())
                 path.mkdirs()
             return@lazy path.resolve("leveldb")
         }
         // Windows
         val path = File("${System.getenv("APPDATA")}\\Macrocosm")
-        if(!path.exists())
+        if (!path.exists())
             path.mkdirs()
         return@lazy path.resolve("leveldb")
     }
@@ -34,9 +34,9 @@ object LevelDatabase {
     private val localPath by lazy { Accessor.access("leveldb") }
 
     fun backup() {
-        if(!localPath.exists())
+        if (!localPath.exists())
             return
-        if(backupPath.exists() && !backupPath.delete())
+        if (backupPath.exists() && !backupPath.delete())
             return
         localPath.toFile().copyTo(backupPath)
     }
@@ -49,7 +49,7 @@ object LevelDatabase {
         val baseCompound = CompoundTag()
         baseCompound.putString("MacrocosmVersion", Macrocosm.version.toString())
         baseCompound.putLong("Timestamp", System.currentTimeMillis())
-        for(adapter in adapters) {
+        for (adapter in adapters) {
             val cmp = CompoundTag()
             adapter.save(cmp)
             baseCompound.put(adapter.name, cmp)
@@ -60,14 +60,20 @@ object LevelDatabase {
     }
 
     fun load() {
-        if(!localPath.exists())
+        if (!localPath.exists())
             return
         val compound = NbtIo.readCompressed(localPath.toFile())
-        if(SemanticVersion.fromString(compound.getString("MacrocosmVersion")) != Macrocosm.version)
-            Macrocosm.logger.warning("Loading older version of leveldb file. Current version is ${Macrocosm.version}, loading ${compound.getString("MacrocosmVersion")}")
+        if (SemanticVersion.fromString(compound.getString("MacrocosmVersion")) != Macrocosm.version)
+            Macrocosm.logger.warning(
+                "Loading older version of leveldb file. Current version is ${Macrocosm.version}, loading ${
+                    compound.getString(
+                        "MacrocosmVersion"
+                    )
+                }"
+            )
         val loadingPool = Threading.newFixedPool(8)
-        for(adapter in adapters) {
-            if(compound.contains(adapter.name))
+        for (adapter in adapters) {
+            if (compound.contains(adapter.name))
                 loadingPool.execute { adapter.load(compound.getCompound(adapter.name)) }
         }
         loadingPool.shutdown()

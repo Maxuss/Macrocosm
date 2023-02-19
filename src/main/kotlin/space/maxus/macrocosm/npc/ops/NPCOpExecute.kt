@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * Executes provided code
  */
-data class NPCOpExecute(val branch: (NPCOperationData) -> Unit): NPCOp {
+data class NPCOpExecute(val branch: (NPCOperationData) -> Unit) : NPCOp {
     override fun operate(data: NPCOperationData): CompletableFuture<Unit> {
         return CompletableFuture.supplyAsync { branch(data) }
     }

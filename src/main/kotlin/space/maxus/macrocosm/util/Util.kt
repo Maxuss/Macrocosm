@@ -245,10 +245,10 @@ inline fun walkDataResources(vararg path: String, block: (Path) -> Unit) {
     }
 
     // Additionally, if external stuff exists, parse it too!
-    if(path[0] == "data") {
+    if (path[0] == "data") {
         val extra = Macrocosm.dataFolder.resolve("data").resolve(path.last())
-        if(extra.exists())
-            for(file in PackProvider.enumerateEntries(extra.toPath()))
+        if (extra.exists())
+            for (file in PackProvider.enumerateEntries(extra.toPath()))
                 block(file)
     }
 }
@@ -560,10 +560,10 @@ fun <V> MutableCollection<V>.drain(count: Int): List<V> {
 }
 
 fun PlayerInventory.containsAtLeast(item: Identifier, amount: Int): Boolean = this.sumOf { stack: ItemStack? ->
-    if(stack.isAirOrNull())
+    if (stack.isAirOrNull())
         return@sumOf 0
     val id = stack!!.macrocosmTag().getId("ID")
-    if(id == item)
+    if (id == item)
         stack.amount
     else 0
 } >= amount
@@ -571,7 +571,7 @@ fun PlayerInventory.containsAtLeast(item: Identifier, amount: Int): Boolean = th
 fun PlayerInventory.removeAnySlot(item: Identifier, amount: Int) {
     var count: Int = amount
     val iter = this.iterator()
-    while(iter.hasNext()) {
+    while (iter.hasNext()) {
         val stack = iter.next()
         if (stack == null || count == -1 || stack.macrocosmTag().getId("ID") != item)
             continue

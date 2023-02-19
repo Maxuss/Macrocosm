@@ -23,74 +23,113 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.pad
 import java.util.*
 
-fun adminEnchantUi(item: MacrocosmItem, search: String = ""): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    defaultPage = 0
-    title = text("Enchanting")
+fun adminEnchantUi(item: MacrocosmItem, search: String = ""): GUI<ForInventorySixByNine> =
+    kSpigotGUI(GUIType.SIX_BY_NINE) {
+        defaultPage = 0
+        title = text("Enchanting")
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        page(0) {
+            placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
-        val compound = createCompound<Enchantment>({ e ->
-            val name = e.name
-            val desc = e.description(1).map { it.str() }.toTypedArray()
+            val compound = createCompound<Enchantment>({ e ->
+                val name = e.name
+                val desc = e.description(1).map { it.str() }.toTypedArray()
 
-            val conflicts = e.conflicts.mapNotNull { Registry.ENCHANT.findOrNull(it)?.name?.let { i -> "<blue>${i.replace(" ", " <blue>")}" } }.joinToString(separator = ", ", prefix = "Conflicts with: ").reduceToList()
+                val conflicts = e.conflicts.mapNotNull {
+                    Registry.ENCHANT.findOrNull(it)?.name?.let { i ->
+                        "<blue>${
+                            i.replace(
+                                " ",
+                                " <blue>"
+                            )
+                        }"
+                    }
+                }.joinToString(separator = ", ", prefix = "Conflicts with: ").reduceToList()
 
-            ItemValue.placeholderDescripted(
-                Material.ENCHANTED_BOOK,
-                if(e is UltimateEnchantment) "<light_purple><bold>$name" else "<blue>$name",
-                *desc,
-                "",
-                "Levels: <blue>${e.levels.let { "${it.first}<gray>-<blue>${it.last}" }}",
-                *conflicts.toTypedArray(),
-                "Applicable to:",
-                *e.applicable.map { " - <blue>${it.name.replace("_", " ").capitalized()}" }.toTypedArray(),
-                "",
-                "<yellow>Click to select level!"
+                ItemValue.placeholderDescripted(
+                    Material.ENCHANTED_BOOK,
+                    if (e is UltimateEnchantment) "<light_purple><bold>$name" else "<blue>$name",
+                    *desc,
+                    "",
+                    "Levels: <blue>${e.levels.let { "${it.first}<gray>-<blue>${it.last}" }}",
+                    *conflicts.toTypedArray(),
+                    "Applicable to:",
+                    *e.applicable.map { " - <blue>${it.name.replace("_", " ").capitalized()}" }.toTypedArray(),
+                    "",
+                    "<yellow>Click to select level!"
+                )
+            }, { e, ench ->
+                e.bukkitEvent.isCancelled = true
+                e.player.openGUI(specificAdminEnchUi(e.player.macrocosm!!, item, ench))
+            })
+
+            compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
+
+            compound.addContent(Registry.ENCHANT.iter().values.filter {
+                it.applicable.contains(item.type) && it.name.lowercase().contains(search.lowercase())
+            })
+
+            compoundScroll(
+                Slots.RowOneSlotNine,
+                ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"),
+                compound,
+                scrollTimes = 1
             )
-        }, { e, ench ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(specificAdminEnchUi(e.player.macrocosm!!, item, ench))
-        })
+            compoundScroll(
+                Slots.RowOneSlotEight,
+                ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"),
+                compound,
+                reverse = true,
+                scrollTimes = 1
+            )
 
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
+            compoundScroll(
+                Slots.RowSixSlotNine,
+                ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"),
+                compound,
+                scrollTimes = 4
+            )
+            compoundScroll(
+                Slots.RowSixSlotEight,
+                ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"),
+                compound,
+                reverse = true,
+                scrollTimes = 4
+            )
 
-        compound.addContent(Registry.ENCHANT.iter().values.filter { it.applicable.contains(item.type) && it.name.lowercase().contains(search.lowercase()) })
+            button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
+                e.bukkitEvent.isCancelled = true
+                e.player.closeInventory()
+                val inputFilterPrompt = object : ValidatingPrompt() {
+                    override fun getPromptText(context: ConversationContext): String {
+                        return ChatColor.YELLOW.toString() + "Input enchantments to search:"
+                    }
 
-        compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"), compound, scrollTimes = 1)
-        compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"), compound, reverse = true, scrollTimes = 1)
+                    override fun isInputValid(context: ConversationContext, input: String): Boolean {
+                        return true
+                    }
 
-        compoundScroll(Slots.RowSixSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"), compound, scrollTimes = 4)
-        compoundScroll(Slots.RowSixSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"), compound, reverse = true, scrollTimes = 4)
+                    override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
+                        e.player.openGUI(
+                            adminEnchantUi(item, input)
+                        )
+                        return Prompt.END_OF_CONVERSATION
+                    }
 
-        button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.closeInventory()
-            val inputFilterPrompt = object: ValidatingPrompt() {
-                override fun getPromptText(context: ConversationContext): String {
-                    return ChatColor.YELLOW.toString() + "Input enchantments to search:"
                 }
 
-                override fun isInputValid(context: ConversationContext, input: String): Boolean {
-                    return true
-                }
-
-                override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
-                    e.player.openGUI(
-                        adminEnchantUi(item, input)
-                    )
-                    return Prompt.END_OF_CONVERSATION
-                }
-
+                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
+                    .buildConversation(e.player)
+                conv.begin()
             }
-
-            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.player)
-            conv.begin()
         }
     }
-}
 
-private fun specificAdminEnchUi(player: MacrocosmPlayer, item: MacrocosmItem, ench: Enchantment): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
+private fun specificAdminEnchUi(
+    player: MacrocosmPlayer,
+    item: MacrocosmItem,
+    ench: Enchantment
+): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
     defaultPage = 0
     title = text("Enchantming -> ${ench.name}")
 
@@ -98,7 +137,7 @@ private fun specificAdminEnchUi(player: MacrocosmPlayer, item: MacrocosmItem, en
         placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
 
         val levelsCompound = createCompound<Optional<Int>>({ oLevel ->
-            if(oLevel.isEmpty)
+            if (oLevel.isEmpty)
                 return@createCompound ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
             val level = oLevel.get()
             val name = ench.name
@@ -106,21 +145,25 @@ private fun specificAdminEnchUi(player: MacrocosmPlayer, item: MacrocosmItem, en
 
             ItemValue.placeholderDescripted(
                 Material.ENCHANTED_BOOK,
-                if(ench is UltimateEnchantment) "<light_purple><bold>$name ${roman(level)}" else "<blue>$name ${roman(level)}",
+                if (ench is UltimateEnchantment) "<light_purple><bold>$name ${roman(level)}" else "<blue>$name ${
+                    roman(
+                        level
+                    )
+                }",
                 *desc,
                 "",
                 "<yellow>Click to enchant!"
             )
         }, { e, oLevel ->
             e.bukkitEvent.isCancelled = true
-            if(oLevel.isEmpty)
+            if (oLevel.isEmpty)
                 return@createCompound
             item.enchant(ench, oLevel.get())
             val built = item.build(player)
             e.player.inventory.setItemInMainHand(built)
             e.player.openGUI(adminEnchantUi(item))
         })
-        compoundSpace(Slots.RowThreeSlotTwo rectTo  Slots.RowThreeSlotEight, levelsCompound)
+        compoundSpace(Slots.RowThreeSlotTwo rectTo Slots.RowThreeSlotEight, levelsCompound)
 
         levelsCompound.addContent(ench.levels.toList().map { Optional.of(it) }.pad(7, Optional.empty()))
 

@@ -71,22 +71,26 @@ private fun modifyItemMeta(next: ItemStack, mc: MacrocosmItem) {
 
 private fun GUIBuilder<ForInventorySixByNine>.setupListeners(player: MacrocosmPlayer) {
     val listener = listen<InventoryClickEvent> { e ->
-        if(
+        if (
             e.whoClicked.uniqueId != player.ref ||
             e.currentItem.isAirOrNull() ||
-            e.clickedInventory != e.view.bottomInventory)
+            e.clickedInventory != e.view.bottomInventory
+        )
             return@listen
         val mc = e.currentItem!!.macrocosm!!
-        if(mc is Unsellable)
+        if (mc is Unsellable)
             return@listen
         val coins = mc.sellPrice.toFloat().toBigDecimal()
         val copy = mc.build(player)!!
         player.shopHistory.lastSold.add(copy)
-        if(player.shopHistory.lastSold.size >= player.shopHistory.limit)
+        if (player.shopHistory.lastSold.size >= player.shopHistory.limit)
             player.shopHistory.lastSold.removeFirst()
         player.purse += transact(coins, player.ref, Transaction.Kind.INCOMING)
         e.view.bottomInventory.clear(e.slot)
-        e.view.topInventory.setItem(Slots.RowOneSlotFive.inventorySlot.realSlotIn(GUIType.SIX_BY_NINE.dimensions)!!, itemAsPurchaseHistory(copy.clone(), mc))
+        e.view.topInventory.setItem(
+            Slots.RowOneSlotFive.inventorySlot.realSlotIn(GUIType.SIX_BY_NINE.dimensions)!!,
+            itemAsPurchaseHistory(copy.clone(), mc)
+        )
 
         sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
             pitch = 2f
@@ -97,7 +101,7 @@ private fun GUIBuilder<ForInventorySixByNine>.setupListeners(player: MacrocosmPl
 
     val p = player.paper!!
     val iter = p.inventory.iterator()
-    while(iter.hasNext()) {
+    while (iter.hasNext()) {
         val next: ItemStack = iter.next() ?: continue
         val mc = next.macrocosm!!
         modifyItemMeta(next, mc)
@@ -108,7 +112,7 @@ private fun GUIBuilder<ForInventorySixByNine>.setupListeners(player: MacrocosmPl
         listener.unregister()
 
         val thisIter = p.inventory.iterator()
-        while(thisIter.hasNext()) {
+        while (thisIter.hasNext()) {
             val next = thisIter.next() ?: continue
             val mc = next.macrocosm!!
             thisIter.set(mc.build(player))
@@ -125,30 +129,33 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine
     page(0) {
         placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
 
-        button(Slots.RowOneSlotFive, if(player.shopHistory.lastSold.isEmpty()) ItemValue.placeholderDescripted(
-            Material.HOPPER,
-            "<green>Sell Item",
-            "Click items in your inventory to",
-            "sell them to this Shop!"
-        ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last().clone())) { e ->
-            e.bukkitEvent.isCancelled = true
-            if(player.shopHistory.lastSold.isEmpty())
-                return@button
-            val lastMod = player.shopHistory.lastSold.removeLast()
-            val mc = lastMod.macrocosm!!
-            val last = mc.build(player)!!
-            val price = mc.sellPrice.toFloat().toBigDecimal()
-            if(player.purse < price)
-                return@button
-            player.purse -= transact(price, player.ref, Transaction.Kind.OUTGOING)
-            modifyItemMeta(last, mc)
-            e.player.giveOrDrop(last)
-            e.guiInstance[Slots.RowOneSlotFive] = if(player.shopHistory.lastSold.isEmpty()) ItemValue.placeholderDescripted(
+        button(
+            Slots.RowOneSlotFive, if (player.shopHistory.lastSold.isEmpty()) ItemValue.placeholderDescripted(
                 Material.HOPPER,
                 "<green>Sell Item",
                 "Click items in your inventory to",
                 "sell them to this Shop!"
             ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last().clone())
+        ) { e ->
+            e.bukkitEvent.isCancelled = true
+            if (player.shopHistory.lastSold.isEmpty())
+                return@button
+            val lastMod = player.shopHistory.lastSold.removeLast()
+            val mc = lastMod.macrocosm!!
+            val last = mc.build(player)!!
+            val price = mc.sellPrice.toFloat().toBigDecimal()
+            if (player.purse < price)
+                return@button
+            player.purse -= transact(price, player.ref, Transaction.Kind.OUTGOING)
+            modifyItemMeta(last, mc)
+            e.player.giveOrDrop(last)
+            e.guiInstance[Slots.RowOneSlotFive] =
+                if (player.shopHistory.lastSold.isEmpty()) ItemValue.placeholderDescripted(
+                    Material.HOPPER,
+                    "<green>Sell Item",
+                    "Click items in your inventory to",
+                    "sell them to this Shop!"
+                ) else itemAsPurchaseHistory(player.shopHistory.lastSold.last().clone())
 
             sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                 pitch = 2f
@@ -169,14 +176,14 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine
                     "<gold>${Formatting.withCommas(deal.price.toFloat().toBigDecimal())} Coins",
                     *deal.additionalItems.map { (extra, amount) ->
                         val baseName = Registry.ITEM.find(extra).name.str()
-                        if(amount != 1)
+                        if (amount != 1)
                             "$baseName <dark_gray>x$amount"
                         else baseName
                     }.toTypedArray(),
                     "",
                     "<yellow>Click to trade!",
                 )
-                if(deal.amount < 32 && !deal.onlyOne && deal.additionalItems.isEmpty()) {
+                if (deal.amount < 32 && !deal.onlyOne && deal.additionalItems.isEmpty()) {
                     interm.add("<yellow>Right-Click for more trading")
                     interm.add("<yellow>options!")
                 }
@@ -186,12 +193,12 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine
             built
         }) { e, deal ->
             e.bukkitEvent.isCancelled = true
-            if(e.bukkitEvent.isRightClick && deal.amount < 32 && !deal.onlyOne && deal.additionalItems.isEmpty()) {
+            if (e.bukkitEvent.isRightClick && deal.amount < 32 && !deal.onlyOne && deal.additionalItems.isEmpty()) {
                 e.player.openGUI(chooseSpecificAmount(player, deal, model))
                 return@createCompound
             }
             val price = deal.price.toFloat().toBigDecimal()
-            if(player.purse < price) {
+            if (player.purse < price) {
                 sound(Sound.ENTITY_VILLAGER_NO) {
                     volume = 2f
                     playFor(e.player)
@@ -199,11 +206,11 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine
                 player.sendMessage("<red>You don't have enough coins!")
                 return@createCompound
             }
-            if(deal.additionalItems.isNotEmpty()) {
+            if (deal.additionalItems.isNotEmpty()) {
                 // Checking that we have enough extra items
                 val toRemove = mutableListOf<Pair<Identifier, Int>>()
-                for((additional, amount) in deal.additionalItems) {
-                    if(!e.player.inventory.containsLeast(additional, amount)) {
+                for ((additional, amount) in deal.additionalItems) {
+                    if (!e.player.inventory.containsLeast(additional, amount)) {
                         sound(Sound.ENTITY_VILLAGER_NO) {
                             volume = 2f
                             playFor(e.player)
@@ -213,7 +220,7 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine
                     }
                     toRemove.add(Pair(additional, amount))
                 }
-                for((built, amount) in toRemove) {
+                for ((built, amount) in toRemove) {
                     e.player.inventory.removeAnySlot(built, amount)
                 }
             }
@@ -236,7 +243,11 @@ fun shopUi(player: MacrocosmPlayer, model: ShopModel): GUI<ForInventorySixByNine
     }
 }
 
-private fun chooseSpecificAmount(player: MacrocosmPlayer, deal: Purchasable, model: ShopModel): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+private fun chooseSpecificAmount(
+    player: MacrocosmPlayer,
+    deal: Purchasable,
+    model: ShopModel
+): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
     defaultPage = 0
     title = text("Shop Trading Options")
 
@@ -249,7 +260,10 @@ private fun chooseSpecificAmount(player: MacrocosmPlayer, deal: Purchasable, mod
             it.bukkitEvent.isCancelled = true
             it.player.closeInventory()
         }
-        button(Slots.RowOneSlotFour, ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To ${model.name}")) {
+        button(
+            Slots.RowOneSlotFour,
+            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To ${model.name}")
+        ) {
             it.bukkitEvent.isCancelled = true
             it.player.openGUI(shopUi(player, model))
         }
@@ -278,7 +292,7 @@ private fun chooseSpecificAmount(player: MacrocosmPlayer, deal: Purchasable, mod
         }) { e, count ->
             e.bukkitEvent.isCancelled = true
             val price = (pricePerOne * count).toBigDecimal()
-            if(player.purse < price) {
+            if (player.purse < price) {
                 sound(Sound.ENTITY_VILLAGER_NO) {
                     volume = 2f
                     playFor(e.player)
@@ -303,7 +317,7 @@ private fun chooseSpecificAmount(player: MacrocosmPlayer, deal: Purchasable, mod
 
         compoundSpace(Slots.RowFourSlotThree linTo Slots.RowFourSlotSeven, cmp)
 
-        val d = if(deal.amount == 1) 5 else deal.amount
+        val d = if (deal.amount == 1) 5 else deal.amount
         cmp.addContent(listOf(1, d, d * 2, 32, 64).sorted())
     }
 }

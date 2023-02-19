@@ -1,10 +1,10 @@
 package space.maxus.macrocosm.fishing
 
 import org.bukkit.entity.FishHook
+import space.maxus.macrocosm.area.Area
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.util.math.Chance
-import space.maxus.macrocosm.area.Area
 import java.util.function.Predicate
 
 data class SeaCreature(

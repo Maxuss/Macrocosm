@@ -39,7 +39,7 @@ object KeyManager {
     fun store() {
         val allKeys = MongoDb.apiKeys.find().map { it.key }
         val keys = owned.map { MongoKeyData(it.key, it.data) }.filter { !allKeys.contains(it.key) }
-        if(keys.isNotEmpty())
+        if (keys.isNotEmpty())
             MongoDb.apiKeys.insertMany(owned.map { MongoKeyData(it.key, it.data) })
     }
 

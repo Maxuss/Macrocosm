@@ -843,19 +843,42 @@ fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = 
                 e.bukkitEvent.isCancelled = true
             }
         )
-        compound.addContent(Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }.map { it.key })
+        compound.addContent(Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
+            .map { it.key })
         compound.sortContentBy { it.path }
 
-        compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"), compound, scrollTimes = 1)
-        compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"), compound, reverse = true, scrollTimes = 1)
+        compoundScroll(
+            Slots.RowOneSlotNine,
+            ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"),
+            compound,
+            scrollTimes = 1
+        )
+        compoundScroll(
+            Slots.RowOneSlotEight,
+            ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"),
+            compound,
+            reverse = true,
+            scrollTimes = 1
+        )
 
-        compoundScroll(Slots.RowSixSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"), compound, scrollTimes = 4)
-        compoundScroll(Slots.RowSixSlotEight, ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"), compound, reverse = true, scrollTimes = 4)
+        compoundScroll(
+            Slots.RowSixSlotNine,
+            ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"),
+            compound,
+            scrollTimes = 4
+        )
+        compoundScroll(
+            Slots.RowSixSlotEight,
+            ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"),
+            compound,
+            reverse = true,
+            scrollTimes = 4
+        )
 
         button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
             e.bukkitEvent.isCancelled = true
             e.player.closeInventory()
-            val inputFilterPrompt = object: ValidatingPrompt() {
+            val inputFilterPrompt = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
                     return ChatColor.YELLOW.toString() + "Input item name to search:"
                 }
@@ -873,7 +896,8 @@ fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = 
 
             }
 
-            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.player)
+            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
+                .buildConversation(e.player)
             conv.begin()
         }
     }

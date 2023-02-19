@@ -11,6 +11,7 @@ open class Collection(
     val name: String,
     val rewards: List<Reward>,
     val section: CollectionSection,
-    val table: CollectionTable) :
+    val table: CollectionTable
+) :
     Serializable
 

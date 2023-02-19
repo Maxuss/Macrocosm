@@ -19,12 +19,14 @@ enum class AreaType(val area: Area, val model: AreaModel) {
 
     MY_TEST_AREA(
         Area.Null,
-        AreaModel.impl("my_test_area", "<blue>Test Area", listOf(
-            "Do something",
-            "Maybe like testing",
-            "idk really",
-            "<rainbow>weeeeeeeeeeeeeeeeeeeeeeee"
-        ))
+        AreaModel.impl(
+            "my_test_area", "<blue>Test Area", listOf(
+                "Do something",
+                "Maybe like testing",
+                "idk really",
+                "<rainbow>weeeeeeeeeeeeeeeeeeeeeeee"
+            )
+        )
     )
 
     ;
@@ -34,7 +36,7 @@ enum class AreaType(val area: Area, val model: AreaModel) {
          * Initializes pre-defined areas
          */
         fun init() {
-            Registry.AREA.delegateRegistration(values().mapNotNull { if(it.area is Area.Null) null else id(it.name.lowercase()) to it.area })
+            Registry.AREA.delegateRegistration(values().mapNotNull { if (it.area is Area.Null) null else id(it.name.lowercase()) to it.area })
             Registry.AREA_MODEL.delegateRegistration(values().map { id(it.name.lowercase()) to it.model })
         }
     }

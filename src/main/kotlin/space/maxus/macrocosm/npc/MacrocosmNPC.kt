@@ -56,14 +56,14 @@ open class MacrocosmNPC(
      * Whether this NPC should not be saved in LevelDB
      */
     val isTemporary: Boolean = false
-): Identified, AutoRegister<MacrocosmEntity> {
+) : Identified, AutoRegister<MacrocosmEntity> {
     override val id: Identifier = Identifier.parse(id)
 
     /**
      * Executes all dialogue operations for this entity
      */
     fun executeOperations(data: NPCOperationData) {
-        for(op in operations) {
+        for (op in operations) {
             // Waiting for completion
             op.operate(data).get()
         }
@@ -85,6 +85,7 @@ open class MacrocosmNPC(
         NativeMacrocosmEntity.summon(native, at, Registry.ENTITY.find(id))
         return native
     }
+
     override fun register(registry: Registry<MacrocosmEntity>) {
         registry.register(id, MacrocosmNPCEntity(mainHand, offHand, helmet, chestplate, leggings, boots, profile))
         Registry.DISGUISE.register(id, "")

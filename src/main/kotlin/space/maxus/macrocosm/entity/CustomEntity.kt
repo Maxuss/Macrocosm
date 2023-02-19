@@ -151,7 +151,7 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
 
         val entity = paper!!
         val nmsEntity = (entity as? CraftEntity)?.handle
-        if(nmsEntity is NPCEntity)
+        if (nmsEntity is NPCEntity)
             return
 
         val loc = paper!!.location

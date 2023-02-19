@@ -20,7 +20,8 @@ data class SpawningPosition(
     /**
      * Entity that spawns at this position
      */
-    val entity: Identifier) {
+    val entity: Identifier
+) {
 
     companion object {
         fun read(from: CompoundTag): SpawningPosition {
@@ -36,7 +37,7 @@ data class SpawningPosition(
      * Spawns a new entity at this position
      */
     fun spawn(): UUID? {
-        if(location.getNearbyEntities(7.0, 7.0, 7.0).size >= 5) {
+        if (location.getNearbyEntities(7.0, 7.0, 7.0).size >= 5) {
             // Extra check not to spawn too many entities
             return null
         }

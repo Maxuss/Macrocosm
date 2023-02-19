@@ -13,7 +13,8 @@ import java.util.*
 /**
  * An implementation of an entity using NMS
  */
-class NPCEntity(level: Level, override val id: Identifier, val standId: UUID): Zombie(EntityType.ZOMBIE, level), NativeMacrocosmEntity {
+class NPCEntity(level: Level, override val id: Identifier, val standId: UUID) : Zombie(EntityType.ZOMBIE, level),
+    NativeMacrocosmEntity {
     init {
         this.setShouldBurnInDay(false)
         this.isSilent = true

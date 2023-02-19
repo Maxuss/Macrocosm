@@ -10,6 +10,6 @@ interface Sellable {
 /**
  * Marks that the item can **NOT** be sold
  */
-interface Unsellable: Sellable {
+interface Unsellable : Sellable {
     override val sellPrice: Number get() = -1
 }

@@ -9,7 +9,7 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.stripTags
 
-class DevEnvironGoalEmitter(role: Role, channel: Channel): DiscordEmitter<DevEnvironGoalEmitter.Context>(
+class DevEnvironGoalEmitter(role: Role, channel: Channel) : DiscordEmitter<DevEnvironGoalEmitter.Context>(
     "Goal Achieved",
     role,
     channel

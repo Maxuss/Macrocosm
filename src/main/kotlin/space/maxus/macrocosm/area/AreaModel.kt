@@ -25,7 +25,7 @@ abstract class AreaModel(
      * Description lines of this area
      */
     val description: List<String>
-): Identified {
+) : Identified {
     override val id = Identifier.parse(id)
 
     /**
@@ -48,7 +48,7 @@ abstract class AreaModel(
      * Sends the first entrance messages to player
      */
     fun announce(to: Player) {
-        if(description.isEmpty())
+        if (description.isEmpty())
             return
         listOf(
             "",
@@ -70,8 +70,10 @@ abstract class AreaModel(
         /**
          * A simple area model implementation
          */
-        fun impl(id: String, name: String, description: List<String> = listOf()): AreaModel = Impl(id, name, description)
+        fun impl(id: String, name: String, description: List<String> = listOf()): AreaModel =
+            Impl(id, name, description)
     }
 
-    private class Impl(id: String, name: String, description: List<String> = listOf()): AreaModel(id, name, description)
+    private class Impl(id: String, name: String, description: List<String> = listOf()) :
+        AreaModel(id, name, description)
 }

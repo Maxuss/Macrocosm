@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * Opens a KSpigot UI for player
  */
-data class NPCOpOpenUI(val open: (NPCOperationData) -> GUI<out ForInventory>): NPCOp {
+data class NPCOpOpenUI(val open: (NPCOperationData) -> GUI<out ForInventory>) : NPCOp {
     override fun operate(data: NPCOperationData): CompletableFuture<Unit> {
         data.playerPaper.openGUI(open(data))
         return CompletableFuture.completedFuture(Unit)

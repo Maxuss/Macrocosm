@@ -17,7 +17,7 @@ class PolygonalArea(
      * All points of this polygon
      */
     val vertices: List<Location>
-): Area(Identifier.parse(id), mutableListOf()) {
+) : Area(Identifier.parse(id), mutableListOf()) {
     private val polygon: Polygon
     private val lowestPoint: Double
     private val highestPoint: Double

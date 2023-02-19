@@ -8,9 +8,9 @@ interface CollectionTable {
     }
 
     fun shouldLevelUp(currentLevel: Int, collected: Int): Boolean {
-        if(currentLevel + 1 >= table.size)
+        if (currentLevel + 1 >= table.size)
             return false
         // currentAmount + collectedAmount >= next level
-        return (if(currentLevel == 0) 0 else table[currentLevel - 1]) + collected >= table[currentLevel]
+        return (if (currentLevel == 0) 0 else table[currentLevel - 1]) + collected >= table[currentLevel]
     }
 }

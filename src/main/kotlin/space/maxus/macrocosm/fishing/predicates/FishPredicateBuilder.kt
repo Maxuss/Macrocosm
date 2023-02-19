@@ -2,8 +2,8 @@ package space.maxus.macrocosm.fishing.predicates
 
 import org.bukkit.World.Environment
 import org.bukkit.entity.FishHook
-import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.area.Area
+import space.maxus.macrocosm.players.MacrocosmPlayer
 
 class FishPredicateBuilder(val baseConditions: (MacrocosmPlayer, Area, FishHook) -> Boolean) {
     inline fun and(crossinline v: (MacrocosmPlayer, Area, FishHook) -> Boolean) =

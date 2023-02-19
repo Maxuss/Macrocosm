@@ -15,7 +15,8 @@ annotation class NPCDSL
  * Starts a dialogue with entity
  */
 @NPCDSL
-inline fun beginDialogue(builder: NPCDialogueBuilder.() -> Unit) = NPCDialogueBuilder(mutableListOf()).apply(builder).dialogueElements
+inline fun beginDialogue(builder: NPCDialogueBuilder.() -> Unit) =
+    NPCDialogueBuilder(mutableListOf()).apply(builder).dialogueElements
 
 @NPCDSL
 class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
@@ -55,8 +56,8 @@ class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
     @NPCDSL
     fun lacksGoal(goal: String, grant: Boolean = true): (NPCOperationData) -> Boolean = {
         val hasGoal = it.player.hasReachedGoal(goal)
-        if(!hasGoal) {
-            if(grant)
+        if (!hasGoal) {
+            if (grant)
                 it.player.reachGoal(goal)
             true
         } else false
@@ -66,13 +67,15 @@ class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
      * Plays a sound at NPC location
      */
     @NPCDSL
-    fun playSound(sound: Sound, pitch: Number = 1, volume: Number = 1) = dialogueElements.add(NPCOpPlaySound(sound, pitch, volume))
+    fun playSound(sound: Sound, pitch: Number = 1, volume: Number = 1) =
+        dialogueElements.add(NPCOpPlaySound(sound, pitch, volume))
 
     /**
      * Branches dialogue logic based on predicate
      */
     @NPCDSL
-    fun branch(predicate: (NPCOperationData) -> Boolean): NPCDialogueBranchBuilder = NPCDialogueBranchBuilder(this, predicate, mutableListOf(), mutableListOf())
+    fun branch(predicate: (NPCOperationData) -> Boolean): NPCDialogueBranchBuilder =
+        NPCDialogueBranchBuilder(this, predicate, mutableListOf(), mutableListOf())
 
     /**
      * Opens a KSpigot GUI for player
@@ -93,7 +96,12 @@ class NPCDialogueBuilder(var dialogueElements: MutableList<NPCOp>) {
     fun shop(id: String) = dialogueElements.add(NPCOpOpenShop(Identifier.parse(id)))
 
     @NPCDSL
-    class NPCDialogueBranchBuilder(val builder: NPCDialogueBuilder, val predicate: (NPCOperationData) -> Boolean, val trueBranch: MutableList<NPCOp>, val elseBranch: MutableList<NPCOp>) {
+    class NPCDialogueBranchBuilder(
+        val builder: NPCDialogueBuilder,
+        val predicate: (NPCOperationData) -> Boolean,
+        val trueBranch: MutableList<NPCOp>,
+        val elseBranch: MutableList<NPCOp>
+    ) {
         /**
          * Executes dialogue logic if the predicate was successful
          */

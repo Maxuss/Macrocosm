@@ -12,11 +12,12 @@ interface ProgressBarTheme {
     val tertiaryColor: TextColor get() = mainColor
     val emptyColor: TextColor
 
-    private data class ProgressBarThemeImpl(override val mainColor: TextColor,
-                                            override val secondaryColor: TextColor,
-                                            override val emptyColor: TextColor,
-                                            override val tertiaryColor: TextColor = secondaryColor
-    ): ProgressBarTheme
+    private data class ProgressBarThemeImpl(
+        override val mainColor: TextColor,
+        override val secondaryColor: TextColor,
+        override val emptyColor: TextColor,
+        override val tertiaryColor: TextColor = secondaryColor
+    ) : ProgressBarTheme
 
     companion object {
         val FOREST: ProgressBarTheme = ProgressBarThemeImpl(
@@ -46,7 +47,13 @@ interface ProgressBarTheme {
     }
 }
 
-class ProgressBar internal constructor(private val theme: ProgressBarTheme, private val filled: Int, private val empty: Int, private val showCount: Boolean = false, private val scale: Int = 25) {
+class ProgressBar internal constructor(
+    private val theme: ProgressBarTheme,
+    private val filled: Int,
+    private val empty: Int,
+    private val showCount: Boolean = false,
+    private val scale: Int = 25
+) {
     fun scale(newScale: Int): ProgressBar {
         return ProgressBar(theme, filled, empty, showCount, newScale)
     }
@@ -63,7 +70,11 @@ class ProgressBar internal constructor(private val theme: ProgressBarTheme, priv
         val ratio = filled.toFloat() / (filled + empty)
         val toFill = floor(ratio * scale).roundToInt()
         val toLeaveEmpty = scale - toFill
-        return "<strikethrough><${theme.mainColor.asHexString()}>${DASH.repeat(toFill)}<${theme.emptyColor.asHexString()}>${DASH.repeat(toLeaveEmpty)}</strikethrough>${if(showCount) " <${theme.secondaryColor.asHexString()}>${filled}<${theme.tertiaryColor.asHexString()}>/<${theme.secondaryColor.asHexString()}>${filled + empty}" else ""}"
+        return "<strikethrough><${theme.mainColor.asHexString()}>${DASH.repeat(toFill)}<${theme.emptyColor.asHexString()}>${
+            DASH.repeat(
+                toLeaveEmpty
+            )
+        }</strikethrough>${if (showCount) " <${theme.secondaryColor.asHexString()}>${filled}<${theme.tertiaryColor.asHexString()}>/<${theme.secondaryColor.asHexString()}>${filled + empty}" else ""}"
     }
 
     companion object {
@@ -76,8 +87,18 @@ class ProgressBar internal constructor(private val theme: ProgressBarTheme, priv
     }
 }
 
-fun progressBar(full: Int, total: Int, scale: Int = 25, theme: ProgressBarTheme = ProgressBarTheme.HILLS, showCount: Boolean = false)
-    = ProgressBar(theme, full, total - full, showCount, scale)
+fun progressBar(
+    full: Int,
+    total: Int,
+    scale: Int = 25,
+    theme: ProgressBarTheme = ProgressBarTheme.HILLS,
+    showCount: Boolean = false
+) = ProgressBar(theme, full, total - full, showCount, scale)
 
-fun progressBar(ratio: Float, total: Int, scale: Int = 25, theme: ProgressBarTheme = ProgressBarTheme.HILLS, showCount: Boolean = false)
-    = ProgressBar.ratio(ratio, total, scale, theme).showCount(showCount)
+fun progressBar(
+    ratio: Float,
+    total: Int,
+    scale: Int = 25,
+    theme: ProgressBarTheme = ProgressBarTheme.HILLS,
+    showCount: Boolean = false
+) = ProgressBar.ratio(ratio, total, scale, theme).showCount(showCount)

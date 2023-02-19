@@ -97,7 +97,7 @@ object SidebarRenderer : Listener {
 
                 // padding
                 lines.add("".toComponent())
-                if(index == last) {
+                if (index == last) {
                     lines.add(text("<yellow>play.maxus.space"))
                 }
                 for (line in lines) {
@@ -184,10 +184,12 @@ object SidebarRenderer : Listener {
 
         enqueue(
             e.player,
-            RenderComponent.dynamic(Calendar::renderDate) { listOf(
-                calculateDayTime(),
-                text(" <gray>⏣ ${e.player.macrocosm?.area?.model?.name}")
-                ) },
+            RenderComponent.dynamic(Calendar::renderDate) {
+                listOf(
+                    calculateDayTime(),
+                    text(" <gray>⏣ ${e.player.macrocosm?.area?.model?.name}")
+                )
+            },
             RenderPriority.HIGHEST
         )
 
