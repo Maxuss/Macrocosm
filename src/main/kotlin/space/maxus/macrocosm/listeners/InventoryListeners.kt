@@ -6,6 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryCloseEvent
+import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.util.giveOrDrop
 
@@ -20,6 +21,15 @@ object InventoryListeners : Listener {
                     )!!
                 ) ?: return
             )
+        }
+    }
+
+    @EventHandler
+    fun onCloseAll(e: InventoryCloseEvent) {
+        val mc = (e.player as Player).macrocosm ?: return
+        if(mc.openUi != null) {
+            mc.openUi!!.close()
+            mc.openUi = null
         }
     }
 }
