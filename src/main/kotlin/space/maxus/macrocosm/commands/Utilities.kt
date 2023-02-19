@@ -22,6 +22,7 @@ import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.accessory.ui.thaumaturgyUi
+import space.maxus.macrocosm.achievement.ui.achievementBrowser
 import space.maxus.macrocosm.api.APIPermission
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.area.PolygonalArea
@@ -70,6 +71,12 @@ import java.util.*
 import kotlin.math.roundToInt
 
 private val vertices = mutableListOf<Location>()
+
+fun achievements() = command("achievements") {
+    runsCatching {
+        player.openGUI(achievementBrowser(player.macrocosm!!))
+    }
+}
 
 fun awardAchievement() = command("awardachievement") {
     argument("id", ResourceLocationArgument.id()) {

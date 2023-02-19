@@ -252,14 +252,22 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         return zone
     }
 
+    /**
+     * Gives player achievement with the provided ID
+     */
     fun giveAchievement(achievement: Identifier) {
         val ach = Registry.ACHIEVEMENT.find(achievement)
         if(!this.achievements.contains(achievement)) {
             this.achievements.add(achievement)
             this.achievementExp += ach.expAwarded
+            ach.award(this)
         }
-        ach.award(this)
     }
+
+    /**
+     * Gives player achievement with the provided ID in string form
+     */
+    fun giveAchievement(achievement: String) = giveAchievement(Identifier.parse(achievement))
 
     fun startSlayerQuest(type: SlayerType, tier: Int) {
         val p = paper ?: return
@@ -355,7 +363,6 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         ) {
             val lvl = collections.level(collection) + 1
             collections.setLevel(collection, lvl)
-            // todo: rewards!!
             sendCollectionLevelUp(collection)
             collection.inst.rewards[lvl - 1].reward(this, lvl)
         }

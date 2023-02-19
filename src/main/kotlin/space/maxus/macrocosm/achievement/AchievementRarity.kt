@@ -2,7 +2,22 @@ package space.maxus.macrocosm.achievement
 
 import org.bukkit.Material
 
-enum class AchievementRarity(val closedDisplay: Material, val openDisplay: Material, val hasGlint: Boolean = false) {
+/**
+ * Rarity of an achievement
+ */
+enum class AchievementRarity(
+    /**
+     * Item that represents this achievement rarity when it is locked
+     */
+    val closedDisplay: Material,
+    /**
+     * Item that represents this achievement rarity when it is achieved
+     */
+    val openDisplay: Material,
+    /**
+     * Whether this achievement rarity will have glint
+     */
+    val hasGlint: Boolean = false) {
     // Basic achievements that you get by doing the storyline
     BASIC(Material.COAL, Material.DIAMOND),
     // More rare and harder to get achievements

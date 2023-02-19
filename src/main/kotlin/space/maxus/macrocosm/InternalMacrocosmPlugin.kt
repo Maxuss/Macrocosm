@@ -335,6 +335,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         addSpawnPos()
         doSpawnPass()
         awardAchievement()
+        achievements()
 
         // registering resource generators
         Registry.RESOURCE_GENERATORS.register(id("pack_manifest"), generate("pack.mcmeta", PackDescription::descript))

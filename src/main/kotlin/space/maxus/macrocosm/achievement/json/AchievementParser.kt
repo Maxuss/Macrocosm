@@ -11,7 +11,13 @@ import space.maxus.macrocosm.util.walkDataResources
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.readText
 
+/**
+ * A JSON Achievement parser
+ */
 object AchievementParser {
+    /**
+     * Reads all JSON achievements
+     */
     fun init() {
         val pool = Threading.newFixedPool(5)
 
@@ -31,8 +37,9 @@ object AchievementParser {
 
     private fun parseAndPrepare(id: Identifier, obj: JsonObject): Achievement {
         val name = obj["name"].asString
+        val description = obj["description"].asString
         val exp = if(obj.has("exp")) obj["exp"].asInt else 10
         val rarity = if(obj.has("rarity")) AchievementRarity.valueOf(obj["rarity"].asString.uppercase()) else AchievementRarity.BASIC
-        return Achievement(id.path, name, exp, rarity)
+        return Achievement(id.path, name, description, exp, rarity)
     }
 }
