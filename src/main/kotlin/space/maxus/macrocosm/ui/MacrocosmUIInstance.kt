@@ -1,16 +1,19 @@
 package space.maxus.macrocosm.ui
 
+import io.papermc.paper.adventure.PaperAdventure
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.event.unregister
 import net.kyori.adventure.text.Component
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventory
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftContainer
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryCustom
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import space.maxus.macrocosm.players.macrocosm
-import space.maxus.macrocosm.util.general.Debug
 
 class MacrocosmUIInstance internal constructor(
     val baseUi: Inventory,
@@ -56,17 +59,23 @@ class MacrocosmUIInstance internal constructor(
             holder.closeInventory()
             holder.openInventory(newBase)
             holder.updateInventory()
-            return other.setup(newBase, holder)
+            val new = other.setup(newBase, holder)
+            holder.macrocosm?.openUi = new
+            return new
         } else {
             // Reusing old inventory for smoother experience
             baseUi.clear()
-            val container = (baseUi as CraftInventory).inventory
-            Debug.log("CONTAINER")
-            Debug.dumpObjectData(container)
-            Debug.dumpObjectData(baseUi)
-            other.render(baseUi)
+            val inv = holder.openInventory.topInventory as CraftInventoryCustom
+            other.render(inv)
+            val activeContainer = (holder.player as CraftPlayer).handle.containerMenu
+            val containerId = activeContainer.containerId
+            val packet = ClientboundOpenScreenPacket(containerId, CraftContainer.getNotchInventoryType(inv), PaperAdventure.asVanilla(other.title))
+            holder.macrocosm?.sendPacket(packet)
             holder.updateInventory()
-            return other.setup(baseUi, holder)
+
+            val new = other.setup(baseUi, holder)
+            holder.macrocosm?.openUi = new
+            return new
         }
     }
 

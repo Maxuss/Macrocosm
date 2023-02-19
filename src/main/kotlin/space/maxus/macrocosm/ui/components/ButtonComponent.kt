@@ -4,7 +4,6 @@ import org.bukkit.inventory.Inventory
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
 import space.maxus.macrocosm.ui.UIComponent
-import space.maxus.macrocosm.util.general.Debug
 
 data class ButtonComponent(
     val space: ComponentSpace,
@@ -21,7 +20,6 @@ data class ButtonComponent(
     }
 
     override fun render(inv: Inventory, ui: MacrocosmUI) {
-        Debug.log("RENDERING")
         for(slot in space.enumerate()) {
             inv.setItem(slot, item.item)
         }

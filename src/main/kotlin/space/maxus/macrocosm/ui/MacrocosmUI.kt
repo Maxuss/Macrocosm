@@ -20,6 +20,11 @@ open class MacrocosmUI(
         return this
     }
 
+    fun withTitle(title: Component): MacrocosmUI {
+        this.title = title
+        return this
+    }
+
     fun open(to: Player): MacrocosmUIInstance {
         val base = dimensions.bukkit(to, title)
         render(base)

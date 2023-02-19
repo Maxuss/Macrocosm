@@ -85,6 +85,7 @@ fun achievements() = command("achievements") {
 fun openTestNewUi() = command("newtestui") {
     runsCatching {
         val ui = MacrocosmUI(Identifier.macro("test_ui"), UIDimensions.SIX_X_NINE)
+            .withTitle(text("<red>Old title"))
             .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
             .addComponent(PlaceholderComponent(RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
             .addComponent(ButtonComponent(Slot.RowThreeSlotFive, DynamicItemRepr {
@@ -96,8 +97,13 @@ fun openTestNewUi() = command("newtestui") {
                     "RNG: ${Random.nextInt()}"
                 )
             }) { data ->
-                data.player.sendMessage("Test mesasge")
-                data.instance.reload()
+                data.player.sendMessage("Test message")
+                data.instance.switch(
+                    MacrocosmUI(Identifier.macro("new_ui"), UIDimensions.SIX_X_NINE)
+                        .withTitle(text("<green>New title"))
+                        .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
+                        .addComponent(PlaceholderComponent(RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
+                )
             })
         ui.open(player)
     }
