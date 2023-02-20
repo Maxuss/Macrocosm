@@ -1,19 +1,26 @@
 package space.maxus.macrocosm.ui
 
 import io.papermc.paper.adventure.PaperAdventure
-import net.axay.kspigot.event.listen
 import net.axay.kspigot.event.unregister
+import net.axay.kspigot.extensions.pluginManager
 import net.kyori.adventure.text.Component
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftContainer
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryCustom
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
+import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.players.macrocosm
+
+val InventoryAction.isInUi get() =
+    this == InventoryAction.PICKUP_ALL || this == InventoryAction.PICKUP_HALF || this == InventoryAction.PICKUP_SOME || this == InventoryAction.PICKUP_ONE || this == InventoryAction.MOVE_TO_OTHER_INVENTORY
 
 class MacrocosmUIInstance internal constructor(
     val baseUi: Inventory,
@@ -32,22 +39,37 @@ class MacrocosmUIInstance internal constructor(
     }
 
     fun start() {
-        clickHandler = listen<InventoryClickEvent> { e ->
-            if(e.whoClicked !is Player || e.whoClicked.uniqueId != holder.uniqueId)
-                return@listen
-            if(e.clickedInventory == e.view.bottomInventory && (e.click.isShiftClick || e.click == ClickType.DOUBLE_CLICK)) {
-                e.isCancelled = true
-                return@listen
-            }
-            val clickData = UIClickData(e, holder, (e.whoClicked as Player).macrocosm!!, baseUi, this)
-            for(component in componentTree) {
-                if(component.wasClicked(e.slot)) {
-                    component.handleClick(clickData)
-                    break
+        clickHandler = object: Listener {
+            @EventHandler
+            fun onClick(e: InventoryClickEvent) {
+                if (e.whoClicked !is Player || e.whoClicked.uniqueId != holder.uniqueId)
+                    return
+                if (e.clickedInventory == e.view.bottomInventory && (e.click.isShiftClick || e.click == ClickType.DOUBLE_CLICK)
+                    || (e.clickedInventory == e.view.topInventory && (!e.action.isInUi))
+                ) {
+                    e.isCancelled = true
+                    return
                 }
+                if(e.clickedInventory == e.view.bottomInventory)
+                    return
+                val clickData = UIClickData(e, holder, (e.whoClicked as Player).macrocosm!!, baseUi, this@MacrocosmUIInstance)
+                for (component in componentTree) {
+                    if (component.wasClicked(e.slot)) {
+                        component.handleClick(clickData)
+                        break
+                    }
+                }
+                extraClickHandler(clickData)
             }
-            extraClickHandler(clickData)
+
+            @EventHandler
+            fun onDrag(e: InventoryDragEvent) {
+                if (e.whoClicked !is Player || e.whoClicked.uniqueId != holder.uniqueId)
+                    return
+                e.isCancelled = true
+            }
         }
+        pluginManager.registerEvents(clickHandler, Macrocosm)
     }
 
     fun switch(other: MacrocosmUI): MacrocosmUIInstance {

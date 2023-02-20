@@ -82,6 +82,7 @@ fun achievements() = command("achievements") {
     }
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun openTestNewUi() = command("newtestui") {
     runsCatching {
         val ui = MacrocosmUI(Identifier.macro("test_ui"), UIDimensions.SIX_X_NINE)
@@ -97,12 +98,32 @@ fun openTestNewUi() = command("newtestui") {
                     "RNG: ${Random.nextInt()}"
                 )
             }) { data ->
-                data.player.sendMessage("Test message")
+                val compound = SpacedCompoundComponent(
+                    RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight),
+                    (1..80).toList(),
+                    { v ->
+                        ItemValue.placeholder(Material.values()[v], "V: $v")
+                    },
+                    { ui, v ->
+                        ui.player.sendMessage("Clicked $v")
+                    }
+                )
                 data.instance.switch(
                     MacrocosmUI(Identifier.macro("new_ui"), UIDimensions.SIX_X_NINE)
                         .withTitle(text("<green>New title"))
                         .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
-                        .addComponent(PlaceholderComponent(RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
+                        .addComponent(compound)
+                        .addComponent(CompoundWidthScrollComponent(
+                            Slot.RowOneSlotOne,
+                            compound,
+                            ItemValue.placeholder(Material.ARROW, "<green>Forward")
+                        ))
+                        .addComponent(CompoundWidthScrollComponent(
+                            Slot.RowOneSlotTwo,
+                            compound,
+                            ItemValue.placeholder(Material.ARROW, "<red>Back"),
+                            true
+                        ))
                 )
             })
         ui.open(player)

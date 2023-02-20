@@ -5,8 +5,10 @@ class RectComponentSpace(
     max: Slot,
 ): ComponentSpace {
     private val contents: MutableList<Int> = mutableListOf()
+    val width: Int
 
     init {
+        width = max.column - min.column + 1
         for(row in min.row..max.row) {
             for(col in min.column..max.column) {
                 contents.add(Slot(row, col).value)
