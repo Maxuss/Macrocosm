@@ -10,6 +10,7 @@ import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
@@ -73,6 +74,8 @@ import space.maxus.macrocosm.spell.essence.ScrollRecipe
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.animation.CompositeAnimation
+import space.maxus.macrocosm.ui.animation.UIRenderHelper
 import space.maxus.macrocosm.ui.components.*
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.SemanticVersion
@@ -403,6 +406,18 @@ class InternalMacrocosmPlugin : KSpigot() {
                     "RNG: ${Random.nextInt()}"
                 )
             }, Identifier.macro("test_ui_2")))
+            .addComponent(ButtonComponent(Slot.RowOneSlotOne, StaticItemRepr(ItemValue.placeholder(Material.BLUE_BED, "<blue>Test"))) { click ->
+                val anim = CompositeAnimation()
+                anim.track(
+                    UIRenderHelper.drawDissolve(
+                        click.inventory,
+                        UIRenderHelper.dummy(Material.YELLOW_STAINED_GLASS_PANE),
+                        UIRenderHelper.dummy(Material.GRAY_STAINED_GLASS_PANE),
+                        RectComponentSpace(Slot.RowOneSlotTwo, Slot.RowOneSlotNine),
+                        frequency = 3, delay = 2).sound(click.paper, Sound.UI_BUTTON_CLICK, pitch = 2f)
+                )
+                click.instance.renderAnimation(anim)
+            })
 
         Registry.UI.register(id("test_ui_1"), ui)
         Registry.UI.register(id("test_ui_2"), otherUi)

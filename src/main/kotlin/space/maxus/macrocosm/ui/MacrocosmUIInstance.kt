@@ -3,6 +3,7 @@ package space.maxus.macrocosm.ui
 import io.papermc.paper.adventure.PaperAdventure
 import net.axay.kspigot.event.unregister
 import net.axay.kspigot.extensions.pluginManager
+import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
@@ -18,6 +19,8 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.ui.animation.UIAnimation
+import java.util.concurrent.atomic.AtomicBoolean
 
 val InventoryAction.isInUi get() =
     this == InventoryAction.PICKUP_ALL || this == InventoryAction.PICKUP_HALF || this == InventoryAction.PICKUP_SOME || this == InventoryAction.PICKUP_ONE || this == InventoryAction.MOVE_TO_OTHER_INVENTORY
@@ -32,10 +35,28 @@ class MacrocosmUIInstance internal constructor(
     var extraClickHandler: (UIClickData) -> Unit,
 ) {
     private lateinit var clickHandler: Listener
+    private var animationLock: AtomicBoolean = AtomicBoolean(false)
 
     fun reload() {
         base.render(holder.openInventory.topInventory)
         holder.updateInventory()
+    }
+
+    fun renderAnimation(animation: UIAnimation) {
+        var tick = 0
+        if(animationLock.get())
+            return
+        animationLock.set(true)
+        task(sync = false, period = 1L) {
+            if(animation.shouldStop(tick)) {
+                it.cancel()
+                animationLock.set(false)
+                return@task
+            }
+            animation.tick(tick, baseUi, base)
+            tick += 1
+            holder.updateInventory()
+        }
     }
 
     fun start() {
