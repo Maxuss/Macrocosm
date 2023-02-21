@@ -9,6 +9,7 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
@@ -61,6 +62,7 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.recipes.RecipeMenu
 import space.maxus.macrocosm.recipes.RecipeValue
 import space.maxus.macrocosm.reforge.ReforgeType
+import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.AlchemyReward
 import space.maxus.macrocosm.slayer.SlayerHandlers
@@ -68,6 +70,10 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
+import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.*
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.SemanticVersion
 import space.maxus.macrocosm.util.data.Unsafe
@@ -344,6 +350,64 @@ class InternalMacrocosmPlugin : KSpigot() {
         Registry.RESOURCE_GENERATORS.register(id("model"), TexturedModelGenerator)
         Registry.RESOURCE_GENERATORS.register(id("mcmeta"), MetaGenerator)
         Registry.RESOURCE_GENERATORS.register(id("blocks"), HybridBlockModelGenerator)
+
+        // TODO: remove this
+        val compound = SpacedCompoundComponent(
+            RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight),
+            (1..80).toList(),
+            { v ->
+                ItemValue.placeholder(Material.values()[v], "V: $v")
+            },
+            { ui, v ->
+                ui.player.sendMessage("Clicked $v")
+            }
+        )
+        val otherUi =
+            MacrocosmUI(Identifier.macro("test_ui_1"), UIDimensions.SIX_X_NINE)
+                .withTitle(text("<green>New title"))
+                .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
+                .addComponent(compound)
+                .addComponent(
+                    CompoundWidthScrollComponent(
+                        Slot.RowOneSlotOne,
+                        compound,
+                        ItemValue.placeholder(Material.ARROW, "<green>Forward")
+                    )
+                )
+                .addComponent(
+                    CompoundWidthScrollComponent(
+                        Slot.RowOneSlotTwo,
+                        compound,
+                        ItemValue.placeholder(Material.ARROW, "<red>Back"),
+                        true
+                    )
+                )
+                .addComponent(
+                    PreviousUIComponent(Slot.RowOneSlotFive)
+                )
+
+        val ui = MacrocosmUI(Identifier.macro("test_ui_2"), UIDimensions.SIX_X_NINE)
+            .withTitle(text("<red>Old title"))
+            .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
+            .addComponent(
+                PlaceholderComponent(
+                    RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(
+                        Material.GREEN_STAINED_GLASS_PANE, ""))
+            )
+            .addComponent(ButtonComponent(Slot.RowThreeSlotFive, DynamicItemRepr {
+                ItemValue.placeholderDescripted(
+                    Material.ARROW,
+                    "Test <red>Button",
+                    "Does precisely",
+                    "<rainbow>nothing",
+                    "RNG: ${Random.nextInt()}"
+                )
+            }) { data ->
+                data.instance.switch(otherUi)
+            })
+
+        Registry.UI.register(id("test_ui_1"), ui)
+        Registry.UI.register(id("test_ui_2"), ui)
 
         if (dumpTestData) {
             Threading.runAsync(isDaemon = true) {

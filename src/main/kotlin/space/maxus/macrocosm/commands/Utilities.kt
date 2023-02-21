@@ -63,16 +63,14 @@ import space.maxus.macrocosm.spell.ui.displayInfusionTable
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.ui.MacrocosmUI
-import space.maxus.macrocosm.ui.UIDimensions
 import space.maxus.macrocosm.ui.components.*
 import space.maxus.macrocosm.util.game.Calendar
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
 import java.net.InetAddress
 import java.util.*
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 private val vertices = mutableListOf<Location>()
 
@@ -85,48 +83,7 @@ fun achievements() = command("achievements") {
 @OptIn(ExperimentalUnsignedTypes::class)
 fun openTestNewUi() = command("newtestui") {
     runsCatching {
-        val ui = MacrocosmUI(Identifier.macro("test_ui"), UIDimensions.SIX_X_NINE)
-            .withTitle(text("<red>Old title"))
-            .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
-            .addComponent(PlaceholderComponent(RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
-            .addComponent(ButtonComponent(Slot.RowThreeSlotFive, DynamicItemRepr {
-                ItemValue.placeholderDescripted(
-                    Material.ARROW,
-                    "Test <red>Button",
-                    "Does precisely",
-                    "<rainbow>nothing",
-                    "RNG: ${Random.nextInt()}"
-                )
-            }) { data ->
-                val compound = SpacedCompoundComponent(
-                    RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight),
-                    (1..80).toList(),
-                    { v ->
-                        ItemValue.placeholder(Material.values()[v], "V: $v")
-                    },
-                    { ui, v ->
-                        ui.player.sendMessage("Clicked $v")
-                    }
-                )
-                data.instance.switch(
-                    MacrocosmUI(Identifier.macro("new_ui"), UIDimensions.SIX_X_NINE)
-                        .withTitle(text("<green>New title"))
-                        .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
-                        .addComponent(compound)
-                        .addComponent(CompoundWidthScrollComponent(
-                            Slot.RowOneSlotOne,
-                            compound,
-                            ItemValue.placeholder(Material.ARROW, "<green>Forward")
-                        ))
-                        .addComponent(CompoundWidthScrollComponent(
-                            Slot.RowOneSlotTwo,
-                            compound,
-                            ItemValue.placeholder(Material.ARROW, "<red>Back"),
-                            true
-                        ))
-                )
-            })
-        ui.open(player)
+        Registry.UI.find(id("test_ui_1")).open(player)
     }
 }
 

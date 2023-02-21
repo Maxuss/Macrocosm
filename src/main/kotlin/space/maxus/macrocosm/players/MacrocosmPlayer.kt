@@ -130,6 +130,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var area: Area = AreaType.OVERWORLD.area; private set
 
     var openUi: MacrocosmUIInstance? = null
+    val uiHistory: MutableList<Identifier> = mutableListOf()
 
     private var slayerRenderId: UUID? = null
     var statCache: Statistics? = null; private set

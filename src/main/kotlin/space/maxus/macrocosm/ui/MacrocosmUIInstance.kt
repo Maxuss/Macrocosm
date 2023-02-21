@@ -72,11 +72,15 @@ class MacrocosmUIInstance internal constructor(
         pluginManager.registerEvents(clickHandler, Macrocosm)
     }
 
-    fun switch(other: MacrocosmUI): MacrocosmUIInstance {
+    fun switch(other: MacrocosmUI, reverse: Boolean = false): MacrocosmUIInstance {
         clickHandler.unregister()
         if(other.dimensions != dimensions) {
             // Dimensions do not fit, we need a new inventory
             val newBase = other.dimensions.bukkit(holder, other.title)
+            if(!reverse)
+                holder.macrocosm?.uiHistory?.add(base.id)
+            else
+                holder.macrocosm?.uiHistory?.removeLast()
             other.render(newBase)
             holder.closeInventory()
             holder.openInventory(newBase)
@@ -87,6 +91,10 @@ class MacrocosmUIInstance internal constructor(
         } else {
             // Reusing old inventory for smoother experience
             baseUi.clear()
+            if(!reverse)
+                holder.macrocosm?.uiHistory?.add(base.id)
+            else
+                holder.macrocosm?.uiHistory?.removeLast()
             val inv = holder.openInventory.topInventory as CraftInventoryCustom
             other.render(inv)
             val activeContainer = (holder.player as CraftPlayer).handle.containerMenu
@@ -94,7 +102,6 @@ class MacrocosmUIInstance internal constructor(
             val packet = ClientboundOpenScreenPacket(containerId, CraftContainer.getNotchInventoryType(inv), PaperAdventure.asVanilla(other.title))
             holder.macrocosm?.sendPacket(packet)
             holder.updateInventory()
-
             val new = other.setup(baseUi, holder)
             holder.macrocosm?.openUi = new
             return new
@@ -102,6 +109,7 @@ class MacrocosmUIInstance internal constructor(
     }
 
     fun close() {
+        this.holder.macrocosm?.uiHistory?.clear()
         this.clickHandler.unregister()
     }
 }
