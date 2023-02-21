@@ -363,7 +363,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             }
         )
         val otherUi =
-            MacrocosmUI(Identifier.macro("test_ui_1"), UIDimensions.SIX_X_NINE)
+            MacrocosmUI(Identifier.macro("test_ui_2"), UIDimensions.SIX_X_NINE)
                 .withTitle(text("<green>New title"))
                 .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GREEN_STAINED_GLASS_PANE, "")))
                 .addComponent(compound)
@@ -386,7 +386,7 @@ class InternalMacrocosmPlugin : KSpigot() {
                     PreviousUIComponent(Slot.RowOneSlotFive)
                 )
 
-        val ui = MacrocosmUI(Identifier.macro("test_ui_2"), UIDimensions.SIX_X_NINE)
+        val ui = MacrocosmUI(Identifier.macro("test_ui_1"), UIDimensions.SIX_X_NINE)
             .withTitle(text("<red>Old title"))
             .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
             .addComponent(
@@ -394,7 +394,7 @@ class InternalMacrocosmPlugin : KSpigot() {
                     RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(
                         Material.GREEN_STAINED_GLASS_PANE, ""))
             )
-            .addComponent(ButtonComponent(Slot.RowThreeSlotFive, DynamicItemRepr {
+            .addComponent(SwitchUIComponent(Slot.RowThreeSlotFive, DynamicItemRepr {
                 ItemValue.placeholderDescripted(
                     Material.ARROW,
                     "Test <red>Button",
@@ -402,12 +402,10 @@ class InternalMacrocosmPlugin : KSpigot() {
                     "<rainbow>nothing",
                     "RNG: ${Random.nextInt()}"
                 )
-            }) { data ->
-                data.instance.switch(otherUi)
-            })
+            }, Identifier.macro("test_ui_2")))
 
         Registry.UI.register(id("test_ui_1"), ui)
-        Registry.UI.register(id("test_ui_2"), ui)
+        Registry.UI.register(id("test_ui_2"), otherUi)
 
         if (dumpTestData) {
             Threading.runAsync(isDaemon = true) {

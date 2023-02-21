@@ -63,7 +63,6 @@ import space.maxus.macrocosm.spell.ui.displayInfusionTable
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.ui.components.*
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
@@ -80,7 +79,6 @@ fun achievements() = command("achievements") {
     }
 }
 
-@OptIn(ExperimentalUnsignedTypes::class)
 fun openTestNewUi() = command("newtestui") {
     runsCatching {
         Registry.UI.find(id("test_ui_1")).open(player)
