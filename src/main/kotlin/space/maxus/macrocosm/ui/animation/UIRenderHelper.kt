@@ -57,6 +57,15 @@ object UIRenderHelper {
     fun drawDissolve(canvas: Inventory, item: ItemStack, replacement: ItemStack, space: ComponentSpace, perTick: Int = 1, frequency: Int = 1, delay: Int = frequency): RenderTask {
         return draw(canvas, item, space, perTick, frequency).join(draw(canvas, replacement, space, perTick, frequency).delay(delay))
     }
+
+    fun burn(canvas: Inventory, base: ItemStack, flame: ItemStack, empty: ItemStack, space: ComponentSpace, frequency: Int = 1, delay: Int = frequency + 1): RenderTask {
+        return draw(canvas, base, space, 1, frequency)
+            .join(
+                draw(canvas, flame, space, 1, frequency).delay(delay))
+            .join(
+                draw(canvas, empty, space, 1, frequency).delay(delay + 1)
+            )
+    }
 }
 
 open class RenderTask(

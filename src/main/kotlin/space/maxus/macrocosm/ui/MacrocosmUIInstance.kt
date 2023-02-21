@@ -48,7 +48,7 @@ class MacrocosmUIInstance internal constructor(
             return
         animationLock.set(true)
         task(sync = false, period = 1L) {
-            if(animation.shouldStop(tick)) {
+            if(animation.shouldStop(tick) || baseUi.viewers.isEmpty()) {
                 it.cancel()
                 animationLock.set(false)
                 return@task

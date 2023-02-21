@@ -392,11 +392,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         val ui = MacrocosmUI(Identifier.macro("test_ui_1"), UIDimensions.SIX_X_NINE)
             .withTitle(text("<red>Old title"))
             .addComponent(PlaceholderComponent(Slot.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")))
-            .addComponent(
-                PlaceholderComponent(
-                    RectComponentSpace(Slot.RowTwoSlotTwo, Slot.RowFiveSlotEight), ItemValue.placeholder(
-                        Material.GREEN_STAINED_GLASS_PANE, ""))
-            )
             .addComponent(SwitchUIComponent(Slot.RowThreeSlotFive, DynamicItemRepr {
                 ItemValue.placeholderDescripted(
                     Material.ARROW,
@@ -409,12 +404,30 @@ class InternalMacrocosmPlugin : KSpigot() {
             .addComponent(ButtonComponent(Slot.RowOneSlotOne, StaticItemRepr(ItemValue.placeholder(Material.BLUE_BED, "<blue>Test"))) { click ->
                 val anim = CompositeAnimation()
                 anim.track(
-                    UIRenderHelper.drawDissolve(
+                    UIRenderHelper.burn(
                         click.inventory,
                         UIRenderHelper.dummy(Material.YELLOW_STAINED_GLASS_PANE),
+                        UIRenderHelper.dummy(Material.ORANGE_STAINED_GLASS_PANE),
                         UIRenderHelper.dummy(Material.GRAY_STAINED_GLASS_PANE),
-                        RectComponentSpace(Slot.RowOneSlotTwo, Slot.RowOneSlotNine),
-                        frequency = 3, delay = 2).sound(click.paper, Sound.UI_BUTTON_CLICK, pitch = 2f)
+                        LinearComponentSpace(
+                            listOf(
+                                Slot.RowOneSlotTwo,
+                                Slot.RowOneSlotThree,
+                                Slot.RowOneSlotFour,
+                                Slot.RowOneSlotFive,
+                                Slot.RowTwoSlotFive,
+                                Slot.RowTwoSlotSix,
+                                Slot.RowThreeSlotSix,
+                                Slot.RowThreeSlotSeven,
+                                Slot.RowThreeSlotEight,
+                                Slot.RowFourSlotEight,
+                                Slot.RowFourSlotNine,
+                                Slot.RowFiveSlotNine,
+                                Slot.RowSixSlotNine,
+                                Slot.RowSixSlotEight
+                            ).map(Slot::value)
+                        ),
+                        frequency = 3, delay = 3).sound(click.paper, Sound.UI_BUTTON_CLICK, pitch = 2f)
                 )
                 click.instance.renderAnimation(anim)
             })
