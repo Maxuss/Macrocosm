@@ -35,6 +35,7 @@ class MacrocosmUIInstance internal constructor(
     var extraClickHandler: (UIClickData) -> Unit,
 ) {
     private lateinit var clickHandler: Listener
+    private var abandoned: Boolean = false
     private var animationLock: AtomicBoolean = AtomicBoolean(false)
 
     fun reload() {
@@ -48,7 +49,7 @@ class MacrocosmUIInstance internal constructor(
             return
         animationLock.set(true)
         task(sync = false, period = 1L) {
-            if(animation.shouldStop(tick) || baseUi.viewers.isEmpty()) {
+            if(animation.shouldStop(tick) || baseUi.viewers.isEmpty() || abandoned) {
                 it.cancel()
                 animationLock.set(false)
                 return@task
@@ -94,6 +95,7 @@ class MacrocosmUIInstance internal constructor(
     }
 
     fun switch(other: MacrocosmUI, reverse: Boolean = false): MacrocosmUIInstance {
+        abandoned = true
         clickHandler.unregister()
         if(other.dimensions != dimensions) {
             // Dimensions do not fit, we need a new inventory
@@ -131,6 +133,7 @@ class MacrocosmUIInstance internal constructor(
 
     fun close() {
         this.holder.macrocosm?.uiHistory?.clear()
+        this.abandoned = true
         this.clickHandler.unregister()
     }
 }
