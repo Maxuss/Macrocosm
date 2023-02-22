@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 enum class UIs(val ui: MacrocosmUI) {
     TEST_1(testUi1()),
-    TEST_2(testUi2())
+    TEST_2(MacrocosmUI.NullUi)
     ;
 
     companion object {
@@ -28,7 +28,7 @@ fun testUi1() = macrocosmUi("test_ui_1", UIDimensions.SIX_X_NINE) {
 
     background()
 
-    switchUi(Slot.RowThreeSlotFive, "test_ui_2") {
+    switchUi(Slot.RowThreeSlotFive, testUi2("This is a test")) {
         ItemValue.placeholderDescripted(
             Material.ARROW,
             "Test <red>Button",
@@ -70,12 +70,12 @@ fun testUi1() = macrocosmUi("test_ui_1", UIDimensions.SIX_X_NINE) {
     }
 }
 
-fun testUi2() = macrocosmUi("test_ui_2", UIDimensions.SIX_X_NINE) {
+fun testUi2(message: String) = macrocosmUi("test_ui_2", UIDimensions.SIX_X_NINE) {
     title = "<green>New title"
 
     background()
     val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, 1..80, { v -> ItemValue.placeholder(Material.values()[v], "V: $v") }) { ui, v ->
-        ui.player.sendMessage("Clicked $v")
+        ui.player.sendMessage("Clicked $message $v")
     }
     compoundWidthScroll(Slot.RowOneSlotOne, cmp)
     compoundWidthScroll(Slot.RowOneSlotTwo, cmp, true)

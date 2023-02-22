@@ -18,6 +18,9 @@ class PreviousUIComponent(val space: ComponentSpace): UIComponent {
         click.bukkit.isCancelled = true
         val last = click.player.uiHistory.lastOrNull() ?: return
         val ui = Registry.UI.find(last)
+        if(ui is MacrocosmUI.NullUi) {
+            throw IllegalStateException("Can not return to delegated ui!")
+        }
         sound(Sound.UI_BUTTON_CLICK) {
             volume = .5f
             playFor(click.paper)

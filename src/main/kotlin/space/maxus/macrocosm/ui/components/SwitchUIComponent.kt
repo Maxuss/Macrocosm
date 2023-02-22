@@ -16,7 +16,37 @@ data class SwitchUIComponent(
 ): UIComponent {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
-        click.instance.switch(Registry.UI.find(ui))
+        val ui = Registry.UI.find(ui)
+        if(ui is MacrocosmUI.NullUi) {
+            throw IllegalStateException("Can not return to delegated ui!")
+        }
+        click.instance.switch(ui)
+        sound(Sound.UI_BUTTON_CLICK) {
+            volume = .5f
+            playFor(click.paper)
+        }
+    }
+
+    override fun wasClicked(slot: Int): Boolean {
+        return space.contains(slot)
+    }
+
+    override fun render(inv: Inventory, ui: MacrocosmUI) {
+        val stack = item.item
+        for(slot in space.enumerate()) {
+            inv.setItem(slot, stack)
+        }
+    }
+}
+
+data class DelegatedSwitchUIComponent(
+    val space: ComponentSpace,
+    val item: ItemComponentRepr,
+    val ui: MacrocosmUI
+): UIComponent {
+    override fun handleClick(click: UIClickData) {
+        click.bukkit.isCancelled = true
+        click.instance.switch(ui)
         sound(Sound.UI_BUTTON_CLICK) {
             volume = .5f
             playFor(click.paper)

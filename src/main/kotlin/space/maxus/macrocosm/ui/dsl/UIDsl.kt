@@ -4,6 +4,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
@@ -90,10 +91,36 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     }
 
     @UIDsl
+    fun switchUi(
+        space: ComponentSpace,
+        ui: MacrocosmUI,
+        display: ItemStack,
+    ) {
+        this.ui.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(display), ui))
+    }
+
+    @UIDsl
+    fun switchUi(
+        space: ComponentSpace,
+        ui: MacrocosmUI,
+        icon: () -> ItemStack,
+    ) {
+        this.ui.addComponent(DelegatedSwitchUIComponent(space, DynamicItemRepr(icon), ui))
+    }
+
+    @UIDsl
     fun goBack(
         space: ComponentSpace,
     ) {
         this.ui.addComponent(PreviousUIComponent(space))
+    }
+
+    @UIDsl
+    fun goBack(
+        space: ComponentSpace,
+        delegated: MacrocosmUI
+    ) {
+        this.ui.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To ${delegated.title.str()}")), delegated))
     }
 
     fun build(): MacrocosmUI {

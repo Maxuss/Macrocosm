@@ -47,4 +47,6 @@ open class MacrocosmUI(
     fun setup(base: Inventory, holder: Player): MacrocosmUIInstance {
         return MacrocosmUIInstance(base, dimensions, componentTree.toMutableList().asReversed(), holder, title, this, extraClickHandler).apply(MacrocosmUIInstance::start)
     }
+
+    object NullUi: MacrocosmUI(Identifier.NULL, UIDimensions.SIX_X_NINE)
 }
