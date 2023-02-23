@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.ui.dsl
 
 import org.bukkit.Material
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.registry.Identifier
@@ -9,12 +10,16 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
 import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.animation.CompositeAnimation
+import space.maxus.macrocosm.ui.animation.RenderTask
 import space.maxus.macrocosm.ui.animation.UIRenderHelper
 import space.maxus.macrocosm.ui.components.*
+import space.maxus.macrocosm.util.identity
 
 @DslMarker
 annotation class UIDsl
 
+@UIDsl
 inline fun macrocosmUi(id: String, dimensions: UIDimensions, builder: MacrocosmUIBuilder.() -> Unit): MacrocosmUI = MacrocosmUIBuilder(Identifier.parse(id), dimensions).apply(builder).build()
 
 class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
@@ -123,6 +128,13 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         this.ui.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To ${delegated.title.str()}")), delegated))
     }
 
+    @UIDsl
+    inline fun UIClickData.animate(handler: AnimationBuilder.() -> Unit) {
+        val builder = AnimationBuilder(this.inventory)
+        builder.apply(handler)
+        this.instance.renderAnimation(builder.animation)
+    }
+
     fun build(): MacrocosmUI {
         ui.title = text(title)
         return ui
@@ -136,4 +148,35 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     infix fun Slot.lin(other: Slot): ComponentSpace {
         return LinearComponentSpace((this.value..other.value).toList())
     }
+}
+
+class AnimationBuilder(private val inv: Inventory) {
+    var animation = CompositeAnimation()
+
+    @UIDsl
+    fun instant(space: ComponentSpace, item: ItemStack) {
+        UIRenderHelper.instant(inv, item, space)
+    }
+
+    @UIDsl
+    fun draw(space: ComponentSpace, item: ItemStack, frequency: Int = 1, perTick: Int = 1, preconfig: (RenderTask) -> RenderTask = identity()) {
+        animation.track(preconfig(UIRenderHelper.draw(inv, item, space, perTick, frequency)))
+    }
+
+    @UIDsl
+    fun dissolve(space: ComponentSpace, to: ItemStack, trail: ItemStack, frequency: Int = 1, delay: Int = frequency, perTick: Int = 1, preconfig: (RenderTask) -> RenderTask = identity()) {
+        animation.track(preconfig(UIRenderHelper.drawDissolve(inv, to, trail, space, perTick, frequency, delay)))
+    }
+
+    @UIDsl
+    fun dissolveInstant(space: ComponentSpace, to: ItemStack, trail: ItemStack, frequency: Int = 1, perTick: Int = 1, preconfig: (RenderTask) -> RenderTask = identity()) {
+        animation.track(preconfig(UIRenderHelper.instantDissolve(inv, to, trail, space, perTick, frequency)))
+    }
+
+    @UIDsl
+    fun burn(space: ComponentSpace, base: ItemStack, edge: ItemStack, trail: ItemStack, frequency: Int = 1, delay: Int = frequency + 1, preconfig: (RenderTask) -> RenderTask = identity()) {
+        animation.track(preconfig(UIRenderHelper.burn(inv, base, edge, trail, space, frequency, delay)))
+    }
+
+    fun dummy(mat: Material) = UIRenderHelper.dummy(mat)
 }

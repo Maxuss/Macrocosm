@@ -4,21 +4,19 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.ui.animation.CompositeAnimation
-import space.maxus.macrocosm.ui.animation.UIRenderHelper
-import space.maxus.macrocosm.ui.components.LinearComponentSpace
 import space.maxus.macrocosm.ui.components.Slot
 import space.maxus.macrocosm.ui.dsl.macrocosmUi
+import space.maxus.macrocosm.util.general.id
 import kotlin.random.Random
 
 enum class UIs(val ui: MacrocosmUI) {
-    TEST_1(testUi1()),
-    TEST_2(MacrocosmUI.NullUi)
+    TEST_UI_1(testUi1()),
+    TEST_UI_2(MacrocosmUI.NullUi)
     ;
 
     companion object {
         fun init() {
-            Registry.UI.delegateRegistration(values().map { it.ui.id to it.ui })
+            Registry.UI.delegateRegistration(values().map { id(it.name.lowercase()) to it.ui })
         }
     }
 }
@@ -38,35 +36,17 @@ fun testUi1() = macrocosmUi("test_ui_1", UIDimensions.SIX_X_NINE) {
         )
     }
 
-    button(Slot.RowOneSlotOne, ItemValue.placeholder(Material.BLUE_BED, "<blue>Test")) {
-        val anim = CompositeAnimation()
-        anim.track(
-            UIRenderHelper.burn(
-                it.inventory,
-                UIRenderHelper.dummy(Material.YELLOW_STAINED_GLASS_PANE),
-                UIRenderHelper.dummy(Material.ORANGE_STAINED_GLASS_PANE),
-                UIRenderHelper.dummy(Material.GRAY_STAINED_GLASS_PANE),
-                LinearComponentSpace(
-                    listOf(
-                        Slot.RowOneSlotTwo,
-                        Slot.RowOneSlotThree,
-                        Slot.RowOneSlotFour,
-                        Slot.RowOneSlotFive,
-                        Slot.RowTwoSlotFive,
-                        Slot.RowTwoSlotSix,
-                        Slot.RowThreeSlotSix,
-                        Slot.RowThreeSlotSeven,
-                        Slot.RowThreeSlotEight,
-                        Slot.RowFourSlotEight,
-                        Slot.RowFourSlotNine,
-                        Slot.RowFiveSlotNine,
-                        Slot.RowSixSlotNine,
-                        Slot.RowSixSlotEight
-                    ).map(Slot::value)
-                ),
-                frequency = 3, delay = 3).sound(it.paper, Sound.UI_BUTTON_CLICK, pitch = 2f)
-        )
-        it.instance.renderAnimation(anim)
+    button(Slot.RowOneSlotOne, ItemValue.placeholder(Material.BLUE_BED, "<blue>Test")) { data ->
+        data.animate {
+            burn(
+                Slot.RowOneSlotThree rect Slot.RowTwoSlotFour,
+                dummy(Material.YELLOW_STAINED_GLASS_PANE),
+                dummy(Material.ORANGE_STAINED_GLASS_PANE),
+                dummy(Material.GRAY_STAINED_GLASS_PANE),
+                3,
+                3
+            ) { it.sound(data.paper, Sound.UI_BUTTON_CLICK, pitch = 2f) }
+        }
     }
 }
 
@@ -74,9 +54,15 @@ fun testUi2(message: String) = macrocosmUi("test_ui_2", UIDimensions.SIX_X_NINE)
     title = "<green>New title"
 
     background()
-    val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, 1..80, { v -> ItemValue.placeholder(Material.values()[v], "V: $v") }) { ui, v ->
+
+    val cmp = compound(
+        Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
+        1..80,
+        { v -> ItemValue.placeholder(Material.values()[v], "V: $v") }
+    ) { ui, v ->
         ui.player.sendMessage("Clicked $message $v")
     }
+
     compoundWidthScroll(Slot.RowOneSlotOne, cmp)
     compoundWidthScroll(Slot.RowOneSlotTwo, cmp, true)
 
