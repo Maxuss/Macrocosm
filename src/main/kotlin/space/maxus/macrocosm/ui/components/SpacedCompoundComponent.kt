@@ -10,7 +10,9 @@ class SpacedCompoundComponent<M>(
     val space: ComponentSpace,
     val values: List<M>,
     val map: (M) -> ItemStack,
-    val clickHandler: (UIClickData, M) -> Unit): UIComponent {
+    val clickHandler: (UIClickData, M) -> Unit,
+    val transparent: Boolean = false
+    ): UIComponent {
     private val slotToValue: MutableList<Int> = mutableListOf()
     private var scrollProgress: Int = 0
     private var slicedContent: List<M> = listOf()
@@ -64,7 +66,8 @@ class SpacedCompoundComponent<M>(
         for(slot in space.enumerate()) {
             val index = slotToValue.indexOf(slot)
             if(slicedContent.size <= index) {
-                inv.setItem(slot, null)
+                if(!transparent)
+                    inv.setItem(slot, null)
             } else {
                 inv.setItem(slot, map(slicedContent[index]))
             }

@@ -57,6 +57,13 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     }
 
     @UIDsl
+    fun <V> transparentCompound(space: ComponentSpace, values: Iterable<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): SpacedCompoundComponent<V> {
+        val compound = SpacedCompoundComponent(space, values.toList(), icon, handler, transparent = true)
+        this.ui.addComponent(compound)
+        return compound
+    }
+
+    @UIDsl
     fun compoundScroll(
         space: ComponentSpace,
         compound: SpacedCompoundComponent<*>,
@@ -107,11 +114,30 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     @UIDsl
     fun switchUi(
         space: ComponentSpace,
+        lazy: () -> MacrocosmUI,
+        display: ItemStack,
+    ) {
+        this.ui.addComponent(LazySwitchUIComponent(space, StaticItemRepr(display), lazy))
+    }
+
+    @UIDsl
+    fun switchUi(
+        space: ComponentSpace,
         ui: MacrocosmUI,
         icon: () -> ItemStack,
     ) {
         this.ui.addComponent(DelegatedSwitchUIComponent(space, DynamicItemRepr(icon), ui))
     }
+
+    @UIDsl
+    fun switchUi(
+        space: ComponentSpace,
+        lazy: () -> MacrocosmUI,
+        icon: () -> ItemStack,
+    ) {
+        this.ui.addComponent(LazySwitchUIComponent(space, DynamicItemRepr(icon), lazy))
+    }
+
 
     @UIDsl
     fun goBack(
@@ -129,10 +155,25 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     }
 
     @UIDsl
+    fun goBack(
+        space: ComponentSpace,
+        lazy: () -> MacrocosmUI,
+        title: String = lazy().title.str()
+    ) {
+        this.ui.addComponent(LazySwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To $title")), lazy))
+    }
+
+
+    @UIDsl
     inline fun UIClickData.animate(handler: AnimationBuilder.() -> Unit) {
         val builder = AnimationBuilder(this.inventory)
         builder.apply(handler)
         this.instance.renderAnimation(builder.animation)
+    }
+
+    @UIDsl
+    fun close(space: ComponentSpace = Slot.RowSixSlotFive, item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
+        this.ui.addComponent(CloseUIComponent(space, item))
     }
 
     fun build(): MacrocosmUI {

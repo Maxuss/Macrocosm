@@ -78,5 +78,6 @@ data class Slot(val row: Int, val column: Int): ComponentSpace {
         val RowSixSlotNine = Slot(5, 8)
 
         val All = LinearComponentSpace((0 until 9 * 6).toList())
+        val Border = InventoryBorderSlots(1)
     }
 }

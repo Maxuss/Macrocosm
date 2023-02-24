@@ -34,7 +34,7 @@ import space.maxus.macrocosm.bazaar.BazaarIntrinsics
 import space.maxus.macrocosm.bazaar.ops.BazaarOp
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
-import space.maxus.macrocosm.collections.ui.collectionUi
+import space.maxus.macrocosm.collections.ui.collUi
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
@@ -236,7 +236,7 @@ fun addNpc() = command("addnpc") {
 
 fun collectionsCommand() = command("collections") {
     runsCatching {
-        player.openGUI(collectionUi(player.macrocosm!!))
+        collUi(player.macrocosm!!).open(player)
     }
 }
 
