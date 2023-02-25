@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
+import space.maxus.macrocosm.ui.UIDimensions
 import space.maxus.macrocosm.ui.components.ComponentSpace
 import space.maxus.macrocosm.util.unreachable
 
@@ -14,13 +15,13 @@ object UIRenderHelper {
     fun dummy(mat: Material): ItemStack = ItemValue.placeholder(mat, "")
 
     fun instant(canvas: Inventory, item: ItemStack, space: ComponentSpace) {
-        for(slot in space.enumerate()) {
+        for(slot in space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE)) {
             canvas.setItem(slot, item)
         }
     }
 
     fun draw(canvas: Inventory, item: ItemStack, space: ComponentSpace, perTick: Int = 1, frequency: Int = 1): RenderTask {
-        val affected = space.enumerate().toMutableList()
+        val affected = space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE).toMutableList()
         val task = {
             if(affected.isEmpty())
                 listOf()
@@ -47,7 +48,7 @@ object UIRenderHelper {
     }
 
     fun instantDissolve(canvas: Inventory, item: ItemStack, replacement: ItemStack, space: ComponentSpace, perTick: Int = 1, frequency: Int = 1): RenderTask {
-        val affected = space.enumerate().toMutableList()
+        val affected = space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE).toMutableList()
         for(slot in affected) {
             canvas.setItem(slot, item)
         }
@@ -89,10 +90,6 @@ open class RenderTask(
         sound()
         val processed = this.processor()
         processedSlots.addAll(processed)
-    }
-
-    fun passed(space: ComponentSpace): Boolean {
-        return processedSlots.containsAll(space.enumerate())
     }
 
     fun delay(ticks: Int): RenderTask {

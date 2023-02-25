@@ -10,6 +10,7 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
 import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.UIPage
 import space.maxus.macrocosm.ui.animation.CompositeAnimation
 import space.maxus.macrocosm.ui.animation.RenderTask
 import space.maxus.macrocosm.ui.animation.UIRenderHelper
@@ -25,63 +26,95 @@ inline fun macrocosmUi(id: String, dimensions: UIDimensions, builder: MacrocosmU
 class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     @UIDsl
     var title: String = ""
+
     @UIDsl
     var onClick: (UIClickData) -> Unit = { }
     private val ui: MacrocosmUI = MacrocosmUI(id, dimensions, onClick)
+    private var pageIndex: Int = 0
 
     @UIDsl
+    fun page(idx: Int = pageIndex + 1, builder: PageBuilder.() -> Unit) {
+        val page = UIPage(idx)
+        this.pageIndex = idx
+        val bld = PageBuilder(page)
+        bld.apply(builder)
+        this.ui.addPage(bld.page)
+    }
+
+    fun build(): MacrocosmUI {
+        ui.title = text(title)
+        return ui
+    }
+}
+
+class PageBuilder(internal val page: UIPage) {
+    @UIDsl
     fun background(space: ComponentSpace = Slot.All) {
-        this.ui.addComponent(PlaceholderComponent(space, UIRenderHelper.dummy(Material.GRAY_STAINED_GLASS_PANE)))
+        this.page.addComponent(PlaceholderComponent(space, UIRenderHelper.dummy(Material.GRAY_STAINED_GLASS_PANE)))
     }
 
     @UIDsl
     fun placeholder(space: ComponentSpace, item: ItemStack) {
-        this.ui.addComponent(PlaceholderComponent(space, item))
+        this.page.addComponent(PlaceholderComponent(space, item))
     }
 
     @UIDsl
     fun button(space: ComponentSpace, display: ItemStack, handler: (UIClickData) -> Unit) {
-        this.ui.addComponent(ButtonComponent(space, StaticItemRepr(display), handler))
+        this.page.addComponent(ButtonComponent(space, StaticItemRepr(display), handler))
     }
 
     @UIDsl
     fun button(space: ComponentSpace, icon: () -> ItemStack, handler: (UIClickData) -> Unit) {
-        this.ui.addComponent(ButtonComponent(space, DynamicItemRepr(icon), handler))
+        this.page.addComponent(ButtonComponent(space, DynamicItemRepr(icon), handler))
     }
 
     @UIDsl
-    fun <V> compound(space: ComponentSpace, values: Iterable<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): SpacedCompoundComponent<V> {
-        val compound = SpacedCompoundComponent(space, values.toList(), icon, handler)
-        this.ui.addComponent(compound)
+    fun <V> compound(space: ComponentSpace, values: Iterable<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): CompoundComponent<V> {
+        val compound = CompoundComponent(space, values.toList(), icon, handler)
+        this.page.addComponent(compound)
         return compound
     }
 
     @UIDsl
-    fun <V> transparentCompound(space: ComponentSpace, values: Iterable<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): SpacedCompoundComponent<V> {
-        val compound = SpacedCompoundComponent(space, values.toList(), icon, handler, transparent = true)
-        this.ui.addComponent(compound)
+    fun <V> compound(space: ComponentSpace, values: () -> List<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): CompoundComponent<V> {
+        val compound = LazyCompoundComponent(space, values, icon, handler)
+        this.page.addComponent(compound)
+        return compound
+    }
+
+    @UIDsl
+    fun <V> transparentCompound(space: ComponentSpace, values: () -> List<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): CompoundComponent<V> {
+        val compound = LazyCompoundComponent(space, values, icon, handler, transparent = true)
+        this.page.addComponent(compound)
+        return compound
+    }
+
+    @UIDsl
+    fun <V> transparentCompound(space: ComponentSpace, values: Iterable<V>, icon: (V) -> ItemStack, handler: (UIClickData, V) -> Unit): CompoundComponent<V> {
+        val compound = CompoundComponent(space, values.toList(), icon, handler, transparent = true)
+        this.page.addComponent(compound)
         return compound
     }
 
     @UIDsl
     fun compoundScroll(
         space: ComponentSpace,
-        compound: SpacedCompoundComponent<*>,
+        compound: CompoundComponent<*>,
         amount: Int = 1,
         reverse: Boolean = false,
         display: ItemStack = ItemValue.placeholderDescripted(Material.ARROW, if(!reverse) "<green>Scroll Forward" else "<red>Scroll Backward", "<blue>$amount times")
     ) {
-        this.ui.addComponent(CompoundScrollComponent(space, compound, if(reverse) -amount else amount, display))
+        this.page.addComponent(CompoundScrollComponent(space, compound, if(reverse) -amount else amount, display))
     }
 
     @UIDsl
     fun compoundWidthScroll(
         space: ComponentSpace,
-        compound: SpacedCompoundComponent<*>,
+        compound: CompoundComponent<*>,
         reverse: Boolean = false,
         display: ItemStack = ItemValue.placeholder(Material.ARROW, if(!reverse) "<green>Scroll Forward" else "<red>Scroll Backward")
     ) {
-        this.ui.addComponent(CompoundWidthScrollComponent(space, compound, display, reverse))
+        this.page.addComponent(CompoundWidthScrollComponent(space, compound, display, reverse))
     }
 
     @UIDsl
@@ -90,7 +123,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         ui: String,
         display: ItemStack,
     ) {
-        this.ui.addComponent(SwitchUIComponent(space, StaticItemRepr(display), Identifier.parse(ui)))
+        this.page.addComponent(SwitchUIComponent(space, StaticItemRepr(display), Identifier.parse(ui)))
     }
 
     @UIDsl
@@ -99,7 +132,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         ui: String,
         icon: () -> ItemStack,
     ) {
-        this.ui.addComponent(SwitchUIComponent(space, DynamicItemRepr(icon), Identifier.parse(ui)))
+        this.page.addComponent(SwitchUIComponent(space, DynamicItemRepr(icon), Identifier.parse(ui)))
     }
 
     @UIDsl
@@ -108,7 +141,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         ui: MacrocosmUI,
         display: ItemStack,
     ) {
-        this.ui.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(display), ui))
+        this.page.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(display), ui))
     }
 
     @UIDsl
@@ -117,7 +150,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         lazy: () -> MacrocosmUI,
         display: ItemStack,
     ) {
-        this.ui.addComponent(LazySwitchUIComponent(space, StaticItemRepr(display), lazy))
+        this.page.addComponent(LazySwitchUIComponent(space, StaticItemRepr(display), lazy))
     }
 
     @UIDsl
@@ -126,7 +159,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         ui: MacrocosmUI,
         icon: () -> ItemStack,
     ) {
-        this.ui.addComponent(DelegatedSwitchUIComponent(space, DynamicItemRepr(icon), ui))
+        this.page.addComponent(DelegatedSwitchUIComponent(space, DynamicItemRepr(icon), ui))
     }
 
     @UIDsl
@@ -135,7 +168,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         lazy: () -> MacrocosmUI,
         icon: () -> ItemStack,
     ) {
-        this.ui.addComponent(LazySwitchUIComponent(space, DynamicItemRepr(icon), lazy))
+        this.page.addComponent(LazySwitchUIComponent(space, DynamicItemRepr(icon), lazy))
     }
 
 
@@ -143,7 +176,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     fun goBack(
         space: ComponentSpace,
     ) {
-        this.ui.addComponent(PreviousUIComponent(space))
+        this.page.addComponent(PreviousUIComponent(space))
     }
 
     @UIDsl
@@ -151,7 +184,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         space: ComponentSpace,
         delegated: MacrocosmUI
     ) {
-        this.ui.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To ${delegated.title.str()}")), delegated))
+        this.page.addComponent(DelegatedSwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To ${delegated.title.str()}")), delegated))
     }
 
     @UIDsl
@@ -160,9 +193,35 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         lazy: () -> MacrocosmUI,
         title: String = lazy().title.str()
     ) {
-        this.ui.addComponent(LazySwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To $title")), lazy))
+        this.page.addComponent(LazySwitchUIComponent(space, StaticItemRepr(ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To $title")), lazy))
     }
 
+    @UIDsl
+    fun changePage(
+        space: ComponentSpace,
+        to: Int
+    ) {
+        val item = if(this.page.index > to) ItemValue.placeholderDescripted(Material.ARROW, "<green>Next Page") else ItemValue.placeholderDescripted(Material.ARROW, "<red>Previous Page")
+        this.page.addComponent(ChangePageComponent(space, to, StaticItemRepr(item)))
+    }
+
+    @UIDsl
+    fun changePage(
+        space: ComponentSpace,
+        to: Int,
+        item: ItemStack
+    ) {
+        this.page.addComponent(ChangePageComponent(space, to, StaticItemRepr(item)))
+    }
+
+    @UIDsl
+    fun changePage(
+        space: ComponentSpace,
+        to: Int,
+        item: () -> ItemStack
+    ) {
+        this.page.addComponent(ChangePageComponent(space, to, DynamicItemRepr(item)))
+    }
 
     @UIDsl
     inline fun UIClickData.animate(handler: AnimationBuilder.() -> Unit) {
@@ -173,12 +232,7 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
 
     @UIDsl
     fun close(space: ComponentSpace = Slot.RowSixSlotFive, item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
-        this.ui.addComponent(CloseUIComponent(space, item))
-    }
-
-    fun build(): MacrocosmUI {
-        ui.title = text(title)
-        return ui
+        this.page.addComponent(CloseUIComponent(space, item))
     }
 
     infix fun Slot.rect(other: Slot): ComponentSpace {

@@ -9,7 +9,9 @@ import space.maxus.macrocosm.ui.dsl.macrocosmUi
 internal fun specificCollectionUi(player: MacrocosmPlayer, ty: CollectionType): MacrocosmUI = macrocosmUi("collection_specific", UIDimensions.SIX_X_NINE) {
     title = "Collections ► ${ty.inst.name}"
 
-    background()
+    page {
+        background()
 
-    // TODO: collection UI
+        // TODO: collection UI
+    }
 }

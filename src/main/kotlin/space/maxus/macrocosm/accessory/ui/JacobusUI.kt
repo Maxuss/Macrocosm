@@ -122,7 +122,7 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
             )
         ) { e ->
             e.bukkitEvent.isCancelled = true
-            e.player.openGUI(player.accessoryBag.ui(player))
+            player.accessoryBag.ui(player).open(e.player)
         }
     }
 }

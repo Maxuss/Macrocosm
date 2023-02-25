@@ -34,7 +34,7 @@ fun thaumaturgyUi(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigot
             )
         ) { e ->
             e.bukkitEvent.isCancelled = true
-            e.player.openGUI(player.accessoryBag.ui(player))
+            player.accessoryBag.ui(player).open(e.player)
         }
         placeholder(
             Slots.RowOneSlotFour,

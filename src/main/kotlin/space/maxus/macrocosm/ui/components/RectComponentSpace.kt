@@ -1,26 +1,34 @@
 package space.maxus.macrocosm.ui.components
 
-class RectComponentSpace(
-    min: Slot,
-    max: Slot,
+import space.maxus.macrocosm.ui.UIDimensions
+
+data class RectComponentSpace(
+    private val min: ComponentSpace,
+    private val max: ComponentSpace,
 ): ComponentSpace {
     private val contents: MutableList<Int> = mutableListOf()
-    val width: Int
+    var width: Int? = null
 
-    init {
-        width = max.column - min.column + 1
-        for(row in min.row..max.row) {
-            for(col in min.column..max.column) {
-                contents.add(Slot(row, col).value)
+    fun initContentsIfNull(dim: UIDimensions) {
+        if(this.width == null) {
+            val slotMin = Slot.fromRaw(min.enumerate(dim).first())
+            val slotMax = Slot.fromRaw(max.enumerate(dim).first())
+            width = slotMax.column - slotMin.column + 1
+            for(row in slotMin.row..slotMax.row) {
+                for(col in slotMin.column..slotMax.column) {
+                    contents.add(Slot(row, col).value)
+                }
             }
         }
     }
 
-    override fun contains(slot: Int): Boolean {
+    override fun contains(slot: Int, dim: UIDimensions): Boolean {
+        this.initContentsIfNull(dim)
         return contents.contains(slot)
     }
 
-    override fun enumerate(): List<Int> {
+    override fun enumerate(dim: UIDimensions): List<Int> {
+        this.initContentsIfNull(dim)
         return contents
     }
 }

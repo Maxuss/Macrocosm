@@ -3,17 +3,17 @@ package space.maxus.macrocosm.ui.components
 import net.axay.kspigot.sound.sound
 import org.bukkit.Sound
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
-import space.maxus.macrocosm.ui.UIComponent
 
-data class SwitchUIComponent(
-    val space: ComponentSpace,
+class SwitchUIComponent(
+    space: ComponentSpace,
     val item: ItemComponentRepr,
     val ui: Identifier
-): UIComponent {
+): SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         val ui = Registry.UI.find(ui)
@@ -27,23 +27,14 @@ data class SwitchUIComponent(
         }
     }
 
-    override fun wasClicked(slot: Int): Boolean {
-        return space.contains(slot)
-    }
-
-    override fun render(inv: Inventory, ui: MacrocosmUI) {
-        val stack = item.item
-        for(slot in space.enumerate()) {
-            inv.setItem(slot, stack)
-        }
-    }
+    override fun render(inv: Inventory): ItemStack = item.item
 }
 
-data class DelegatedSwitchUIComponent(
-    val space: ComponentSpace,
+class DelegatedSwitchUIComponent(
+    space: ComponentSpace,
     val item: ItemComponentRepr,
     val ui: MacrocosmUI
-): UIComponent {
+): SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         click.instance.switch(ui)
@@ -53,14 +44,5 @@ data class DelegatedSwitchUIComponent(
         }
     }
 
-    override fun wasClicked(slot: Int): Boolean {
-        return space.contains(slot)
-    }
-
-    override fun render(inv: Inventory, ui: MacrocosmUI) {
-        val stack = item.item
-        for(slot in space.enumerate()) {
-            inv.setItem(slot, stack)
-        }
-    }
+    override fun render(inv: Inventory): ItemStack = item.item
 }

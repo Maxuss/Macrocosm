@@ -34,50 +34,54 @@ fun collUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("collection_main"
     val unlockedCollections = allCollections.filter { player.collections[it] > 0 }
     val maxedCollections = allCollections.filter { player.collections.isMaxLevel(it) }
 
-    background()
-
-    switchUi(Slot.RowOneSlotFive, { collRankings(player) }, ItemValue.placeholderDescripted(
-        Material.PAINTING,
-        "<green>Collection",
-        "View all of the items available",
-        "in Macrocosm. Collect more of an",
-        "item to unlock rewards on your",
-        "way to becoming a master of",
-        "Macroocsm!",
-        "",
-        *(if (unlockedCollections.size == allCollections.size)
-            buildBar(allCollections.size, maxedCollections.size).toList().toTypedArray()
-        else
-            buildBar(allCollections.size, unlockedCollections.size, "Collection Unlocked").toList()
-                .toTypedArray()),
-        "",
-        "<yellow>Click to show rankings!"
-    ))
-
-    CollectionSection.values().forEachIndexed { i, section ->
-        val allRelated = allCollections.filter { it.inst.section == section }
-        val unlocked = allRelated.filter { player.collections[it] > 0 }
+    page {
+        background()
 
         switchUi(
-            sectionSlots[i],
-            { sectionUi(player, section, allRelated, unlocked) },
-            ItemValue.placeholderDescripted(
-                section.mat,
-                "<aqua>${section.name.capitalized()} Collection",
-                "View your ${section.name.capitalized()} Collection!",
+            Slot.RowOneSlotFive, { collRankings(player) }, ItemValue.placeholderDescripted(
+                Material.PAINTING,
+                "<green>Collection",
+                "View all of the items available",
+                "in Macrocosm. Collect more of an",
+                "item to unlock rewards on your",
+                "way to becoming a master of",
+                "Macroocsm!",
                 "",
-                *(if (unlocked.size == allRelated.size)
-                    buildBar(allRelated.size, allRelated.count { player.collections.isMaxLevel(it) }).toList()
-                        .toTypedArray()
+                *(if (unlockedCollections.size == allCollections.size)
+                    buildBar(allCollections.size, maxedCollections.size).toList().toTypedArray()
                 else
-                    buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
+                    buildBar(allCollections.size, unlockedCollections.size, "Collection Unlocked").toList()
+                        .toTypedArray()),
                 "",
-                "<yellow>Click to view!"
+                "<yellow>Click to show rankings!"
             )
         )
-    }
 
-    close()
+        CollectionSection.values().forEachIndexed { i, section ->
+            val allRelated = allCollections.filter { it.inst.section == section }
+            val unlocked = allRelated.filter { player.collections[it] > 0 }
+
+            switchUi(
+                sectionSlots[i],
+                { sectionUi(player, section, allRelated, unlocked) },
+                ItemValue.placeholderDescripted(
+                    section.mat,
+                    "<aqua>${section.name.capitalized()} Collection",
+                    "View your ${section.name.capitalized()} Collection!",
+                    "",
+                    *(if (unlocked.size == allRelated.size)
+                        buildBar(allRelated.size, allRelated.count { player.collections.isMaxLevel(it) }).toList()
+                            .toTypedArray()
+                    else
+                        buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
+                    "",
+                    "<yellow>Click to view!"
+                )
+            )
+        }
+
+        close()
+    }
 }
 
 fun collRankings(player: MacrocosmPlayer) = macrocosmUi("collection_rankings", UIDimensions.SIX_X_NINE) {
@@ -87,59 +91,61 @@ fun collRankings(player: MacrocosmPlayer) = macrocosmUi("collection_rankings", U
     val unlockedCollections = allCollections.filter { player.collections[it] > 0 }
     val maxedCollections = allCollections.filter { player.collections.isMaxLevel(it) }
 
-    background()
-
-    switchUi(
-        Slot.RowOneSlotFive,
-        { collUi(player) },
-        ItemValue.placeholderDescripted(
-            Material.PAINTING,
-            "<green>Collection",
-            "View all of the items available",
-            "in Macrocosm. Collect more of an",
-            "item to unlock rewards on your",
-            "way to becoming a master of",
-            "Macrocosm!",
-            "",
-            *(if (unlockedCollections.size == allCollections.size)
-                buildBar(allCollections.size, maxedCollections.size).toList().toTypedArray()
-            else
-                buildBar(allCollections.size, unlockedCollections.size, "Collection Unlocked").toList()
-                    .toTypedArray()),
-            "",
-            "<yellow>Click to hide rankings!"
-        )
-    )
-
-    CollectionSection.values().forEachIndexed { i, section ->
-        val allRelated = allCollections.filter { it.inst.section == section }
-        val unlocked = allRelated.filter { player.collections[it] > 0 }
+    page {
+        background()
 
         switchUi(
-            sectionSlots[i],
-            { sectionUi(player, section, allRelated, unlocked) },
-            ItemValue.placeholderDescriptedGlow(
-                section.mat,
-                "<aqua>${section.name.capitalized()} Collection",
-                "View your ${section.name.capitalized()} Collection!",
+            Slot.RowOneSlotFive,
+            { collUi(player) },
+            ItemValue.placeholderDescripted(
+                Material.PAINTING,
+                "<green>Collection",
+                "View all of the items available",
+                "in Macrocosm. Collect more of an",
+                "item to unlock rewards on your",
+                "way to becoming a master of",
+                "Macrocosm!",
                 "",
-                *(if (unlocked.size == allRelated.size)
-                    buildBar(allRelated.size, allRelated.count { player.collections.isMaxLevel(it) }).toList()
-                        .toTypedArray()
+                *(if (unlockedCollections.size == allCollections.size)
+                    buildBar(allCollections.size, maxedCollections.size).toList().toTypedArray()
                 else
-                    buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
+                    buildBar(allCollections.size, unlockedCollections.size, "Collection Unlocked").toList()
+                        .toTypedArray()),
                 "",
-                *aggregateRankings(player, allRelated),
-                "",
-                "<dark_gray>Rankings take ~10 minutes to refresh.",
-                "<dark_gray>Requires 25k in collection to be ranked.",
-                "",
-                "<yellow>Click to view!"
+                "<yellow>Click to hide rankings!"
             )
         )
-    }
 
-    close()
+        CollectionSection.values().forEachIndexed { i, section ->
+            val allRelated = allCollections.filter { it.inst.section == section }
+            val unlocked = allRelated.filter { player.collections[it] > 0 }
+
+            switchUi(
+                sectionSlots[i],
+                { sectionUi(player, section, allRelated, unlocked) },
+                ItemValue.placeholderDescriptedGlow(
+                    section.mat,
+                    "<aqua>${section.name.capitalized()} Collection",
+                    "View your ${section.name.capitalized()} Collection!",
+                    "",
+                    *(if (unlocked.size == allRelated.size)
+                        buildBar(allRelated.size, allRelated.count { player.collections.isMaxLevel(it) }).toList()
+                            .toTypedArray()
+                    else
+                        buildBar(allRelated.size, unlocked.size, "Collection Unlocked").toList().toTypedArray()),
+                    "",
+                    *aggregateRankings(player, allRelated),
+                    "",
+                    "<dark_gray>Rankings take ~10 minutes to refresh.",
+                    "<dark_gray>Requires 25k in collection to be ranked.",
+                    "",
+                    "<yellow>Click to view!"
+                )
+            )
+        }
+
+        close()
+    }
 }
 
 private val rankingsCached: Cache<CollectionType, List<UUID>> =

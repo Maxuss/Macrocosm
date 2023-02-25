@@ -271,7 +271,7 @@ fun thaumaturgyTest() = command("thaum") {
 fun accessoriesCommand() = command("accessories") {
     runsCatching {
         val mc = player.macrocosm!!
-        player.openGUI(mc.accessoryBag.ui(mc))
+        mc.accessoryBag.ui(mc).open(player)
     }
 }
 

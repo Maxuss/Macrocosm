@@ -5,15 +5,15 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
-import space.maxus.macrocosm.ui.UIComponent
 
-class PreviousUIComponent(val space: ComponentSpace): UIComponent {
+class PreviousUIComponent(space: ComponentSpace): SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         val last = click.player.uiHistory.lastOrNull() ?: return
@@ -28,16 +28,10 @@ class PreviousUIComponent(val space: ComponentSpace): UIComponent {
         click.instance.switch(ui, true)
     }
 
-    override fun wasClicked(slot: Int): Boolean {
-        return space.contains(slot)
-    }
-
-    override fun render(inv: Inventory, ui: MacrocosmUI) {
-        val paper = inv.viewers.first() as? Player ?: return
-        val player = paper.macrocosm ?: return
-        val previousName = Registry.UI.find(player.uiHistory.lastOrNull() ?: return).title.str()
-        for(slot in space.enumerate()) {
-            inv.setItem(slot, ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To $previousName"))
-        }
+    override fun render(inv: Inventory): ItemStack {
+        val paper = inv.viewers.first() as? Player ?: return ItemStack(Material.AIR)
+        val player = paper.macrocosm ?: return ItemStack(Material.AIR)
+        val previousName = Registry.UI.find(player.uiHistory.lastOrNull() ?: return ItemStack(Material.AIR)).title.str()
+        return ItemValue.placeholderDescripted(Material.ARROW, "<yellow>Go Back", "To $previousName")
     }
 }

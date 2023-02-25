@@ -28,18 +28,26 @@ val InventoryAction.isInUi get() =
 class MacrocosmUIInstance internal constructor(
     val baseUi: Inventory,
     val dimensions: UIDimensions,
-    private val componentTree: MutableList<UIComponent>,
+    private val pages: MutableList<UIPage>,
     val holder: Player,
     val title: Component,
     val base: MacrocosmUI,
     var extraClickHandler: (UIClickData) -> Unit,
+    var defaultPage: Int
 ) {
     private lateinit var clickHandler: Listener
     private var abandoned: Boolean = false
+    private var currentPage: Int = defaultPage
     private var animationLock: AtomicBoolean = AtomicBoolean(false)
 
     fun reload() {
-        base.render(holder.openInventory.topInventory)
+        base.render(holder.openInventory.topInventory, currentPage)
+        holder.updateInventory()
+    }
+
+    fun switchPage(page: Int) {
+        this.currentPage = page
+        base.render(holder.openInventory.topInventory, page)
         holder.updateInventory()
     }
 
@@ -48,8 +56,9 @@ class MacrocosmUIInstance internal constructor(
         if(animationLock.get())
             return
         animationLock.set(true)
+        val pageLock = currentPage
         task(sync = false, period = 1L) {
-            if(animation.shouldStop(tick) || baseUi.viewers.isEmpty() || abandoned) {
+            if(animation.shouldStop(tick) || baseUi.viewers.isEmpty() || abandoned || currentPage != pageLock) {
                 it.cancel()
                 animationLock.set(false)
                 return@task
@@ -72,16 +81,16 @@ class MacrocosmUIInstance internal constructor(
                     e.isCancelled = true
                     return
                 }
+                val clickData = UIClickData(e, holder, (e.whoClicked as Player).macrocosm!!, baseUi, this@MacrocosmUIInstance)
+                extraClickHandler(clickData)
                 if(e.clickedInventory == e.view.bottomInventory)
                     return
-                val clickData = UIClickData(e, holder, (e.whoClicked as Player).macrocosm!!, baseUi, this@MacrocosmUIInstance)
-                for (component in componentTree) {
-                    if (component.wasClicked(e.slot)) {
+                for (component in pages[currentPage].components) {
+                    if (component.wasClicked(e.slot, dimensions)) {
                         component.handleClick(clickData)
                         break
                     }
                 }
-                extraClickHandler(clickData)
             }
 
             @EventHandler
@@ -104,7 +113,7 @@ class MacrocosmUIInstance internal constructor(
                 holder.macrocosm?.uiHistory?.add(base.id)
             else
                 holder.macrocosm?.uiHistory?.removeLast()
-            other.render(newBase)
+            other.render(newBase, other.defaultPage)
             holder.closeInventory()
             holder.openInventory(newBase)
             holder.updateInventory()
@@ -119,7 +128,7 @@ class MacrocosmUIInstance internal constructor(
             else
                 holder.macrocosm?.uiHistory?.removeLast()
             val inv = holder.openInventory.topInventory as CraftInventoryCustom
-            other.render(inv)
+            other.render(inv, other.defaultPage)
             val activeContainer = (holder.player as CraftPlayer).handle.containerMenu
             val containerId = activeContainer.containerId
             val packet = ClientboundOpenScreenPacket(containerId, CraftContainer.getNotchInventoryType(inv), PaperAdventure.asVanilla(other.title))

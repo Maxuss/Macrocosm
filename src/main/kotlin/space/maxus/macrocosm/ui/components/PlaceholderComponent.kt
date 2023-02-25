@@ -2,44 +2,26 @@ package space.maxus.macrocosm.ui.components
 
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
-import space.maxus.macrocosm.ui.UIComponent
 
-data class PlaceholderComponent(
-    val space: ComponentSpace,
+class PlaceholderComponent(
+    space: ComponentSpace,
     val item: ItemStack
-): UIComponent {
+): SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
     }
 
-    override fun wasClicked(slot: Int): Boolean {
-        return space.contains(slot)
-    }
-
-    override fun render(inv: Inventory, ui: MacrocosmUI) {
-        for(slot in space.enumerate()) {
-            inv.setItem(slot, item)
-        }
-    }
+    override fun render(inv: Inventory): ItemStack = item
 }
 
-data class AdvancedPlaceholderComponent(
-    val space: ComponentSpace,
+class AdvancedPlaceholderComponent(
+    space: ComponentSpace,
     val item: ItemComponentRepr
-): UIComponent {
+): SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
     }
 
-    override fun wasClicked(slot: Int): Boolean {
-        return space.contains(slot)
-    }
-
-    override fun render(inv: Inventory, ui: MacrocosmUI) {
-        for(slot in space.enumerate()) {
-            inv.setItem(slot, item.item)
-        }
-    }
+    override fun render(inv: Inventory): ItemStack = item.item
 }

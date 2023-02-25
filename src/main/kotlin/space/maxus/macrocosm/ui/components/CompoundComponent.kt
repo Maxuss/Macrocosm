@@ -4,21 +4,26 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
-import space.maxus.macrocosm.ui.UIComponent
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.util.unreachable
 
-class SpacedCompoundComponent<M>(
-    val space: ComponentSpace,
-    val values: List<M>,
+open class CompoundComponent<M>(
+    space: ComponentSpace,
+    var values: List<M>,
     val map: (M) -> ItemStack,
     val clickHandler: (UIClickData, M) -> Unit,
     val transparent: Boolean = false
-    ): UIComponent {
+    ): SpacedComponent(space) {
     private val slotToValue: MutableList<Int> = mutableListOf()
     private var scrollProgress: Int = 0
     private var slicedContent: List<M> = listOf()
+    private var lastDim: UIDimensions = UIDimensions.SIX_X_NINE
 
-    init {
-        for(slot in space.enumerate()) {
+    protected open fun initContentsIfNull(dim: UIDimensions) {
+        lastDim = dim
+        if(slotToValue.isNotEmpty())
+            return
+        for(slot in space.enumerate(dim)) {
             if(!slotToValue.contains(slot))
                 slotToValue.add(slot)
         }
@@ -30,16 +35,17 @@ class SpacedCompoundComponent<M>(
         val value = scrollProgress + amount
 
         val doScroll = if(slotToValue.size + value <= values.size) true
-            else if(space is RectComponentSpace)
-                (slotToValue.size + value <= values.size + (space.width - (values.size % space.width)))
-            else false
+            else if(space is RectComponentSpace) {
+                space.initContentsIfNull(lastDim)
+                (slotToValue.size + value <= values.size + (space.width!! - (values.size % space.width!!)))
+            } else false
         if(doScroll) {
             scrollProgress = value
             recalculateSlicedContent()
         }
     }
 
-    private fun recalculateSlicedContent() {
+    open fun recalculateSlicedContent() {
         if (scrollProgress > values.size)
             scrollProgress = values.size
         else if(scrollProgress < 0)
@@ -55,6 +61,7 @@ class SpacedCompoundComponent<M>(
     }
 
     override fun handleClick(click: UIClickData) {
+        initContentsIfNull(click.instance.dimensions)
         click.bukkit.isCancelled = true
         val index = slotToValue.indexOf(click.bukkit.slot)
         if(slicedContent.size <= index)
@@ -63,7 +70,8 @@ class SpacedCompoundComponent<M>(
     }
 
     override fun render(inv: Inventory, ui: MacrocosmUI) {
-        for(slot in space.enumerate()) {
+        initContentsIfNull(ui.dimensions)
+        for(slot in space.enumerate(ui.dimensions)) {
             val index = slotToValue.indexOf(slot)
             if(slicedContent.size <= index) {
                 if(!transparent)
@@ -74,7 +82,31 @@ class SpacedCompoundComponent<M>(
         }
     }
 
-    override fun wasClicked(slot: Int): Boolean {
-        return space.contains(slot)
+    override fun render(inv: Inventory): ItemStack {
+        unreachable()
+    }
+}
+
+class LazyCompoundComponent<M>(
+    space: ComponentSpace,
+    val valueSupplier: () -> List<M>,
+    map: (M) -> ItemStack,
+    clickHandler: (UIClickData, M) -> Unit,
+    transparent: Boolean = false
+): CompoundComponent<M>(
+    space,
+    listOf(),
+    map,
+    clickHandler,
+    transparent
+) {
+    override fun recalculateSlicedContent() {
+        this.values = valueSupplier()
+        super.recalculateSlicedContent()
+    }
+
+    override fun render(inv: Inventory, ui: MacrocosmUI) {
+        this.recalculateSlicedContent()
+        super.render(inv, ui)
     }
 }

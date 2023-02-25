@@ -1,11 +1,13 @@
 package space.maxus.macrocosm.listeners
 
 import io.papermc.paper.event.player.AsyncChatEvent
-import net.axay.kspigot.extensions.bukkit.toLegacyString
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import space.maxus.macrocosm.players.macrocosm
+import space.maxus.macrocosm.text.str
+import space.maxus.macrocosm.text.text
 
 /**
  * Listener for formatting player's rank and messages
@@ -13,8 +15,8 @@ import space.maxus.macrocosm.players.macrocosm
 object ChatHandler : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun formatRank(e: AsyncChatEvent) {
-        e.renderer { source, _, message, _ ->
-            source.macrocosm?.rank?.format(source.name, message.toLegacyString()) ?: message
-        }
+        e.isCancelled = true
+        val formatted = e.player.macrocosm?.rank?.format(e.player.name, e.originalMessage().str()) ?: text("Something went very wrong")
+        Bukkit.broadcast(formatted)
     }
 }

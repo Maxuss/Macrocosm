@@ -1,7 +1,9 @@
 package space.maxus.macrocosm.ui.components
 
-interface ComponentSpace {
-    fun contains(slot: Int): Boolean
+import space.maxus.macrocosm.ui.UIDimensions
 
-    fun enumerate(): List<Int>
+interface ComponentSpace {
+    fun contains(slot: Int, dim: UIDimensions): Boolean
+
+    fun enumerate(dim: UIDimensions): List<Int>
 }

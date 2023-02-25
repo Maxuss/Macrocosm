@@ -1,16 +1,54 @@
 package space.maxus.macrocosm.ui.components
 
+import space.maxus.macrocosm.ui.UIDimensions
+
 data class Slot(val row: Int, val column: Int): ComponentSpace {
     val value = row * 9 + column
-    override fun contains(slot: Int): Boolean {
+
+    override fun contains(slot: Int, dim: UIDimensions): Boolean {
+        if(dim.height < row + 1) {
+            // need to clamp value
+            return row.coerceIn(0 until dim.height) * 9 + column == slot
+        }
         return slot == value
     }
 
-    override fun enumerate(): List<Int> {
+    override fun enumerate(dim: UIDimensions): List<Int> {
+        if(dim.height < row + 1) {
+            // need to clamp value
+            return listOf(row.coerceIn(0 until dim.height) * 9 + column)
+        }
         return listOf(value)
     }
 
+    data class LastRowSlot(val column: Int): ComponentSpace {
+        override fun contains(slot: Int, dim: UIDimensions): Boolean {
+            return (dim.height - 1) * 9 + column == slot
+        }
+
+        override fun enumerate(dim: UIDimensions): List<Int> {
+            return listOf((dim.height - 1) * 9 + column)
+        }
+    }
+
+    object AllSlotsSpace: ComponentSpace {
+        override fun contains(slot: Int, dim: UIDimensions): Boolean {
+            return true
+        }
+
+        override fun enumerate(dim: UIDimensions): List<Int> {
+            return (0 until dim.size).toList()
+        }
+
+    }
+
     companion object {
+        fun fromRaw(raw: Int): Slot {
+            val row = raw / 9
+            val column = raw % 9
+            return Slot(row, column)
+        }
+
         // ROW ONE
         val RowOneSlotOne = Slot(0, 0)
         val RowOneSlotTwo = Slot(0, 1)
@@ -77,7 +115,17 @@ data class Slot(val row: Int, val column: Int): ComponentSpace {
         val RowSixSlotEight = Slot(5, 7)
         val RowSixSlotNine = Slot(5, 8)
 
-        val All = LinearComponentSpace((0 until 9 * 6).toList())
-        val Border = InventoryBorderSlots(1)
+        // ROW LAST
+        val RowLastSlotOne = LastRowSlot(0)
+        val RowLastSlotTwo = LastRowSlot(1)
+        val RowLastSlotThree = LastRowSlot(2)
+        val RowLastSlotFour = LastRowSlot(3)
+        val RowLastSlotFive = LastRowSlot(4)
+        val RowLastSlotSix = LastRowSlot(5)
+        val RowLastSlotSeven = LastRowSlot(6)
+        val RowLastSlotEight = LastRowSlot(7)
+        val RowLastSlotNine = LastRowSlot(8)
+
+        val All = AllSlotsSpace
     }
 }
