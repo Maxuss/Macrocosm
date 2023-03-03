@@ -50,7 +50,7 @@ fun doTestEmitPost() = command("doemit") {
 
 fun testJacobus() = command("jacobustest") {
     runsCatching {
-        player.openGUI(jacobusUi(player.macrocosm!!))
+        jacobusUi(player.macrocosm!!).open(player)
     }
 }
 

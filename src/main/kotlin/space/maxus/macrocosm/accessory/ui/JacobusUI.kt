@@ -1,9 +1,7 @@
 package space.maxus.macrocosm.accessory.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
-import org.bukkit.Material
 import org.bukkit.Sound
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.item.ItemValue
@@ -12,18 +10,20 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.players.banking.Transaction
 import space.maxus.macrocosm.players.banking.transact
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.giveOrDrop
 
 val jacobusCoinsSpent by lazy { MacrocosmMetrics.counter("jacobus_coins_spent", "Coins spent on Jacobus upgrades") }
 
-fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
-    defaultPage = 0
-    title = text("Accessory Bag Upgrades")
+fun jacobusUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("jacobus", UIDimensions.SIX_X_NINE) {
+    title = "Accessory Bag Upgrades"
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+    pageLazy {
+        background()
 
         val bag = player.accessoryBag
 
@@ -37,13 +37,10 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
             else -> 1_500_000
         }
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.closeInventory()
-        }
+        close()
 
         button(
-            Slots.RowThreeSlotThree, ItemValue.placeholderHeadDesc(
+            Slot.RowThreeSlotThree, ItemValue.placeholderHeadDesc(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2I2NDhiOWE0NGUyODBiY2RmMjVmNGE2NmE5N2JkNWMzMzU0MmU1ZTgyNDE1ZTE1YjQ3NWM2Yjk5OWI4ZDYzNSJ9fX0=",
                 "<green>Accessory Bag Upgrades",
                 "Increases the size of your",
@@ -60,7 +57,6 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                 "<yellow>Click to buy!"
             )
         ) { e ->
-            e.bukkitEvent.isCancelled = true
             if (player.purse >= nextPrice.toBigDecimal()) {
                 val amount = transact(nextPrice.toBigDecimal(), player.ref, Transaction.Kind.OUTGOING)
                 jacobusCoinsSpent.inc(amount.toDouble())
@@ -70,7 +66,7 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                 bag.capacity += nextAmount
                 if (bag.jacobusSlots == 8) {
                     // award a register on 5th purchase
-                    e.player.giveOrDrop(Registry.ITEM.find(id("jacobus_register")).build(player)!!)
+                    e.paper.giveOrDrop(Registry.ITEM.find(id("jacobus_register")).build(player)!!)
                     player.sendMessage("<green>You have been awarded by <gold>Jacqueefis<green> with a <gold>Jacqueefis Register<green>!")
                 }
                 var count = 0
@@ -79,14 +75,14 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                     sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                         volume = 3f
                         pitch = 1 + count * .1f
-                        playAt(e.player.location)
+                        playAt(e.paper.location)
                     }
                     if (count >= 6) {
                         it.cancel()
                         sound(Sound.BLOCK_ANVIL_USE) {
                             pitch = 2f
                             volume = 3f
-                            playAt(e.player.location)
+                            playAt(e.paper.location)
                         }
                         return@task
                     }
@@ -99,19 +95,19 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                         )
                     } Coins<yellow>!"
                 )
-                e.player.openGUI(jacobusUi(player))
+                e.instance.reload()
             } else {
                 sound(Sound.ENTITY_VILLAGER_NO) {
                     volume = 2f
                     pitch = 2f
-                    playFor(e.player)
+                    playFor(e.paper)
                 }
                 player.sendMessage("<red>Not enough coins!")
             }
         }
 
         button(
-            Slots.RowThreeSlotSeven,
+            Slot.RowThreeSlotSeven,
             ItemValue.placeholderHeadDesc(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYxYTkxOGMwYzQ5YmE4ZDA1M2U1MjJjYjkxYWJjNzQ2ODkzNjdiNGQ4YWEwNmJmYzFiYTkxNTQ3MzA5ODVmZiJ9fX0=",
                 "<green>Accessory Bag Shortcut",
@@ -121,8 +117,7 @@ fun jacobusUi(player: MacrocosmPlayer): GUI<ForInventoryFourByNine> = kSpigotGUI
                 "<yellow>Click to open!"
             )
         ) { e ->
-            e.bukkitEvent.isCancelled = true
-            player.accessoryBag.ui(player).open(e.player)
+            player.accessoryBag.ui(player).open(e.paper)
         }
     }
 }

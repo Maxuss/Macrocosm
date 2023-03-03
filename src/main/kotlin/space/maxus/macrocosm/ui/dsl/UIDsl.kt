@@ -7,10 +7,7 @@ import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
-import space.maxus.macrocosm.ui.MacrocosmUI
-import space.maxus.macrocosm.ui.UIClickData
-import space.maxus.macrocosm.ui.UIDimensions
-import space.maxus.macrocosm.ui.UIPage
+import space.maxus.macrocosm.ui.*
 import space.maxus.macrocosm.ui.animation.CompositeAnimation
 import space.maxus.macrocosm.ui.animation.RenderTask
 import space.maxus.macrocosm.ui.animation.UIRenderHelper
@@ -41,10 +38,23 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
         this.ui.addPage(bld.page)
     }
 
+    @UIDsl
+    fun pageLazy(idx: Int = pageIndex + 1, builder: PageBuilder.() -> Unit) {
+        this.pageIndex = idx
+        val page = LazyUIPage(idx, builder)
+        this.ui.addPage(page)
+    }
+
     fun build(): MacrocosmUI {
         ui.title = text(title)
         return ui
     }
+}
+
+class LazyUIPage(idx: Int, private val config: PageBuilder.() -> Unit): UIPage(idx) {
+    override var components: MutableList<UIComponent>
+        get() = PageBuilder(UIPage(index)).apply(config).page.components
+        set(_) { /* no-op */ }
 }
 
 class PageBuilder(internal val page: UIPage) {

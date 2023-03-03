@@ -9,7 +9,8 @@ enum class UIs(val ui: MacrocosmUI? = null) {
     COLLECTION_SECTION,
     COLLECTION_SPECIFIC,
 
-    ACCESSORY_BAG
+    ACCESSORY_BAG,
+    JACOBUS
 
     ;
 
