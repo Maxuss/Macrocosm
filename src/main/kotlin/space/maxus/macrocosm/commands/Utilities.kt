@@ -264,7 +264,7 @@ fun connectDiscordCommand() = command("discordauth") {
 fun thaumaturgyTest() = command("thaum") {
     runsCatching {
         val mc = player.macrocosm!!
-        player.openGUI(thaumaturgyUi(mc))
+        thaumaturgyUi(mc).open(player)
     }
 }
 

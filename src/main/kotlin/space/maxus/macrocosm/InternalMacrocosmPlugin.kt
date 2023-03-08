@@ -12,8 +12,7 @@ import org.bukkit.Bukkit
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
-import space.maxus.macrocosm.accessory.ui.LearnPower
-import space.maxus.macrocosm.achievement.json.AchievementParser
+ import space.maxus.macrocosm.achievement.json.AchievementParser
 import space.maxus.macrocosm.api.KeyManager
 import space.maxus.macrocosm.area.AreaLevelDbAdapter
 import space.maxus.macrocosm.area.AreaType
@@ -267,7 +266,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         server.pluginManager.registerEvents(CustomBlockHandlers, this)
         server.pluginManager.registerEvents(CustomBlockHandlers.WoodHandlers, this)
         server.pluginManager.registerEvents(AccessoryBag.Handlers, this)
-        server.pluginManager.registerEvents(LearnPower, this)
         server.pluginManager.registerEvents(NPCLevelDbAdapter, this)
         server.pluginManager.registerEvents(AreaLevelDbAdapter, this)
 

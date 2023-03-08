@@ -10,7 +10,10 @@ enum class UIs(val ui: MacrocosmUI? = null) {
     COLLECTION_SPECIFIC,
 
     ACCESSORY_BAG,
-    JACOBUS
+    JACOBUS,
+    LEARN_POWER,
+    THAUMATURGY,
+    POWER_STONE_GUIDE
 
     ;
 

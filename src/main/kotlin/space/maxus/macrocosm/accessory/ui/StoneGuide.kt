@@ -1,35 +1,22 @@
 package space.maxus.macrocosm.accessory.ui
 
-import net.axay.kspigot.gui.*
-import org.bukkit.Material
 import space.maxus.macrocosm.accessory.power.StoneAccessoryPower
-import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 
-fun powerStonesGuide(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    defaultPage = 0
-    title = text("Power Stones Guide")
+fun powerStonesGuide(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("power_stone_guide", UIDimensions.SIX_X_NINE) {
+    title = "Power Stones Guide"
 
-    page(0) {
-        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+    page {
+        background()
 
-        button(
-            Slots.RowOneSlotFive,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Learn Power From Stones")
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(learnPowerUi(player, mutableListOf()))
-        }
+        goBack(Slot.RowSixSlotFive, learnPowerUi(player, mutableListOf()))
 
-        val compound = createCompound<StoneAccessoryPower>({ it.guideItem(player) }) { e, _ ->
-            e.bukkitEvent.isCancelled = true
-        }
-
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
-        compound.addContent(
-            Registry.ACCESSORY_POWER.iter().values.filterIsInstance<StoneAccessoryPower>()
-                .sortedByDescending { it.combatLevel })
+        compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
+            Registry.ACCESSORY_POWER.iter().values.filterIsInstance<StoneAccessoryPower>().sortedByDescending { it.combatLevel }, { it.guideItem(player) }) { _, _ -> }
     }
 }

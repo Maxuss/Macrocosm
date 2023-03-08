@@ -19,7 +19,7 @@ import space.maxus.macrocosm.util.giveOrDrop
 
 val jacobusCoinsSpent by lazy { MacrocosmMetrics.counter("jacobus_coins_spent", "Coins spent on Jacobus upgrades") }
 
-fun jacobusUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("jacobus", UIDimensions.SIX_X_NINE) {
+fun jacobusUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("jacobus", UIDimensions.FOUR_X_NINE) {
     title = "Accessory Bag Upgrades"
 
     pageLazy {
@@ -37,10 +37,10 @@ fun jacobusUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("jacobus", UID
             else -> 1_500_000
         }
 
-        close()
+        close(Slot.RowLastSlotFive)
 
         button(
-            Slot.RowThreeSlotThree, ItemValue.placeholderHeadDesc(
+            Slot.RowTwoSlotThree, ItemValue.placeholderHeadDesc(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2I2NDhiOWE0NGUyODBiY2RmMjVmNGE2NmE5N2JkNWMzMzU0MmU1ZTgyNDE1ZTE1YjQ3NWM2Yjk5OWI4ZDYzNSJ9fX0=",
                 "<green>Accessory Bag Upgrades",
                 "Increases the size of your",
@@ -106,8 +106,11 @@ fun jacobusUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("jacobus", UID
             }
         }
 
-        button(
-            Slot.RowThreeSlotSeven,
+        switchUi(
+            Slot.RowTwoSlotSeven,
+            {
+                player.accessoryBag.ui(player)
+            },
             ItemValue.placeholderHeadDesc(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYxYTkxOGMwYzQ5YmE4ZDA1M2U1MjJjYjkxYWJjNzQ2ODkzNjdiNGQ4YWEwNmJmYzFiYTkxNTQ3MzA5ODVmZiJ9fX0=",
                 "<green>Accessory Bag Shortcut",
@@ -116,9 +119,7 @@ fun jacobusUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("jacobus", UID
                 "",
                 "<yellow>Click to open!"
             )
-        ) { e ->
-            player.accessoryBag.ui(player).open(e.paper)
-        }
+        )
     }
 }
 

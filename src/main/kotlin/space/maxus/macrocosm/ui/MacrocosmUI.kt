@@ -12,7 +12,8 @@ import space.maxus.macrocosm.util.general.Ensure
 open class MacrocosmUI(
     val id: Identifier,
     val dimensions: UIDimensions,
-    val extraClickHandler: (UIClickData) -> Unit = { },
+    var extraClickHandler: (UIClickData) -> Unit = { },
+    var extraCloseHandler: (UICloseData) -> Unit = { }
 ) {
     var title: Component = Component.empty()
     var defaultPage: Int = 0
@@ -59,7 +60,7 @@ open class MacrocosmUI(
     }
 
     fun setup(base: Inventory, holder: Player): MacrocosmUIInstance {
-        return MacrocosmUIInstance(base, dimensions, pages.map { val copy = UIPage(it.index); copy.components = it.components.toMutableList().asReversed(); copy }.toMutableList(), holder, title, this, extraClickHandler, defaultPage).apply(MacrocosmUIInstance::start)
+        return MacrocosmUIInstance(base, dimensions, pages, holder, title, this, extraClickHandler, extraCloseHandler, defaultPage).apply(MacrocosmUIInstance::start)
     }
 
     object NullUi: MacrocosmUI(Identifier.NULL, UIDimensions.SIX_X_NINE)

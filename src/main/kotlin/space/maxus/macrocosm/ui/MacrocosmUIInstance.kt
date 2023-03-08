@@ -20,10 +20,10 @@ import org.bukkit.inventory.Inventory
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.ui.animation.UIAnimation
+import space.maxus.macrocosm.util.equalsAny
 import java.util.concurrent.atomic.AtomicBoolean
 
-val InventoryAction.isInUi get() =
-    this == InventoryAction.PICKUP_ALL || this == InventoryAction.PICKUP_HALF || this == InventoryAction.PICKUP_SOME || this == InventoryAction.PICKUP_ONE || this == InventoryAction.MOVE_TO_OTHER_INVENTORY
+val InventoryAction.isInUi get() = this.equalsAny(InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_HALF, InventoryAction.PICKUP_SOME, InventoryAction.PICKUP_ONE, InventoryAction.MOVE_TO_OTHER_INVENTORY, InventoryAction.PLACE_ALL, InventoryAction.PLACE_ONE, InventoryAction.PLACE_SOME)
 
 class MacrocosmUIInstance internal constructor(
     val baseUi: Inventory,
@@ -33,6 +33,7 @@ class MacrocosmUIInstance internal constructor(
     val title: Component,
     val base: MacrocosmUI,
     var extraClickHandler: (UIClickData) -> Unit,
+    var extraCloseHandler: (UICloseData) -> Unit,
     var defaultPage: Int
 ) {
     private lateinit var clickHandler: Listener
@@ -85,7 +86,7 @@ class MacrocosmUIInstance internal constructor(
                 extraClickHandler(clickData)
                 if(e.clickedInventory == e.view.bottomInventory)
                     return
-                for (component in pages[currentPage].components) {
+                for (component in pages[currentPage].components.reversed()) {
                     if (component.wasClicked(e.slot, dimensions)) {
                         component.handleClick(clickData)
                         break
@@ -105,6 +106,7 @@ class MacrocosmUIInstance internal constructor(
 
     fun switch(other: MacrocosmUI, reverse: Boolean = false): MacrocosmUIInstance {
         abandoned = true
+        this.extraCloseHandler(UICloseData(this.holder, this.holder.macrocosm!!, this.baseUi, this))
         clickHandler.unregister()
         if(other.dimensions != dimensions) {
             // Dimensions do not fit, we need a new inventory
@@ -143,6 +145,7 @@ class MacrocosmUIInstance internal constructor(
     fun close() {
         this.holder.macrocosm?.uiHistory?.clear()
         this.abandoned = true
+        this.extraCloseHandler(UICloseData(this.holder, this.holder.macrocosm ?: return, this.baseUi, this))
         this.clickHandler.unregister()
     }
 }

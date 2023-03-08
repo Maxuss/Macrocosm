@@ -24,9 +24,16 @@ class MacrocosmUIBuilder(val id: Identifier, dimensions: UIDimensions) {
     @UIDsl
     var title: String = ""
 
+    private val ui: MacrocosmUI = MacrocosmUI(id, dimensions)
     @UIDsl
-    var onClick: (UIClickData) -> Unit = { }
-    private val ui: MacrocosmUI = MacrocosmUI(id, dimensions, onClick)
+    var onClick: (UIClickData) -> Unit
+        set(v) { ui.extraClickHandler = v }
+        get() = ui.extraClickHandler
+    @UIDsl
+    var onClose: (UICloseData) -> Unit
+        set(v) { ui.extraCloseHandler = v }
+        get() = ui.extraCloseHandler
+
     private var pageIndex: Int = 0
 
     @UIDsl
@@ -104,6 +111,11 @@ class PageBuilder(internal val page: UIPage) {
         val compound = CompoundComponent(space, values.toList(), icon, handler, transparent = true)
         this.page.addComponent(compound)
         return compound
+    }
+
+    @UIDsl
+    fun storageSlot(space: ComponentSpace, fits: (ItemStack) -> Boolean = { true }, onPut: (UIClickData, ItemStack) -> Unit = { _, _ -> }, onTake: (UIClickData, ItemStack) -> Unit = { _, _ -> }) {
+        this.page.addComponent(StorageComponent(space, fits, onPut, onTake))
     }
 
     @UIDsl
