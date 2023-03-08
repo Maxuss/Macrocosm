@@ -1,38 +1,24 @@
 package space.maxus.macrocosm.achievement.ui
 
-import net.axay.kspigot.gui.GUIType
-import net.axay.kspigot.gui.Slots
-import net.axay.kspigot.gui.kSpigotGUI
-import net.axay.kspigot.gui.rectTo
-import org.bukkit.Material
-import space.maxus.macrocosm.achievement.Achievement
-import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Registry
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 
-fun achievementBrowser(player: MacrocosmPlayer) = kSpigotGUI(GUIType.FIVE_BY_NINE) {
-    title = text("Achievement Browser")
-    defaultPage = 0
+fun achievementBrowser(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("achievement_browser", UIDimensions.FIVE_X_NINE) {
+    title = "Achievement Browser"
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
-        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
-            it.bukkitEvent.isCancelled = true
-            it.player.closeInventory()
-        }
+    page {
+        background()
+        close()
 
-        val cmp = createCompound<Achievement>({ ach ->
+        val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight, Registry.ACHIEVEMENT.iter().values.sortedBy { it.rarity.ordinal }, { ach ->
             ach.buildItem(player)
-        }) { e, _ ->
-            e.bukkitEvent.isCancelled = true
-        }
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotEight, cmp)
+        }) { _, _ -> }
 
-        cmp.addContent(Registry.ACHIEVEMENT.iter().values)
-        cmp.sortContentBy { it.rarity.ordinal }
-
-        compoundScroll(Slots.RowOneSlotEight, ItemValue.placeholder(Material.ARROW, "<green>Back"), cmp, reverse = true)
-        compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Forward"), cmp)
+        compoundWidthScroll(Slot.RowFiveSlotEight, cmp, reverse = true)
+        compoundWidthScroll(Slot.RowFiveSlotNine, cmp)
     }
 }

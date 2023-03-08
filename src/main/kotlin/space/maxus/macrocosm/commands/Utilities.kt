@@ -75,7 +75,7 @@ private val vertices = mutableListOf<Location>()
 
 fun achievements() = command("achievements") {
     runsCatching {
-        player.openGUI(achievementBrowser(player.macrocosm!!))
+        achievementBrowser(player.macrocosm!!).open(player)
     }
 }
 
