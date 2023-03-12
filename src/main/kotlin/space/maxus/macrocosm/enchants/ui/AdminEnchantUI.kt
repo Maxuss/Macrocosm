@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.enchants.ui
 
-import net.axay.kspigot.gui.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.conversations.ConversationContext
@@ -16,22 +15,25 @@ import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.item.MacrocosmItem
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.pad
 import java.util.*
 
-fun adminEnchantUi(item: MacrocosmItem, search: String = ""): GUI<ForInventorySixByNine> =
-    kSpigotGUI(GUIType.SIX_BY_NINE) {
-        defaultPage = 0
-        title = text("Enchanting")
+fun adminEnchantUi(item: MacrocosmItem, search: String = ""): MacrocosmUI =
+    macrocosmUi("admin_enchanting", UIDimensions.SIX_X_NINE) {
+        title = "Enchanting"
 
-        page(0) {
-            placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        page {
+            background()
 
-            val compound = createCompound<Enchantment>({ e ->
+            val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, Registry.ENCHANT.iter().values.filter {
+                it.applicable.contains(item.type) && it.name.lowercase().contains(search.lowercase())
+            }, { e ->
                 val name = e.name
                 val desc = e.description(1).map { it.str() }.toTypedArray()
 
@@ -59,47 +61,21 @@ fun adminEnchantUi(item: MacrocosmItem, search: String = ""): GUI<ForInventorySi
                     "<yellow>Click to select level!"
                 )
             }, { e, ench ->
-                e.bukkitEvent.isCancelled = true
-                e.player.openGUI(specificAdminEnchUi(e.player.macrocosm!!, item, ench))
+                e.instance.switch(specificAdminEnchUi(e.player, item, ench))
             })
 
-            compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
-
-            compound.addContent(Registry.ENCHANT.iter().values.filter {
-                it.applicable.contains(item.type) && it.name.lowercase().contains(search.lowercase())
-            })
-
-            compoundScroll(
-                Slots.RowOneSlotNine,
-                ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"),
-                compound,
-                scrollTimes = 1
+            compoundWidthScroll(
+                Slot.RowSixSlotNine,
+                cmp
             )
-            compoundScroll(
-                Slots.RowOneSlotEight,
-                ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"),
-                compound,
-                reverse = true,
-                scrollTimes = 1
+            compoundWidthScroll(
+                Slot.RowSixSlotEight,
+                cmp,
+                reverse = true
             )
 
-            compoundScroll(
-                Slots.RowSixSlotNine,
-                ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"),
-                compound,
-                scrollTimes = 4
-            )
-            compoundScroll(
-                Slots.RowSixSlotEight,
-                ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"),
-                compound,
-                reverse = true,
-                scrollTimes = 4
-            )
-
-            button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
-                e.bukkitEvent.isCancelled = true
-                e.player.closeInventory()
+            button(Slot.RowSixSlotOne, ItemValue.placeholderDescripted(Material.OAK_SIGN, "<yellow>Search", *(if(search.isNotBlank()) arrayOf("Current filter: <green>$search") else arrayOf()))) { e ->
+                e.paper.closeInventory()
                 val inputFilterPrompt = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
                         return ChatColor.YELLOW.toString() + "Input enchantments to search:"
@@ -110,16 +86,13 @@ fun adminEnchantUi(item: MacrocosmItem, search: String = ""): GUI<ForInventorySi
                     }
 
                     override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
-                        e.player.openGUI(
-                            adminEnchantUi(item, input)
-                        )
+                        adminEnchantUi(item, input).open(e.paper)
                         return Prompt.END_OF_CONVERSATION
                     }
 
                 }
 
-                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
-                    .buildConversation(e.player)
+                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.paper)
                 conv.begin()
             }
         }
@@ -129,16 +102,15 @@ private fun specificAdminEnchUi(
     player: MacrocosmPlayer,
     item: MacrocosmItem,
     ench: Enchantment
-): GUI<ForInventoryFourByNine> = kSpigotGUI(GUIType.FOUR_BY_NINE) {
-    defaultPage = 0
-    title = text("Enchantming -> ${ench.name}")
+): MacrocosmUI = macrocosmUi("admin_enchant_specific", UIDimensions.FOUR_X_NINE) {
+    title = "Enchanting -> ${ench.name}"
 
     page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        background()
 
-        val levelsCompound = createCompound<Optional<Int>>({ oLevel ->
+        compound(Slot.RowTwoSlotTwo rect Slot.RowTwoSlotEight, ench.levels.toList().map { Optional.of(it) }.pad(7, Optional.empty()), { oLevel ->
             if (oLevel.isEmpty)
-                return@createCompound ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
+                return@compound ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
             val level = oLevel.get()
             val name = ench.name
             val desc = ench.description(level).map { it.str() }.toTypedArray()
@@ -155,21 +127,14 @@ private fun specificAdminEnchUi(
                 "<yellow>Click to enchant!"
             )
         }, { e, oLevel ->
-            e.bukkitEvent.isCancelled = true
             if (oLevel.isEmpty)
-                return@createCompound
+                return@compound
             item.enchant(ench, oLevel.get())
             val built = item.build(player)
-            e.player.inventory.setItemInMainHand(built)
-            e.player.openGUI(adminEnchantUi(item))
+            e.paper.inventory.setItemInMainHand(built)
+            e.instance.switch(adminEnchantUi(item))
         })
-        compoundSpace(Slots.RowThreeSlotTwo rectTo Slots.RowThreeSlotEight, levelsCompound)
 
-        levelsCompound.addContent(ench.levels.toList().map { Optional.of(it) }.pad(7, Optional.empty()))
-
-        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.ARROW, "<green>Go Back")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(adminEnchantUi(item))
-        }
+        goBack(Slot.RowFourSlotFive, { adminEnchantUi(item) })
     }
 }

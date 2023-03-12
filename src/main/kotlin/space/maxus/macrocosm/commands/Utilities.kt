@@ -209,7 +209,7 @@ fun finishLocRestrictive() = command("zonerestrict") {
 
 fun adminEnchanting() = command("enchantui") {
     runsCatching {
-        player.openGUI(adminEnchantUi(player.inventory.itemInMainHand.macrocosm ?: return@runsCatching))
+        adminEnchantUi(player.inventory.itemInMainHand.macrocosm ?: return@runsCatching).open(player)
     }
 }
 
