@@ -106,7 +106,8 @@ class MacrocosmUIInstance internal constructor(
 
     fun switch(other: MacrocosmUI, reverse: Boolean = false): MacrocosmUIInstance {
         abandoned = true
-        this.extraCloseHandler(UICloseData(this.holder, this.holder.macrocosm!!, this.baseUi, this))
+        if(other.dimensions == this.dimensions)
+            this.extraCloseHandler(UICloseData(this.holder, this.holder.macrocosm!!, this.baseUi, this))
         clickHandler.unregister()
         if(other.dimensions != dimensions) {
             // Dimensions do not fit, we need a new inventory

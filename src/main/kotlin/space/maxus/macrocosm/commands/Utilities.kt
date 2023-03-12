@@ -377,7 +377,7 @@ fun bazaarOpCommand() = command("bazaarop") {
 fun infusionCommand() = command("infuse") {
     runs {
         try {
-            player.openGUI(displayInfusionTable(player.macrocosm!!))
+            displayInfusionTable(player.macrocosm!!).open(player)
         } catch (e: Exception) {
             e.printStackTrace()
         }

@@ -114,8 +114,10 @@ class PageBuilder(internal val page: UIPage) {
     }
 
     @UIDsl
-    fun storageSlot(space: ComponentSpace, fits: (ItemStack) -> Boolean = { true }, onPut: (UIClickData, ItemStack) -> Unit = { _, _ -> }, onTake: (UIClickData, ItemStack) -> Unit = { _, _ -> }) {
-        this.page.addComponent(StorageComponent(space, fits, onPut, onTake))
+    fun storageSlot(space: ComponentSpace, fits: (ItemStack) -> Boolean = { true }, onPut: (UIClickData, ItemStack) -> Unit = { _, _ -> }, onTake: (UIClickData, ItemStack) -> Unit = { _, _ -> }): StorageComponent {
+        val slot = StorageComponent(space, fits, onPut, onTake)
+        this.page.addComponent(slot)
+        return slot
     }
 
     @UIDsl
