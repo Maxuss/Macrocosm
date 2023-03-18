@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.bazaar.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
 import org.bukkit.ChatColor
@@ -23,40 +22,42 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.stripTags
 import java.math.BigDecimal
 
-internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): GUI<ForInventoryFourByNine> =
-    kSpigotGUI(GUIType.FOUR_BY_NINE) {
+internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): MacrocosmUI =
+    macrocosmUi("create_sell_order", UIDimensions.FOUR_X_NINE) {
         val element = BazaarElement.idToElement(item)!!
         val elementName = element.name.color(null).str()
         val builtItem = element.build(player)!!
         val p = player.paper!!
 
-        defaultPage = 0
-        title = text("${elementName.stripTags()} ▶ Create Sell Order")
+        title = "${elementName.stripTags()} ▶ Create Sell Order"
 
         page(0) {
-            placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+            background()
 
             val amountInInventory =
                 p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }
 
             button(
-                Slots.RowThreeSlotTwo,
+                Slot.RowTwoSlotTwo,
                 modifyStackGenerateAmountButtonSellOrder(
                     "<green>Sell inventory!",
                     amountInInventory,
                     ItemStack(Material.CHEST)
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
                 if (amountInInventory > 0)
-                    e.player.openGUI(createSellOrderManagePrice(player, item, amountInInventory))
+                    e.instance.switch(createSellOrderManagePrice(player, item, amountInInventory))
             }
 
             button(
-                Slots.RowThreeSlotEight, ItemValue.placeholderDescripted(
+                Slot.RowThreeSlotEight, ItemValue.placeholderDescripted(
                     Material.OAK_SIGN,
                     "<green>Custom Amount",
                     "<dark_gray>$elementName",
@@ -65,7 +66,6 @@ internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): GUI<For
                     "items."
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
                 val inputCoinsPrompt = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
                         return ChatColor.YELLOW.toString() + "Input amount to order:"
@@ -81,23 +81,17 @@ internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): GUI<For
 
                     override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
                         val amount = Integer.parseInt(input)
-                        e.player.openGUI(createSellOrderManagePrice(player, item, amount))
+                        createSellOrderManagePrice(player, item, amount).open(e.paper)
                         return END_OF_CONVERSATION
                     }
                 }
-                e.player.closeInventory()
+                e.paper.closeInventory()
                 val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputCoinsPrompt)
-                    .buildConversation(e.player)
+                    .buildConversation(e.paper)
                 conv.begin()
             }
 
-            button(
-                Slots.RowOneSlotFive,
-                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To $elementName")
-            ) { e ->
-                e.bukkitEvent.isCancelled = true
-                e.player.openGUI(openSpecificItemManagementMenu(player, item))
-            }
+            goBack(Slot.RowFourSlotFive, { openSpecificItemManagementMenu(player, item) }, elementName)
         }
     }
 
@@ -105,23 +99,23 @@ private fun createSellOrderManagePrice(
     player: MacrocosmPlayer,
     item: Identifier,
     amount: Int
-): GUI<ForInventoryFourByNine> = kSpigotGUI(
-    GUIType.FOUR_BY_NINE
+): MacrocosmUI = macrocosmUi(
+    "create_sell_order_manage",
+    UIDimensions.FOUR_X_NINE
 ) {
     val element = BazaarElement.idToElement(item)!!
     val elementName = element.name.color(null).str()
     val builtItem = element.build(player)!!
 
-    defaultPage = 0
-    title = text("${elementName.stripTags()} ▶ Create Sell Order")
+    title = "${elementName.stripTags()} ▶ Create Sell Order"
 
     page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        background()
 
         val topOrder = Bazaar.table.nextBuyOrder(item)?.pricePer
         val topSellOrder = Bazaar.table.nextSellOrder(item)?.pricePer
         button(
-            Slots.RowThreeSlotTwo,
+            Slot.RowTwoSlotTwo,
             constructPriceButton(
                 builtItem,
                 topSellOrder,
@@ -132,12 +126,11 @@ private fun createSellOrderManagePrice(
                 "current top order"
             )
         ) { e ->
-            e.bukkitEvent.isCancelled = true
             if (topSellOrder != null) {
-                e.player.openGUI(
+                e.instance.switch(
                     confirmSellOrder(
                         player,
-                        e.player,
+                        e.paper,
                         item,
                         builtItem,
                         elementName,
@@ -149,7 +142,7 @@ private fun createSellOrderManagePrice(
         }
 
         button(
-            Slots.RowThreeSlotFour,
+            Slot.RowTwoSlotFour,
             constructPriceButton(
                 ItemStack(Material.GOLD_NUGGET),
                 topSellOrder?.let { order -> order - 0.1 },
@@ -160,12 +153,11 @@ private fun createSellOrderManagePrice(
                 "current top order"
             )
         ) { e ->
-            e.bukkitEvent.isCancelled = true
             if (topSellOrder != null) {
-                e.player.openGUI(
+                e.instance.switch(
                     confirmSellOrder(
                         player,
-                        e.player,
+                        e.paper,
                         item,
                         builtItem,
                         elementName,
@@ -178,7 +170,7 @@ private fun createSellOrderManagePrice(
 
         val tenPercentSpread = if (topSellOrder != null && topOrder != null) (topSellOrder - topOrder) * .10 else null
         button(
-            Slots.RowThreeSlotSix,
+            Slot.RowTwoSlotSix,
             constructPriceButton(
                 ItemStack(Material.GOLDEN_HORSE_ARMOR),
                 tenPercentSpread,
@@ -190,12 +182,11 @@ private fun createSellOrderManagePrice(
                 "the lowest sell order."
             )
         ) { e ->
-            e.bukkitEvent.isCancelled = true
             if (tenPercentSpread != null) {
-                e.player.openGUI(
+                e.instance.switch(
                     confirmSellOrder(
                         player,
-                        e.player,
+                        e.paper,
                         item,
                         builtItem,
                         elementName,
@@ -207,11 +198,9 @@ private fun createSellOrderManagePrice(
         }
 
         button(
-            Slots.RowThreeSlotEight,
+            Slot.RowTwoSlotEight,
             ItemValue.placeholderDescripted(Material.OAK_SIGN, "<gold>Custom Price", "Name your own price.")
         ) { e ->
-            e.bukkitEvent.isCancelled = true
-
             val inputPricePer = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
                     return ChatColor.YELLOW.toString() + "Input price per:"
@@ -227,33 +216,30 @@ private fun createSellOrderManagePrice(
 
                 override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
                     val pricePer = java.lang.Double.parseDouble(input)
-                    e.player.openGUI(
+
                         confirmSellOrder(
                             player,
-                            e.player,
+                            e.paper,
                             item,
                             builtItem,
                             elementName,
                             amount,
                             pricePer.toBigDecimal()
-                        )
-                    )
+                        ).open(e.paper)
                     return END_OF_CONVERSATION
                 }
             }
-            e.player.closeInventory()
+            e.paper.closeInventory()
             val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputPricePer)
-                .buildConversation(e.player)
+                .buildConversation(e.paper)
             conv.begin()
         }
 
-        button(
-            Slots.RowOneSlotFive,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To $elementName")
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(openSpecificItemManagementMenu(player, item))
-        }
+        goBack(
+            Slot.RowLastSlotFive,
+            { openSpecificItemManagementMenu(player, item) },
+            elementName
+        )
     }
 }
 
@@ -265,14 +251,14 @@ private fun confirmSellOrder(
     elementName: String,
     amount: Int,
     pricePer: BigDecimal
-): GUI<ForInventoryFourByNine> = kSpigotGUI(
-    GUIType.FOUR_BY_NINE
+): MacrocosmUI = macrocosmUi(
+    "sell_order_confirm",
+    UIDimensions.FOUR_X_NINE
 ) {
-    defaultPage = 0
-    title = text("Confirm Sell Order")
+    title = "Confirm Sell Order"
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+    pageLazy {
+        background()
         val c = baseItem.clone()
 
         c.meta {
@@ -295,29 +281,26 @@ private fun confirmSellOrder(
             lore(lore.map { text(it).noitalic() })
         }
 
-        button(Slots.RowThreeSlotFive, c) { e ->
-            e.bukkitEvent.isCancelled = true
+        button(Slot.RowTwoSlotFive, c) { e ->
             sound(Sound.UI_BUTTON_CLICK) {
                 volume = 2f
-                playFor(e.player)
+                playFor(e.paper)
             }
 
-            val contains = e.player.inventory.containsAtLeast(baseItem, amount)
+            val contains = e.paper.inventory.containsAtLeast(baseItem, amount)
 
             if (contains) {
-                Bazaar.createSellOrder(player, e.player, item, amount, pricePer.toDouble())
+                Bazaar.createSellOrder(player, e.paper, item, amount, pricePer.toDouble())
             }
 
-            e.player.closeInventory()
+            e.paper.closeInventory()
         }
 
-        button(
-            Slots.RowOneSlotFive,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To $elementName")
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(openSpecificItemManagementMenu(player, item))
-        }
+        goBack(
+            Slot.RowFourSlotFive,
+            { openSpecificItemManagementMenu(player, item) },
+            elementName
+        )
     }
 }
 

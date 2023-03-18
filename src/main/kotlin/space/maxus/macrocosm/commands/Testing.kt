@@ -73,7 +73,7 @@ fun petsCommand() = command("pets") {
 
 fun openBazaarMenuCommand() = command("bazaar") {
     runsCatching {
-        player.openGUI(globalBazaarMenu(player.macrocosm!!))
+        globalBazaarMenu(player.macrocosm!!).open(player)
     }
 }
 

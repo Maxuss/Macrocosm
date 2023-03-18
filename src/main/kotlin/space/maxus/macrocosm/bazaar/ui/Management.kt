@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.bazaar.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
 import org.bukkit.Bukkit
@@ -18,6 +17,10 @@ import space.maxus.macrocosm.players.chat.ChatChannel
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.giveOrDrop
 import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.runCatchingReporting
@@ -29,10 +32,9 @@ private object NullBazaarOrder : BazaarOrder(Identifier.NULL, UUID.randomUUID(),
     override val totalPrice: BigDecimal = BigDecimal.valueOf(0L)
 }
 
-internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+internal fun manageOrders(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("bazaar_manage_orders", UIDimensions.SIX_X_NINE) {
     runCatchingReporting {
-        defaultPage = 0
-        title = text("Your Orders")
+        title = "Your Orders"
         val orders = Bazaar.getOrdersForPlayer(player.ref)
         if (orders.size > 28) {
             throw MacrocosmThrowable(
@@ -40,17 +42,16 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                 "You have too many orders active! This should not normally happen!"
             )
         }
+
         orders.padForward(28, NullBazaarOrder)
         val nullOrderGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "")
-        page(0) {
-            placeholder(Slots.Border, ItemValue.placeholder(Material.LIME_STAINED_GLASS_PANE))
+        page {
+            placeholder(Slot.All, ItemValue.placeholder(Material.LIME_STAINED_GLASS_PANE))
 
-            val cmp = createRectCompound<BazaarOrder>(Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
-                iconGenerator = { order ->
-                    if (order is NullBazaarOrder)
-                        return@createRectCompound nullOrderGlass
+            compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, { Bazaar.getOrdersForPlayer(player.ref) },
+                { order ->
                     val resultItem =
-                        BazaarElement.idToElement(order.item)?.build() ?: return@createRectCompound nullOrderGlass
+                        BazaarElement.idToElement(order.item)?.build() ?: return@compound nullOrderGlass
                     resultItem.meta {
                         if (order is BazaarBuyOrder) {
                             displayName(
@@ -141,27 +142,26 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                     }
                     resultItem
                 },
-                onClick = { e, order ->
-                    e.bukkitEvent.isCancelled = true
+                { e, order ->
                     if (order is BazaarBuyOrder) {
                         if (order.bought > 0) {
                             // claiming items
-                            val mc = BazaarElement.idToElement(order.item) ?: return@createRectCompound
-                            val item = mc.build(player) ?: return@createRectCompound
+                            val mc = BazaarElement.idToElement(order.item) ?: return@compound
+                            val item = mc.build(player) ?: return@compound
                             var amount = order.bought
                             while (amount > 64) {
                                 amount -= 64
                                 val clone = item.clone()
                                 clone.amount = 64
-                                e.player.giveOrDrop(clone)
+                                e.paper.giveOrDrop(clone)
                             }
                             val clone = item.clone()
                             clone.amount = amount
-                            e.player.giveOrDrop(clone)
+                            e.paper.giveOrDrop(clone)
                             sound(Sound.ENTITY_PLAYER_LEVELUP) {
                                 pitch = 2f
                                 volume = 2f
-                                playFor(e.player)
+                                playFor(e.paper)
                             }
                             player.sendMessage(
                                 ChatChannel.BAZAAR,
@@ -175,20 +175,20 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                             order.bought = 0
                             if (order.qty == 0) {
                                 Bazaar.table.popOrder(order)
-                                e.guiInstance.reloadCurrentPage()
+                                e.instance.reload()
                             }
                         } else {
                             // managing order
                             sound(Sound.UI_BUTTON_CLICK) {
                                 volume = 2f
-                                playFor(e.player)
+                                playFor(e.paper)
                             }
-                            e.player.openGUI(manageSingleOrder(player, order))
+                            e.instance.switch(manageSingleOrder(player, order))
                         }
                     } else if (order is BazaarSellOrder) {
                         if (order.sold > 0) {
                             // claiming coins
-                            val mc = BazaarElement.idToElement(order.item) ?: return@createRectCompound
+                            val mc = BazaarElement.idToElement(order.item) ?: return@compound
                             player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
                             val coins = transact(
                                 order.sold.toBigDecimal() * order.pricePer.toBigDecimal() * BazaarIntrinsics.INCOMING_TAX_MODIFIER,
@@ -199,7 +199,7 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                             sound(Sound.ENTITY_PLAYER_LEVELUP) {
                                 pitch = 2f
                                 volume = 2f
-                                playFor(e.player)
+                                playFor(e.paper)
                             }
                             order.sold = 0
                             player.sendMessage(
@@ -215,51 +215,43 @@ internal fun manageOrders(player: MacrocosmPlayer): GUI<ForInventorySixByNine> =
                             )
                             if (order.qty == 0) {
                                 Bazaar.table.popOrder(order)
-                                e.guiInstance.reloadCurrentPage()
+                                e.instance.reload()
                             }
                         } else {
                             // clearing order
                             sound(Sound.UI_BUTTON_CLICK) {
                                 volume = 2f
-                                playFor(e.player)
+                                playFor(e.paper)
                             }
-                            e.player.openGUI(manageSingleOrder(player, order))
+                            e.instance.switch(manageSingleOrder(player, order))
                         }
                     }
                 }
             )
 
-            val allOrders = Bazaar.getOrdersForPlayer(player.ref)
-            cmp.addContent(allOrders.padForward(28, NullBazaarOrder))
-
-            button(
-                Slots.RowOneSlotFive,
-                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Bazaar")
-            ) { e ->
-                e.bukkitEvent.isCancelled = true
-                e.player.openGUI(globalBazaarMenu(player))
-            }
+            goBack(
+                Slot.RowSixSlotFive,
+                { globalBazaarMenu(player) },
+                "Bazaar"
+            )
         }
     }
 }
 
-internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kSpigotGUI(GUIType.THREE_BY_NINE) {
-    defaultPage = 0
-    title = text("Manage Order")
+internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder): MacrocosmUI = macrocosmUi("bazaar_manage_single", UIDimensions.THREE_X_NINE) {
+    title = "Manage Order"
 
     page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
-        button(
-            Slots.RowOneSlotFive,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Your Orders")
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(manageOrders(player))
-        }
+        background()
+        goBack(
+            Slot.RowThreeSlotFive,
+            { manageOrders(player) },
+            "Manage Orders"
+        )
         if (order is BazaarBuyOrder) {
             // delete order
             button(
-                Slots.RowTwoSlotFive,
+                Slot.RowTwoSlotFive,
                 ItemValue.placeholderDescripted(
                     Material.BARRIER,
                     "<red>Delete Order",
@@ -271,26 +263,25 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                     "<yellow>I'm sure, delete this order"
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
                 sound(Sound.ENTITY_BLAZE_DEATH) {
                     pitch = 2f
                     volume = 2f
-                    playFor(e.player)
+                    playFor(e.paper)
                 }
                 Bazaar.table.popOrder(order)
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
                 val amount =
-                    transact(order.totalPrice * .8.toBigDecimal(), e.player.uniqueId, Transaction.Kind.INCOMING)
+                    transact(order.totalPrice * .8.toBigDecimal(), e.paper.uniqueId, Transaction.Kind.INCOMING)
                 player.purse += amount
                 player.sendMessage(
                     ChatChannel.BAZAAR,
                     "<yellow>Refunded <gold>${Formatting.withCommas(amount)} coins<yellow> from deleting a bazaar order."
                 )
-                e.player.openGUI(manageOrders(player))
+                e.instance.switch(manageOrders(player))
             }
         } else if (order is BazaarSellOrder) {
             button(
-                Slots.RowTwoSlotFive,
+                Slot.RowTwoSlotFive,
                 ItemValue.placeholderDescripted(
                     Material.BARRIER,
                     "<red>Delete Order",
@@ -300,11 +291,10 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                     "<yellow>I'm sure, delete this order"
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
                 sound(Sound.ENTITY_BLAZE_DEATH) {
                     pitch = 2f
                     volume = 2f
-                    playFor(e.player)
+                    playFor(e.paper)
                 }
                 Bazaar.table.popOrder(order)
                 player.sendMessage(ChatChannel.BAZAAR, "<gray>Processing transaction...")
@@ -314,10 +304,10 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                     itemsToRefund -= 64
                     val c = item.clone()
                     c.amount = 64
-                    e.player.giveOrDrop(c)
+                    e.paper.giveOrDrop(c)
                 }
                 item.amount = itemsToRefund
-                e.player.giveOrDrop(item)
+                e.paper.giveOrDrop(item)
                 player.sendMessage(
                     ChatChannel.BAZAAR,
                     "<yellow>Refunded <green>${
@@ -327,7 +317,7 @@ internal fun manageSingleOrder(player: MacrocosmPlayer, order: BazaarOrder) = kS
                         )
                     }x<yellow> items from deleting a bazaar order."
                 )
-                e.player.openGUI(manageOrders(player))
+                e.instance.switch(manageOrders(player))
             }
         }
     }

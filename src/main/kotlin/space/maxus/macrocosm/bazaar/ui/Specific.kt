@@ -1,36 +1,34 @@
 package space.maxus.macrocosm.bazaar.ui
 
-import net.axay.kspigot.gui.GUIType
-import net.axay.kspigot.gui.Slots
-import net.axay.kspigot.gui.kSpigotGUI
-import net.axay.kspigot.gui.openGUI
 import org.bukkit.Material
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.stripTags
 
-fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = kSpigotGUI(GUIType.FOUR_BY_NINE) {
-    val coll = BazaarElement.idToCollection(item) ?: return@kSpigotGUI
+fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier): MacrocosmUI = macrocosmUi("bazaar_manage_specific", UIDimensions.FOUR_X_NINE) {
+    val coll = BazaarElement.idToCollection(item) ?: return@macrocosmUi
     val element = BazaarElement.idToElement(item)!!
     val elementName = element.name.color(null).str()
     val builtItem = element.build(player)!!
     val p = player.paper!!
 
-    defaultPage = 0
-    title = text("${coll.displayName.stripTags()} ▶ $elementName")
+    title = "${coll.displayName.stripTags()} ▶ $elementName"
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+    pageLazy {
+        background()
 
-        button(
-            Slots.RowThreeSlotTwo,
+        switchUi(
+            Slot.RowTwoSlotTwo,
+            { buyInstantlyScreen(player, item) },
             ItemValue.placeholderDescripted(
                 Material.GOLDEN_HORSE_ARMOR,
                 "<green>Buy Instantly",
@@ -47,16 +45,14 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "",
                 "<yellow>Click to pick amount!"
             )
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(buyInstantlyScreen(e.player.macrocosm!!, item))
-        }
+        )
 
         val invAmount =
             p.inventory.filter { stack -> stack?.isSimilar(builtItem) == true }.sumOf { stack -> stack.amount }
                 .toBigDecimal()
-        button(
-            Slots.RowThreeSlotThree,
+        switchUi(
+            Slot.RowTwoSlotThree,
+            { sellInstantlyScreen(player, item) },
             ItemValue.placeholderDescripted(
                 Material.HOPPER,
                 "<gold>Sell Instantly",
@@ -66,15 +62,13 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "",
                 "<yellow>Click to pick amount!"
             )
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(sellInstantlyScreen(e.player.macrocosm!!, item))
-        }
+        )
 
-        placeholder(Slots.RowThreeSlotFive, builtItem)
+        placeholder(Slot.RowTwoSlotFive, builtItem)
 
-        button(
-            Slots.RowThreeSlotSeven,
+        switchUi(
+            Slot.RowTwoSlotSeven,
+            { createBuyOrder(player, item) },
             ItemValue.placeholderDescripted(
                 Material.FILLED_MAP,
                 "<green>Create Buy Order",
@@ -91,13 +85,11 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "",
                 "<yellow>Click to setup buy order!"
             )
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(createBuyOrder(e.player.macrocosm!!, item))
-        }
+        )
 
-        button(
-            Slots.RowThreeSlotEight,
+        switchUi(
+            Slot.RowTwoSlotEight,
+            { createSellOrder(player, item) },
             ItemValue.placeholderDescripted(
                 Material.MAP,
                 "<green>Create Sell Order",
@@ -116,17 +108,12 @@ fun openSpecificItemManagementMenu(player: MacrocosmPlayer, item: Identifier) = 
                 "",
                 "<yellow>Click to setup sell order!"
             )
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(createSellOrder(e.player.macrocosm!!, item))
-        }
+        )
 
-        button(
-            Slots.RowOneSlotFive,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To Bazaar")
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(globalBazaarMenu(player))
-        }
+        goBack(
+            Slot.RowFourSlotFive,
+            { globalBazaarMenu(player) },
+            "Bazaar"
+        )
     }
 }
