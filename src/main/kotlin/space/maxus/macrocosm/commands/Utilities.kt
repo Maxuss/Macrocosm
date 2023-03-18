@@ -529,7 +529,7 @@ fun viewRecipeCommand() = command("viewrecipe") {
 
         runs {
             val recipe = getArgument<ResourceLocation>("recipe").macrocosm
-            player.openGUI(recipeViewer(recipe, player.macrocosm!!))
+            recipeViewer(recipe, player.macrocosm!!).open(player)
         }
 
     }
@@ -560,7 +560,7 @@ fun cosmeticCommand() = command("cosmetic") {
 
 fun recipesCommand() = command("recipes") {
     runs {
-        player.openGUI(recipeBrowser(player.macrocosm!!))
+        recipeBrowser(player.macrocosm!!).open(player)
     }
 }
 
