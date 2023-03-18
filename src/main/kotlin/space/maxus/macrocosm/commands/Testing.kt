@@ -7,7 +7,6 @@ import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
-import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
 import space.maxus.macrocosm.accessory.ui.jacobusUi
@@ -50,7 +49,7 @@ fun doTestEmitPost() = command("doemit") {
 
 fun testJacobus() = command("jacobustest") {
     runsCatching {
-        player.openGUI(jacobusUi(player.macrocosm!!))
+        jacobusUi(player.macrocosm!!).open(player)
     }
 }
 
@@ -67,13 +66,13 @@ fun handDebug() = command("handdebug") {
 
 fun petsCommand() = command("pets") {
     runsCatching {
-        player.openGUI(petsMenu(player.macrocosm!!))
+        petsMenu(player.macrocosm!!).open(player)
     }
 }
 
 fun openBazaarMenuCommand() = command("bazaar") {
     runsCatching {
-        player.openGUI(globalBazaarMenu(player.macrocosm!!))
+        globalBazaarMenu(player.macrocosm!!).open(player)
     }
 }
 
@@ -81,7 +80,7 @@ fun openForgeMenuCommand() = command("openforge") {
     argument("id", StringArgumentType.string()) {
         runs {
             val ty = ForgeType.valueOf(getArgument("id"))
-            player.openGUI(displayForge(player.macrocosm!!, ty))
+            displayForge(player.macrocosm!!, ty).open(player)
         }
     }
 }
@@ -135,7 +134,7 @@ fun giveRecipeCommand() = command("giverecipe") {
 
 fun testMaddoxMenuCommand() = command("slayermenu") {
     runs {
-        player.openGUI(slayerChooseMenu(player.macrocosm!!))
+        slayerChooseMenu(player.macrocosm!!).open(player)
     }
 }
 

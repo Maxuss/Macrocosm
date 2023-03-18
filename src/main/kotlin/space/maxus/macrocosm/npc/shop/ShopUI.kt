@@ -31,6 +31,8 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 import space.maxus.macrocosm.util.containsAtLeast as containsLeast
 
+// These UIs can't really be refactored to the new UI system, unless we rewrite some internal UI parts, so they will remain
+
 private fun itemAsPurchaseHistory(item: ItemStack, model: MacrocosmItem = item.macrocosm!!): ItemStack {
     val price = model.sellPrice
     item.meta {

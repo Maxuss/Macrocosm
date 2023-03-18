@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.bazaar.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -19,24 +18,27 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.emptySlots
 import space.maxus.macrocosm.util.stripTags
 
-internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<ForInventoryFourByNine> =
-    kSpigotGUI(GUIType.FOUR_BY_NINE) {
+internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): MacrocosmUI =
+    macrocosmUi("bazaar_buy_instant", UIDimensions.FOUR_X_NINE) {
         val element = BazaarElement.idToElement(item)!!
         val elementName = element.name.color(null).str()
         val builtItem = element.build(player)!!
         val p = player.paper!!
 
-        title = text("${elementName.stripTags()} ▶ Instant Buy")
-        defaultPage = 0
+        title = "${elementName.stripTags()} ▶ Instant Buy"
 
-        page(0) {
-            placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        pageLazy {
+            background()
 
             button(
-                Slots.RowThreeSlotTwo,
+                Slot.RowTwoSlotTwo,
                 modifyStackGenerateAmountButtonBuy(
                     player,
                     elementName,
@@ -46,12 +48,11 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
                     builtItem.clone()
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
-                Bazaar.instantBuy(player, e.player, item, 1)
+                Bazaar.instantBuy(player, e.paper, item, 1)
             }
 
             button(
-                Slots.RowThreeSlotFour,
+                Slot.RowTwoSlotFour,
                 modifyStackGenerateAmountButtonBuy(
                     player,
                     elementName,
@@ -60,14 +61,13 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
                     item,
                     builtItem.clone()
                 ).apply { amount = 64 }) { e ->
-                e.bukkitEvent.isCancelled = true
-                Bazaar.instantBuy(player, e.player, item, 64)
+                Bazaar.instantBuy(player, e.paper, item, 64)
             }
 
             val emptySlots = p.inventory.emptySlots * 64
 
             button(
-                Slots.RowThreeSlotSix,
+                Slot.RowTwoSlotSix,
                 modifyStackGenerateAmountButtonBuy(
                     player,
                     elementName,
@@ -77,13 +77,12 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
                     ItemStack(Material.CHEST)
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
-                Bazaar.instantBuy(player, e.player, item, emptySlots)
-                e.guiInstance.reloadCurrentPage()
+                Bazaar.instantBuy(player, e.paper, item, emptySlots)
+                e.instance.reload()
             }
 
             button(
-                Slots.RowThreeSlotEight,
+                Slot.RowTwoSlotEight,
                 ItemValue.placeholderDescripted(
                     Material.OAK_SIGN,
                     "<green>Custom Amount",
@@ -99,7 +98,6 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
                     "<yellow>Click to specify!"
                 )
             ) { e ->
-                e.bukkitEvent.isCancelled = true
                 val inputCoinsPrompt = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
                         return ChatColor.YELLOW.toString() + "Input amount to order:"
@@ -116,23 +114,20 @@ internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): GUI<
 
                     override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
                         val amount = Integer.parseInt(input)
-                        e.player.openGUI(confirmInstantBuy(player, item, elementName, builtItem, amount))
+                        confirmInstantBuy(player, item, elementName, builtItem, amount).open(e.paper)
                         return Prompt.END_OF_CONVERSATION
                     }
                 }
-                e.player.closeInventory()
+                e.paper.closeInventory()
                 val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputCoinsPrompt)
-                    .buildConversation(e.player)
+                    .buildConversation(e.paper)
                 conv.begin()
             }
 
-            button(
-                Slots.RowOneSlotFive,
-                ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "<dark_gray>To $elementName")
-            ) { e ->
-                e.bukkitEvent.isCancelled = true
-                e.player.openGUI(openSpecificItemManagementMenu(player, item))
-            }
+            goBack(
+                Slot.RowFourSlotFive,
+                { openSpecificItemManagementMenu(player, item) },
+            )
         }
     }
 
@@ -142,15 +137,14 @@ private fun confirmInstantBuy(
     elementName: String,
     builtItem: ItemStack,
     amount: Int
-) = kSpigotGUI(GUIType.FOUR_BY_NINE) {
-    title = text("Confirm Instant Buy")
-    defaultPage = 0
+): MacrocosmUI = macrocosmUi("bazaar_instant_buy_confirm", UIDimensions.FOUR_X_NINE) {
+    title = "Confirm Instant Buy"
 
     page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        background()
 
         button(
-            Slots.RowThreeSlotFive,
+            Slot.RowTwoSlotFive,
             modifyStackGenerateAmountButtonBuy(
                 player,
                 elementName,
@@ -159,17 +153,14 @@ private fun confirmInstantBuy(
                 item,
                 builtItem.clone()
             )
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
+        ) { _ ->
             Bazaar.instantBuy(player, player.paper!!, item, amount)
         }
 
-        button(
-            Slots.RowOneSlotFive,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To $elementName > Instant Buy")
-        ) { e ->
-            e.player.openGUI(buyInstantlyScreen(player, item))
-        }
+        goBack(
+            Slot.RowOneSlotFive,
+            { buyInstantlyScreen(player, item) }
+        )
     }
 }
 

@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.collections.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import org.bukkit.Material
 import space.maxus.macrocosm.chat.Formatting
@@ -15,23 +14,27 @@ import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.progressBar
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 
 fun sectionUi(
     player: MacrocosmPlayer,
     section: CollectionSection,
     allRelated: List<CollectionType>,
     unlocked: List<CollectionType>
-): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
+): MacrocosmUI = macrocosmUi("collection_section", UIDimensions.SIX_X_NINE) {
     val sectionName: String = section.name.capitalized()
+    title = "Collections ► $sectionName"
 
-    defaultPage = 0
-    title = text("$sectionName Collection")
+    page {
 
-    page(0) {
-        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        background()
 
         placeholder(
-            Slots.RowSixSlotFive, ItemValue.placeholderDescripted(
+            Slot.RowOneSlotFive,
+            ItemValue.placeholderDescripted(
                 section.mat,
                 "<green>$sectionName Collection",
                 "Your $sectionName Collection!",
@@ -44,23 +47,14 @@ fun sectionUi(
             )
         )
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
-            it.bukkitEvent.isCancelled = true
-            it.player.closeInventory()
-        }
+        close()
 
-        button(
-            Slots.RowOneSlotFour,
-            ItemValue.placeholderDescripted(Material.ARROW, "<green>Go Back", "To Collection")
-        ) {
-            it.bukkitEvent.isCancelled = true
-            it.player.openGUI(collectionUi(player))
-        }
+        goBack(Slot.RowSixSlotFour, { collUi(player) })
 
-        val compound = createCompound<CollectionType>({ ty ->
+        transparentCompound(Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight, allRelated, { ty ->
             val (lvl, amount) = player.collections.colls[ty]!!
             if (lvl == 0 && amount == 0)
-                return@createCompound ItemValue.placeholderDescripted(
+                return@transparentCompound ItemValue.placeholderDescripted(
                     Material.GRAY_DYE,
                     "<red>${ty.inst.name}",
                     "Find this item to add it to your",
@@ -109,14 +103,9 @@ fun sectionUi(
                 lore(lore.map { text("<gray>$it").noitalic() })
             }
             base
-        }, { e, ty ->
-            e.bukkitEvent.isCancelled = true
+        }) { data, ty ->
             if (player.collections.colls[ty]!!.total > 0)
-                e.player.openGUI(specificCollectionUi(player, ty))
-        })
-
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFiveSlotEight, compound)
-
-        compound.addContent(allRelated)
+                data.instance.switch(specificCollectionUi(player, ty))
+        }
     }
 }

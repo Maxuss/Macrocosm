@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.listeners
 
-import net.axay.kspigot.gui.openGUI
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
@@ -36,7 +35,7 @@ object BlockClickListener : Listener {
             val p = e.player.macrocosm!!
             val allRecipes = Recipes.using(id).filter { p.unlockedRecipes.contains(it.id) }
             if (allRecipes.isNotEmpty())
-                e.player.openGUI(recipesUsing(mc.getId("ViewRecipes"), e.player.macrocosm!!))
+                recipesUsing(mc.getId("ViewRecipes"), e.player.macrocosm!!).open(e.player)
         }
     }
 }

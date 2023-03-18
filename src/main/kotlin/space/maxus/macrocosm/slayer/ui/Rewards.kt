@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.slayer.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -14,23 +13,32 @@ import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerTable
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.LinearComponentSpace
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.renderBar
 import space.maxus.macrocosm.util.stripTags
 
 
-fun rewardsMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventoryFourByNine> =
-    kSpigotGUI(GUIType.FOUR_BY_NINE) {
+fun rewardsMenu(player: MacrocosmPlayer, ty: SlayerType): MacrocosmUI =
+    macrocosmUi("slayer_rewards", UIDimensions.FOUR_X_NINE) {
         val slayer = ty.slayer
         val playerLevel = player.slayers[ty]!!
-        title = text("${slayer.name.stripTags()} Rewards")
-        defaultPage = 0
+        title = "${slayer.name.stripTags()} Rewards"
 
         page(0) {
-            placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+            background()
 
-            val cmp = createCompound<Int>(
-                iconGenerator = { lvl ->
+            compound(
+                LinearComponentSpace(
+                    listOf(
+                        *(1..7).slots(1), Slot(2, 3), Slot(2, 4), Slot(2, 5)
+                    ).map(Slot::value),
+                ),
+                (1..10).toList(),
+                { lvl ->
                     if (lvl >= 10) {
                         ItemValue.placeholderDescripted(
                             Material.CLOCK,
@@ -97,8 +105,7 @@ fun rewardsMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventoryFourBy
                         }
                     }
                 },
-                onClick = { event, lvl ->
-                    event.bukkitEvent.isCancelled = true
+                { e, lvl ->
                     if (!playerLevel.collectedRewards.contains(lvl) && playerLevel.level >= lvl) {
                         // giving player the rewards
                         val rewards = slayer.rewards[lvl - 1]
@@ -111,25 +118,14 @@ fun rewardsMenu(player: MacrocosmPlayer, ty: SlayerType): GUI<ForInventoryFourBy
                             listOf(*playerLevel.collectedRewards.toTypedArray(), lvl),
                             playerLevel.rng
                         )
-                        event.player.closeInventory()
+                        e.paper.closeInventory()
                         player.sendMessage("<yellow>You have claimed rewards for ${slayer.name}<yellow> LVL $lvl")
                         sound(Sound.ENTITY_FIREWORK_ROCKET_BLAST) {
-                            playFor(event.player)
+                            playFor(e.paper)
                         }
                     }
                 })
-            compoundSpace(
-                LinearInventorySlots(
-                    listOf(
-                        *(2..8).slots(3), InventorySlot(2, 4), InventorySlot(2, 5), InventorySlot(2, 6)
-                    )
-                ), cmp
-            )
-            cmp.addContent(1..10)
 
-            button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.ARROW, "<red>Back")) { ev ->
-                ev.bukkitEvent.isCancelled = true
-                ev.player.openGUI(specificSlayerMenu(player, ty))
-            }
+            goBack(Slot.RowFourSlotOne, { specificSlayerMenu(player, ty) })
         }
     }

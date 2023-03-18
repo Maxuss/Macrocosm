@@ -40,6 +40,7 @@ import space.maxus.macrocosm.reforge.Reforge
 import space.maxus.macrocosm.slayer.Slayer
 import space.maxus.macrocosm.spell.Spell
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
+import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.util.GSON_PRETTY
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoringProducer
@@ -217,6 +218,7 @@ abstract class Registry<T>(val name: Identifier, val shouldBeExposed: Boolean = 
         }
         val SHOP = makeDefaulted<ShopModel>(id("shop"), true)
         val ACHIEVEMENT = makeDefaulted<Achievement>(id("achievement"), true)
+        val UI = makeDefaulted<MacrocosmUI>(id("ui"), true)
 
         override fun dumpToFile(file: Path) {
             // Global registry can not dump data to file

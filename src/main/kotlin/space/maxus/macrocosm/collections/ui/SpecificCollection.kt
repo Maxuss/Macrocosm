@@ -1,18 +1,18 @@
 package space.maxus.macrocosm.collections.ui
 
-import net.axay.kspigot.gui.*
-import org.bukkit.Material
 import space.maxus.macrocosm.collections.CollectionType
-import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 
-internal fun specificCollectionUi(player: MacrocosmPlayer, ty: CollectionType): GUI<ForInventorySixByNine> =
-    kSpigotGUI(GUIType.SIX_BY_NINE) {
-        defaultPage = 0
-        title = text("${ty.inst.name} Collection")
+internal fun specificCollectionUi(player: MacrocosmPlayer, ty: CollectionType): MacrocosmUI =
+    macrocosmUi("collection_specific", UIDimensions.SIX_X_NINE) {
+        title = "Collections ► ${ty.inst.name}"
 
-        page(0) {
-            placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        page {
+            background()
+
+            // TODO: collection UI
         }
     }

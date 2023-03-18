@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.accessory
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.sound.sound
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -21,7 +20,11 @@ import space.maxus.macrocosm.players.macrocosm
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.CompoundComponent
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.*
 import java.io.Externalizable
 import java.io.ObjectInput
@@ -136,81 +139,66 @@ class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
     /**
      * Loads the accessory UI for player
      */
-    fun ui(player: MacrocosmPlayer): GUI<*> {
+    fun ui(player: MacrocosmPlayer): MacrocosmUI {
         val (size, beginCompound, endCompound) = when (capacity) {
-            in 1..9 -> Triple(GUIType.TWO_BY_NINE, Slots.RowTwoSlotOne, Slots.RowTwoSlotNine)
-            in 10..18 -> Triple(GUIType.THREE_BY_NINE, Slots.RowTwoSlotOne, Slots.RowThreeSlotNine)
-            in 19..27 -> Triple(GUIType.FOUR_BY_NINE, Slots.RowTwoSlotOne, Slots.RowFourSlotNine)
-            in 28..36 -> Triple(GUIType.FIVE_BY_NINE, Slots.RowTwoSlotOne, Slots.RowFiveSlotNine)
-            else -> Triple(GUIType.TWO_BY_NINE, Slots.RowTwoSlotOne, Slots.RowSixSlotNine)
+            in 1..9 -> Triple(UIDimensions.TWO_X_NINE, Slot.RowOneSlotOne, Slot.RowOneSlotNine)
+            in 10..18 -> Triple(UIDimensions.THREE_X_NINE, Slot.RowOneSlotOne, Slot.RowTwoSlotNine)
+            in 19..27 -> Triple(UIDimensions.FOUR_X_NINE, Slot.RowOneSlotOne, Slot.RowThreeSlotNine)
+            in 28..36 -> Triple(UIDimensions.FIVE_X_NINE, Slot.RowOneSlotOne, Slot.RowFourSlotNine)
+            else -> Triple(UIDimensions.SIX_X_NINE, Slot.RowOneSlotOne, Slot.RowFiveSlotNine)
         }
-        return kSpigotGUI(size) {
-            defaultPage = 0
-            title = text("Accessories")
+        return macrocosmUi("accessory_bag", size) {
+            title = "Accessories"
 
             val partitioned = accessories.padNullsForward(capacity).chunked(45)
 
-            for ((index, accs) in partitioned.withIndex()) {
+            for ((index, _) in partitioned.withIndex()) {
                 page(index) {
-                    placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
-                    button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
-                        e.bukkitEvent.isCancelled = true
-                        e.player.closeInventory()
-                    }
+                    background()
 
-                    val compound = createCompound<Pair<Int, ItemStack>>({ it.second }) { e, (index, item) ->
-                        e.bukkitEvent.isCancelled = true
-                        if (index != -1 && e.player.inventory.emptySlots != 0) {
-                            accessories.removeAt(index)
-                            e.player.giveOrDrop(item)
-                            e.player.openGUI(ui(player))
-                        }
-                    }
-
-                    @Suppress("UNCHECKED_CAST")
-                    compoundSpace(
-                        (beginCompound rectTo endCompound) as InventorySlotCompound<ForInventoryTwoByNine>,
-                        compound
-                    )
-
-                    if (capacity > 45) {
-                        if (page != partitioned.size - 1)
-                            pageChanger(
-                                Slots.RowOneSlotNine,
-                                ItemValue.placeholder(Material.ARROW, "<green>Next Page"),
-                                page + 1,
-                                null,
-                                null
-                            )
-                        if (page != 0)
-                            pageChanger(
-                                Slots.RowOneSlotEight,
-                                ItemValue.placeholder(Material.ARROW, "<red>Previous Page"),
-                                page - 1,
-                                null,
-                                null
-                            )
-                    }
+                    close()
 
                     val lightGrayGlass = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
                     val grayGlass = ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE)
-                    val unoccupied = accs.count { it == null }
-                    runCatchingReporting(player.paper ?: return@page) {
-                        val mapped = accs.mapIndexedNotNull { index, item ->
-                            index to run {
-                                val base = Registry.ITEM.findOrNull(item?.item ?: return@mapIndexedNotNull null)
-                                    ?: return@run ItemValue.NULL.item.build(player)!!
-                                if (item.rarity != base.rarity) {
-                                    base.rarity = item.rarity
-                                    base.rarityUpgraded = true
+                    var unoccupied: Int
+
+                    var compound: CompoundComponent<Pair<Int, ItemStack>>? = null
+                    compound = compound(beginCompound rect endCompound, {
+                        val repartitioned = accessories.padNullsForward(capacity).chunked(45)
+                        val reAccs = repartitioned.getOrNull(index) ?: listOf()
+                        unoccupied = reAccs.count { it == null }
+                        var mapped: MutableCollection<Pair<Int, ItemStack>> = mutableListOf()
+                        runCatchingReporting(player.paper ?: return@compound listOf()) {
+                            mapped = reAccs.mapIndexedNotNull { index, item ->
+                                index to run {
+                                    val base = Registry.ITEM.findOrNull(item?.item ?: return@mapIndexedNotNull null)
+                                        ?: return@run ItemValue.NULL.item.build(player)!!
+                                    if (item.rarity != base.rarity) {
+                                        base.rarity = item.rarity
+                                        base.rarityUpgraded = true
+                                    }
+                                    base.build(player) ?: ItemValue.NULL.item.build(player)!!
                                 }
-                                base.build(player) ?: ItemValue.NULL.item.build(player)!!
+                            }.let {
+                                it.padForward(it.size + unoccupied, Pair(-1, lightGrayGlass))
+                                    .padForward(45, Pair(-1, grayGlass))
                             }
-                        }.let {
-                            it.padForward(it.size + unoccupied, Pair(-1, lightGrayGlass))
-                                .padForward(45, Pair(-1, grayGlass))
                         }
-                        compound.addContent(mapped)
+                        mapped.toList()
+                    }, { it.second }) { e, (index, item) ->
+                        if (index != -1 && e.paper.inventory.emptySlots != 0) {
+                            accessories.removeAt(index)
+                            e.paper.giveOrDrop(item)
+                            compound?.recalculateSlicedContent()
+                            e.instance.reload()
+                        }
+                    }
+
+                    if (capacity > 45) {
+                        if (index != partitioned.size - 1)
+                            changePage(Slot.RowLastSlotNine, index + 1)
+                        if (index != 0)
+                            changePage(Slot.RowLastSlotEight, index - 1)
                     }
                 }
             }
@@ -244,7 +232,6 @@ class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
                 return
             e.isCancelled = true
             val clickedItem = e.currentItem
-            clickedItem?.amount = 1
             val clicked = clickedItem?.macrocosm
             if (clicked == null || clicked !is AccessoryItem)
                 return
@@ -256,8 +243,13 @@ class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
                 }
                 return
             }
-            e.clickedInventory!!.clear(e.slot)
-            clicker.openGUI(bag.ui(clicker.macrocosm!!))
+            if (clickedItem.amount > 1) {
+                clicked.amount = 1
+                clickedItem.amount -= 1
+            } else {
+                e.clickedInventory!!.clear(e.slot)
+            }
+            bag.ui(clicker.macrocosm!!).open(clicker)
         }
     }
 

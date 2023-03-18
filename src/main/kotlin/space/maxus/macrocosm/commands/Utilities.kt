@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.axay.kspigot.commands.*
-import net.axay.kspigot.gui.*
+import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.sound.sound
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
@@ -34,7 +34,7 @@ import space.maxus.macrocosm.bazaar.BazaarIntrinsics
 import space.maxus.macrocosm.bazaar.ops.BazaarOp
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.collections.CollectionType
-import space.maxus.macrocosm.collections.ui.collectionUi
+import space.maxus.macrocosm.collections.ui.collUi
 import space.maxus.macrocosm.cosmetic.Dye
 import space.maxus.macrocosm.cosmetic.SkullSkin
 import space.maxus.macrocosm.damage.DamageCalculator
@@ -63,7 +63,12 @@ import space.maxus.macrocosm.spell.ui.displayInfusionTable
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.game.Calendar
+import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
 import space.maxus.macrocosm.util.runCatchingReporting
 import java.net.InetAddress
@@ -74,7 +79,13 @@ private val vertices = mutableListOf<Location>()
 
 fun achievements() = command("achievements") {
     runsCatching {
-        player.openGUI(achievementBrowser(player.macrocosm!!))
+        achievementBrowser(player.macrocosm!!).open(player)
+    }
+}
+
+fun openTestNewUi() = command("newtestui") {
+    runsCatching {
+        Registry.UI.find(id("test_ui_1")).open(player)
     }
 }
 
@@ -202,7 +213,7 @@ fun finishLocRestrictive() = command("zonerestrict") {
 
 fun adminEnchanting() = command("enchantui") {
     runsCatching {
-        player.openGUI(adminEnchantUi(player.inventory.itemInMainHand.macrocosm ?: return@runsCatching))
+        adminEnchantUi(player.inventory.itemInMainHand.macrocosm ?: return@runsCatching).open(player)
     }
 }
 
@@ -229,7 +240,7 @@ fun addNpc() = command("addnpc") {
 
 fun collectionsCommand() = command("collections") {
     runsCatching {
-        player.openGUI(collectionUi(player.macrocosm!!))
+        collUi(player.macrocosm!!).open(player)
     }
 }
 
@@ -257,14 +268,14 @@ fun connectDiscordCommand() = command("discordauth") {
 fun thaumaturgyTest() = command("thaum") {
     runsCatching {
         val mc = player.macrocosm!!
-        player.openGUI(thaumaturgyUi(mc))
+        thaumaturgyUi(mc).open(player)
     }
 }
 
 fun accessoriesCommand() = command("accessories") {
     runsCatching {
         val mc = player.macrocosm!!
-        player.openGUI(mc.accessoryBag.ui(mc))
+        mc.accessoryBag.ui(mc).open(player)
     }
 }
 
@@ -370,7 +381,7 @@ fun bazaarOpCommand() = command("bazaarop") {
 fun infusionCommand() = command("infuse") {
     runs {
         try {
-            player.openGUI(displayInfusionTable(player.macrocosm!!))
+            displayInfusionTable(player.macrocosm!!).open(player)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -417,7 +428,7 @@ fun getSlayerRewardsCommand() = command("slayerrewards") {
     argument("type", StringArgumentType.word()) {
         runs {
             val type = SlayerType.valueOf(getArgument("type"))
-            player.openGUI(rewardsMenu(player.macrocosm!!, type))
+            rewardsMenu(player.macrocosm!!, type).open(player)
         }
     }
 }
@@ -518,7 +529,7 @@ fun viewRecipeCommand() = command("viewrecipe") {
 
         runs {
             val recipe = getArgument<ResourceLocation>("recipe").macrocosm
-            player.openGUI(recipeViewer(recipe, player.macrocosm!!))
+            recipeViewer(recipe, player.macrocosm!!).open(player)
         }
 
     }
@@ -549,7 +560,7 @@ fun cosmeticCommand() = command("cosmetic") {
 
 fun recipesCommand() = command("recipes") {
     runs {
-        player.openGUI(recipeBrowser(player.macrocosm!!))
+        recipeBrowser(player.macrocosm!!).open(player)
     }
 }
 
@@ -596,7 +607,7 @@ fun collAmount() = command("coll") {
 fun itemsCommand() = command("items") {
     requires { it.hasPermission(4) }
     runs {
-        player.openGUI(allItems(player))
+        allItems(player).open(player)
     }
 }
 
@@ -819,65 +830,46 @@ fun addSpellCommand() = command("addspell") {
     }
 }
 
-fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    title = text("Item Browser")
-    defaultPage = 0
+fun allItems(player: Player, search: String = ""): MacrocosmUI = macrocosmUi("all_items", UIDimensions.SIX_X_NINE) {
+    title = "Item Browser"
     val mc = player.macrocosm!!
 
-    page(0) {
-        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
-        val compound = createRectCompound<Identifier>(
-            Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
-            iconGenerator = {
+    page {
+        background()
+
+        val cmp = compound(
+            Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
+            {
+                Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
+                    .map { it.key }.sortedBy { it.path }
+            },
+            {
                 try {
                     Registry.ITEM.find(it).build(mc)!!
                 } catch (e: Exception) {
                     ItemValue.NULL.item.build()!!
                 }
             },
-            onClick = { e, it ->
-                if (e.bukkitEvent.click.isLeftClick)
-                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!)
+            { e, it ->
+                if (e.bukkit.click.isLeftClick)
+                    e.paper.inventory.addItem(Registry.ITEM.find(it).build(e.player)!!)
                 else
-                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
-                e.bukkitEvent.isCancelled = true
+                    e.paper.inventory.addItem(Registry.ITEM.find(it).build(e.player)!!.apply { amount = 64 })
             }
         )
-        compound.addContent(Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
-            .map { it.key })
-        compound.sortContentBy { it.path }
 
-        compoundScroll(
-            Slots.RowOneSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"),
-            compound,
-            scrollTimes = 1
+        compoundWidthScroll(
+            Slot.RowSixSlotEight,
+            cmp,
         )
-        compoundScroll(
-            Slots.RowOneSlotEight,
-            ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"),
-            compound,
-            reverse = true,
-            scrollTimes = 1
+        compoundWidthScroll(
+            Slot.RowSixSlotNine,
+            cmp,
+            reverse = true
         )
 
-        compoundScroll(
-            Slots.RowSixSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"),
-            compound,
-            scrollTimes = 4
-        )
-        compoundScroll(
-            Slots.RowSixSlotEight,
-            ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"),
-            compound,
-            reverse = true,
-            scrollTimes = 4
-        )
-
-        button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.closeInventory()
+        button(Slot.RowSixSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
+            e.paper.closeInventory()
             val inputFilterPrompt = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
                     return ChatColor.YELLOW.toString() + "Input item name to search:"
@@ -888,16 +880,14 @@ fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = 
                 }
 
                 override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
-                    e.player.openGUI(
-                        allItems(player, input)
-                    )
+                    allItems(player, input).open(e.paper)
                     return Prompt.END_OF_CONVERSATION
                 }
 
             }
 
             val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
-                .buildConversation(e.player)
+                .buildConversation(e.paper)
             conv.begin()
         }
     }

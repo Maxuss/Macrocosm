@@ -2,10 +2,6 @@ package space.maxus.macrocosm.collections.ui
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import net.axay.kspigot.gui.GUIType
-import net.axay.kspigot.gui.Slots
-import net.axay.kspigot.gui.kSpigotGUI
-import net.axay.kspigot.gui.openGUI
 import org.bukkit.Material
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
@@ -15,32 +11,34 @@ import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.text.progressBar
-import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import java.time.Duration
 import java.util.*
 
 private val sectionSlots = arrayOf(
-    Slots.RowFourSlotThree,
-    Slots.RowFourSlotFour,
-    Slots.RowFourSlotFive,
-    Slots.RowFourSlotSix,
-    Slots.RowFourSlotSeven,
-    Slots.RowThreeSlotThree
+    Slot.RowThreeSlotThree,
+    Slot.RowThreeSlotFour,
+    Slot.RowThreeSlotFive,
+    Slot.RowThreeSlotSix,
+    Slot.RowThreeSlotSeven,
+    Slot.RowFourSlotThree
 )
 
-fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    defaultPage = 0
-    title = text("Collection")
+fun collUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("collection_main", UIDimensions.SIX_X_NINE) {
+    title = "Collection"
 
     val allCollections = player.collections.colls.keys
     val unlockedCollections = allCollections.filter { player.collections[it] > 0 }
     val maxedCollections = allCollections.filter { player.collections.isMaxLevel(it) }
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+    page {
+        background()
 
-        pageChanger(
-            Slots.RowSixSlotFive, ItemValue.placeholderDescripted(
+        switchUi(
+            Slot.RowOneSlotFive, { collRankings(player) }, ItemValue.placeholderDescripted(
                 Material.PAINTING,
                 "<green>Collection",
                 "View all of the items available",
@@ -56,15 +54,17 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                         .toTypedArray()),
                 "",
                 "<yellow>Click to show rankings!"
-            ), 1, null, null
+            )
         )
 
         CollectionSection.values().forEachIndexed { i, section ->
             val allRelated = allCollections.filter { it.inst.section == section }
             val unlocked = allRelated.filter { player.collections[it] > 0 }
 
-            button(
-                sectionSlots[i], ItemValue.placeholderDescripted(
+            switchUi(
+                sectionSlots[i],
+                { sectionUi(player, section, allRelated, unlocked) },
+                ItemValue.placeholderDescripted(
                     section.mat,
                     "<aqua>${section.name.capitalized()} Collection",
                     "View your ${section.name.capitalized()} Collection!",
@@ -77,24 +77,27 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                     "",
                     "<yellow>Click to view!"
                 )
-            ) {
-                it.bukkitEvent.isCancelled = true
-                it.player.openGUI(sectionUi(player, section, allRelated, unlocked))
-            }
+            )
         }
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.closeInventory()
-        }
+        close()
     }
+}
 
-    page(1) {
-        // rankings
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+fun collRankings(player: MacrocosmPlayer) = macrocosmUi("collection_rankings", UIDimensions.SIX_X_NINE) {
+    title = "Collection Rankings"
 
-        pageChanger(
-            Slots.RowSixSlotFive, ItemValue.placeholderDescripted(
+    val allCollections = player.collections.colls.keys
+    val unlockedCollections = allCollections.filter { player.collections[it] > 0 }
+    val maxedCollections = allCollections.filter { player.collections.isMaxLevel(it) }
+
+    page {
+        background()
+
+        switchUi(
+            Slot.RowOneSlotFive,
+            { collUi(player) },
+            ItemValue.placeholderDescripted(
                 Material.PAINTING,
                 "<green>Collection",
                 "View all of the items available",
@@ -110,15 +113,17 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                         .toTypedArray()),
                 "",
                 "<yellow>Click to hide rankings!"
-            ), 0, null, null
+            )
         )
 
         CollectionSection.values().forEachIndexed { i, section ->
             val allRelated = allCollections.filter { it.inst.section == section }
             val unlocked = allRelated.filter { player.collections[it] > 0 }
 
-            button(
-                sectionSlots[i], ItemValue.placeholderDescriptedGlow(
+            switchUi(
+                sectionSlots[i],
+                { sectionUi(player, section, allRelated, unlocked) },
+                ItemValue.placeholderDescriptedGlow(
                     section.mat,
                     "<aqua>${section.name.capitalized()} Collection",
                     "View your ${section.name.capitalized()} Collection!",
@@ -136,16 +141,10 @@ fun collectionUi(player: MacrocosmPlayer) = kSpigotGUI(GUIType.SIX_BY_NINE) {
                     "",
                     "<yellow>Click to view!"
                 )
-            ) {
-                it.bukkitEvent.isCancelled = true
-                it.player.openGUI(sectionUi(player, section, allRelated, unlocked))
-            }
+            )
         }
 
-        button(Slots.RowOneSlotFive, ItemValue.placeholder(Material.BARRIER, "<red>Close")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.closeInventory()
-        }
+        close()
     }
 }
 

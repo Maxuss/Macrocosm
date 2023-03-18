@@ -68,6 +68,7 @@ import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUIInstance
 import space.maxus.macrocosm.util.associateWithHashed
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.ignoring
@@ -127,6 +128,9 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var achievements: MutableList<Identifier> = mutableListOf()
     var achievementExp: Int = 0
     var area: Area = AreaType.OVERWORLD.area; private set
+
+    var openUi: MacrocosmUIInstance? = null
+    val uiHistory: MutableList<Identifier> = mutableListOf()
 
     private var slayerRenderId: UUID? = null
     var statCache: Statistics? = null; private set
@@ -308,11 +312,20 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     fun addPet(type: Identifier, rarity: Rarity, level: Int, overflow: Double = .0): String {
+        // TODO: rework pet system
         val stored = StoredPet(type, rarity, level, overflow)
         val key = "$type@${stored.hashCode().toString(16)}"
         if (ownedPets.containsKey(key))
             return key
         ownedPets[key] = stored
+        return key
+    }
+
+    fun addPet(inner: StoredPet): String {
+        val key = "${inner.id}@${inner.hashCode().toString(16)}"
+        if (ownedPets.containsKey(key))
+            return key
+        ownedPets[key] = inner
         return key
     }
 
