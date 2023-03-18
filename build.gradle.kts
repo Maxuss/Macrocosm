@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "space.maxus"
-version = "0.4.1-alpha"
+version = "0.5.0-alpha"
 val apiVersion = "0.6.5-alpha"
 
 repositories {
