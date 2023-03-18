@@ -63,6 +63,10 @@ import space.maxus.macrocosm.spell.ui.displayInfusionTable
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.game.Calendar
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
@@ -603,7 +607,7 @@ fun collAmount() = command("coll") {
 fun itemsCommand() = command("items") {
     requires { it.hasPermission(4) }
     runs {
-        player.openGUI(allItems(player))
+        allItems(player).open(player)
     }
 }
 
@@ -826,65 +830,44 @@ fun addSpellCommand() = command("addspell") {
     }
 }
 
-fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    title = text("Item Browser")
-    defaultPage = 0
+fun allItems(player: Player, search: String = ""): MacrocosmUI = macrocosmUi("all_items", UIDimensions.SIX_X_NINE) {
+    title = "Item Browser"
     val mc = player.macrocosm!!
 
-    page(0) {
-        placeholder(Slots.Border, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE))
-        val compound = createRectCompound<Identifier>(
-            Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
-            iconGenerator = {
+    page {
+        background()
+
+        val cmp = compound(
+            Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
+            { Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
+                .map { it.key }.sortedBy { it.path } },
+            {
                 try {
                     Registry.ITEM.find(it).build(mc)!!
                 } catch (e: Exception) {
                     ItemValue.NULL.item.build()!!
                 }
             },
-            onClick = { e, it ->
-                if (e.bukkitEvent.click.isLeftClick)
-                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!)
+            { e, it ->
+                if (e.bukkit.click.isLeftClick)
+                    e.paper.inventory.addItem(Registry.ITEM.find(it).build(e.player)!!)
                 else
-                    e.player.inventory.addItem(Registry.ITEM.find(it).build(e.player.macrocosm)!!.apply { amount = 64 })
-                e.bukkitEvent.isCancelled = true
+                    e.paper.inventory.addItem(Registry.ITEM.find(it).build(e.player)!!.apply { amount = 64 })
             }
         )
-        compound.addContent(Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
-            .map { it.key })
-        compound.sortContentBy { it.path }
 
-        compoundScroll(
-            Slots.RowOneSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Forward 1 Row"),
-            compound,
-            scrollTimes = 1
+        compoundWidthScroll(
+            Slot.RowOneSlotNine,
+            cmp,
         )
-        compoundScroll(
-            Slots.RowOneSlotEight,
-            ItemValue.placeholder(Material.ARROW, "<red>Back 1 Row"),
-            compound,
-            reverse = true,
-            scrollTimes = 1
+        compoundWidthScroll(
+            Slot.RowOneSlotNine,
+            cmp,
+            reverse = true
         )
 
-        compoundScroll(
-            Slots.RowSixSlotNine,
-            ItemValue.placeholder(Material.ARROW, "<green>Forward 4 Rows"),
-            compound,
-            scrollTimes = 4
-        )
-        compoundScroll(
-            Slots.RowSixSlotEight,
-            ItemValue.placeholder(Material.ARROW, "<red>Back 4 Rows"),
-            compound,
-            reverse = true,
-            scrollTimes = 4
-        )
-
-        button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.closeInventory()
+        button(Slot.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
+            e.paper.closeInventory()
             val inputFilterPrompt = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
                     return ChatColor.YELLOW.toString() + "Input item name to search:"
@@ -895,16 +878,13 @@ fun allItems(player: Player, search: String = ""): GUI<ForInventorySixByNine> = 
                 }
 
                 override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
-                    e.player.openGUI(
-                        allItems(player, input)
-                    )
+                    allItems(player, input).open(e.paper)
                     return Prompt.END_OF_CONVERSATION
                 }
 
             }
 
-            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
-                .buildConversation(e.player)
+            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.paper)
             conv.begin()
         }
     }
