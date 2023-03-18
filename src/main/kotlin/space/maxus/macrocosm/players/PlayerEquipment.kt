@@ -2,7 +2,6 @@ package space.maxus.macrocosm.players
 
 import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.axay.kspigot.extensions.server
-import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.items.meta
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -62,13 +61,13 @@ class PlayerEquipment {
 }
 
 object EquipmentHandler : Listener {
-    val emptyHelmet = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Helmet Slot")
-    val emptyChest = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Chestplate Slot")
-    val emptyLegs = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Leggings Slot")
-    val emptyBoots = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Boots Slot")
-    val emptyMainHand = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Hand Slot")
-    val emptyOffHand = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Off Hand Slot")
-    val emptyPet = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Pet Slot")
+    private val emptyHelmet = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Helmet Slot")
+    private val emptyChest = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Chestplate Slot")
+    private val emptyLegs = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Leggings Slot")
+    private val emptyBoots = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Boots Slot")
+    private val emptyMainHand = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Hand Slot")
+    private val emptyOffHand = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Off Hand Slot")
+    private val emptyPet = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Pet Slot")
 
     fun menu(player: MacrocosmPlayer) {
         val eq = player.equipment
@@ -156,7 +155,7 @@ object EquipmentHandler : Listener {
             }
 
             50 -> {
-                player.paper?.openGUI(statBreakdown(player))
+                statBreakdown(player).open(e.whoClicked as Player)
             }
         }
 
@@ -201,7 +200,7 @@ object EquipmentHandler : Listener {
         37 to listOf(ItemType.GLOVES)
     )
 
-    val emptySlots = hashMapOf(
+    private val emptySlots = hashMapOf(
         10 to ItemValue.placeholderDescripted(
             Material.LIGHT_GRAY_STAINED_GLASS_PANE,
             "<gray>Empty Equipment Slot",
