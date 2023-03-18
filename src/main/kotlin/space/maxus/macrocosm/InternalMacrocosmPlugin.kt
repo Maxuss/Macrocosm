@@ -67,7 +67,6 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
-import space.maxus.macrocosm.ui.UIs
 import space.maxus.macrocosm.ui.components.*
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.SemanticVersion
@@ -238,7 +237,6 @@ class InternalMacrocosmPlugin : KSpigot() {
             AccessoryPowers::init,
             ShopParser::init,
             AchievementParser::init,
-            UIs::init
         )
 
         DataListener.joinLeave()
