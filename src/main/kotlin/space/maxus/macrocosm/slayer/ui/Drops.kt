@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.slayer.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -10,7 +9,6 @@ import space.maxus.macrocosm.enchants.roman
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.loot.Drop
 import space.maxus.macrocosm.loot.DropRarity
-import space.maxus.macrocosm.loot.vanilla
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -18,8 +16,11 @@ import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.colorFromTier
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.general.id
-import space.maxus.macrocosm.util.padForward
 import space.maxus.macrocosm.util.stripTags
 
 internal fun formatChance(chance: Float): String {
@@ -80,39 +81,25 @@ internal fun buildDropItem(
     return it
 }
 
-fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType) = kSpigotGUI(GUIType.FIVE_BY_NINE) {
+fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType): MacrocosmUI = macrocosmUi("slayer_drops", UIDimensions.FIVE_X_NINE) {
     val slayer = ty.slayer
     val playerLevel = player.slayers[ty]!!
-    title = text("${slayer.name.stripTags()} Drops")
-    defaultPage = 0
+    title = "${slayer.name.stripTags()} Drops"
 
-    page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+    page {
+        background()
 
-        val cmp = createCompound<SlayerDrop>(iconGenerator = { drop ->
-            if (drop is NullDrop) {
-                ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
-            } else {
+        transparentCompound(
+            Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight,
+            slayer.drops.sortedBy { it.requiredLevel },
+            { drop ->
                 buildDropItem(player, playerLevel, drop)
-            }
-        }, onClick = { ev, _ ->
-            ev.bukkitEvent.isCancelled = true
-        })
+        }, { _, _ -> })
 
-        compoundSpace(Slots.RowTwoSlotTwo rectTo Slots.RowFourSlotEight, cmp)
-        val drops = slayer.drops.padForward(21, NullDrop)
-        cmp.addContent(drops)
-        cmp.sortContentBy { it.requiredLevel }
-        cmp.sortContentBy { it.minTier }
-
-        button(Slots.RowOneSlotOne, ItemValue.placeholder(Material.ARROW, "<red>Back")) { ev ->
-            ev.bukkitEvent.isCancelled = true
-            ev.player.openGUI(specificSlayerMenu(player, ty))
-        }
+        goBack(Slot.RowFiveSlotOne, { specificSlayerMenu(player, ty) })
     }
 }
 
-object NullDrop : SlayerDrop(vanilla(Material.AIR, -1.0), -1, -1, hashMapOf())
 open class SlayerDrop(val drop: Drop, val minTier: Int, val requiredLevel: Int, val amounts: HashMap<Int, IntRange>)
 
 class VisualDrop internal constructor(rarity: DropRarity, item: Identifier, chance: Double) :

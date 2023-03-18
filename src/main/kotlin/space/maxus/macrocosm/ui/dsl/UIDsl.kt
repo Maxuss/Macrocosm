@@ -255,7 +255,7 @@ class PageBuilder(internal val page: UIPage) {
     }
 
     @UIDsl
-    fun close(space: ComponentSpace = Slot.RowSixSlotFive, item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
+    fun close(space: ComponentSpace = Slot.RowLastSlotFive, item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")) {
         this.page.addComponent(CloseUIComponent(space, item))
     }
 

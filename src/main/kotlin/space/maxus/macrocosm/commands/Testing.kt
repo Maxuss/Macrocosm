@@ -7,7 +7,6 @@ import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestList
-import net.axay.kspigot.gui.openGUI
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
 import space.maxus.macrocosm.accessory.ui.jacobusUi
@@ -135,7 +134,7 @@ fun giveRecipeCommand() = command("giverecipe") {
 
 fun testMaddoxMenuCommand() = command("slayermenu") {
     runs {
-        player.openGUI(slayerChooseMenu(player.macrocosm!!))
+        slayerChooseMenu(player.macrocosm!!).open(player)
     }
 }
 

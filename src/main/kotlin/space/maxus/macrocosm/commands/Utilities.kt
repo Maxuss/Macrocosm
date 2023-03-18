@@ -428,7 +428,7 @@ fun getSlayerRewardsCommand() = command("slayerrewards") {
     argument("type", StringArgumentType.word()) {
         runs {
             val type = SlayerType.valueOf(getArgument("type"))
-            player.openGUI(rewardsMenu(player.macrocosm!!, type))
+            rewardsMenu(player.macrocosm!!, type).open(player)
         }
     }
 }
