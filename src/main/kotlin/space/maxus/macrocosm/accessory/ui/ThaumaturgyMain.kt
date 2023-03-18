@@ -68,31 +68,35 @@ fun thaumaturgyUi(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("thaumatur
             )
         )
 
-        compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, player.memory.knownPowers.map { Registry.ACCESSORY_POWER.find(it) },  {
-            it.thaumaturgyPlaceholder(player, totalMp, player.accessoryBag.power == it.id)
-        }, { e, power ->
-            if (player.accessoryBag.power != power.id) {
-                // not selected, selecting
-                player.accessoryBag.power = power.id
+        compound(
+            Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
+            player.memory.knownPowers.map { Registry.ACCESSORY_POWER.find(it) },
+            {
+                it.thaumaturgyPlaceholder(player, totalMp, player.accessoryBag.power == it.id)
+            },
+            { e, power ->
+                if (player.accessoryBag.power != power.id) {
+                    // not selected, selecting
+                    player.accessoryBag.power = power.id
 
-                sound(Sound.BLOCK_LEVER_CLICK) {
-                    playFor(e.paper)
-                }
-                var counter = 0
-                task(sync = false, period = 2L) {
-                    counter++
-                    sound(Sound.ENTITY_CHICKEN_EGG) {
-                        pitch = 1 + (counter / 10f)
+                    sound(Sound.BLOCK_LEVER_CLICK) {
                         playFor(e.paper)
                     }
-                    if (counter >= 5)
-                        it.cancel()
+                    var counter = 0
+                    task(sync = false, period = 2L) {
+                        counter++
+                        sound(Sound.ENTITY_CHICKEN_EGG) {
+                            pitch = 1 + (counter / 10f)
+                            playFor(e.paper)
+                        }
+                        if (counter >= 5)
+                            it.cancel()
+                    }
+
+                    e.player.sendMessage("<yellow>You selected the <green>${power.name}<yellow> power for your <green>Accessory Bag<yellow>!")
+
+                    e.instance.reload()
                 }
-
-                e.player.sendMessage("<yellow>You selected the <green>${power.name}<yellow> power for your <green>Accessory Bag<yellow>!")
-
-                e.instance.reload()
-            }
-        })
+            })
     }
 }

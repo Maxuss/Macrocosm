@@ -136,7 +136,16 @@ private fun createBuyOrderManagePrice(
             )
         ) { e ->
             if (topOrder != null) {
-                e.instance.switch(confirmBuyOrder(player, item, builtItem, elementName, amount, topOrder.toBigDecimal()))
+                e.instance.switch(
+                    confirmBuyOrder(
+                        player,
+                        item,
+                        builtItem,
+                        elementName,
+                        amount,
+                        topOrder.toBigDecimal()
+                    )
+                )
             }
         }
 
@@ -213,14 +222,14 @@ private fun createBuyOrderManagePrice(
 
                 override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
                     val pricePer = java.lang.Double.parseDouble(input)
-                        confirmBuyOrder(
-                            player,
-                            item,
-                            builtItem,
-                            elementName,
-                            amount,
-                            pricePer.toBigDecimal()
-                        ).open(e.paper)
+                    confirmBuyOrder(
+                        player,
+                        item,
+                        builtItem,
+                        elementName,
+                        amount,
+                        pricePer.toBigDecimal()
+                    ).open(e.paper)
                     return Prompt.END_OF_CONVERSATION
                 }
             }
@@ -276,7 +285,11 @@ private fun confirmBuyOrder(
             e.paper.closeInventory()
         }
 
-        goBack(Slot.RowFourSlotFive, { openSpecificItemManagementMenu(player, item) }, "$elementName ▶ Create Buy Order")
+        goBack(
+            Slot.RowFourSlotFive,
+            { openSpecificItemManagementMenu(player, item) },
+            "$elementName ▶ Create Buy Order"
+        )
     }
 }
 

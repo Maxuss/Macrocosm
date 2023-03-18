@@ -50,8 +50,10 @@ fun statBreakdown(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("stat_brea
         close()
 
         compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
-            { stats.iter().entries.filter { (k, v) -> v != 0f && !k.hidden && !k.hiddenFancy }
-                .map { (k, v) -> Pair(k, v) }.padForward(28, Pair(Statistic.DAMAGE, -1f)).toList() },
+            {
+                stats.iter().entries.filter { (k, v) -> v != 0f && !k.hidden && !k.hiddenFancy }
+                    .map { (k, v) -> Pair(k, v) }.padForward(28, Pair(Statistic.DAMAGE, -1f)).toList()
+            },
             {
                 if (it.second == -1f)
                     return@compound glass

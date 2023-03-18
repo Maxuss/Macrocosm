@@ -243,7 +243,7 @@ class AccessoryBag : Serializable, MongoConvert<MongoAccessoryBag> {
                 }
                 return
             }
-            if(clickedItem.amount > 1) {
+            if (clickedItem.amount > 1) {
                 clicked.amount = 1
                 clickedItem.amount -= 1
             } else {

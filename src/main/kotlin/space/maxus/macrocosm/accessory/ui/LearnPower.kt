@@ -26,8 +26,8 @@ fun learnPowerUi(
     title = "Learn Power From Stones"
 
     onClose = {
-        for(stone in stones) {
-            player.paper?.giveOrDrop(stone )
+        for (stone in stones) {
+            player.paper?.giveOrDrop(stone)
         }
     }
 
@@ -115,7 +115,7 @@ fun learnPowerUi(
             }
         }
 
-        for(slot in (Slot.RowTwoSlotFive rect Slot.RowFourSlotSeven).enumerate(UIDimensions.SIX_X_NINE)) {
+        for (slot in (Slot.RowTwoSlotFive rect Slot.RowFourSlotSeven).enumerate(UIDimensions.SIX_X_NINE)) {
             storageSlot(Slot.fromRaw(slot), { stack -> stack.macrocosm is PowerStone }, { data, stack ->
                 stones.add(stack)
                 data.instance.reload()

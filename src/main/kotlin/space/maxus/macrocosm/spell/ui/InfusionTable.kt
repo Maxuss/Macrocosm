@@ -148,13 +148,17 @@ fun displayInfusionTable(
                 data.instance.switch(displaySelectEssence(p, scroll, selectedEssence, slot))
             }
         }
-        val slot = storageSlot(Slot.RowFourSlotFive, fits = { it.macrocosm.let { s -> s is SpellScroll && s.spell == null } }, onPut = { data, _ ->
-            scroll.set(true)
-            data.instance.reload()
-        }, onTake = { data, _ ->
-            scroll.set(false)
-            data.instance.reload()
-        })
+        val slot = storageSlot(
+            Slot.RowFourSlotFive,
+            fits = { it.macrocosm.let { s -> s is SpellScroll && s.spell == null } },
+            onPut = { data, _ ->
+                scroll.set(true)
+                data.instance.reload()
+            },
+            onTake = { data, _ ->
+                scroll.set(false)
+                data.instance.reload()
+            })
 
         button(Slot.RowFiveSlotFive, infuse) { data ->
             val realSlot = Slots.RowThreeSlotFive.inventorySlot.realSlotIn(InventoryDimensions(9, 6))!!

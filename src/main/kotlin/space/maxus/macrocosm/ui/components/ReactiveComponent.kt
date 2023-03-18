@@ -3,10 +3,10 @@ package space.maxus.macrocosm.ui.components
 import org.bukkit.inventory.Inventory
 import space.maxus.macrocosm.ui.*
 
-data class ReactiveComponent<V, B: UIComponent>(
+data class ReactiveComponent<V, B : UIComponent>(
     val base: B,
     val react: (B, V, MacrocosmUIInstance) -> Unit
-): UIComponent {
+) : UIComponent {
     override fun handleClick(click: UIClickData) {
         base.handleClick(click)
     }

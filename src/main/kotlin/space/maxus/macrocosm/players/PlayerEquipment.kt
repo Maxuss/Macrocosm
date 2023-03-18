@@ -62,11 +62,13 @@ class PlayerEquipment {
 
 object EquipmentHandler : Listener {
     private val emptyHelmet = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Helmet Slot")
-    private val emptyChest = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Chestplate Slot")
+    private val emptyChest =
+        ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Chestplate Slot")
     private val emptyLegs = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Leggings Slot")
     private val emptyBoots = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Boots Slot")
     private val emptyMainHand = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Hand Slot")
-    private val emptyOffHand = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Off Hand Slot")
+    private val emptyOffHand =
+        ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Off Hand Slot")
     private val emptyPet = ItemValue.placeholder(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "<gray>Empty Pet Slot")
 
     fun menu(player: MacrocosmPlayer) {

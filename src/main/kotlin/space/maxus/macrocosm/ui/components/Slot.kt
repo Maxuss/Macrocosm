@@ -2,11 +2,11 @@ package space.maxus.macrocosm.ui.components
 
 import space.maxus.macrocosm.ui.UIDimensions
 
-data class Slot(val row: Int, val column: Int): ComponentSpace {
+data class Slot(val row: Int, val column: Int) : ComponentSpace {
     val value = row * 9 + column
 
     override fun contains(slot: Int, dim: UIDimensions): Boolean {
-        if(dim.height < row + 1) {
+        if (dim.height < row + 1) {
             // need to clamp value
             return row.coerceIn(0 until dim.height) * 9 + column == slot
         }
@@ -14,14 +14,14 @@ data class Slot(val row: Int, val column: Int): ComponentSpace {
     }
 
     override fun enumerate(dim: UIDimensions): List<Int> {
-        if(dim.height < row + 1) {
+        if (dim.height < row + 1) {
             // need to clamp value
             return listOf(row.coerceIn(0 until dim.height) * 9 + column)
         }
         return listOf(value)
     }
 
-    data class LastRowSlot(val column: Int): ComponentSpace {
+    data class LastRowSlot(val column: Int) : ComponentSpace {
         override fun contains(slot: Int, dim: UIDimensions): Boolean {
             return (dim.height - 1) * 9 + column == slot
         }
@@ -31,7 +31,7 @@ data class Slot(val row: Int, val column: Int): ComponentSpace {
         }
     }
 
-    object AllSlotsSpace: ComponentSpace {
+    object AllSlotsSpace : ComponentSpace {
         override fun contains(slot: Int, dim: UIDimensions): Boolean {
             return true
         }

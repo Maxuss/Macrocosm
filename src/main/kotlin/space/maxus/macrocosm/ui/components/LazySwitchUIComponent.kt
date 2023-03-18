@@ -7,7 +7,8 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
 
-class LazySwitchUIComponent(space: ComponentSpace, val item: ItemComponentRepr, val ui: () -> MacrocosmUI): SpacedComponent(space) {
+class LazySwitchUIComponent(space: ComponentSpace, val item: ItemComponentRepr, val ui: () -> MacrocosmUI) :
+    SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         click.instance.switch(ui())

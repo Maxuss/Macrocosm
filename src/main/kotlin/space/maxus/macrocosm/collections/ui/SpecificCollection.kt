@@ -6,12 +6,13 @@ import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIDimensions
 import space.maxus.macrocosm.ui.dsl.macrocosmUi
 
-internal fun specificCollectionUi(player: MacrocosmPlayer, ty: CollectionType): MacrocosmUI = macrocosmUi("collection_specific", UIDimensions.SIX_X_NINE) {
-    title = "Collections ► ${ty.inst.name}"
+internal fun specificCollectionUi(player: MacrocosmPlayer, ty: CollectionType): MacrocosmUI =
+    macrocosmUi("collection_specific", UIDimensions.SIX_X_NINE) {
+        title = "Collections ► ${ty.inst.name}"
 
-    page {
-        background()
+        page {
+            background()
 
-        // TODO: collection UI
+            // TODO: collection UI
+        }
     }
-}

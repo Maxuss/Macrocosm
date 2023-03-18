@@ -8,7 +8,10 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.ui.UIClickData
 
-class CloseUIComponent(space: ComponentSpace, val item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")): SpacedComponent(space) {
+class CloseUIComponent(
+    space: ComponentSpace,
+    val item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")
+) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.paper.closeInventory()
         sound(Sound.UI_BUTTON_CLICK) {

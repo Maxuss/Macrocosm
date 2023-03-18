@@ -81,24 +81,25 @@ internal fun buildDropItem(
     return it
 }
 
-fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType): MacrocosmUI = macrocosmUi("slayer_drops", UIDimensions.FIVE_X_NINE) {
-    val slayer = ty.slayer
-    val playerLevel = player.slayers[ty]!!
-    title = "${slayer.name.stripTags()} Drops"
+fun dropsMenu(player: MacrocosmPlayer, ty: SlayerType): MacrocosmUI =
+    macrocosmUi("slayer_drops", UIDimensions.FIVE_X_NINE) {
+        val slayer = ty.slayer
+        val playerLevel = player.slayers[ty]!!
+        title = "${slayer.name.stripTags()} Drops"
 
-    page {
-        background()
+        page {
+            background()
 
-        transparentCompound(
-            Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight,
-            slayer.drops.sortedBy { it.requiredLevel },
-            { drop ->
-                buildDropItem(player, playerLevel, drop)
-        }, { _, _ -> })
+            transparentCompound(
+                Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight,
+                slayer.drops.sortedBy { it.requiredLevel },
+                { drop ->
+                    buildDropItem(player, playerLevel, drop)
+                }, { _, _ -> })
 
-        goBack(Slot.RowFiveSlotOne, { specificSlayerMenu(player, ty) })
+            goBack(Slot.RowFiveSlotOne, { specificSlayerMenu(player, ty) })
+        }
     }
-}
 
 open class SlayerDrop(val drop: Drop, val minTier: Int, val requiredLevel: Int, val amounts: HashMap<Int, IntRange>)
 

@@ -10,17 +10,18 @@ class CompoundWidthScrollComponent(
     val compound: CompoundComponent<*>,
     val item: ItemStack,
     private val reverse: Boolean = false
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
     var amount: Int? = null
+
     init {
         Ensure.isTrue(compound.space is RectComponentSpace, "Can not do width-scroll for non-rect compounds")
     }
 
     override fun handleClick(click: UIClickData) {
-        if(amount == null) {
+        if (amount == null) {
             val rect = compound.space as RectComponentSpace
             rect.initContentsIfNull(click.instance.dimensions)
-            amount = rect.width!!.let { if(reverse) -it else it }
+            amount = rect.width!!.let { if (reverse) -it else it }
         }
         click.bukkit.isCancelled = true
         compound.scroll(amount!!)

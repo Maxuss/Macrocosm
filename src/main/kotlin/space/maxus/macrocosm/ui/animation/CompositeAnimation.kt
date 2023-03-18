@@ -3,11 +3,11 @@ package space.maxus.macrocosm.ui.animation
 import org.bukkit.inventory.Inventory
 import space.maxus.macrocosm.ui.MacrocosmUI
 
-open class CompositeAnimation: UIAnimation {
+open class CompositeAnimation : UIAnimation {
     private val tasks: MutableList<RenderTask> = mutableListOf()
 
     override fun tick(tick: Int, inv: Inventory, ui: MacrocosmUI) {
-        for(task in tasks) {
+        for (task in tasks) {
             task.tick()
         }
     }

@@ -10,7 +10,7 @@ object InventoryListeners : Listener {
     @EventHandler
     fun onCloseAll(e: InventoryCloseEvent) {
         val mc = (e.player as Player).macrocosm ?: return
-        if(mc.openUi != null) {
+        if (mc.openUi != null) {
             mc.openUi!!.close()
             mc.openUi = null
         }

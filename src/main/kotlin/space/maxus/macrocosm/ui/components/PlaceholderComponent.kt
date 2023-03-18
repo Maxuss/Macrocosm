@@ -7,7 +7,7 @@ import space.maxus.macrocosm.ui.UIClickData
 class PlaceholderComponent(
     space: ComponentSpace,
     val item: ItemStack
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
     }
@@ -18,7 +18,7 @@ class PlaceholderComponent(
 class AdvancedPlaceholderComponent(
     space: ComponentSpace,
     val item: ItemComponentRepr
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
     }

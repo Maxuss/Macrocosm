@@ -6,9 +6,9 @@ interface ItemComponentRepr {
     val item: ItemStack
 }
 
-data class StaticItemRepr(override val item: ItemStack): ItemComponentRepr
+data class StaticItemRepr(override val item: ItemStack) : ItemComponentRepr
 
-data class DynamicItemRepr(private val getter: () -> ItemStack): ItemComponentRepr {
+data class DynamicItemRepr(private val getter: () -> ItemStack) : ItemComponentRepr {
     override val item: ItemStack get() = getter()
 }
 

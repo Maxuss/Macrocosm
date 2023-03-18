@@ -13,7 +13,7 @@ open class CompoundComponent<M>(
     val map: (M) -> ItemStack,
     val clickHandler: (UIClickData, M) -> Unit,
     val transparent: Boolean = false
-    ): SpacedComponent(space) {
+) : SpacedComponent(space) {
     private val slotToValue: MutableList<Int> = mutableListOf()
     private var scrollProgress: Int = 0
     private var slicedContent: List<M> = listOf()
@@ -21,10 +21,10 @@ open class CompoundComponent<M>(
 
     protected open fun initContentsIfNull(dim: UIDimensions) {
         lastDim = dim
-        if(slotToValue.isNotEmpty())
+        if (slotToValue.isNotEmpty())
             return
-        for(slot in space.enumerate(dim)) {
-            if(!slotToValue.contains(slot))
+        for (slot in space.enumerate(dim)) {
+            if (!slotToValue.contains(slot))
                 slotToValue.add(slot)
         }
         slotToValue.sort()
@@ -34,12 +34,12 @@ open class CompoundComponent<M>(
     fun scroll(amount: Int) {
         val value = scrollProgress + amount
 
-        val doScroll = if(slotToValue.size + value <= values.size) true
-            else if(space is RectComponentSpace) {
-                space.initContentsIfNull(lastDim)
-                (slotToValue.size + value <= values.size + (space.width!! - (values.size % space.width!!)))
-            } else false
-        if(doScroll) {
+        val doScroll = if (slotToValue.size + value <= values.size) true
+        else if (space is RectComponentSpace) {
+            space.initContentsIfNull(lastDim)
+            (slotToValue.size + value <= values.size + (space.width!! - (values.size % space.width!!)))
+        } else false
+        if (doScroll) {
             scrollProgress = value
             recalculateSlicedContent()
         }
@@ -48,13 +48,13 @@ open class CompoundComponent<M>(
     open fun recalculateSlicedContent() {
         if (scrollProgress > values.size)
             scrollProgress = values.size
-        else if(scrollProgress < 0)
+        else if (scrollProgress < 0)
             scrollProgress = 0
 
         var sliceUntil = slotToValue.size + scrollProgress
         if (sliceUntil > values.lastIndex)
             sliceUntil = values.size
-        else if(sliceUntil < 0)
+        else if (sliceUntil < 0)
             sliceUntil = 0
 
         slicedContent = values.slice(scrollProgress until sliceUntil)
@@ -64,17 +64,17 @@ open class CompoundComponent<M>(
         initContentsIfNull(click.instance.dimensions)
         click.bukkit.isCancelled = true
         val index = slotToValue.indexOf(click.bukkit.slot)
-        if(slicedContent.size <= index)
+        if (slicedContent.size <= index)
             return
         clickHandler(click, slicedContent[index])
     }
 
     override fun render(inv: Inventory, ui: MacrocosmUI) {
         initContentsIfNull(ui.dimensions)
-        for(slot in space.enumerate(ui.dimensions)) {
+        for (slot in space.enumerate(ui.dimensions)) {
             val index = slotToValue.indexOf(slot)
-            if(slicedContent.size <= index) {
-                if(!transparent)
+            if (slicedContent.size <= index) {
+                if (!transparent)
                     inv.setItem(slot, null)
             } else {
                 inv.setItem(slot, map(slicedContent[index]))
@@ -93,7 +93,7 @@ class LazyCompoundComponent<M>(
     map: (M) -> ItemStack,
     clickHandler: (UIClickData, M) -> Unit,
     transparent: Boolean = false
-): CompoundComponent<M>(
+) : CompoundComponent<M>(
     space,
     listOf(),
     map,

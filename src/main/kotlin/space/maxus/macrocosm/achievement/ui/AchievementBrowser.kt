@@ -7,18 +7,22 @@ import space.maxus.macrocosm.ui.UIDimensions
 import space.maxus.macrocosm.ui.components.Slot
 import space.maxus.macrocosm.ui.dsl.macrocosmUi
 
-fun achievementBrowser(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("achievement_browser", UIDimensions.FIVE_X_NINE) {
-    title = "Achievement Browser"
+fun achievementBrowser(player: MacrocosmPlayer): MacrocosmUI =
+    macrocosmUi("achievement_browser", UIDimensions.FIVE_X_NINE) {
+        title = "Achievement Browser"
 
-    page {
-        background()
-        close()
+        page {
+            background()
+            close()
 
-        val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight, Registry.ACHIEVEMENT.iter().values.sortedBy { it.rarity.ordinal }, { ach ->
-            ach.buildItem(player)
-        }) { _, _ -> }
+            val cmp = compound(
+                Slot.RowTwoSlotTwo rect Slot.RowFourSlotEight,
+                Registry.ACHIEVEMENT.iter().values.sortedBy { it.rarity.ordinal },
+                { ach ->
+                    ach.buildItem(player)
+                }) { _, _ -> }
 
-        compoundWidthScroll(Slot.RowFiveSlotEight, cmp, reverse = true)
-        compoundWidthScroll(Slot.RowFiveSlotNine, cmp)
+            compoundWidthScroll(Slot.RowFiveSlotEight, cmp, reverse = true)
+            compoundWidthScroll(Slot.RowFiveSlotNine, cmp)
+        }
     }
-}

@@ -79,7 +79,8 @@ fun globalBazaarMenu(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("bazaar
     }
 }
 
-private fun specificCollectionMenu(player: MacrocosmPlayer, collection: BazaarCollection): MacrocosmUI = macrocosmUi("bazaar_specific_collection", UIDimensions.FOUR_X_NINE) {
+private fun specificCollectionMenu(player: MacrocosmPlayer, collection: BazaarCollection): MacrocosmUI =
+    macrocosmUi("bazaar_specific_collection", UIDimensions.FOUR_X_NINE) {
         title = collection.displayName.stripTags()
 
         page(0) {

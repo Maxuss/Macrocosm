@@ -839,8 +839,10 @@ fun allItems(player: Player, search: String = ""): MacrocosmUI = macrocosmUi("al
 
         val cmp = compound(
             Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
-            { Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
-                .map { it.key }.sortedBy { it.path } },
+            {
+                Registry.ITEM.iter().filter { it.value.name.str().lowercase().contains(search.lowercase()) }
+                    .map { it.key }.sortedBy { it.path }
+            },
             {
                 try {
                     Registry.ITEM.find(it).build(mc)!!
@@ -884,7 +886,8 @@ fun allItems(player: Player, search: String = ""): MacrocosmUI = macrocosmUi("al
 
             }
 
-            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.paper)
+            val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
+                .buildConversation(e.paper)
             conv.begin()
         }
     }

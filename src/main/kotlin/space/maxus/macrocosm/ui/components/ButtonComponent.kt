@@ -8,7 +8,7 @@ class ButtonComponent(
     space: ComponentSpace,
     val item: ItemComponentRepr,
     val handler: (UIClickData) -> Unit
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         handler(click)

@@ -107,70 +107,75 @@ fun rngMeter(player: MacrocosmPlayer, slayer: SlayerLevel, slayerType: SlayerTyp
                 slayerType.slayer.drops.indices.associateWith { slayerType.slayer.drops[it] }.toList()
                     .filter { it.second.drop.chance < 1 },
                 { (dropIndex, drop) ->
-                if (drop.requiredLevel > slayer.level) {
-                    return@compound ItemValue.placeholderDescripted(
-                        Material.COAL_BLOCK,
-                        "<red>???",
-                        "Requires ${slayerType.slayer.name} ${drop.requiredLevel}<gray>!"
-                    )
-                }
-                val oldChance = drop.drop.chance
-                val expToDrop = (((1 / oldChance) * 900) * slayerLevelBuff[slayer.level]).roundToInt()
-                val newChance = oldChance + (slayer.rng[slayerType]!!.expAccumulated / expToDrop) * .03
-                val item = buildDropItem(
-                    player,
-                    slayer,
-                    drop,
-                    if (dropIndex == slayer.rng[slayerType]!!.selectedRngDrop) newChance.toFloat() else -1f
-                )
-                item.meta {
-                    val lore = lore()!!.toMutableList()
-
-                    lore.add(Component.empty())
-
-                    if (slayer.rng[slayerType]!!.selectedRngDrop == dropIndex) {
-                        val ratio = slayer.rng[slayerType]!!.expAccumulated / expToDrop
-                        val progress = ratio * 100
-                        lore.add(text("<gray>Progress: <light_purple>${Formatting.withCommas(progress.toBigDecimal())}<dark_purple>%").noitalic())
-                        val barCount = (ratio * 25).roundToInt().coerceIn(0..25)
-                        lore.add(
-                            text(
-                                "<light_purple>${"-".repeat(barCount)}<white>${"-".repeat(25 - barCount)} <light_purple>${
-                                    Formatting.withCommas(
-                                        slayer.rng[slayerType]!!.expAccumulated.toBigDecimal(),
-                                        true
-                                    )
-                                }<dark_purple>/<light_purple>${truncateBigNumber(expToDrop.toFloat(), false)}"
-                            ).noitalic()
+                    if (drop.requiredLevel > slayer.level) {
+                        return@compound ItemValue.placeholderDescripted(
+                            Material.COAL_BLOCK,
+                            "<red>???",
+                            "Requires ${slayerType.slayer.name} ${drop.requiredLevel}<gray>!"
                         )
-                        lore.add(Component.empty())
-                        lore.addAll(listOf(
-                            "Filling the meter increases the",
-                            "drop chance of this item.",
-                            "Reaching <green>100%<gray> will guarantee",
-                            "it to drop!",
-                            "",
-                            "<green>SELECTED"
-                        ).map { text("<gray>$it").noitalic() })
-                    } else {
-                        lore.add(
-                            text(
-                                "<gray>Slayer XP: <light_purple>${
-                                    Formatting.withCommas(
-                                        slayer.rng[slayerType]!!.expAccumulated.toBigDecimal(),
-                                        true
-                                    )
-                                }<dark_purple>/<light_purple>${Formatting.withCommas(expToDrop.toBigDecimal(), true)}"
-                            ).noitalic()
-                        )
-                        lore.add(Component.empty())
-                        lore.add(text("<yellow>Click to select!").noitalic())
                     }
+                    val oldChance = drop.drop.chance
+                    val expToDrop = (((1 / oldChance) * 900) * slayerLevelBuff[slayer.level]).roundToInt()
+                    val newChance = oldChance + (slayer.rng[slayerType]!!.expAccumulated / expToDrop) * .03
+                    val item = buildDropItem(
+                        player,
+                        slayer,
+                        drop,
+                        if (dropIndex == slayer.rng[slayerType]!!.selectedRngDrop) newChance.toFloat() else -1f
+                    )
+                    item.meta {
+                        val lore = lore()!!.toMutableList()
 
-                    lore(lore)
-                }
-                item
-            }) { e, (dropIndex, drop) ->
+                        lore.add(Component.empty())
+
+                        if (slayer.rng[slayerType]!!.selectedRngDrop == dropIndex) {
+                            val ratio = slayer.rng[slayerType]!!.expAccumulated / expToDrop
+                            val progress = ratio * 100
+                            lore.add(text("<gray>Progress: <light_purple>${Formatting.withCommas(progress.toBigDecimal())}<dark_purple>%").noitalic())
+                            val barCount = (ratio * 25).roundToInt().coerceIn(0..25)
+                            lore.add(
+                                text(
+                                    "<light_purple>${"-".repeat(barCount)}<white>${"-".repeat(25 - barCount)} <light_purple>${
+                                        Formatting.withCommas(
+                                            slayer.rng[slayerType]!!.expAccumulated.toBigDecimal(),
+                                            true
+                                        )
+                                    }<dark_purple>/<light_purple>${truncateBigNumber(expToDrop.toFloat(), false)}"
+                                ).noitalic()
+                            )
+                            lore.add(Component.empty())
+                            lore.addAll(listOf(
+                                "Filling the meter increases the",
+                                "drop chance of this item.",
+                                "Reaching <green>100%<gray> will guarantee",
+                                "it to drop!",
+                                "",
+                                "<green>SELECTED"
+                            ).map { text("<gray>$it").noitalic() })
+                        } else {
+                            lore.add(
+                                text(
+                                    "<gray>Slayer XP: <light_purple>${
+                                        Formatting.withCommas(
+                                            slayer.rng[slayerType]!!.expAccumulated.toBigDecimal(),
+                                            true
+                                        )
+                                    }<dark_purple>/<light_purple>${
+                                        Formatting.withCommas(
+                                            expToDrop.toBigDecimal(),
+                                            true
+                                        )
+                                    }"
+                                ).noitalic()
+                            )
+                            lore.add(Component.empty())
+                            lore.add(text("<yellow>Click to select!").noitalic())
+                        }
+
+                        lore(lore)
+                    }
+                    item
+                }) { e, (dropIndex, drop) ->
                 if (slayer.rng[slayerType]!!.selectedRngDrop != dropIndex && drop.requiredLevel <= slayer.level) {
                     slayer.rng[slayerType]!!.selectedRngDrop = dropIndex
                     sound(Sound.BLOCK_NOTE_BLOCK_HARP) {

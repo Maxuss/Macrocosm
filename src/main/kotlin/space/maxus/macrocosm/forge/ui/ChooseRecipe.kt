@@ -23,91 +23,93 @@ import space.maxus.macrocosm.util.toFancyString
 import java.time.Duration
 import java.time.Instant
 
-fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): MacrocosmUI = macrocosmUi("recipe_chooser", UIDimensions.SIX_X_NINE) {
-    title = "${forge.displayName} Recipes"
+fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): MacrocosmUI =
+    macrocosmUi("recipe_chooser", UIDimensions.SIX_X_NINE) {
+        title = "${forge.displayName} Recipes"
 
-    page(0) {
-        background()
+        page(0) {
+            background()
 
-        val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, { Registry.FORGE_RECIPE.iter().filter { it.value.type == forge }.values.toList() },
-            { recipe ->
-                if (player.skills.level(forge.skill) < recipe.requiredLvl) {
-                    ItemValue.placeholderDescripted(
-                        Material.WHITE_STAINED_GLASS_PANE,
-                        "<red>???",
-                        "<red>Requires ${forge.skill.inst.name} LVL ${recipe.requiredLvl}"
-                    )
-                } else {
-                    val (resId, resAmount) = recipe.result
-                    val resItem = Registry.ITEM.find(resId)
-                    val built = resItem.build(player)!!
-                    built.meta {
-                        if (resAmount > 1) {
-                            displayName(displayName()!!.append(text(" <gray>${resAmount}x").noitalic()))
-                        }
-                        val loreClone = lore()!!
-                        loreClone.addAll(
-                            listOf(
-                                "",
-                                "<yellow>Items Required:",
-                                *recipe.input.mapPaired(::unwrapIngredient).toTypedArray(),
-                                "",
-                                "<gray>Duration: <aqua>${Duration.ofSeconds(recipe.length).toFancyString()}",
-                                "",
-                                "<yellow>Click to start!"
-                            ).map { text -> text(text).noitalic() }
+            val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
+                { Registry.FORGE_RECIPE.iter().filter { it.value.type == forge }.values.toList() },
+                { recipe ->
+                    if (player.skills.level(forge.skill) < recipe.requiredLvl) {
+                        ItemValue.placeholderDescripted(
+                            Material.WHITE_STAINED_GLASS_PANE,
+                            "<red>???",
+                            "<red>Requires ${forge.skill.inst.name} LVL ${recipe.requiredLvl}"
                         )
-                        lore(loreClone)
-                    }
-                    built
-                }
-            },
-            { e, recipe ->
-                if (player.activeForgeRecipes.size >= 5)
-                    player.sendMessage("<red>You have reached forge recipe limit!")
-                else {
-                    if (recipe.input.all { (id, amount) ->
-                            val it = Registry.ITEM.find(id).build(player)!!
-                            e.paper.inventory.containsAtLeast(it, amount)
-                        }) {
-                        recipe.input.forEach { (itemId, itemAmount) ->
-                            val it = Registry.ITEM.find(itemId).build(player)!!
-                            it.amount = itemAmount
-                            e.paper.inventory.removeItemAnySlot(it)
-                        }
-                        sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
-                            pitch = 2f
-                            volume = 2f
-
-                            playFor(e.paper)
-                        }
-                        val addMillis = if (OldBlueprints.hasAccs(player)) recipe.length * 250 else 0
-                        player.activeForgeRecipes.add(
-                            ActiveForgeRecipe(
-                                Registry.FORGE_RECIPE.byValue(recipe)!!,
-                                Instant.now().toEpochMilli() + addMillis
-                            )
-                        )
-                        e.instance.switch(displayForge(player, forge))
                     } else {
-                        player.sendMessage("<red>Not enough ingredients!")
+                        val (resId, resAmount) = recipe.result
+                        val resItem = Registry.ITEM.find(resId)
+                        val built = resItem.build(player)!!
+                        built.meta {
+                            if (resAmount > 1) {
+                                displayName(displayName()!!.append(text(" <gray>${resAmount}x").noitalic()))
+                            }
+                            val loreClone = lore()!!
+                            loreClone.addAll(
+                                listOf(
+                                    "",
+                                    "<yellow>Items Required:",
+                                    *recipe.input.mapPaired(::unwrapIngredient).toTypedArray(),
+                                    "",
+                                    "<gray>Duration: <aqua>${Duration.ofSeconds(recipe.length).toFancyString()}",
+                                    "",
+                                    "<yellow>Click to start!"
+                                ).map { text -> text(text).noitalic() }
+                            )
+                            lore(loreClone)
+                        }
+                        built
+                    }
+                },
+                { e, recipe ->
+                    if (player.activeForgeRecipes.size >= 5)
+                        player.sendMessage("<red>You have reached forge recipe limit!")
+                    else {
+                        if (recipe.input.all { (id, amount) ->
+                                val it = Registry.ITEM.find(id).build(player)!!
+                                e.paper.inventory.containsAtLeast(it, amount)
+                            }) {
+                            recipe.input.forEach { (itemId, itemAmount) ->
+                                val it = Registry.ITEM.find(itemId).build(player)!!
+                                it.amount = itemAmount
+                                e.paper.inventory.removeItemAnySlot(it)
+                            }
+                            sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
+                                pitch = 2f
+                                volume = 2f
+
+                                playFor(e.paper)
+                            }
+                            val addMillis = if (OldBlueprints.hasAccs(player)) recipe.length * 250 else 0
+                            player.activeForgeRecipes.add(
+                                ActiveForgeRecipe(
+                                    Registry.FORGE_RECIPE.byValue(recipe)!!,
+                                    Instant.now().toEpochMilli() + addMillis
+                                )
+                            )
+                            e.instance.switch(displayForge(player, forge))
+                        } else {
+                            player.sendMessage("<red>Not enough ingredients!")
+                        }
                     }
                 }
-            }
-        )
-        compoundWidthScroll(
-            Slot.RowSixSlotEight,
-            cmp,
-        )
-        compoundWidthScroll(
-            Slot.RowSixSlotNine,
-            cmp,
-            reverse = true
-        )
+            )
+            compoundWidthScroll(
+                Slot.RowSixSlotEight,
+                cmp,
+            )
+            compoundWidthScroll(
+                Slot.RowSixSlotNine,
+                cmp,
+                reverse = true
+            )
 
-        goBack(Slot.RowSixSlotOne, { displayForge(player, forge) }, forge.displayName)
+            goBack(Slot.RowSixSlotOne, { displayForge(player, forge) }, forge.displayName)
+        }
     }
-}
 
 private fun unwrapIngredient(ingredient: Pair<Identifier, Int>): String {
     val item = Registry.ITEM.find(ingredient.first)

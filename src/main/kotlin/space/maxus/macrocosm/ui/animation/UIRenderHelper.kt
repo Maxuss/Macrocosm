@@ -15,25 +15,30 @@ object UIRenderHelper {
     fun dummy(mat: Material): ItemStack = ItemValue.placeholder(mat, "")
 
     fun instant(canvas: Inventory, item: ItemStack, space: ComponentSpace) {
-        for(slot in space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE)) {
+        for (slot in space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE)) {
             canvas.setItem(slot, item)
         }
     }
 
-    fun draw(canvas: Inventory, item: ItemStack, space: ComponentSpace, perTick: Int = 1, frequency: Int = 1): RenderTask {
+    fun draw(
+        canvas: Inventory,
+        item: ItemStack,
+        space: ComponentSpace,
+        perTick: Int = 1,
+        frequency: Int = 1
+    ): RenderTask {
         val affected = space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE).toMutableList()
         val task = {
-            if(affected.isEmpty())
+            if (affected.isEmpty())
                 listOf()
             else {
-                if(perTick <= 1) {
+                if (perTick <= 1) {
                     val single = affected.removeFirst()
                     canvas.setItem(single, item)
                     listOf(single)
-                }
-                else {
+                } else {
                     val all = mutableListOf<Int>()
-                    for(amount in 0..perTick) {
+                    for (amount in 0..perTick) {
                         val removed = affected.removeFirst()
                         all.add(removed)
                         canvas.setItem(removed, item)
@@ -47,22 +52,54 @@ object UIRenderHelper {
         }
     }
 
-    fun instantDissolve(canvas: Inventory, item: ItemStack, replacement: ItemStack, space: ComponentSpace, perTick: Int = 1, frequency: Int = 1): RenderTask {
+    fun instantDissolve(
+        canvas: Inventory,
+        item: ItemStack,
+        replacement: ItemStack,
+        space: ComponentSpace,
+        perTick: Int = 1,
+        frequency: Int = 1
+    ): RenderTask {
         val affected = space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE).toMutableList()
-        for(slot in affected) {
+        for (slot in affected) {
             canvas.setItem(slot, item)
         }
         return draw(canvas, replacement, space, perTick, frequency)
     }
 
-    fun drawDissolve(canvas: Inventory, item: ItemStack, replacement: ItemStack, space: ComponentSpace, perTick: Int = 1, frequency: Int = 1, delay: Int = frequency): RenderTask {
-        return draw(canvas, item, space, perTick, frequency).join(draw(canvas, replacement, space, perTick, frequency).delay(delay))
+    fun drawDissolve(
+        canvas: Inventory,
+        item: ItemStack,
+        replacement: ItemStack,
+        space: ComponentSpace,
+        perTick: Int = 1,
+        frequency: Int = 1,
+        delay: Int = frequency
+    ): RenderTask {
+        return draw(canvas, item, space, perTick, frequency).join(
+            draw(
+                canvas,
+                replacement,
+                space,
+                perTick,
+                frequency
+            ).delay(delay)
+        )
     }
 
-    fun burn(canvas: Inventory, base: ItemStack, flame: ItemStack, empty: ItemStack, space: ComponentSpace, frequency: Int = 1, delay: Int = frequency + 1): RenderTask {
+    fun burn(
+        canvas: Inventory,
+        base: ItemStack,
+        flame: ItemStack,
+        empty: ItemStack,
+        space: ComponentSpace,
+        frequency: Int = 1,
+        delay: Int = frequency + 1
+    ): RenderTask {
         return draw(canvas, base, space, 1, frequency)
             .join(
-                draw(canvas, flame, space, 1, frequency).delay(delay))
+                draw(canvas, flame, space, 1, frequency).delay(delay)
+            )
             .join(
                 draw(canvas, empty, space, 1, frequency).delay(delay + 1)
             )
@@ -79,11 +116,11 @@ open class RenderTask(
     protected var frequencyTick: Int = frequency
     protected var sound: () -> Unit = { }
     open fun tick() {
-        if(frequencyTick - 1 > 0) {
+        if (frequencyTick - 1 > 0) {
             frequencyTick -= 1
             return
         } else frequencyTick = frequency
-        if(delay > 0) {
+        if (delay > 0) {
             delay -= 1
             return
         }
@@ -116,13 +153,13 @@ open class RenderTask(
 data class RenderTaskPair(
     val first: RenderTask,
     val second: RenderTask
-): RenderTask(1, { unreachable() }, { first.isComplete() && second.isComplete() }) {
+) : RenderTask(1, { unreachable() }, { first.isComplete() && second.isComplete() }) {
     override fun tick() {
-        if(frequencyTick - 1 > 0) {
+        if (frequencyTick - 1 > 0) {
             frequencyTick -= 1
             return
         } else frequencyTick = frequency
-        if(delay > 0) {
+        if (delay > 0) {
             delay -= 1
             return
         }

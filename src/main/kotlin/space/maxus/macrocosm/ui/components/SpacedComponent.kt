@@ -6,12 +6,12 @@ import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIComponent
 import space.maxus.macrocosm.ui.UIDimensions
 
-abstract class SpacedComponent(val space: ComponentSpace): UIComponent {
+abstract class SpacedComponent(val space: ComponentSpace) : UIComponent {
     abstract fun render(inv: Inventory): ItemStack
 
     override fun render(inv: Inventory, ui: MacrocosmUI) {
         val item = render(inv)
-        for(slot in space.enumerate(ui.dimensions)) {
+        for (slot in space.enumerate(ui.dimensions)) {
             inv.setItem(slot, item)
         }
     }

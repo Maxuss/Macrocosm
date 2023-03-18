@@ -13,12 +13,12 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.ui.MacrocosmUI
 import space.maxus.macrocosm.ui.UIClickData
 
-class PreviousUIComponent(space: ComponentSpace): SpacedComponent(space) {
+class PreviousUIComponent(space: ComponentSpace) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         val last = click.player.uiHistory.lastOrNull() ?: return
         val ui = Registry.UI.find(last)
-        if(ui is MacrocosmUI.NullUi) {
+        if (ui is MacrocosmUI.NullUi) {
             throw IllegalStateException("Can not return to delegated ui!")
         }
         sound(Sound.UI_BUTTON_CLICK) {

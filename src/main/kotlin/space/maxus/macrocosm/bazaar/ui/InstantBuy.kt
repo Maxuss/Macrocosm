@@ -25,7 +25,8 @@ import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.emptySlots
 import space.maxus.macrocosm.util.stripTags
 
-internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): MacrocosmUI = macrocosmUi("bazaar_buy_instant", UIDimensions.FOUR_X_NINE) {
+internal fun buyInstantlyScreen(player: MacrocosmPlayer, item: Identifier): MacrocosmUI =
+    macrocosmUi("bazaar_buy_instant", UIDimensions.FOUR_X_NINE) {
         val element = BazaarElement.idToElement(item)!!
         val elementName = element.name.color(null).str()
         val builtItem = element.build(player)!!

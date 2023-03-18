@@ -16,11 +16,12 @@ enum class UIDimensions(val width: Int, val height: Int) {
 
     val size = width * height
 
-    fun bukkit(holder: InventoryHolder? = null, title: Component = Component.empty()) = Bukkit.createInventory(holder, size, title)
+    fun bukkit(holder: InventoryHolder? = null, title: Component = Component.empty()) =
+        Bukkit.createInventory(holder, size, title)
 
     companion object {
         fun fromRaw(size: Int): UIDimensions? {
-            return when(size) {
+            return when (size) {
                 6 * 9 -> SIX_X_NINE
                 5 * 9 -> FIVE_X_NINE
                 4 * 9 -> FOUR_X_NINE

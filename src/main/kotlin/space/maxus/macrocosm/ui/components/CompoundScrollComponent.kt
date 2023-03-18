@@ -9,7 +9,7 @@ class CompoundScrollComponent(
     val compound: CompoundComponent<*>,
     val amount: Int,
     val item: ItemStack,
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
 
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true

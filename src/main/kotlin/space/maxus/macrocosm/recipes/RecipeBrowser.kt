@@ -56,50 +56,51 @@ fun recipeBrowser(player: MacrocosmPlayer) = macrocosmUi("recipe_browser", UIDim
     }
 }
 
-fun recipesUsing(item: Identifier, player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("recipe_browser_using", UIDimensions.FIVE_X_NINE) {
-    title = "Recipe Browser"
-    val recipes = Recipes.using(item)
-    val indices = recipes.filter { !player.isRecipeLocked(it.id) }.indices
-    for (i in indices) {
-        val recipe = recipes[i]
-        page(i) {
-            background()
+fun recipesUsing(item: Identifier, player: MacrocosmPlayer): MacrocosmUI =
+    macrocosmUi("recipe_browser_using", UIDimensions.FIVE_X_NINE) {
+        title = "Recipe Browser"
+        val recipes = Recipes.using(item)
+        val indices = recipes.filter { !player.isRecipeLocked(it.id) }.indices
+        for (i in indices) {
+            val recipe = recipes[i]
+            page(i) {
+                background()
 
-            // crafting grid
-            val items = mutableListOf<ItemStack>()
-            recipe.ingredients().map {
-                it.map { v ->
-                    val its = Registry.ITEM.findOrNull(v.first)?.build(player)
-                        ?: VanillaItem(Material.valueOf(v.first.path.uppercase())).build(player)!!
-                    its.amount = v.second
-                    its
+                // crafting grid
+                val items = mutableListOf<ItemStack>()
+                recipe.ingredients().map {
+                    it.map { v ->
+                        val its = Registry.ITEM.findOrNull(v.first)?.build(player)
+                            ?: VanillaItem(Material.valueOf(v.first.path.uppercase())).build(player)!!
+                        its.amount = v.second
+                        its
+                    }
+                }.forEach {
+                    items.addAll(it)
                 }
-            }.forEach {
-                items.addAll(it)
-            }
-            compound(
-                Slot.RowTwoSlotTwo rect Slot.RowFourSlotFour,
-                items,
-                { it },
-            ) { e, it ->
-                if (!it.type.isAir) {
-                    val id = it.macrocosm?.id ?: Identifier.NULL
-                    val rec = Registry.RECIPE.findOrNull(id)
-                    if (rec != null)
-                        e.instance.switch(recipeViewer(id, player))
+                compound(
+                    Slot.RowTwoSlotTwo rect Slot.RowFourSlotFour,
+                    items,
+                    { it },
+                ) { e, it ->
+                    if (!it.type.isAir) {
+                        val id = it.macrocosm?.id ?: Identifier.NULL
+                        val rec = Registry.RECIPE.findOrNull(id)
+                        if (rec != null)
+                            e.instance.switch(recipeViewer(id, player))
+                    }
                 }
+
+                // result
+                placeholder(Slot.RowThreeSlotEight, recipe.resultItem())
+
+                if (i != 0)
+                    changePage(Slot.RowSixSlotOne, i - 1)
+                if (i != indices.last)
+                    changePage(Slot.RowSixSlotNine, i + 1)
             }
-
-            // result
-            placeholder(Slot.RowThreeSlotEight, recipe.resultItem())
-
-            if(i != 0)
-                changePage(Slot.RowSixSlotOne, i - 1)
-            if(i != indices.last)
-                changePage(Slot.RowSixSlotNine, i + 1)
         }
     }
-}
 
 fun recipeViewer(item: Identifier, player: MacrocosmPlayer): MacrocosmUI =
     macrocosmUi("single_recipe_viewer", UIDimensions.FIVE_X_NINE) {

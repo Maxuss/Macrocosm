@@ -13,11 +13,11 @@ class SwitchUIComponent(
     space: ComponentSpace,
     val item: ItemComponentRepr,
     val ui: Identifier
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         val ui = Registry.UI.find(ui)
-        if(ui is MacrocosmUI.NullUi) {
+        if (ui is MacrocosmUI.NullUi) {
             throw IllegalStateException("Can not return to delegated ui!")
         }
         click.instance.switch(ui)
@@ -34,7 +34,7 @@ class DelegatedSwitchUIComponent(
     space: ComponentSpace,
     val item: ItemComponentRepr,
     val ui: MacrocosmUI
-): SpacedComponent(space) {
+) : SpacedComponent(space) {
     override fun handleClick(click: UIClickData) {
         click.bukkit.isCancelled = true
         click.instance.switch(ui)

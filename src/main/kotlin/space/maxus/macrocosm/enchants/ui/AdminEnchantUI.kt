@@ -74,7 +74,14 @@ fun adminEnchantUi(item: MacrocosmItem, search: String = ""): MacrocosmUI =
                 reverse = true
             )
 
-            button(Slot.RowSixSlotOne, ItemValue.placeholderDescripted(Material.OAK_SIGN, "<yellow>Search", *(if(search.isNotBlank()) arrayOf("Current filter: <green>$search") else arrayOf()))) { e ->
+            button(
+                Slot.RowSixSlotOne,
+                ItemValue.placeholderDescripted(
+                    Material.OAK_SIGN,
+                    "<yellow>Search",
+                    *(if (search.isNotBlank()) arrayOf("Current filter: <green>$search") else arrayOf())
+                )
+            ) { e ->
                 e.paper.closeInventory()
                 val inputFilterPrompt = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
@@ -92,7 +99,8 @@ fun adminEnchantUi(item: MacrocosmItem, search: String = ""): MacrocosmUI =
 
                 }
 
-                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt).buildConversation(e.paper)
+                val conv = ConversationFactory(Macrocosm).withLocalEcho(false).withFirstPrompt(inputFilterPrompt)
+                    .buildConversation(e.paper)
                 conv.begin()
             }
         }
@@ -108,32 +116,36 @@ private fun specificAdminEnchUi(
     page(0) {
         background()
 
-        compound(Slot.RowTwoSlotTwo rect Slot.RowTwoSlotEight, ench.levels.toList().map { Optional.of(it) }.pad(7, Optional.empty()), { oLevel ->
-            if (oLevel.isEmpty)
-                return@compound ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
-            val level = oLevel.get()
-            val name = ench.name
-            val desc = ench.description(level).map { it.str() }.toTypedArray()
+        compound(
+            Slot.RowTwoSlotTwo rect Slot.RowTwoSlotEight,
+            ench.levels.toList().map { Optional.of(it) }.pad(7, Optional.empty()),
+            { oLevel ->
+                if (oLevel.isEmpty)
+                    return@compound ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, "")
+                val level = oLevel.get()
+                val name = ench.name
+                val desc = ench.description(level).map { it.str() }.toTypedArray()
 
-            ItemValue.placeholderDescripted(
-                Material.ENCHANTED_BOOK,
-                if (ench is UltimateEnchantment) "<light_purple><bold>$name ${roman(level)}" else "<blue>$name ${
-                    roman(
-                        level
-                    )
-                }",
-                *desc,
-                "",
-                "<yellow>Click to enchant!"
-            )
-        }, { e, oLevel ->
-            if (oLevel.isEmpty)
-                return@compound
-            item.enchant(ench, oLevel.get())
-            val built = item.build(player)
-            e.paper.inventory.setItemInMainHand(built)
-            e.instance.switch(adminEnchantUi(item))
-        })
+                ItemValue.placeholderDescripted(
+                    Material.ENCHANTED_BOOK,
+                    if (ench is UltimateEnchantment) "<light_purple><bold>$name ${roman(level)}" else "<blue>$name ${
+                        roman(
+                            level
+                        )
+                    }",
+                    *desc,
+                    "",
+                    "<yellow>Click to enchant!"
+                )
+            },
+            { e, oLevel ->
+                if (oLevel.isEmpty)
+                    return@compound
+                item.enchant(ench, oLevel.get())
+                val built = item.build(player)
+                e.paper.inventory.setItemInMainHand(built)
+                e.instance.switch(adminEnchantUi(item))
+            })
 
         goBack(Slot.RowFourSlotFive, { adminEnchantUi(item) })
     }

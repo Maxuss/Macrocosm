@@ -17,6 +17,7 @@ fun powerStonesGuide(player: MacrocosmPlayer): MacrocosmUI = macrocosmUi("power_
         goBack(Slot.RowSixSlotFive, learnPowerUi(player, mutableListOf()))
 
         compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
-            Registry.ACCESSORY_POWER.iter().values.filterIsInstance<StoneAccessoryPower>().sortedByDescending { it.combatLevel }, { it.guideItem(player) }) { _, _ -> }
+            Registry.ACCESSORY_POWER.iter().values.filterIsInstance<StoneAccessoryPower>()
+                .sortedByDescending { it.combatLevel }, { it.guideItem(player) }) { _, _ -> }
     }
 }

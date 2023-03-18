@@ -29,7 +29,7 @@ open class MacrocosmUI(
     @DeprecatedSince("0.4.1")
     @ForRemoval(deadline = "0.5.0")
     fun addComponent(component: UIComponent): MacrocosmUI {
-        if(this.pages.isEmpty())
+        if (this.pages.isEmpty())
             this.pages.add(UIPage(0))
         this.pages.last().components.add(component)
         return this
@@ -54,14 +54,24 @@ open class MacrocosmUI(
 
         inside.clear()
 
-        for(component in pages[page].components) {
+        for (component in pages[page].components) {
             component.render(inside, this)
         }
     }
 
     fun setup(base: Inventory, holder: Player): MacrocosmUIInstance {
-        return MacrocosmUIInstance(base, dimensions, pages, holder, title, this, extraClickHandler, extraCloseHandler, defaultPage).apply(MacrocosmUIInstance::start)
+        return MacrocosmUIInstance(
+            base,
+            dimensions,
+            pages,
+            holder,
+            title,
+            this,
+            extraClickHandler,
+            extraCloseHandler,
+            defaultPage
+        ).apply(MacrocosmUIInstance::start)
     }
 
-    object NullUi: MacrocosmUI(Identifier.NULL, UIDimensions.SIX_X_NINE)
+    object NullUi : MacrocosmUI(Identifier.NULL, UIDimensions.SIX_X_NINE)
 }

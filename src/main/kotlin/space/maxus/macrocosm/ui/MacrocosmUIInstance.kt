@@ -23,7 +23,17 @@ import space.maxus.macrocosm.ui.animation.UIAnimation
 import space.maxus.macrocosm.util.equalsAny
 import java.util.concurrent.atomic.AtomicBoolean
 
-val InventoryAction.isInUi get() = this.equalsAny(InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_HALF, InventoryAction.PICKUP_SOME, InventoryAction.PICKUP_ONE, InventoryAction.MOVE_TO_OTHER_INVENTORY, InventoryAction.PLACE_ALL, InventoryAction.PLACE_ONE, InventoryAction.PLACE_SOME)
+val InventoryAction.isInUi
+    get() = this.equalsAny(
+        InventoryAction.PICKUP_ALL,
+        InventoryAction.PICKUP_HALF,
+        InventoryAction.PICKUP_SOME,
+        InventoryAction.PICKUP_ONE,
+        InventoryAction.MOVE_TO_OTHER_INVENTORY,
+        InventoryAction.PLACE_ALL,
+        InventoryAction.PLACE_ONE,
+        InventoryAction.PLACE_SOME
+    )
 
 class MacrocosmUIInstance internal constructor(
     val baseUi: Inventory,
@@ -54,12 +64,12 @@ class MacrocosmUIInstance internal constructor(
 
     fun renderAnimation(animation: UIAnimation) {
         var tick = 0
-        if(animationLock.get())
+        if (animationLock.get())
             return
         animationLock.set(true)
         val pageLock = currentPage
         task(sync = false, period = 1L) {
-            if(animation.shouldStop(tick) || baseUi.viewers.isEmpty() || abandoned || currentPage != pageLock) {
+            if (animation.shouldStop(tick) || baseUi.viewers.isEmpty() || abandoned || currentPage != pageLock) {
                 it.cancel()
                 animationLock.set(false)
                 return@task
@@ -71,7 +81,7 @@ class MacrocosmUIInstance internal constructor(
     }
 
     fun start() {
-        clickHandler = object: Listener {
+        clickHandler = object : Listener {
             @EventHandler
             fun onClick(e: InventoryClickEvent) {
                 if (e.whoClicked !is Player || e.whoClicked.uniqueId != holder.uniqueId)
@@ -82,9 +92,10 @@ class MacrocosmUIInstance internal constructor(
                     e.isCancelled = true
                     return
                 }
-                val clickData = UIClickData(e, holder, (e.whoClicked as Player).macrocosm!!, baseUi, this@MacrocosmUIInstance)
+                val clickData =
+                    UIClickData(e, holder, (e.whoClicked as Player).macrocosm!!, baseUi, this@MacrocosmUIInstance)
                 extraClickHandler(clickData)
-                if(e.clickedInventory == e.view.bottomInventory)
+                if (e.clickedInventory == e.view.bottomInventory)
                     return
                 for (component in pages[currentPage].components.reversed()) {
                     if (component.wasClicked(e.slot, dimensions)) {
@@ -106,13 +117,13 @@ class MacrocosmUIInstance internal constructor(
 
     fun switch(other: MacrocosmUI, reverse: Boolean = false): MacrocosmUIInstance {
         abandoned = true
-        if(other.dimensions == this.dimensions)
+        if (other.dimensions == this.dimensions)
             this.extraCloseHandler(UICloseData(this.holder, this.holder.macrocosm!!, this.baseUi, this))
         clickHandler.unregister()
-        if(other.dimensions != dimensions) {
+        if (other.dimensions != dimensions) {
             // Dimensions do not fit, we need a new inventory
             val newBase = other.dimensions.bukkit(holder, other.title)
-            if(!reverse)
+            if (!reverse)
                 holder.macrocosm?.uiHistory?.add(base.id)
             else
                 holder.macrocosm?.uiHistory?.removeLast()
@@ -126,7 +137,7 @@ class MacrocosmUIInstance internal constructor(
         } else {
             // Reusing old inventory for smoother experience
             baseUi.clear()
-            if(!reverse)
+            if (!reverse)
                 holder.macrocosm?.uiHistory?.add(base.id)
             else
                 holder.macrocosm?.uiHistory?.removeLast()
@@ -134,7 +145,11 @@ class MacrocosmUIInstance internal constructor(
             other.render(inv, other.defaultPage)
             val activeContainer = (holder.player as CraftPlayer).handle.containerMenu
             val containerId = activeContainer.containerId
-            val packet = ClientboundOpenScreenPacket(containerId, CraftContainer.getNotchInventoryType(inv), PaperAdventure.asVanilla(other.title))
+            val packet = ClientboundOpenScreenPacket(
+                containerId,
+                CraftContainer.getNotchInventoryType(inv),
+                PaperAdventure.asVanilla(other.title)
+            )
             holder.macrocosm?.sendPacket(packet)
             holder.updateInventory()
             val new = other.setup(baseUi, holder)

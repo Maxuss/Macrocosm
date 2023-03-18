@@ -10,5 +10,6 @@ interface UIComponent {
     fun render(inv: Inventory, ui: MacrocosmUI) {
         throw IllegalStateException("Override the `render` method in your UI component!")
     }
+
     fun wasClicked(slot: Int, dim: UIDimensions): Boolean
 }

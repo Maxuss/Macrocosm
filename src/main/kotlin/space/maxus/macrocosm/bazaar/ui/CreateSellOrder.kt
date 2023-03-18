@@ -217,15 +217,15 @@ private fun createSellOrderManagePrice(
                 override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
                     val pricePer = java.lang.Double.parseDouble(input)
 
-                        confirmSellOrder(
-                            player,
-                            e.paper,
-                            item,
-                            builtItem,
-                            elementName,
-                            amount,
-                            pricePer.toBigDecimal()
-                        ).open(e.paper)
+                    confirmSellOrder(
+                        player,
+                        e.paper,
+                        item,
+                        builtItem,
+                        elementName,
+                        amount,
+                        pricePer.toBigDecimal()
+                    ).open(e.paper)
                     return END_OF_CONVERSATION
                 }
             }

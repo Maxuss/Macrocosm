@@ -21,7 +21,7 @@ object AbilityTriggers : Listener {
             val event = PlayerLeftClickEvent(e.player.macrocosm!!, e.item!!.macrocosm)
             event.callEvent()
         } else if (e.action.isRightClick) {
-            if(e.item!!.macrocosm is PetItem) {
+            if (e.item!!.macrocosm is PetItem) {
                 val item = e.item!!.macrocosm as PetItem
                 e.player.inventory.setItemInMainHand(null)
                 e.player.macrocosm?.addPet(item.stored!!)
