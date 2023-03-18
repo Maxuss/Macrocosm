@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.forge.ui
 
-import net.axay.kspigot.gui.*
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
 import org.bukkit.Material
@@ -8,7 +7,6 @@ import org.bukkit.Sound
 import space.maxus.macrocosm.ability.types.accessory.OldBlueprints
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
-import space.maxus.macrocosm.forge.ForgeRecipe
 import space.maxus.macrocosm.forge.ForgeType
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -16,20 +14,23 @@ import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
+import space.maxus.macrocosm.ui.MacrocosmUI
+import space.maxus.macrocosm.ui.UIDimensions
+import space.maxus.macrocosm.ui.components.Slot
+import space.maxus.macrocosm.ui.dsl.macrocosmUi
 import space.maxus.macrocosm.util.mapPaired
 import space.maxus.macrocosm.util.toFancyString
 import java.time.Duration
 import java.time.Instant
 
-fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI(GUIType.SIX_BY_NINE) {
-    defaultPage = 0
-    title = text("${forge.displayName} Recipes")
+fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): MacrocosmUI = macrocosmUi("recipe_chooser", UIDimensions.SIX_X_NINE) {
+    title = "${forge.displayName} Recipes"
 
     page(0) {
-        placeholder(Slots.All, ItemValue.placeholder(Material.GRAY_STAINED_GLASS_PANE, ""))
+        background()
 
-        val recipeCompound = createRectCompound<ForgeRecipe>(Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
-            iconGenerator = { recipe ->
+        val cmp = compound(Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight, { Registry.FORGE_RECIPE.iter().filter { it.value.type == forge }.values.toList() },
+            { recipe ->
                 if (player.skills.level(forge.skill) < recipe.requiredLvl) {
                     ItemValue.placeholderDescripted(
                         Material.WHITE_STAINED_GLASS_PANE,
@@ -61,25 +62,24 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
                     built
                 }
             },
-            onClick = { e, recipe ->
-                e.bukkitEvent.isCancelled = true
+            { e, recipe ->
                 if (player.activeForgeRecipes.size >= 5)
                     player.sendMessage("<red>You have reached forge recipe limit!")
                 else {
                     if (recipe.input.all { (id, amount) ->
                             val it = Registry.ITEM.find(id).build(player)!!
-                            e.player.inventory.containsAtLeast(it, amount)
+                            e.paper.inventory.containsAtLeast(it, amount)
                         }) {
                         recipe.input.forEach { (itemId, itemAmount) ->
                             val it = Registry.ITEM.find(itemId).build(player)!!
                             it.amount = itemAmount
-                            e.player.inventory.removeItemAnySlot(it)
+                            e.paper.inventory.removeItemAnySlot(it)
                         }
                         sound(Sound.BLOCK_NOTE_BLOCK_PLING) {
                             pitch = 2f
                             volume = 2f
 
-                            playFor(e.player)
+                            playFor(e.paper)
                         }
                         val addMillis = if (OldBlueprints.hasAccs(player)) recipe.length * 250 else 0
                         player.activeForgeRecipes.add(
@@ -88,28 +88,24 @@ fun recipeChoose(player: MacrocosmPlayer, forge: ForgeType): GUI<*> = kSpigotGUI
                                 Instant.now().toEpochMilli() + addMillis
                             )
                         )
-                        e.player.openGUI(displayForge(player, forge))
+                        e.instance.switch(displayForge(player, forge))
                     } else {
                         player.sendMessage("<red>Not enough ingredients!")
                     }
                 }
             }
         )
-        recipeCompound.addContent(Registry.FORGE_RECIPE.iter().filter { it.value.type == forge }.values)
-        compoundScroll(
-            Slots.RowOneSlotEight,
-            ItemValue.placeholder(Material.ARROW, "<red>Previous Page"),
-            recipeCompound,
+        compoundWidthScroll(
+            Slot.RowSixSlotEight,
+            cmp,
+        )
+        compoundWidthScroll(
+            Slot.RowSixSlotNine,
+            cmp,
             reverse = true
         )
-        compoundScroll(Slots.RowOneSlotNine, ItemValue.placeholder(Material.ARROW, "<green>Next Page"), recipeCompound)
-        button(
-            Slots.RowOneSlotOne,
-            ItemValue.placeholderDescripted(Material.ARROW, "<red>Back", "Back to ${forge.displayName}")
-        ) { e ->
-            e.bukkitEvent.isCancelled = true
-            e.player.openGUI(displayForge(player, forge))
-        }
+
+        goBack(Slot.RowSixSlotOne, { displayForge(player, forge) }, forge.displayName)
     }
 }
 

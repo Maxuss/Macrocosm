@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.axay.kspigot.commands.*
-import net.axay.kspigot.gui.*
+import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.sound.sound
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
@@ -857,16 +857,16 @@ fun allItems(player: Player, search: String = ""): MacrocosmUI = macrocosmUi("al
         )
 
         compoundWidthScroll(
-            Slot.RowOneSlotNine,
+            Slot.RowSixSlotEight,
             cmp,
         )
         compoundWidthScroll(
-            Slot.RowOneSlotNine,
+            Slot.RowSixSlotNine,
             cmp,
             reverse = true
         )
 
-        button(Slot.RowOneSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
+        button(Slot.RowSixSlotOne, ItemValue.placeholder(Material.OAK_SIGN, "<yellow>Search")) { e ->
             e.paper.closeInventory()
             val inputFilterPrompt = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {

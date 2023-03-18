@@ -81,7 +81,7 @@ fun openForgeMenuCommand() = command("openforge") {
     argument("id", StringArgumentType.string()) {
         runs {
             val ty = ForgeType.valueOf(getArgument("id"))
-            player.openGUI(displayForge(player.macrocosm!!, ty))
+            displayForge(player.macrocosm!!, ty).open(player)
         }
     }
 }
