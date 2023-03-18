@@ -67,7 +67,7 @@ fun handDebug() = command("handdebug") {
 
 fun petsCommand() = command("pets") {
     runsCatching {
-        player.openGUI(petsMenu(player.macrocosm!!))
+        petsMenu(player.macrocosm!!).open(player)
     }
 }
 

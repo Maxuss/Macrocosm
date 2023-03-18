@@ -312,11 +312,20 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     }
 
     fun addPet(type: Identifier, rarity: Rarity, level: Int, overflow: Double = .0): String {
+        // TODO: rework pet system
         val stored = StoredPet(type, rarity, level, overflow)
         val key = "$type@${stored.hashCode().toString(16)}"
         if (ownedPets.containsKey(key))
             return key
         ownedPets[key] = stored
+        return key
+    }
+
+    fun addPet(inner: StoredPet): String {
+        val key = "${inner.id}@${inner.hashCode().toString(16)}"
+        if (ownedPets.containsKey(key))
+            return key
+        ownedPets[key] = inner
         return key
     }
 
