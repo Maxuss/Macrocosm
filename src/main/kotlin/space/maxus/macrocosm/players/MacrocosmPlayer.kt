@@ -16,7 +16,7 @@ import net.minecraft.network.protocol.Packet
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffect

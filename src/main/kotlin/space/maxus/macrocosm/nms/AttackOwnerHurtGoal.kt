@@ -19,7 +19,7 @@ class AttackOwnerHurtGoal(mob: Mob) : TargetGoal(mob, true, true) {
     private var timestamp: Int = -1
 
     override fun canUse(): Boolean {
-        val entityliving = (this.mob as OwnableEntity).owner as? LivingEntity
+        val entityliving = (this.mob as OwnableEntity).owner
         return if (entityliving == null) {
             false
         } else {
@@ -41,7 +41,7 @@ class AttackOwnerHurtGoal(mob: Mob) : TargetGoal(mob, true, true) {
             true
         ) // CraftBukkit - reason
 
-        val entityliving: LivingEntity? = (this.mob as OwnableEntity).owner as? LivingEntity
+        val entityliving: LivingEntity? = (this.mob as OwnableEntity).owner
 
         if (entityliving != null) {
             timestamp = entityliving.lastHurtMobTimestamp

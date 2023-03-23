@@ -7,7 +7,7 @@ import net.axay.kspigot.sound.sound
 import net.minecraft.util.Mth
 import org.bukkit.Particle
 import org.bukkit.Sound
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot

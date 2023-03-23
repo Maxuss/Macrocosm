@@ -2,8 +2,8 @@ package space.maxus.macrocosm.fishing
 
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftItem
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftItem
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.FishHook
 import org.bukkit.entity.Item

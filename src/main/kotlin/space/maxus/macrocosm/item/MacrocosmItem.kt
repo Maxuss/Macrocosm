@@ -16,7 +16,7 @@ import net.minecraft.nbt.ListTag
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta

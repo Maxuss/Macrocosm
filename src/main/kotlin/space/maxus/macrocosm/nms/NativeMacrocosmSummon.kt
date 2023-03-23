@@ -1,13 +1,12 @@
 package space.maxus.macrocosm.nms
 
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.OwnableEntity
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.registry.Identifier
 import java.util.*
@@ -16,7 +15,7 @@ interface NativeMacrocosmSummon : OwnableEntity, NativeMacrocosmEntity {
     override val id: Identifier
     val owner: UUID
 
-    override fun getOwner(): Entity? {
+    override fun getOwner(): LivingEntity? {
         return (Bukkit.getPlayer(owner) as? CraftPlayer)?.handle
     }
 

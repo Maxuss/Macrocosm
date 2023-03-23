@@ -5,7 +5,7 @@ import net.axay.kspigot.extensions.geometry.vec
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.persistence.PersistentDataType

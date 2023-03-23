@@ -3,9 +3,8 @@ main: space.maxus.macrocosm.InternalMacrocosmPlugin
 version: 0.1-SNAPSHOT
 api-version: 1.19
 libraries:
-    - "net.axay:kspigot:1.19.1"
+    - "net.axay:kspigot:1.19.2"
     - "org.postgresql:postgresql:42.3.6"
-    # - "org.xerial:sqlite-jdbc:3.36.0.3" // obsolete
     - "io.ktor:ktor-server-core-jvm:2.2.1"
     - "io.ktor:ktor-server-netty-jvm:2.2.1"
     - "io.ktor:ktor-server-default-headers-jvm:2.2.1"

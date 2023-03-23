@@ -3,7 +3,7 @@ package space.maxus.macrocosm.nms
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
 import space.maxus.macrocosm.entity.MacrocosmEntity
 import space.maxus.macrocosm.registry.Identified
 import space.maxus.macrocosm.registry.Identifier

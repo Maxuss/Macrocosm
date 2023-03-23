@@ -6,9 +6,9 @@ import net.axay.kspigot.extensions.pluginManager
 import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftContainer
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryCustom
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftContainer
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryCustom
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -44,7 +44,7 @@ class MacrocosmUIInstance internal constructor(
     val base: MacrocosmUI,
     var extraClickHandler: (UIClickData) -> Unit,
     var extraCloseHandler: (UICloseData) -> Unit,
-    var defaultPage: Int
+    defaultPage: Int
 ) {
     private lateinit var clickHandler: Listener
     private var abandoned: Boolean = false

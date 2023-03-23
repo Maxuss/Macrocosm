@@ -7,7 +7,7 @@ import net.axay.kspigot.runnables.task
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler

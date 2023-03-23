@@ -5,7 +5,7 @@ import net.axay.kspigot.extensions.server
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.world.entity.OwnableEntity
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity
 import org.bukkit.entity.*
 import space.maxus.macrocosm.damage.DamageKind
 import space.maxus.macrocosm.events.EntityDropItemsEvent

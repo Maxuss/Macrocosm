@@ -20,7 +20,7 @@ class MimicOwnerAttackGoal(mob: Mob) : TargetGoal(mob, true, true) {
     private var timestamp: Int = -1
 
     override fun canUse(): Boolean {
-        val entityliving = this.owned.owner as? LivingEntity
+        val entityliving = this.owned.owner
         return if (entityliving == null) {
             false
         } else {
@@ -41,7 +41,7 @@ class MimicOwnerAttackGoal(mob: Mob) : TargetGoal(mob, true, true) {
             EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET,
             true
         )
-        val entityliving = this.owned.owner as? LivingEntity
+        val entityliving = this.owned.owner
         if (entityliving != null) {
             this.timestamp = entityliving.lastHurtMobTimestamp
         }

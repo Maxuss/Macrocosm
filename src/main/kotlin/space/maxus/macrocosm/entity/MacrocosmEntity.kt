@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
