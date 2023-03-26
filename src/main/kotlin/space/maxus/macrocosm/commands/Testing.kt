@@ -1,23 +1,17 @@
 package space.maxus.macrocosm.commands
 
 import com.mojang.brigadier.arguments.DoubleArgumentType
+import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
-import me.libraryaddict.disguise.DisguiseAPI
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise
-import net.axay.kspigot.commands.argument
-import net.axay.kspigot.commands.command
-import net.axay.kspigot.commands.runs
-import net.axay.kspigot.commands.suggestList
+import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
-import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.accessory.ui.jacobusUi
 import space.maxus.macrocosm.async.Threading
 import space.maxus.macrocosm.bazaar.ui.globalBazaarMenu
 import space.maxus.macrocosm.collections.CollectionType
 import space.maxus.macrocosm.discord.emitters.HighSkillEmitter
-import space.maxus.macrocosm.entity.textureProfile
 import space.maxus.macrocosm.forge.ForgeType
 import space.maxus.macrocosm.forge.ui.displayForge
 import space.maxus.macrocosm.item.macrocosm
@@ -29,20 +23,33 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.DevelopmentOnly
 import space.maxus.macrocosm.util.general.Debug
+import space.maxus.macrocosm.util.general.DevelopmentArgs
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
 
+@OptIn(DevelopmentOnly::class)
+fun setDevArg() = command("devarg") {
+    argument("key", StringArgumentType.string()) {
+        suggestListSuspending {
+            DevelopmentArgs.required.filter { key -> key.contains(it.getArgumentOrNull("key") ?: "") }
+        }
 
-fun doTestDisguise() = command("dodisguise") {
-    runsCatching {
-        val entity = world.spawnEntity(player.location, EntityType.SPIDER)
-        DisguiseAPI.disguiseEntity(entity, PlayerDisguise(
-            textureProfile(
-            "ewogICJ0aW1lc3RhbXAiIDogMTYzNTY5OTQ4MTY3NywKICAicHJvZmlsZUlkIiA6ICIyYzEwNjRmY2Q5MTc0MjgyODRlM2JmN2ZhYTdlM2UxYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJOYWVtZSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9jNDY5MDlmNjNhYmQ5YTQ1Y2IxMDU1NGJiMWQ2ZTAwMGIzYjExMmI3ZGIzOWQ5OTAxNDQxZTUyYTllZjNjMGRjIgogICAgfQogIH0KfQ==",
-            "tIQmgDSbUvTnVbZMvhCm5wS3HbNUu4QxoWYEfrEfoVShO7sWg0V3MPH1lIVr29yege0vSfc6wITqOR0U6HwEGp8nZKvtHTIfdnSqYleOMU/4q2ZDyLo3xB3J0kNzQDYzjjyJ9V3A/vQnaNz9EmACJqj7aHk3kK/KpCTIDuCXXof2qiOZUuJIyebW3THl/VBl0hZTSVOxCDYqT6iUYbdhxBhEQKmc9ObBFtwKN2i3kGrpkFCYgntz2xSAdYq2rk6GF/dhREmdjkqiG8uqs17beaa6Jxjy2KWHKjiRUSHvigr20uyPanMwjk/tXq2NpfZMrwajYvKLuSBB3wsxNj6YRuUtpuqw3YLOny/JhbMzrZi+irbsSAb1vWHBeEn2VWcD0gwsRQ7nSx4i4m9yY4wF4+AZeSUFJohvROFgrifVS//Mw2pd8cDYTpjODTIxwOiISBcXKLEDIXGhJj9lkkAXVKpz2EX/hlrRzfgYRLCwYJns7MM1oYqnbB0bhBNBfSSEHyYbSJg1qJuV+fBvJk9td+ZNRQwSL5jyTvee1SoQyZLHOfdPwh8IuyMNPJyZAS8TyHdqudzFrSyU2OIBtqMqAS00SDq3Is6m5su3+UyO0CmUW723pK39jZrA9k0ZHz3S5720kTnxXqtL0Z7Qr1vGF40eFaZAxCDn+CRBX5Wqrck="
-        )))
+        argument("str", StringArgumentType.string()) {
+            runsCatching {
+                DevelopmentArgs[getArgument("key")] = getArgument<String>("str")
+                player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a string <green>'${getArgument<String>("str")}'</green>"))
+            }
+        }
+
+        argument("float", FloatArgumentType.floatArg()) {
+            runsCatching {
+                DevelopmentArgs[getArgument("key")] = getArgument<Float>("float")
+                player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a float <green>${getArgument<Float>("float")}</green>"))
+            }
+        }
     }
 }
 
