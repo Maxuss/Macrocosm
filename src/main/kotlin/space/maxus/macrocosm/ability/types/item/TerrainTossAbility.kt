@@ -9,10 +9,12 @@ import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Transformation
 import org.bukkit.util.Vector
 import org.jetbrains.annotations.NotNull
 import space.maxus.macrocosm.ability.AbilityBase
@@ -24,6 +26,7 @@ import space.maxus.macrocosm.events.PlayerRightClickEvent
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.createFloatingBlock
+import space.maxus.macrocosm.util.joml
 import space.maxus.macrocosm.util.math.MathHelper
 
 
@@ -42,7 +45,7 @@ object TerrainTossAbility : AbilityBase(
             val damage = DamageCalculator.calculateMagicDamage(30000, .1f, e.player.stats()!!)
             val p = e.player.paper!!
 
-            val armorStands: ArrayList<ArmorStand> = ArrayList()
+            val armorStands: ArrayList<BlockDisplay> = ArrayList()
             val landingLoc: Location = p.getTargetBlock(null, 30).location
             landingLoc.block
             landingLoc.add(Vector(0.0, 1.0, 0.0))
@@ -76,20 +79,20 @@ object TerrainTossAbility : AbilityBase(
                 playAt(p.location)
             }
 
-            task(delay = 0L, period = 1L) {
+            task(delay = 0L, period = 2L) {
                 var next: Location? = null
                 if (locationIterator.hasNext() && locationIterator.next().also { a -> next = a; }.block.type.isAir) {
                     moveStands(armorStands, next!!)
                 } else {
+                    val last = path.last()
                     particle(Particle.EXPLOSION_HUGE) {
-                        val loc = armorStands[0].location
-                        spawnAt(loc)
+                        spawnAt(last)
                     }
                     sound(Sound.ENTITY_IRON_GOLEM_DEATH) {
                         pitch = 0f
                         playAt(p.location)
                     }
-                    val nearbyEntities = armorStands[0].location.getNearbyLivingEntities(5.0)
+                    val nearbyEntities = last.getNearbyLivingEntities(5.0)
                     for (entity in nearbyEntities) {
                         if (entity is Player || entity is ArmorStand)
                             continue
@@ -97,7 +100,6 @@ object TerrainTossAbility : AbilityBase(
                         DamageHandlers.summonDamageIndicator(entity.location, damage)
                     }
                     for (stand in armorStands) {
-                        stand.passengers.forEach { passenger -> passenger.remove() }
                         stand.remove()
                     }
                     it.cancel()
@@ -112,7 +114,7 @@ object TerrainTossAbility : AbilityBase(
         xChange: Int,
         yChange: Int,
         zChange: Int,
-        @NotNull arrayList: ArrayList<ArmorStand>
+        @NotNull arrayList: ArrayList<BlockDisplay>
     ) {
         val blockLoc: Location = playerLoc.add(0.0, -2.0, 0.0).add(Vector(xChange, yChange, zChange))
         val block: ItemStack =
@@ -127,18 +129,14 @@ object TerrainTossAbility : AbilityBase(
         )
     }
 
-    private fun moveStands(@NotNull stands: List<ArmorStand>, @NotNull moveTo: Location) {
-        val mainStand: ArmorStand = stands[0]
-        val xMove: Double = moveTo.x - mainStand.location.x
-        val yMove: Double = moveTo.y - mainStand.location.y
-        val zMove: Double = moveTo.z - mainStand.location.z
+    private fun moveStands(@NotNull stands: List<BlockDisplay>, @NotNull moveTo: Location) {
+        val mainStand: Entity = stands[0]
+        val diff: Vector = moveTo.toVector().subtract(mainStand.location.toVector())
         for (stand in stands) {
             try {
-                val passenger: Entity = stand.passengers[0]
-                stand.eject()
-                stand.teleport(stand.location.add(xMove, yMove, zMove))
-                stand.passengers.clear()
-                stand.addPassenger(passenger)
+                stand.interpolationDelay = 0
+                stand.interpolationDuration = 5
+                stand.transformation = Transformation(diff.joml(), stand.transformation.leftRotation, stand.transformation.scale, stand.transformation.rightRotation)
             } catch (ignored: NullPointerException) {
                 // ignored
             }
