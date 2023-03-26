@@ -592,14 +592,12 @@ object DamageHandlers : Listener {
             }
         }
 
-        val stand = newLocation.world.spawnEntity(newLocation, EntityType.ARMOR_STAND) as ArmorStand
-        stand.isVisible = false
-        stand.isMarker = true
-        stand.isInvulnerable = true
-        stand.customName(display)
-        stand.isCustomNameVisible = true
-        stand.setGravity(false)
-        stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
-        taskRunLater(30, runnable = stand::remove)
+        val dmgDisplay = newLocation.clone().add(vec(y = 1)).world.spawnEntity(newLocation, EntityType.TEXT_DISPLAY) as TextDisplay
+        dmgDisplay.text(display)
+        dmgDisplay.textOpacity = 220.toByte()
+        dmgDisplay.isSeeThrough = false
+        dmgDisplay.isShadowed = true
+        dmgDisplay.billboard = Display.Billboard.VERTICAL
+        taskRunLater(30, runnable = dmgDisplay::remove)
     }
 }

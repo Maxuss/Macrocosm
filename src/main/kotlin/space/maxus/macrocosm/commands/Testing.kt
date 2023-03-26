@@ -1,9 +1,6 @@
 package space.maxus.macrocosm.commands
 
-import com.mojang.brigadier.arguments.DoubleArgumentType
-import com.mojang.brigadier.arguments.FloatArgumentType
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.arguments.*
 import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
@@ -48,6 +45,13 @@ fun setDevArg() = command("devarg") {
             runsCatching {
                 DevelopmentArgs[getArgument("key")] = getArgument<Float>("float")
                 player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a float <green>${getArgument<Float>("float")}</green>"))
+            }
+        }
+
+        argument("bool", BoolArgumentType.bool()) {
+            runsCatching {
+                DevelopmentArgs[getArgument("key")] = getArgument<Boolean>("bool")
+                player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a bool <green>${getArgument<Boolean>("bool")}</green>"))
             }
         }
     }

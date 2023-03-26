@@ -21,6 +21,18 @@ object DevelopmentArgs {
         return values[key] as V
     }
 
+    fun num(key: String): Number {
+        return values[key] as Number
+    }
+
+    fun str(key: String): String {
+        return values[key] as String
+    }
+
+    fun bool(key: String): Boolean {
+        return values[key] as Boolean
+    }
+
     init {
         // Put `require`s here
     }
