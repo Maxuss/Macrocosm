@@ -15,7 +15,7 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
     LEGENDARY(NamedTextColor.GOLD),
     RELIC(TextColor.color(0xFFE7A8)),
     MYTHIC(NamedTextColor.LIGHT_PURPLE),
-    DIVINE(NamedTextColor.AQUA, false),
+    MACROCOSMIC(TextColor.color(0x6B40F7), false),
     SPECIAL(NamedTextColor.RED, true),
     VERY_SPECIAL(TextColor.color(0xE45878)),
     UNOBTAINABLE(TextColor.color(0xA64CFD))
@@ -48,24 +48,24 @@ enum class Rarity(val color: TextColor, val canUpgrade: Boolean = true) {
         RARE -> EPIC
         EPIC -> LEGENDARY
         LEGENDARY -> MYTHIC
-        RELIC -> DIVINE
-        MYTHIC -> DIVINE
-        DIVINE -> SPECIAL
+        RELIC -> MACROCOSMIC
+        MYTHIC -> MACROCOSMIC
+        MACROCOSMIC -> SPECIAL
         SPECIAL -> VERY_SPECIAL
         VERY_SPECIAL -> COMMON
         UNOBTAINABLE -> UNOBTAINABLE
     }
 
     fun previous() = when (this) {
-        COMMON -> DIVINE
+        COMMON -> MACROCOSMIC
         UNCOMMON -> COMMON
         RARE -> UNCOMMON
         EPIC -> RARE
         LEGENDARY -> EPIC
         RELIC -> MYTHIC
         MYTHIC -> LEGENDARY
-        DIVINE -> MYTHIC
-        SPECIAL -> DIVINE
+        MACROCOSMIC -> MYTHIC
+        SPECIAL -> MACROCOSMIC
         VERY_SPECIAL -> SPECIAL
         UNOBTAINABLE -> UNOBTAINABLE
     }

@@ -18,7 +18,7 @@ private fun rarityFromEnchants(ench: HashMap<Identifier, Int>): Rarity {
     if (ench.values.isEmpty())
         return Rarity.COMMON
     val lvl = ench.values.max()
-    return if (lvl >= 8) Rarity.DIVINE
+    return if (lvl >= 8) Rarity.MACROCOSMIC
     else if (lvl >= 7) Rarity.MYTHIC
     else if (lvl >= 6) Rarity.LEGENDARY
     else if (lvl >= 5) Rarity.EPIC

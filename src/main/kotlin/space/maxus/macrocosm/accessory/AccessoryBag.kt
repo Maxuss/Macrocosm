@@ -68,7 +68,7 @@ val rarityToMp = hashMapOf(
     Rarity.LEGENDARY to 16,
     Rarity.RELIC to 25,
     Rarity.MYTHIC to 22,
-    Rarity.DIVINE to 25,
+    Rarity.MACROCOSMIC to 25,
     Rarity.UNOBTAINABLE to 30,
 )
 
