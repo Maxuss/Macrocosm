@@ -188,8 +188,7 @@ object ZombieAbilities {
                     e.damager.world.getEntity(it)?.customName(text("<red>⚡ Doom: <gold>${level}"))
                 }
             }.call()
-        }
-    }
+        }    }
 
     val DOOMSTONE = SlayerAbility(
         "doomstone",
