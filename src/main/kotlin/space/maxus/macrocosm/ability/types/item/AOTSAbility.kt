@@ -4,13 +4,16 @@ import net.axay.kspigot.event.listen
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
-import org.bukkit.Material
+import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
+import org.bukkit.util.EulerAngle
+import org.bukkit.util.Transformation
+import org.joml.Quaternionf
+import org.joml.Vector3f
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
@@ -23,6 +26,7 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.anyPoints
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.general.id
+import space.maxus.macrocosm.util.joml
 import java.util.*
 import kotlin.math.min
 
@@ -56,32 +60,39 @@ object AOTSAbility : AbilityBase(
             val stats = e.player.stats()!!
             var (dmg, _) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
             dmg *= (min((cost / 2), 160) / 100f)
-            val stand = p.world.spawnEntity(p.location, EntityType.ARMOR_STAND) as ArmorStand
-            stand.isInvisible = true
-            stand.isInvulnerable = true
-            stand.isMarker = true
-            stand.isCollidable = false
-            stand.setItem(EquipmentSlot.HAND, ItemStack(Material.DIAMOND_AXE))
+            val display = p.world.spawnEntity(p.location, EntityType.ITEM_DISPLAY) as ItemDisplay
+            display.itemStack = e.item?.build(e.player)
+            display.isInvulnerable = true
+            display.itemDisplayTransform = ItemDisplay.ItemDisplayTransform.THIRDPERSON_LEFTHAND
             sound(Sound.ENTITY_EGG_THROW) {
                 pitch = 0f
                 playAt(p.location)
             }
 
-            val dir = p.location.direction.multiply(0.7).normalize()
-            val loc = p.location
+            val dir = p.location.direction.multiply(.8f).normalize()
             var tick = 0
+            val baseLocation: Location = display.location
+            val mod = dir.clone()
+            var currentPose = EulerAngle(.0, .0, .0)
+            val norm = dir.clone().normalize()
             task(period = 1L) {
                 tick++
-                if (tick >= 120 || stand.eyeLocation.block.isSolid) {
+                if (tick >= 120 || baseLocation.block.isSolid) {
                     it.cancel()
-                    stand.remove()
+                    display.remove()
                     return@task
                 }
-                stand.rightArmPose = stand.rightArmPose.add(0.4, .0, .0)
-                loc.add(dir)
-                stand.teleport(loc)
+                currentPose = currentPose.add(0.4, .0, .0)
+                baseLocation.add(dir)
+                val quat = Quaternionf()
+                quat.rotationXYZ(currentPose.x.toFloat(), currentPose.y.toFloat(), currentPose.z.toFloat())
+                val playerRot = Quaternionf()
+                playerRot.rotationTo(Vector3f(0f, 0f, 1f), norm.joml().apply { y = 0f })
+                display.interpolationDelay = 0
+                display.interpolationDuration = 5
+                display.transformation = Transformation(mod.add(dir).joml(), playerRot, display.transformation.scale, quat)
 
-                for (entity in loc.getNearbyLivingEntities(1.0)) {
+                for (entity in baseLocation.getNearbyLivingEntities(1.0)) {
                     if (entity is Player || entity is ArmorStand)
                         continue
 
