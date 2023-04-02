@@ -30,7 +30,6 @@ import space.maxus.macrocosm.util.general.Ticker
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.math.MathHelper.extractYawPitch
 import space.maxus.macrocosm.util.metrics.report
-import space.maxus.macrocosm.util.mutate
 import java.util.*
 
 object FlamethrowerTurretActive : AbilityBase(
@@ -111,7 +110,7 @@ object FlamethrowerTurretActive : AbilityBase(
                         yawQuat.rotateYXZ(-yaw, 0f, 0f)
                         display.interpolationDelay = 0
                         display.interpolationDuration = 5
-                        display.transformation = display.transformation.mutate(leftRot = yawQuat)
+                        // display.transformation = display.transformation.mutate(rightRot = yawQuat)
                         display.setRotation(yaw, 0f)
 
                         FlamethrowerAbility.renderFlamethrower(
