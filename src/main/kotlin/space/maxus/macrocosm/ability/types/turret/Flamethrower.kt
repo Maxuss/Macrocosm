@@ -2,7 +2,6 @@ package space.maxus.macrocosm.ability.types.turret
 
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.geometry.vec
-import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
@@ -11,9 +10,10 @@ import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.persistence.PersistentDataType
+import org.joml.Quaternionf
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
@@ -30,6 +30,7 @@ import space.maxus.macrocosm.util.general.Ticker
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.math.MathHelper.extractYawPitch
 import space.maxus.macrocosm.util.metrics.report
+import space.maxus.macrocosm.util.mutate
 import java.util.*
 
 object FlamethrowerTurretActive : AbilityBase(
@@ -70,8 +71,8 @@ object FlamethrowerTurretActive : AbilityBase(
                 val damage = DamageCalculator.calculateMagicDamage(2000, .15f, e.player.stats()!!)
                 if (p.inventory.containsAtLeast(gasoline, 1)) {
                     e.player.summonSlotsUsed += 3
-                    val stand = summonTurret(p.location, e.player)
-                    turrets[p.uniqueId] = stand.uniqueId
+                    val display = summonTurret(p.location, e.player)
+                    turrets[p.uniqueId] = display.uniqueId
 
                     val ticker = Ticker(0..3)
                     enabled[p.uniqueId] = task(period = 5L) {
@@ -100,25 +101,30 @@ object FlamethrowerTurretActive : AbilityBase(
                         if (tick == 3)
                             p.inventory.removeItemAnySlot(gasoline)
 
-                        val location = stand.eyeLocation
+                        val location = display.location
                         val nearest =
-                            stand.location.getNearbyLivingEntities(7.0) { en -> en !is ArmorStand && en !is Player }
+                            display.location.getNearbyLivingEntities(7.0) { en -> en !is ArmorStand && en !is Player }
                                 .firstOrNull() ?: return@task
                         val look = nearest.eyeLocation.toVector().subtract(location.toVector()).normalize()
                         val (yaw, _) = look.extractYawPitch()
-                        stand.setRotation(yaw, 0f)
+                        val yawQuat = Quaternionf()
+                        yawQuat.rotateYXZ(-yaw, 0f, 0f)
+                        display.interpolationDelay = 0
+                        display.interpolationDuration = 5
+                        display.transformation = display.transformation.mutate(leftRot = yawQuat)
+                        display.setRotation(yaw, 0f)
 
                         FlamethrowerAbility.renderFlamethrower(
                             e.player,
-                            stand.location.add(vec(y = 1f)),
-                            stand.eyeLocation.direction,
+                            display.location.add(vec(y = 1f)),
+                            display.location.direction,
                             damage,
                             tick
                         )
                         FlamethrowerAbility.renderFlamethrower(
                             e.player,
-                            stand.location.add(vec(y = 1f)),
-                            stand.eyeLocation.direction.rotateAroundY(Math.toRadians(180.0)),
+                            display.location.add(vec(y = 1f)),
+                            display.location.direction.rotateAroundY(Math.toRadians(180.0)),
                             damage,
                             tick
                         )
@@ -135,16 +141,13 @@ object FlamethrowerTurretActive : AbilityBase(
         }
     }
 
-    private fun summonTurret(at: Location, player: MacrocosmPlayer): ArmorStand {
-        val stand = at.world.spawnEntity(at, EntityType.ARMOR_STAND) as ArmorStand
-        stand.isInvulnerable = true
-        stand.isInvisible = true
-        stand.disabledSlots.addAll(EquipmentSlot.values())
-        stand.persistentDataContainer.set(pluginKey("ignore_damage"), PersistentDataType.BYTE, 0)
-        stand.equipment.setItem(EquipmentSlot.HEAD, Registry.ITEM.find(id("turret_flamethrower")).build(player))
-        stand.customName(text("<gold>${player.paper?.name}'s <red>Flamethrower Turret"))
-        stand.isCustomNameVisible = true
-        return stand
+    private fun summonTurret(at: Location, player: MacrocosmPlayer): ItemDisplay {
+        val display = at.world.spawnEntity(at.add(vec(y = 1)), EntityType.ITEM_DISPLAY) as ItemDisplay
+        display.itemDisplayTransform = ItemDisplay.ItemDisplayTransform.HEAD
+        display.itemStack = Registry.ITEM.find(id("turret_flamethrower")).build(player)
+        display.customName(text("<gold>${player.paper?.name}'s <red>Flamethrower Turret"))
+        display.isCustomNameVisible = true
+        return display
     }
 }
 
