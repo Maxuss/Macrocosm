@@ -76,7 +76,6 @@ open class EntityBase(
             if (disguiseProfile != null) {
                 disguise.gameProfile = disguiseProfile
             }
-
             DisguiseAPI.disguiseEntity(entity, disguise)
         }
     }

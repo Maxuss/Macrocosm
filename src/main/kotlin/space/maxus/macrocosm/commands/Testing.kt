@@ -1,12 +1,7 @@
 package space.maxus.macrocosm.commands
 
-import com.mojang.brigadier.arguments.DoubleArgumentType
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
-import net.axay.kspigot.commands.argument
-import net.axay.kspigot.commands.command
-import net.axay.kspigot.commands.runs
-import net.axay.kspigot.commands.suggestList
+import com.mojang.brigadier.arguments.*
+import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.ResourceLocationArgument
 import net.minecraft.resources.ResourceLocation
 import space.maxus.macrocosm.accessory.ui.jacobusUi
@@ -25,11 +20,42 @@ import space.maxus.macrocosm.skills.SkillType
 import space.maxus.macrocosm.slayer.SlayerLevel
 import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.ui.slayerChooseMenu
+import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.annotations.DevelopmentOnly
 import space.maxus.macrocosm.util.general.Debug
+import space.maxus.macrocosm.util.general.DevelopmentArgs
 import space.maxus.macrocosm.util.general.id
 import space.maxus.macrocosm.util.general.macrocosm
 
+@OptIn(DevelopmentOnly::class)
+fun setDevArg() = command("devarg") {
+    argument("key", StringArgumentType.string()) {
+        suggestListSuspending {
+            DevelopmentArgs.required.filter { key -> key.contains(it.getArgumentOrNull("key") ?: "") }
+        }
+
+        argument("str", StringArgumentType.string()) {
+            runsCatching {
+                DevelopmentArgs[getArgument("key")] = getArgument<String>("str")
+                player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a string <green>'${getArgument<String>("str")}'</green>"))
+            }
+        }
+
+        argument("float", FloatArgumentType.floatArg()) {
+            runsCatching {
+                DevelopmentArgs[getArgument("key")] = getArgument<Float>("float")
+                player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a float <green>${getArgument<Float>("float")}</green>"))
+            }
+        }
+
+        argument("bool", BoolArgumentType.bool()) {
+            runsCatching {
+                DevelopmentArgs[getArgument("key")] = getArgument<Boolean>("bool")
+                player.sendMessage(text("<#691ff2>[Macrocosm]<aqua> Set the value of the <gold>${getArgument<String>("key")}</gold> development variable to a bool <green>${getArgument<Boolean>("bool")}</green>"))
+            }
+        }
+    }
+}
 
 fun doTestEmitPost() = command("doemit") {
     runsCatching {

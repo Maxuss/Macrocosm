@@ -17,8 +17,8 @@ import org.bukkit.block.Barrel
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.block.data.type.NoteBlock
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -302,7 +302,7 @@ object MiningHandler : PacketAdapter(
                 // spawning block destroyed particles
                 (breaking.world as CraftWorld).handle.levelEvent(
                     LevelEvent.PARTICLES_DESTROY_BLOCK,
-                    BlockPos(breaking.location.x, breaking.location.y, breaking.location.z),
+                    BlockPos(breaking.location.x.toInt(), breaking.location.y.toInt(), breaking.location.z.toInt()),
                     net.minecraft.world.level.block.Block.getId((breaking as CraftBlock).nms)
                 )
                 // setting block to air, without dropping items, because

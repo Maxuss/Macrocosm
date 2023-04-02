@@ -2,7 +2,7 @@ package space.maxus.macrocosm.ability.types.armor
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import net.axay.kspigot.event.listen
-import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.OwnableEntity
 import net.minecraft.world.entity.ai.goal.*
 import net.minecraft.world.entity.monster.Zombie
@@ -10,8 +10,8 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
 import org.bukkit.event.player.PlayerQuitEvent
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityType
@@ -78,7 +78,7 @@ object ReaperMaskAbility :
             return owner
         }
 
-        override fun getOwner(): Entity? {
+        override fun getOwner(): LivingEntity? {
             return (Bukkit.getPlayer(owner) as? CraftPlayer)?.handle
         }
     }

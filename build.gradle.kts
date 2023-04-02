@@ -1,39 +1,39 @@
 import java.net.URL
 
 plugins {
-    kotlin("jvm") version "1.8.0"
-    id("xyz.jpenilla.run-paper") version "2.0.0"
-    id("io.papermc.paperweight.userdev") version "1.3.11"
+    kotlin("jvm") version "1.8.10"
+    id("xyz.jpenilla.run-paper") version "2.0.1"
+    id("io.papermc.paperweight.userdev") version "1.5.3"
     id("org.hidetake.swagger.generator") version "2.19.2"
-    id("org.jetbrains.dokka") version "1.7.20"
+    id("org.jetbrains.dokka") version "1.8.10"
 
 }
 
 group = "space.maxus"
-version = "0.5.0-alpha"
+version = "0.5.1-alpha"
 val apiVersion = "0.6.5-alpha"
 
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
+//    maven { url = uri("https://repo.repsy.io/mvn/maxuss/artifacts/") } needed this when KSpigot was not in maven central
     maven { url = uri("https://jitpack.io") }
 }
 
 val exposedVersion: String by project
 
 dependencies {
-    paperDevBundle("1.19.3-R0.1-SNAPSHOT")
-    implementation("net.axay:kspigot:1.19.1")
+    paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
+    implementation("net.axay:kspigot:1.19.2")
     implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
-    implementation("LibsDisguises:LibsDisguises:10.0.31-SNAPSHOT") {
+    implementation("LibsDisguises:LibsDisguises:10.0.32") {
         exclude("org.spigotmc")
     }
-    implementation("io.ktor:ktor-server-core-jvm:2.2.1")
-    @Suppress("VulnerableLibrariesLocal") // suppressing while the stable update is not out
-    implementation("io.ktor:ktor-server-netty-jvm:2.2.1")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.2.1")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.1")
+    implementation("io.ktor:ktor-server-core-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-netty-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.4")
     implementation("net.dv8tion:JDA:5.0.0-beta.2") {
         exclude(module = "opus-java")
     }
@@ -70,6 +70,8 @@ tasks {
                 systemProperty(str, value)
             }
         }
+        minecraftVersion("1.19.4")
+        jvmArgs("-Xms2G", "-Xmx2G")
     }
 }
 

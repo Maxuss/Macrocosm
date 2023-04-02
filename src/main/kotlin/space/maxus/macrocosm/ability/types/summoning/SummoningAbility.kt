@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.Level
 import org.bukkit.Sound
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost

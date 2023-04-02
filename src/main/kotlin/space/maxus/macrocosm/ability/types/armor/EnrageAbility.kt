@@ -5,7 +5,7 @@ import net.axay.kspigot.event.listen
 import net.axay.kspigot.runnables.taskRunLater
 import net.axay.kspigot.sound.sound
 import org.bukkit.Sound
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.event.EventPriority
 import org.bukkit.inventory.EquipmentSlot

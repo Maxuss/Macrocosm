@@ -2,7 +2,7 @@ package space.maxus.macrocosm.listeners
 
 import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.runnables.task
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

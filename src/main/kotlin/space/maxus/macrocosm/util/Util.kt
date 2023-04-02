@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
@@ -15,22 +14,23 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.network.PacketListener
 import net.minecraft.network.protocol.Packet
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
-import org.bukkit.entity.ArmorStand
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
+import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
-import org.bukkit.persistence.PersistentDataType
+import org.bukkit.util.Transformation
 import org.bukkit.util.Vector
+import org.joml.Quaternionf
+import org.joml.Vector3f
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.ComponentTypeAdapter
 import space.maxus.macrocosm.exceptions.macrocosm
 import space.maxus.macrocosm.item.macrocosmTag
-import space.maxus.macrocosm.listeners.FallingBlockListener
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
@@ -420,18 +420,10 @@ fun EntityType.summon(location: Location): Entity {
     return nmsEntity.bukkitEntity
 }
 
-fun createFloatingBlock(loc: Location, item: ItemStack): ArmorStand {
-    val hologram: ArmorStand = loc.world.spawnEntity(loc, EntityType.ARMOR_STAND) as ArmorStand
-    hologram.setGravity(false)
-    hologram.canPickupItems = false
-    hologram.isVisible = false
-    hologram.isMarker = true
-    hologram.persistentDataContainer.set(pluginKey("ignore_damage"), PersistentDataType.BYTE, 0)
-    val fallingBlock = loc.world.spawnFallingBlock(loc, item.type.createBlockData())
-    fallingBlock.dropItem = false
-    FallingBlockListener.stands.add(fallingBlock.uniqueId)
-    hologram.addPassenger(fallingBlock)
-    return hologram
+fun createFloatingBlock(loc: Location, item: ItemStack): BlockDisplay {
+    val display: BlockDisplay = loc.world.spawnEntity(loc, EntityType.BLOCK_DISPLAY) as BlockDisplay
+    display.block = item.type.createBlockData()
+    return display
 }
 
 fun File.recreateFile() {
@@ -584,3 +576,12 @@ fun PlayerInventory.removeAnySlot(item: Identifier, amount: Int) {
         stack.amount = 0
     }
 }
+
+fun Vector.joml() = Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
+
+fun Transformation.mutate(
+    translation: Vector3f = this.translation,
+    leftRot: Quaternionf = this.leftRotation,
+    scale: Vector3f = this.scale,
+    rightRot: Quaternionf = this.rightRotation
+    ): Transformation = Transformation(translation, leftRot, scale, rightRot)
