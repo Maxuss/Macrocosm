@@ -16,7 +16,10 @@ import net.minecraft.network.protocol.Packet
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
-import org.bukkit.entity.*
+import org.bukkit.entity.BlockDisplay
+import org.bukkit.entity.Entity
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
@@ -576,4 +579,9 @@ fun PlayerInventory.removeAnySlot(item: Identifier, amount: Int) {
 
 fun Vector.joml() = Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
 
-fun Vector3f.translate() = Transformation(this, Quaternionf(), Vector3f(), Quaternionf())
+fun Transformation.mutate(
+    translation: Vector3f = this.translation,
+    leftRot: Quaternionf = this.leftRotation,
+    scale: Vector3f = this.scale,
+    rightRot: Quaternionf = this.rightRotation
+    ): Transformation = Transformation(translation, leftRot, scale, rightRot)

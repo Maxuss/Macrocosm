@@ -9,6 +9,7 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
+import org.bukkit.entity.EntityType
 import space.maxus.macrocosm.ability.Ability
 import space.maxus.macrocosm.accessory.AccessoryBag
 import space.maxus.macrocosm.accessory.power.AccessoryPowers
@@ -67,7 +68,6 @@ import space.maxus.macrocosm.slayer.SlayerType
 import space.maxus.macrocosm.slayer.zombie.ZombieAbilities
 import space.maxus.macrocosm.spell.SpellValue
 import space.maxus.macrocosm.spell.essence.ScrollRecipe
-import space.maxus.macrocosm.ui.components.*
 import space.maxus.macrocosm.util.annotations.UnsafeFeature
 import space.maxus.macrocosm.util.data.SemanticVersion
 import space.maxus.macrocosm.util.data.Unsafe
@@ -189,6 +189,7 @@ class InternalMacrocosmPlugin : KSpigot() {
         Threading.runAsync {
             Calendar.readSelf()
         }
+        EntityType.ARMOR_STAND
     }
 
     override fun startup() {

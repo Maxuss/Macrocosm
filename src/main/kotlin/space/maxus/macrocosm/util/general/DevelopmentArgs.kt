@@ -35,6 +35,5 @@ object DevelopmentArgs {
 
     init {
         // Put `require`s here
-        require("speed.modifier", .2f)
     }
 }

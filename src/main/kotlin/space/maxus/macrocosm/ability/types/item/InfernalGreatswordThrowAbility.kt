@@ -7,18 +7,17 @@ import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
 import net.minecraft.util.Mth
 import org.bukkit.Location
-import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.Particle.DustOptions
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.persistence.PersistentDataType
-import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
-import space.maxus.macrocosm.Macrocosm
+import org.joml.Quaternionf
+import org.joml.Vector3f
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityCost
 import space.maxus.macrocosm.ability.AbilityType
@@ -30,6 +29,8 @@ import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.util.general.id
+import space.maxus.macrocosm.util.joml
+import space.maxus.macrocosm.util.mutate
 
 object InfernalGreatswordThrowAbility : AbilityBase(
     AbilityType.RIGHT_CLICK,
@@ -44,22 +45,18 @@ object InfernalGreatswordThrowAbility : AbilityBase(
                 return@listen
 
             val p = e.player.paper ?: return@listen
-            val pos = p.eyeLocation.add(vec(y = -1.4))
-                .add(p.eyeLocation.direction.rotateAroundY(Mth.DEG_TO_RAD * 90.0).multiply(1.1f).normalize()).add(
-                    vec(y = 0.4)
-                )
+            val pos = p.eyeLocation
             val inc = pos.direction.multiply(2f)
 
-            val stand = p.world.spawnEntity(pos, EntityType.ARMOR_STAND) as ArmorStand
-            stand.isVisible = false
-            stand.isMarker = true
-            stand.isInvulnerable = true
-            stand.setGravity(false)
-            stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
-            stand.rightArmPose = EulerAngle(.0, -p.eyeLocation.pitch.toDouble() * Mth.DEG_TO_RAD, 90.0 * Mth.DEG_TO_RAD)
-            stand.setItem(EquipmentSlot.HAND, Registry.ITEM.find(id("infernal_greatsword")).build(e.player))
+            val display = p.world.spawnEntity(pos, EntityType.ITEM_DISPLAY) as ItemDisplay
+            display.itemDisplayTransform = ItemDisplay.ItemDisplayTransform.THIRDPERSON_LEFTHAND
+            display.interpolationDelay = 0
+            display.interpolationDuration = 5
+            display.itemStack = Registry.ITEM.find(id("infernal_greatsword")).build(e.player)
 
-            var tick = 0
+            val poseQuat = Quaternionf()
+            poseQuat.rotationXYZ(Mth.DEG_TO_RAD * 180f, 0f, 0f)
+            display.transformation = display.transformation.mutate(leftRot = poseQuat)
 
             val stats = e.player.stats()!!
             var (damage, crit) = DamageCalculator.calculateStandardDealt(stats.damage, stats)
@@ -70,19 +67,24 @@ object InfernalGreatswordThrowAbility : AbilityBase(
                 playAt(pos)
             }
 
+            var tick = 0
             task(period = 1L) {
                 tick++
                 if (tick >= 80) {
                     // travelling for *too* long, despawn
-                    stand.remove()
+                    display.remove()
                     it.cancel()
                     return@task
                 }
                 pos.add(inc)
-                stand.teleport(pos)
+                val playerRot = Quaternionf()
+                playerRot.rotationTo(Vector3f(0f, 0f, 1f), p.eyeLocation.direction.joml().apply { y = 0f })
+                display.interpolationDelay = 0
+                display.interpolationDuration = 5
+                display.transformation = display.transformation.mutate(translation = pos.toVector().subtract(display.location.toVector()).joml(), leftRot = playerRot, rightRot = poseQuat)
 
-                if (stand.eyeLocation.add(vec(y = -.3)).block.isSolid) {
-                    removeStand(pos, stand)
+                if (pos.add(vec(y = -.3)).block.isSolid) {
+                    removeDisplay(pos, display)
                     it.cancel()
                     return@task
                 }
@@ -109,7 +111,7 @@ object InfernalGreatswordThrowAbility : AbilityBase(
                     val dmg = damage * (entityStats.defense / (100 + entityStats.defense))
                     mc.damage(dmg, p)
 
-                    removeStand(pos, stand)
+                    removeDisplay(pos, display)
                     DamageHandlers.summonDamageIndicator(
                         pos,
                         dmg,
@@ -125,7 +127,7 @@ object InfernalGreatswordThrowAbility : AbilityBase(
                 }
 
                 if (damage <= 0) {
-                    removeStand(pos, stand)
+                    removeDisplay(pos, display)
                     it.cancel()
                     return@task
                 }
@@ -133,7 +135,7 @@ object InfernalGreatswordThrowAbility : AbilityBase(
         }
     }
 
-    private fun removeStand(pos: Location, stand: ArmorStand) {
+    private fun removeDisplay(pos: Location, display: ItemDisplay) {
         sound(Sound.ENTITY_ITEM_BREAK) {
             pitch = 0f
             volume = 4f
@@ -148,6 +150,6 @@ object InfernalGreatswordThrowAbility : AbilityBase(
             spawnAt(pos)
         }
 
-        stand.remove()
+        display.remove()
     }
 }

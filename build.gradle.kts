@@ -17,7 +17,7 @@ repositories {
     mavenCentral()
     maven { url = uri("https://repo.dmulloy2.net/repository/public/") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
-    maven { url = uri("https://repo.repsy.io/mvn/maxuss/artifacts/") }
+//    maven { url = uri("https://repo.repsy.io/mvn/maxuss/artifacts/") } needed this when KSpigot was not in maven central
     maven { url = uri("https://jitpack.io") }
 }
 
