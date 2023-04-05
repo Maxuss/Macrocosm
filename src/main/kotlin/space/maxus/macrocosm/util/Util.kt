@@ -454,13 +454,11 @@ fun threadNoinline(
     contextClassLoader: ClassLoader? = null,
     name: String? = null,
     priority: Int = -1,
-    block: Thread.() -> Unit
+    block: () -> Unit
 ): Thread {
-    val thread = object : Thread() {
-        override fun run() {
-            block()
-        }
-    }
+    val thread = if(start)
+        Thread.ofVirtual().start(block)
+    else Thread.ofVirtual().unstarted(block)
     if (isDaemon)
         thread.isDaemon = true
     if (priority > 0)
@@ -469,8 +467,6 @@ fun threadNoinline(
         thread.name = name
     if (contextClassLoader != null)
         thread.contextClassLoader = contextClassLoader
-    if (start)
-        thread.start()
     return thread
 }
 

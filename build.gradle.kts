@@ -41,7 +41,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo:4.8.0")
     implementation("io.prometheus:simpleclient:0.16.0")
     implementation("io.prometheus:simpleclient_httpserver:0.16.0")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
 }
 
 tasks {
@@ -56,11 +56,10 @@ tasks {
         }
     }
     compileJava {
+        options.compilerArgs.add("--enable-preview")
         options.encoding = "UTF-8"
-        options.release.set(17)
     }
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     runServer {
@@ -71,8 +70,18 @@ tasks {
             }
         }
         minecraftVersion("1.19.4")
-        jvmArgs("-Xms2G", "-Xmx2G")
+        jvmArgs("-Xms2G", "-Xmx2G", "--enable-preview")
     }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(19))
+    }
+}
+
+kotlin {
+    jvmToolchain(19)
 }
 
 tasks.dokkaHtml.configure {

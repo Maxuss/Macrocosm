@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.async
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder
 import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.util.threadNoinline
 import java.util.concurrent.ExecutorService
@@ -54,7 +53,6 @@ object Threading {
         threadNoinline(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
             runnable()
             activeThreads.decrementAndGet()
-            interrupt()
         }
     }
 
@@ -80,7 +78,7 @@ object Threading {
      * @return New [ExecutorService] provided by cached thread pool
      */
     fun newCachedPool(): ExecutorService = Executors.newCachedThreadPool(
-        ThreadFactoryBuilder().build()
+        Thread.ofVirtual().factory()
     )
 
     /**
@@ -91,7 +89,7 @@ object Threading {
      */
     fun newFixedPool(max: Int): ExecutorService = Executors.newFixedThreadPool(
         max,
-        ThreadFactoryBuilder().build()
+        Thread.ofVirtual().factory()
     )
 
     /**
