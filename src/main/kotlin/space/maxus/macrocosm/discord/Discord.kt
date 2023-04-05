@@ -1184,10 +1184,10 @@ object Discord : ListenerAdapter() {
             val skin = when (item) {
                 is SkullAbilityItem -> item.skin?.skin ?: item.skullOwner
                 is RecipeItem -> item.skin?.skin ?: item.headSkin
-                is PetItem -> {
+                is ItemPet -> {
                     val pet = item.stored ?: return "null"
-                    if (pet.skin != null && pet.skin!!.isNotNull()) {
-                        (Registry.COSMETIC.find(pet.skin!!) as SkullSkin).skin
+                    if (pet.skin.isNotNull()) {
+                        (Registry.COSMETIC.find(pet.skin) as SkullSkin).skin
                     } else Registry.PET.find(pet.id).headSkin
                 }
 

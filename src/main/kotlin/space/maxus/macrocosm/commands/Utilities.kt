@@ -722,7 +722,7 @@ fun addPetCommand() = command("addpet") {
 
     argument("type", ResourceLocationArgument.id()) {
         suggestList {
-            Registry.ITEM.iter().filter { item -> item.value is PetItem }.keys.filter { k ->
+            Registry.ITEM.iter().filter { item -> item.value is ItemPet }.keys.filter { k ->
                 k.path.contains(it.getArgumentOrNull("type") ?: "")
             }
         }
@@ -764,7 +764,7 @@ fun givePetItemCommand() = command("givepet") {
 
     argument("type", ResourceLocationArgument.id()) {
         suggestList {
-            Registry.ITEM.iter().filter { item -> item.value is PetItem }.keys.filter { k ->
+            Registry.ITEM.iter().filter { item -> item.value is ItemPet }.keys.filter { k ->
                 k.path.contains(it.getArgumentOrNull("type") ?: "")
             }
         }
@@ -782,7 +782,7 @@ fun givePetItemCommand() = command("givepet") {
                     val rarity = Rarity.valueOf(getArgument<String>("rarity").uppercase())
                     val level = getArgument<Int>("level")
                     val stored = StoredPet(pet, rarity, level, .0)
-                    val petItem = Registry.ITEM.find(pet) as PetItem
+                    val petItem = Registry.ITEM.find(pet) as ItemPet
                     petItem.stored = stored
                     petItem.rarity = stored.rarity
                     player.inventory.addItem(petItem.build(player.macrocosm!!)!!)

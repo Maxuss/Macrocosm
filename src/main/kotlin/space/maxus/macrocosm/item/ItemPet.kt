@@ -22,7 +22,7 @@ import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.getId
 import space.maxus.macrocosm.util.general.putId
 
-class PetItem(
+class ItemPet(
     id: Identifier,
     private var nameStr: String,
     private val headSkin: String,
@@ -50,19 +50,21 @@ class PetItem(
             pet.putDouble("Overflow", st.overflow)
             pet.putInt("Rarity", st.rarity.ordinal)
             pet.putUUID("PetID", st.petId)
-            pet.putId("Skin", st.skin ?: Identifier.NULL)
+            pet.putId("Skin", st.skin)
             cmp.put("Pet", pet)
         }
     }
 
     override fun convert(from: ItemStack, nbt: CompoundTag): MacrocosmItem {
-        val base = super.convert(from, nbt) as PetItem
+        val base = super.convert(from, nbt) as ItemPet
         val petTag = nbt.getCompound("Pet")
         val stored = StoredPet(
             nbt.getId("ID"),
             Rarity.values()[petTag.getInt("Rarity")],
             petTag.getInt("LVL"),
             petTag.getDouble("Overflow"),
+            petTag.getId("PetItem"),
+            petTag.getInt("CandiesEaten"),
             petTag.getUUID("PetID"),
             petTag.getId("Skin")
         )
@@ -77,7 +79,7 @@ class PetItem(
 
         val newLore = mutableListOf<Component>()
         newLore.add(text("<dark_gray>${base.preferredSkill.inst.name} Pet").noitalic())
-        newLore.add("".toComponent())
+        newLore.add(Component.empty())
 
         for ((stat, amount) in base.stats(pet.level, pet.rarity).iter()) {
             if (amount == 0f)
@@ -95,6 +97,15 @@ class PetItem(
             lore.addAll(ability.description(pet))
             lore.add("".toComponent())
         }
+
+        if(pet.petItem.isNotNull()) {
+            // TODO: pet item stuff
+        }
+
+        if(pet.candiesEaten > 0) {
+            newLore.add(text("<green>(${pet.candiesEaten}/10) Pet Candy Used"))
+            newLore.add(Component.empty())
+        }
     }
 
     override fun enchant(enchantment: Enchantment, level: Int): Boolean {
@@ -106,6 +117,6 @@ class PetItem(
     }
 
     override fun clone(): MacrocosmItem {
-        return PetItem(id, nameStr, headSkin, null)
+        return ItemPet(id, nameStr, headSkin, null)
     }
 }

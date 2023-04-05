@@ -44,7 +44,6 @@ import space.maxus.macrocosm.events.*
 import space.maxus.macrocosm.forge.ActiveForgeRecipe
 import space.maxus.macrocosm.item.Items
 import space.maxus.macrocosm.item.MacrocosmItem
-import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.metrics.MacrocosmMetrics
 import space.maxus.macrocosm.mongo.MongoConvert

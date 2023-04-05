@@ -69,12 +69,14 @@ data class MongoOwnedPet(
     val rarity: Rarity,
     val level: Int,
     val overflow: Double,
-    val skin: String?,
-    val petId: UUID
+    val skin: String,
+    val petId: UUID,
+    val heldItem: String,
+    val candiesEaten: Int,
 ) : MongoRepr<StoredPet> {
     override val actual: StoredPet
         @JsonIgnore
-        get() = StoredPet(Identifier.parse(id), rarity, level, overflow, petId, skin?.let { Identifier.parse(it) })
+        get() = StoredPet(Identifier.parse(id), rarity, level, overflow, Identifier.parse(heldItem), candiesEaten, petId, Identifier.parse(skin))
 
 }
 

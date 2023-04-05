@@ -3,7 +3,7 @@ package space.maxus.macrocosm.loot
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.MacrocosmItem
-import space.maxus.macrocosm.item.PetItem
+import space.maxus.macrocosm.item.ItemPet
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.macrocosm
 import space.maxus.macrocosm.pets.Pet
@@ -32,7 +32,7 @@ abstract class Drop(val rarity: DropRarity, override val chance: Double, val ite
         } else if (this.item.path.contains("pet")) {
             val (id, rarity) = this.item.path.split("@")
             val newId = id(id)
-            val basePet = Registry.ITEM.find(newId) as PetItem
+            val basePet = Registry.ITEM.find(newId) as ItemPet
             val rar = Rarity.valueOf(rarity.uppercase())
             basePet.stored = StoredPet(newId, rar, 1, .0)
             basePet.rarity = rar

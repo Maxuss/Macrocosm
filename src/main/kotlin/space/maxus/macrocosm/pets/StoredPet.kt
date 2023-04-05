@@ -14,19 +14,17 @@ import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.cosmetic.SkullSkin
-import space.maxus.macrocosm.damage.truncateBigNumber
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.mongo.MongoConvert
 import space.maxus.macrocosm.mongo.data.MongoOwnedPet
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
+import space.maxus.macrocosm.text.progressBar
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import java.io.Serializable
-import java.math.MathContext
 import java.util.*
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 data class StoredPet(
@@ -34,8 +32,10 @@ data class StoredPet(
     var rarity: Rarity,
     var level: Int,
     var overflow: Double,
+    var petItem: Identifier = Identifier.NULL,
+    var candiesEaten: Int = 0,
     val petId: UUID = UUID.randomUUID(),
-    var skin: Identifier? = null
+    var skin: Identifier = Identifier.NULL
 ) : Serializable, MongoConvert<MongoOwnedPet> {
 
     fun menuItem(player: MacrocosmPlayer): ItemStack {
@@ -59,6 +59,15 @@ data class StoredPet(
             lore.add("".toComponent())
         }
 
+        if(petItem.isNotNull()) {
+            // TODO: pet item stuff
+        }
+
+        if(candiesEaten > 0) {
+            lore.add(text("<green>($candiesEaten/10) Pet Candy Used"))
+            lore.add(Component.empty())
+        }
+
         if (level >= base.maxLevel) {
             // max level reached
             lore.add(text("<aqua><bold>MAX LEVEL").noitalic())
@@ -66,20 +75,12 @@ data class StoredPet(
             val next = level + 1
             val table = ProgressivePetTable((rarity.ordinal + 1) / 7.3f)
             val requiredExp = table.expForLevel(level)
-            val ratio = ((overflow / requiredExp) * 100).toBigDecimal().round(MathContext(1))
-            val coloredBarCount = (25f * (overflow / requiredExp)).roundToInt()
-            val emptyBarCount = max(0, 25 - coloredBarCount)
+            val progressBar = progressBar(overflow.toFloat(), requiredExp.roundToInt(), showCount = true)
+            val ratio = (overflow / table.expForLevel(level + 1)).toBigDecimal().setScale(1)
 
             lore.add(text("<gray>Progress to Level $next: <yellow>${Formatting.withCommas(ratio)}%").noitalic())
-            lore.add(
-                text(
-                    "<green>${"-".repeat(coloredBarCount)}<white>${"-".repeat(emptyBarCount)}  <yellow>${
-                        Formatting.withCommas(
-                            overflow.toBigDecimal()
-                        )
-                    }<gold>/${truncateBigNumber(requiredExp.toFloat())}"
-                ).noitalic()
-            )
+            lore.add(progressBar.render())
+
         }
 
         lore.add("".toComponent())
@@ -92,7 +93,7 @@ data class StoredPet(
                 profile.setProperty(
                     ProfileProperty(
                         "textures",
-                        if (skin == null || skin!!.isNull()) base.headSkin else (Registry.COSMETIC.find(skin!!) as SkullSkin).skin
+                        if (skin.isNull()) base.headSkin else (Registry.COSMETIC.find(skin) as SkullSkin).skin
                     )
                 )
                 playerProfile = profile
@@ -103,5 +104,5 @@ data class StoredPet(
     }
 
     override val mongo: MongoOwnedPet
-        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, skin?.toString(), petId)
+        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, skin.toString(), petId, petItem.toString(), candiesEaten)
 }

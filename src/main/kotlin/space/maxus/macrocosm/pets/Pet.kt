@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.cosmetic.SkullSkin
+import space.maxus.macrocosm.item.ItemPet
 import space.maxus.macrocosm.item.ItemValue
-import space.maxus.macrocosm.item.PetItem
 import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
@@ -45,13 +45,13 @@ abstract class Pet(
     }
 
     fun registerItem() {
-        Registry.ITEM.register(id, PetItem(id, name, headSkin))
+        Registry.ITEM.register(id, ItemPet(id, name, headSkin))
     }
 
     fun buildItem(player: MacrocosmPlayer, value: StoredPet): ItemStack {
-        val found = Registry.ITEM.findOrNull(this.id) as? PetItem
+        val found = Registry.ITEM.findOrNull(this.id) as? ItemPet
         if (found == null) {
-            val item = PetItem(
+            val item = ItemPet(
                 id(value.id.path),
                 name,
                 headSkin,
@@ -75,7 +75,7 @@ abstract class Pet(
     }
 
     internal fun buildName(pet: StoredPet, player: MacrocosmPlayer): Component =
-        text("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if (pet.skin != null) "☆" else ""}")
+        text("<dark_gray>[<gray>Lvl ${pet.level}<dark_gray>] <${pet.rarity.color.asHexString()}> ${player.paper?.name}'s $name ${if (pet.skin.isNotNull()) "☆" else ""}")
 
     fun stats(level: Int, rarity: Rarity): Statistics {
         val clone = baseStats.clone()
@@ -103,7 +103,7 @@ abstract class Pet(
         stand.isCustomNameVisible = true
         stand.customName(buildName(stored, player))
         stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
-        val skin = if (stored.skin != null && stored.skin!!.isNotNull()) (Registry.COSMETIC.find(stored.skin!!) as SkullSkin).skin else headSkin
+        val skin = if (stored.skin.isNotNull()) (Registry.COSMETIC.find(stored.skin) as SkullSkin).skin else headSkin
         stand.equipment.helmet = ItemValue.placeholderHead(skin, "PetEntity", "")
 
         player.sendMessage("<green>You spawned your <${stored.rarity.color.asHexString()}>$name<green>.")
