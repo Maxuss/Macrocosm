@@ -11,15 +11,18 @@ class ProgressivePetTable(val modifier: Float) : LevelingTable {
         val BASE: List<Double> = Util.make(mutableListOf()) {
             for (i in 0..199) {
                 val lvl = i + 1
-                val cumulative = (lvl * lvl) * ln(lvl.toDouble()) * min(max(100.0, lvl * 3.1), 180.0)
+                // https://www.desmos.com/calculator/2jrlu04ezy
+                val cumulative = (lvl * lvl) * ln(lvl.toDouble()) * min(max(100.0, lvl * 2.0), 198.0)
                 it.add(cumulative)
             }
         }
     }
 
     override fun expForLevel(lvl: Int): Double {
-        if (lvl <= 1)
-            return .0
+        if (lvl <= 0)
+            return .1
+        else if(lvl == 1)
+            return BASE[1] * modifier
         return (BASE[lvl - 1] - BASE[lvl - 2]) * modifier
     }
 

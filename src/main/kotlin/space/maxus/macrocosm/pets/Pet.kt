@@ -68,9 +68,9 @@ abstract class Pet(
     fun ensureRequirement(player: MacrocosmPlayer, ability: String): Pair<Boolean, StoredPet?> {
         player.paper ?: return Pair(false, null)
         val active = player.activePet?.base
-        val ref = player.activePet?.referring(player)
+        val ref = player.activePet?.stored
         if (active == this.id && ref != null && abilitiesForRarity(ref.rarity).map { it.name }.contains(ability))
-            return Pair(true, player.ownedPets[player.activePet!!.hashKey])
+            return Pair(true, ref)
         return Pair(false, null)
     }
 
@@ -89,15 +89,11 @@ abstract class Pet(
         return clone
     }
 
-    fun spawn(player: MacrocosmPlayer, key: String): PetInstance? {
+    fun spawn(player: MacrocosmPlayer, stored: StoredPet): PetInstance? {
         if (player.activePet != null) {
-            if (player.activePet!!.hashKey == key) {
-                player.activePet!!.despawn(player)
-            } else
-                player.activePet?.despawn(player)
+            player.activePet!!.despawn(player)
         }
         val paper = player.paper ?: return null
-        val stored = player.ownedPets[key]!!
         val stand = paper.world.spawnEntity(paper.location, EntityType.ARMOR_STAND) as ArmorStand
         stand.isInvulnerable = true
         stand.isVisible = false
@@ -107,11 +103,11 @@ abstract class Pet(
         stand.isCustomNameVisible = true
         stand.customName(buildName(stored, player))
         stand.persistentDataContainer.set(NamespacedKey(Macrocosm, "ignore_damage"), PersistentDataType.BYTE, 0)
-        val skin = if (stored.skin != null) (Registry.COSMETIC.find(stored.skin) as SkullSkin).skin else headSkin
+        val skin = if (stored.skin != null && stored.skin!!.isNotNull()) (Registry.COSMETIC.find(stored.skin!!) as SkullSkin).skin else headSkin
         stand.equipment.helmet = ItemValue.placeholderHead(skin, "PetEntity", "")
 
         player.sendMessage("<green>You spawned your <${stored.rarity.color.asHexString()}>$name<green>.")
-        val instance = PetInstance(stand.uniqueId, id, key)
+        val instance = PetInstance(stand.uniqueId, id, stored)
         player.activePet = instance
         instance.teleport(player)
         instance.floatTick(player, stand.location)

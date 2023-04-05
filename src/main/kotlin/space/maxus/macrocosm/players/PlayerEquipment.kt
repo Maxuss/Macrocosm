@@ -94,7 +94,7 @@ object EquipmentHandler : Listener {
         val offHand = if (p.inventory.itemInOffHand.isAirOrNull()) emptyOffHand else p.inventory.itemInOffHand
 
         val activePet = player.activePet
-        val pet = activePet?.prototype?.buildItem(player, player.ownedPets[activePet.hashKey]!!) ?: emptyPet
+        val pet = activePet?.prototype?.buildItem(player, player.activePet!!.stored) ?: emptyPet
 
         val stats = player.stats()!!
 

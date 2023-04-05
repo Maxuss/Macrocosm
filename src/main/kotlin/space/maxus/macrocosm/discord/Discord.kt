@@ -752,8 +752,8 @@ object Discord : ListenerAdapter() {
             addField(
                 "**Pet**",
                 if (activePet == null) "`None`" else "`${
-                    activePet.rarity(player).name.replace("_", " ").capitalized()
-                } ${activePet.prototype.name.stripTags()} [Lv ${activePet.level(player)}]`",
+                    activePet.stored.rarity.name.replace("_", " ").capitalized()
+                } ${activePet.prototype.name.stripTags()} [Lv ${activePet.stored.level}]`",
                 false
             )
 
@@ -1186,8 +1186,8 @@ object Discord : ListenerAdapter() {
                 is RecipeItem -> item.skin?.skin ?: item.headSkin
                 is PetItem -> {
                     val pet = item.stored ?: return "null"
-                    if (pet.skin != null) {
-                        (Registry.COSMETIC.find(pet.skin) as SkullSkin).skin
+                    if (pet.skin != null && pet.skin!!.isNotNull()) {
+                        (Registry.COSMETIC.find(pet.skin!!) as SkullSkin).skin
                     } else Registry.PET.find(pet.id).headSkin
                 }
 

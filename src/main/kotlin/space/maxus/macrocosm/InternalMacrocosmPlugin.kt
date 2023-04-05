@@ -51,7 +51,7 @@ import space.maxus.macrocosm.npc.NPCs
 import space.maxus.macrocosm.npc.shop.ShopParser
 import space.maxus.macrocosm.pack.PackDescription
 import space.maxus.macrocosm.pack.PackProvider
-import space.maxus.macrocosm.pets.PetValue
+import space.maxus.macrocosm.pets.PetType
 import space.maxus.macrocosm.pets.types.PyroclasticToadPet
 import space.maxus.macrocosm.pets.types.WaspPet
 import space.maxus.macrocosm.players.EquipmentHandler
@@ -225,7 +225,7 @@ class InternalMacrocosmPlugin : KSpigot() {
             RecipeValue::init,
             Buffs::init,
             EntityValue::init,
-            PetValue::init,
+            PetType::init,
             Cosmetics::init,
             SlayerType::init,
             ItemParser::init,
@@ -287,7 +287,6 @@ class InternalMacrocosmPlugin : KSpigot() {
         addPotatoBooks()
         givePetItemCommand()
         addPetCommand()
-        spawnPetCommand()
         itemsCommand()
         summonCommand()
         giveAdminItemCommand()

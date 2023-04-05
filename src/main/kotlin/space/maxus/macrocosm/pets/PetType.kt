@@ -4,7 +4,7 @@ import space.maxus.macrocosm.pets.types.*
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.util.general.id
 
-enum class PetValue(val pet: Pet) {
+enum class PetType(val pet: Pet) {
     PICKLE_PET(TestPet),
     PET_PHOENIX(PhoenixPet),
     PET_BEE(BeePet),

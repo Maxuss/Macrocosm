@@ -12,9 +12,10 @@ object Ensure {
             throw AnnotatedException(NullPointerException(), "Provided value was *not* null: $message")
     }
 
-    fun isNotNull(any: Any?, message: String = "Assertion failed") {
+    fun <V: Any> isNotNull(any: V?, message: String = "Assertion failed"): V {
         if (any == null)
             throw AnnotatedException(NullPointerException(), "Provided value was null: $message")
+        return any
     }
 
     fun isTrue(check: Boolean, message: String = "Assertion failed") {

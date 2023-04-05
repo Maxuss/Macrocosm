@@ -20,6 +20,7 @@ import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import space.maxus.macrocosm.util.general.getId
+import space.maxus.macrocosm.util.general.putId
 
 class PetItem(
     id: Identifier,
@@ -48,6 +49,8 @@ class PetItem(
             pet.putInt("LVL", st.level)
             pet.putDouble("Overflow", st.overflow)
             pet.putInt("Rarity", st.rarity.ordinal)
+            pet.putUUID("PetID", st.petId)
+            pet.putId("Skin", st.skin ?: Identifier.NULL)
             cmp.put("Pet", pet)
         }
     }
@@ -59,7 +62,9 @@ class PetItem(
             nbt.getId("ID"),
             Rarity.values()[petTag.getInt("Rarity")],
             petTag.getInt("LVL"),
-            petTag.getDouble("Overflow")
+            petTag.getDouble("Overflow"),
+            petTag.getUUID("PetID"),
+            petTag.getId("Skin")
         )
         base.stored = stored
         base.rarity = stored.rarity

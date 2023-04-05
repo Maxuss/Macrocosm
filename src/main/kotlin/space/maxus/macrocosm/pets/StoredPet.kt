@@ -1,5 +1,3 @@
-@file:Suppress("UNNECESSARY_SAFE_CALL")
-
 package space.maxus.macrocosm.pets
 
 import com.destroystokyo.paper.profile.ProfileProperty
@@ -27,6 +25,7 @@ import space.maxus.macrocosm.text.str
 import space.maxus.macrocosm.text.text
 import java.io.Serializable
 import java.math.MathContext
+import java.util.*
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -35,8 +34,10 @@ data class StoredPet(
     var rarity: Rarity,
     var level: Int,
     var overflow: Double,
-    val skin: Identifier? = null
+    val petId: UUID = UUID.randomUUID(),
+    var skin: Identifier? = null
 ) : Serializable, MongoConvert<MongoOwnedPet> {
+
     fun menuItem(player: MacrocosmPlayer): ItemStack {
         val base = Registry.PET.find(id)
         val name = text("<gray>[Lvl ${level}] <${rarity.color.asHexString()}>${base.name}").noitalic()
@@ -83,7 +84,7 @@ data class StoredPet(
 
         lore.add("".toComponent())
 
-        lore.add(text(if (player.activePet?.referring(player) == this) "<red>Click to despawn!" else "<yellow>Click to summon!").noitalic())
+        lore.add(text(if (player.activePet?.stored == this) "<red>Click to despawn!" else "<yellow>Click to summon!").noitalic())
 
         return itemStack(Material.PLAYER_HEAD) {
             meta<SkullMeta> {
@@ -91,7 +92,7 @@ data class StoredPet(
                 profile.setProperty(
                     ProfileProperty(
                         "textures",
-                        if (skin == null) base.headSkin else (Registry.COSMETIC.find(skin) as SkullSkin).skin
+                        if (skin == null || skin!!.isNull()) base.headSkin else (Registry.COSMETIC.find(skin!!) as SkullSkin).skin
                     )
                 )
                 playerProfile = profile
@@ -102,5 +103,5 @@ data class StoredPet(
     }
 
     override val mongo: MongoOwnedPet
-        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, skin?.toString())
+        get() = MongoOwnedPet(id.toString(), rarity, level, overflow, skin?.toString(), petId)
 }

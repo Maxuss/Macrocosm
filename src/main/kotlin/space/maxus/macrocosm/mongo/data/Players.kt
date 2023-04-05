@@ -69,11 +69,12 @@ data class MongoOwnedPet(
     val rarity: Rarity,
     val level: Int,
     val overflow: Double,
-    val skin: String?
+    val skin: String?,
+    val petId: UUID
 ) : MongoRepr<StoredPet> {
     override val actual: StoredPet
         @JsonIgnore
-        get() = StoredPet(Identifier.parse(id), rarity, level, overflow, skin?.let { Identifier.parse(it) })
+        get() = StoredPet(Identifier.parse(id), rarity, level, overflow, petId, skin?.let { Identifier.parse(it) })
 
 }
 
@@ -153,8 +154,7 @@ data class MongoPlayerData(
     val bank: BigDecimal,
     val skills: Skills,
     val collections: CollectionCompound,
-    val ownedPets: HashMap<String, MongoOwnedPet>,
-    val activePet: String,
+    val activePet: MongoOwnedPet?,
     val memory: MongoPlayerMemory,
     val forge: List<MongoActiveForgeRecipe>,
     val unlockedRecipes: List<String>,
@@ -162,6 +162,7 @@ data class MongoPlayerData(
     val essence: HashMap<EssenceType, Int>,
     val accessories: MongoAccessoryBag,
     val goals: List<String>,
+    val ownedPets: List<MongoOwnedPet>,
     val shopHistory: MongoShopHistory?,
     val achievements: List<String>?,
     val achievementExp: Int?

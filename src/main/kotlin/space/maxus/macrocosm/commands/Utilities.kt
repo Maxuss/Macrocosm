@@ -715,24 +715,6 @@ fun giveCoinsCommand() = command("givecoins") {
 
 }
 
-fun spawnPetCommand() = command("spawnpet") {
-    requires { it.hasPermission(4) }
-    argument("pet", StringArgumentType.string()) {
-        suggestList {
-            it.source.playerOrException.bukkitEntity.macrocosm!!.ownedPets.keys.filter { pet ->
-                pet.contains(it.getArgumentOrNull("pet") ?: "")
-            }
-        }
-
-        runs {
-            val pet = getArgument<String>("pet")
-            val stored = player.macrocosm!!.ownedPets[pet]!!
-            player.macrocosm!!.activePet?.despawn(player.macrocosm!!)
-            player.macrocosm!!.activePet = Registry.PET.find(stored.id).spawn(player.macrocosm!!, pet)
-        }
-    }
-}
-
 fun addPetCommand() = command("addpet") {
     requires {
         it.hasPermission(4)
@@ -757,7 +739,7 @@ fun addPetCommand() = command("addpet") {
                     val pet = getArgument<ResourceLocation>("type").macrocosm
                     val rarity = Rarity.valueOf(getArgument<String>("rarity").uppercase())
                     val level = getArgument<Int>("level")
-                    player.macrocosm!!.addPet(pet, rarity, level, .0)
+                    player.macrocosm!!.addPet(StoredPet(pet, rarity, level, .0))
                 }
             }
         }

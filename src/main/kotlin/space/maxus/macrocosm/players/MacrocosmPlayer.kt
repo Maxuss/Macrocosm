@@ -102,7 +102,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
     var unlockedRecipes: MutableList<Identifier> = mutableListOf()
     var skills: Skills = Skills.default()
     var collections: CollectionCompound = CollectionCompound.default()
-    var ownedPets: HashMap<String, StoredPet> = hashMapOf()
+    var ownedPets: ConcurrentLinkedQueue<StoredPet> = ConcurrentLinkedQueue()
     var activePet: PetInstance? = null
     var slayerQuest: SlayerQuest? = null
     var slayers: HashMap<SlayerType, SlayerLevel> =
@@ -311,22 +311,9 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
         return !unlockedRecipes.contains(recipe)
     }
 
-    fun addPet(type: Identifier, rarity: Rarity, level: Int, overflow: Double = .0): String {
-        // TODO: rework pet system
-        val stored = StoredPet(type, rarity, level, overflow)
-        val key = "$type@${stored.hashCode().toString(16)}"
-        if (ownedPets.containsKey(key))
-            return key
-        ownedPets[key] = stored
-        return key
-    }
-
-    fun addPet(inner: StoredPet): String {
-        val key = "${inner.id}@${inner.hashCode().toString(16)}"
-        if (ownedPets.containsKey(key))
-            return key
-        ownedPets[key] = inner
-        return key
+    fun addPet(inner: StoredPet): StoredPet {
+        ownedPets.add(inner)
+        return inner
     }
 
     fun addSkillExperience(skill: SkillType, exp: Double) {
@@ -614,7 +601,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             cloned.increase(item.stats(this))
         }
         if (activePet != null) {
-            cloned.increase(activePet!!.prototype.stats(activePet!!.level(this), activePet!!.rarity(this)))
+            cloned.increase(activePet!!.prototype.stats(activePet!!.stored.level, activePet!!.stored.rarity))
         }
         for (item in equipment.enumerate()) {
             if (item != null) {
@@ -658,7 +645,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             }
         }
         if (activePet != null) {
-            stats.increase(activePet!!.prototype.specialStats(activePet!!.level(this), activePet!!.rarity(this)))
+            stats.increase(activePet!!.prototype.specialStats(activePet!!.stored.level, activePet!!.stored.rarity))
         }
 
         stats.increase(tempSpecs)
@@ -735,12 +722,12 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             player.unlockedRecipes = mongo.unlockedRecipes.map(Identifier::parse).toMutableList()
             player.equipment = mongo.equipment.actual
             player.slayers = mongo.slayers
-            player.ownedPets = HashMap(mongo.ownedPets.map { it.key to it.value.actual }.toMap())
+            player.ownedPets = ConcurrentLinkedQueue(mongo.ownedPets.map { it.actual })
             player.goals = ConcurrentLinkedQueue(mongo.goals)
-            if (mongo.activePet.isNotBlank()) {
-                val pet = player.ownedPets[mongo.activePet]!!
+            if (mongo.activePet != null) {
+                val pet = mongo.activePet.actual
                 task(delay = 20L) {
-                    player.activePet = Registry.PET.find(pet.id).spawn(player, mongo.activePet)
+                    player.activePet = Registry.PET.find(pet.id).spawn(player, pet)
                 }
             }
             player.availableEssence = mongo.essence
@@ -768,8 +755,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             bank,
             skills,
             collections,
-            HashMap(ownedPets.map { it.key to it.value.mongo }.toMap()),
-            activePet?.hashKey ?: "",
+            activePet?.stored?.mongo,
             memory.mongo,
             activeForgeRecipes.map(ActiveForgeRecipe::mongo),
             unlockedRecipes.map(Identifier::toString),
@@ -777,6 +763,7 @@ class MacrocosmPlayer(val ref: UUID) : Store, MongoConvert<MongoPlayerData> {
             availableEssence,
             accessoryBag.mongo,
             goals.toList(),
+            ownedPets.map { it.mongo },
             shopHistory.mongo,
             achievements.map { it.toString() },
             achievementExp

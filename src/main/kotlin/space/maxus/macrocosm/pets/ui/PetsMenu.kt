@@ -29,7 +29,7 @@ fun petsMenu(player: MacrocosmPlayer, petToItem: Boolean = false): MacrocosmUI =
                     "gaining xp in their favorite",
                     "skill!",
                     "",
-                    "Selected pet: ${player.activePet?.let { inst -> "<${inst.rarity(player).color.asHexString()}>${inst.prototype.name}" }}"
+                    "Selected pet: ${player.activePet?.let { inst -> "<${inst.stored.rarity.color.asHexString()}>${inst.prototype.name}" }}"
                 )
             )
             close()
@@ -52,21 +52,21 @@ fun petsMenu(player: MacrocosmPlayer, petToItem: Boolean = false): MacrocosmUI =
             val cmp =
                 compound(
                     Slot.RowTwoSlotTwo rect Slot.RowFiveSlotEight,
-                    { player.ownedPets.toList().sortedBy { it.second.rarity.ordinal } },
-                    { it.second.menuItem(player) },
+                    { player.ownedPets.toMutableList().sortedBy { it.rarity.ordinal } },
+                    { it.menuItem(player) },
                     { e, pet ->
                         if (petToItemMut) {
-                            if (pet.first == player.activePet?.hashKey) {
+                            if (pet == player.activePet?.stored) {
                                 player.activePet?.despawn(player)
                             }
-                            val instance = player.ownedPets.remove(pet.first)!!
-                            player.paper?.giveOrDrop(Registry.PET.find(instance.id).buildItem(player, instance))
-                        } else if (player.activePet?.hashKey == pet.first) {
+                            player.ownedPets.remove(pet)
+                            player.paper?.giveOrDrop(Registry.PET.find(pet.id).buildItem(player, pet))
+                        } else if (player.activePet?.stored == pet) {
                             player.activePet?.despawn(player)
                         } else {
                             player.activePet?.despawn(player)
-                            Registry.PET.find(pet.second.id)
-                                .spawn(player, pet.first)
+                            Registry.PET.find(pet.id)
+                                .spawn(player, pet)
                         }
                         e.instance.reload()
                     })

@@ -1,5 +1,6 @@
 package space.maxus.macrocosm.pets
 
+import net.axay.kspigot.extensions.bukkit.fullLock
 import net.axay.kspigot.extensions.geometry.multiply
 import net.axay.kspigot.extensions.geometry.vec
 import net.axay.kspigot.runnables.task
@@ -10,7 +11,6 @@ import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
 import org.bukkit.util.EulerAngle
-import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -19,33 +19,17 @@ import space.maxus.macrocosm.util.math.LevelingTable
 import java.util.*
 
 
-class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey: String) {
+class PetInstance(private val entityId: UUID, val base: Identifier, var stored: StoredPet) {
     val prototype: Pet get() = Registry.PET.find(base)
     var floatingPaused: Boolean = false
     private val entity: LivingEntity? get() = Bukkit.getEntity(entityId) as? LivingEntity
 
-    fun table(player: MacrocosmPlayer): LevelingTable {
-        return ProgressivePetTable((referring(player).rarity.ordinal + 1) / 7.3f)
-    }
-
-    fun referring(player: MacrocosmPlayer): StoredPet {
-        return player.ownedPets[hashKey]!!
-    }
-
-    fun rarity(player: MacrocosmPlayer): Rarity {
-        return referring(player).rarity
-    }
-
-    fun level(player: MacrocosmPlayer): Int {
-        return referring(player).level
+    fun table(): LevelingTable {
+        return ProgressivePetTable((stored.rarity.ordinal + 1) / 7.3f)
     }
 
     private inline fun modifySave(player: MacrocosmPlayer, modifier: StoredPet.() -> Unit) {
-        val modified = player.ownedPets[hashKey]!!.apply(modifier)
-        val newHash = "${prototype.id}@${modified.hashCode().toString(16)}"
-        player.ownedPets.remove(hashKey)
-        this.hashKey = newHash
-        player.ownedPets[newHash] = modified
+        val modified = stored.apply(modifier)
         entity?.customName(prototype.buildName(modified, player))
     }
 
@@ -54,7 +38,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         if (e != null && !e.isDead)
             e.remove()
         player.activePet = null
-        player.sendMessage("<green>You despawned your <${rarity(player).color.asHexString()}>${prototype.name}<green>.")
+        player.sendMessage("<green>You have despawned your <${stored.rarity.color.asHexString()}>${prototype.name}<green>.")
     }
 
     fun addExperience(player: MacrocosmPlayer, amount: Double, skill: SkillType) {
@@ -64,7 +48,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         val amt = if (prototype.preferredSkill != skill) amount * .4 else amount
         modifySave(player) {
             this.overflow += amt
-            if (this.level < 100 && table(player).shouldLevelUp(this.level, this.overflow)) {
+            if (this.level < 100 && table().shouldLevelUp(this.level, this.overflow)) {
                 this.level++
                 this.overflow = .0
                 player.sendMessage("<green>Your <${rarity.color.asHexString()}>${prototype.name}<green> leveled up to level $level!")
@@ -79,7 +63,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
 
     fun respawn(player: MacrocosmPlayer) {
         despawn(player)
-        prototype.spawn(player, hashKey)
+        prototype.spawn(player, stored)
     }
 
     fun teleport(player: MacrocosmPlayer) {
@@ -108,7 +92,7 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
         var negative = false
         val base = prototype
         val e = entity
-        val cachedRarity = rarity(player)
+        val cachedRarity = stored.rarity
         task(period = 1L) {
             if (player.activePet != this) {
                 it.cancel()
@@ -149,6 +133,8 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
             var location = dir.toLocation(pos.world)
 
             entity.headPose = EulerAngle(.0, Math.toRadians(paper.eyeLocation.yaw.toDouble()), .0)
+            entity.isSmall = true
+            entity.fullLock()
             if (location.world.name != paper.location.world.name)
                 location.world = paper.location.world
             location.add(paper.location)
@@ -168,7 +154,8 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var hashKey:
     override fun hashCode(): Int {
         var result = entityId.hashCode()
         result = 31 * result + base.hashCode()
-        result = 31 * result + hashKey.hashCode()
+        result = 31 * result + stored.hashCode()
+        result = 31 * result + floatingPaused.hashCode()
         return result
     }
 }
