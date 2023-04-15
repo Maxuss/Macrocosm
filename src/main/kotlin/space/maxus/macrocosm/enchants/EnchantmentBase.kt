@@ -2,8 +2,7 @@ package space.maxus.macrocosm.enchants
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Material
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.chat.Formatting
@@ -138,7 +137,7 @@ abstract class EnchantmentBase(
         val reduced =
             regulatedDescription.reduceToList(25).map { mm.deserialize("<gray>$it").noitalic() }.toMutableList()
         reduced.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
+            PlainTextComponentSerializer.plainText().serialize(it).isBlank()
         }
         return reduced
     }

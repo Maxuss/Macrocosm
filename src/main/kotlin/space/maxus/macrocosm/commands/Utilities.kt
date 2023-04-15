@@ -854,7 +854,7 @@ fun allItems(player: Player, search: String = ""): MacrocosmUI = macrocosmUi("al
             e.paper.closeInventory()
             val inputFilterPrompt = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
-                    return ChatColor.YELLOW.toString() + "Input item name to search:"
+                    return "§eInput item name to search:"
                 }
 
                 override fun isInputValid(context: ConversationContext, input: String): Boolean {

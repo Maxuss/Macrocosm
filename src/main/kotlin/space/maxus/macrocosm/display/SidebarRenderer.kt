@@ -1,3 +1,5 @@
+@file:Suppress("Deprecation")
+
 package space.maxus.macrocosm.display
 
 import net.axay.kspigot.extensions.bukkit.toComponent

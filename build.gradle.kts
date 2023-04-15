@@ -6,7 +6,6 @@ plugins {
     id("io.papermc.paperweight.userdev") version "1.5.3"
     id("org.hidetake.swagger.generator") version "2.19.2"
     id("org.jetbrains.dokka") version "1.8.10"
-
 }
 
 group = "space.maxus"

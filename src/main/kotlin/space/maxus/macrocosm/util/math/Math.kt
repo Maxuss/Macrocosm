@@ -40,7 +40,7 @@ object MathHelper {
         }
 
         val theta = Mth.atan2(-x, z)
-        val yaw = Math.toDegrees((theta + Mth.TWO_PI) % Mth.TWO_PI).toFloat()
+        val yaw = Mth.DEG_TO_RAD * ((theta.toFloat() + Mth.TWO_PI) % Mth.TWO_PI)
 
         val x2 = x * x
         val z2 = z * z

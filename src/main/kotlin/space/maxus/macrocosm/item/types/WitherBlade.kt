@@ -1,18 +1,20 @@
 package space.maxus.macrocosm.item.types
 
 import net.axay.kspigot.event.listen
-import net.axay.kspigot.extensions.bukkit.toLegacyString
 import net.axay.kspigot.particles.particle
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.axay.kspigot.sound.sound
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.StringTag
-import org.bukkit.*
+import org.bukkit.Color
+import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.Particle.DustOptions
+import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
@@ -39,7 +41,10 @@ import space.maxus.macrocosm.item.Rarity
 import space.maxus.macrocosm.item.runes.RuneSlot
 import space.maxus.macrocosm.listeners.DamageHandlers
 import space.maxus.macrocosm.players.MacrocosmPlayer
-import space.maxus.macrocosm.registry.*
+import space.maxus.macrocosm.registry.Identifier
+import space.maxus.macrocosm.registry.RegistryPointer
+import space.maxus.macrocosm.registry.anyPoints
+import space.maxus.macrocosm.registry.registryPointer
 import space.maxus.macrocosm.stats.Statistic
 import space.maxus.macrocosm.stats.Statistics
 import space.maxus.macrocosm.text.text
@@ -208,7 +213,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
 
     @Suppress("UNCHECKED_CAST")
     override fun clone(): MacrocosmItem {
-        val item = WitherBlade(ChatColor.stripColor(name.toLegacyString())!!, base, stats.clone(), rarity)
+        val item = WitherBlade(PlainTextComponentSerializer.plainText().serialize(name), base, stats.clone(), rarity)
         item.enchantments = enchantments.clone() as HashMap<Identifier, Int>
         item.reforge = reforge?.clone()
         item.rarityUpgraded = rarityUpgraded
@@ -239,7 +244,7 @@ class WitherScrollAbility(
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
+            PlainTextComponentSerializer.plainText().serialize(it).isBlank()
         }
         lore.addAll(tmp)
     }

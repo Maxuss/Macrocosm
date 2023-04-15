@@ -1,6 +1,5 @@
 package space.maxus.macrocosm.enchants.ui
 
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
@@ -85,7 +84,7 @@ fun adminEnchantUi(item: MacrocosmItem, search: String = ""): MacrocosmUI =
                 e.paper.closeInventory()
                 val inputFilterPrompt = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
-                        return ChatColor.YELLOW.toString() + "Input enchantments to search:"
+                        return "§eInput enchantments to search:"
                     }
 
                     override fun isInputValid(context: ConversationContext, input: String): Boolean {

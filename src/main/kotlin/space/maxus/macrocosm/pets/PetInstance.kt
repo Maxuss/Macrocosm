@@ -1,27 +1,26 @@
 package space.maxus.macrocosm.pets
 
-import net.axay.kspigot.extensions.bukkit.fullLock
-import net.axay.kspigot.extensions.geometry.multiply
 import net.axay.kspigot.extensions.geometry.vec
+import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.sound.sound
+import net.minecraft.util.Mth
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
-import org.bukkit.util.EulerAngle
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.skills.SkillType
+import space.maxus.macrocosm.util.general.Ticker
 import space.maxus.macrocosm.util.math.LevelingTable
 import java.util.*
 
 
 class PetInstance(private val entityId: UUID, val base: Identifier, var stored: StoredPet) {
     val prototype: Pet get() = Registry.PET.find(base)
-    var floatingPaused: Boolean = false
+    var runningTask: KSpigotRunnable? = null; private set
     private val entity: LivingEntity? get() = Bukkit.getEntity(entityId) as? LivingEntity
 
     fun table(): LevelingTable {
@@ -87,39 +86,28 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var stored: 
         stand.teleport(loc)
     }
 
-    fun floatTick(player: MacrocosmPlayer, pos: Location) {
-        var ticker = 0
-        var negative = false
+    fun idleFloat(player: MacrocosmPlayer) {
+        this.runningTask?.cancel()
+        val ticker = Ticker(-6..6)
         val base = prototype
         val e = entity
         val cachedRarity = stored.rarity
-        task(period = 1L) {
+        this.runningTask = task(period = 2L) {
             if (player.activePet != this) {
                 it.cancel()
+                runningTask = null
                 return@task
             }
-
-            if (floatingPaused)
-                return@task
 
             val paper = player.paper
             if (paper == null) {
                 despawn(player)
                 it.cancel()
+                runningTask = null
                 return@task
             }
 
-            // ticking
-            if (negative)
-                ticker++
-            else
-                ticker--
-
-
-            if (ticker <= -10)
-                negative = true
-            else if (ticker >= 10)
-                negative = false
+            val tick = ticker.tick()
 
             // calculating movement
             val entity = e as? ArmorStand ?: run {
@@ -127,25 +115,64 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var stored: 
                 return@task
             }
 
-            val dir = (((paper.eyeLocation.direction.normalize() multiply -4.8).normalize() multiply 4.3).rotateAroundY(
-                Math.toRadians(75.0)
-            ) multiply 3.4).normalize()
-            var location = dir.toLocation(pos.world)
+            if(!entity.world.getNearbyEntities(entity.location, 1.5, 1.5, 1.5).contains(paper)) {
+                it.cancel()
+                this.followFloat(player)
+                return@task
+            }
 
-            entity.headPose = EulerAngle(.0, Math.toRadians(paper.eyeLocation.yaw.toDouble()), .0)
-            entity.isSmall = true
-            entity.fullLock()
-            if (location.world.name != paper.location.world.name)
-                location.world = paper.location.world
-            location.add(paper.location)
-            location = location.toVector().add(vec(y = .5 + (1 + ticker / 7.5))).toLocation(pos.world)
+            val loc = entity.location.add(vec(y = .03 * tick))
+            entity.teleport(loc)
 
-            entity.teleport(location)
-
-            base.effects.spawnParticles(Location(location.world, location.x, location.y + .6, location.z), cachedRarity)
+            base.effects.spawnParticles(entity.eyeLocation, cachedRarity)
         }
     }
 
+    fun followFloat(player: MacrocosmPlayer) {
+        this.runningTask?.cancel()
+        val e = entity
+        val base = prototype
+        this.runningTask = task(period = 1L) {
+            if (player.activePet != this) {
+                it.cancel()
+                runningTask = null
+                return@task
+            }
+
+            val paper = player.paper
+
+            if (paper == null) {
+                despawn(player)
+                it.cancel()
+                runningTask = null
+                return@task
+            }
+
+            // calculating movement
+            val stand = e as? ArmorStand ?: run {
+                it.cancel()
+                return@task
+            }
+
+            if(stand.world.getNearbyEntities(stand.location, 1.5, 1.5, 1.5).contains(paper)) {
+                it.cancel()
+                this.idleFloat(player)
+                return@task
+            }
+
+            val pLoc = paper.eyeLocation.add(
+                paper.location.direction.rotateAroundY(Math.PI + Mth.DEG_TO_RAD * 60.0).multiply(1.5f)
+            )
+            pLoc.yaw = paper.location.yaw
+            pLoc.pitch = 0f
+            val sLoc = stand.location
+            val dir = pLoc.toVector().subtract(sLoc.toVector()).multiply(.2)
+            val delta = paper.location.subtract(stand.location).toVector().normalize()
+
+            stand.teleport(sLoc.clone().add(dir).setDirection(delta))
+            base.effects.spawnParticles(stand.eyeLocation, stored.rarity)
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         return other != null && other is PetInstance && entityId == other.entityId
@@ -155,7 +182,6 @@ class PetInstance(private val entityId: UUID, val base: Identifier, var stored: 
         var result = entityId.hashCode()
         result = 31 * result + base.hashCode()
         result = 31 * result + stored.hashCode()
-        result = 31 * result + floatingPaused.hashCode()
         return result
     }
 }

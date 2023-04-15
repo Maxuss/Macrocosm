@@ -1,7 +1,6 @@
 package space.maxus.macrocosm.bazaar.ui
 
 import net.axay.kspigot.items.meta
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
@@ -102,7 +101,7 @@ fun sellInstantlyScreen(player: MacrocosmPlayer, item: Identifier): MacrocosmUI 
             ) { e ->
                 val inputAmountToSell = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
-                        return ChatColor.YELLOW.toString() + "Input amount to sell:"
+                        return "§eInput amount to sell:"
                     }
 
                     override fun isInputValid(context: ConversationContext, input: String): Boolean {

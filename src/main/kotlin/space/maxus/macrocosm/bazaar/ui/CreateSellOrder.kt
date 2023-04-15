@@ -2,7 +2,6 @@ package space.maxus.macrocosm.bazaar.ui
 
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.sound.sound
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.conversations.ConversationContext
@@ -68,7 +67,7 @@ internal fun createSellOrder(player: MacrocosmPlayer, item: Identifier): Macroco
             ) { e ->
                 val inputCoinsPrompt = object : ValidatingPrompt() {
                     override fun getPromptText(context: ConversationContext): String {
-                        return ChatColor.YELLOW.toString() + "Input amount to order:"
+                        return "§eInput amount to order:"
                     }
 
                     override fun isInputValid(context: ConversationContext, input: String): Boolean {
@@ -203,7 +202,7 @@ private fun createSellOrderManagePrice(
         ) { e ->
             val inputPricePer = object : ValidatingPrompt() {
                 override fun getPromptText(context: ConversationContext): String {
-                    return ChatColor.YELLOW.toString() + "Input price per:"
+                    return "§eInput price per:"
                 }
 
                 override fun isInputValid(context: ConversationContext, input: String): Boolean {

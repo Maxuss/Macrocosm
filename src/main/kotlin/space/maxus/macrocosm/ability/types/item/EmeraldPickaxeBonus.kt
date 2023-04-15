@@ -3,8 +3,7 @@ package space.maxus.macrocosm.ability.types.item
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.bukkit.toComponent
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityBase
 import space.maxus.macrocosm.ability.AbilityType
@@ -38,7 +37,7 @@ object EmeraldPickaxeBonus : AbilityBase(
             tmp.add(text("${Statistic.MINING_FORTUNE.display}<gray> Bonus: <green>$bonus").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
+            PlainTextComponentSerializer.plainText().serialize(it).isBlank()
         }
         lore.addAll(tmp)
     }

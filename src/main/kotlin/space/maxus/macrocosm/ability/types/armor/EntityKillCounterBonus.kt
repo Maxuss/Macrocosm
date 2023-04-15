@@ -2,8 +2,7 @@ package space.maxus.macrocosm.ability.types.armor
 
 import net.axay.kspigot.event.listen
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.EquipmentSlot
 import space.maxus.macrocosm.ability.AbilityBase
@@ -115,7 +114,7 @@ open class EntityKillCounterBonus(
             tmp.add(text("<gray>$desc</gray>").noitalic())
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
+            PlainTextComponentSerializer.plainText().serialize(it).isBlank()
         }
         lore.addAll(tmp)
     }

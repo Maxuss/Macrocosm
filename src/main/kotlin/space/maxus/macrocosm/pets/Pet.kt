@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.pets
 
 import net.kyori.adventure.text.Component
+import net.minecraft.util.Mth
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
@@ -94,7 +95,13 @@ abstract class Pet(
             player.activePet!!.despawn(player)
         }
         val paper = player.paper ?: return null
-        val stand = paper.world.spawnEntity(paper.location, EntityType.ARMOR_STAND) as ArmorStand
+        val baseLoc = paper.eyeLocation.add(
+            paper.location.direction.rotateAroundY(Math.PI + Mth.DEG_TO_RAD * 60.0).multiply(1.5f)
+        )
+        baseLoc.yaw = paper.location.yaw
+        baseLoc.pitch = 0f
+
+        val stand = paper.world.spawnEntity(baseLoc, EntityType.ARMOR_STAND) as ArmorStand
         stand.isInvulnerable = true
         stand.isVisible = false
         stand.isSmall = true
@@ -110,7 +117,7 @@ abstract class Pet(
         val instance = PetInstance(stand.uniqueId, id, stored)
         player.activePet = instance
         instance.teleport(player)
-        instance.floatTick(player, stand.location)
+        instance.idleFloat(player)
         return instance
     }
 }

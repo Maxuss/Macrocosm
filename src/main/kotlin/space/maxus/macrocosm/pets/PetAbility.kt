@@ -1,8 +1,7 @@
 package space.maxus.macrocosm.pets
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import space.maxus.macrocosm.chat.Formatting
 import space.maxus.macrocosm.chat.noitalic
 import space.maxus.macrocosm.chat.reduceToList
@@ -23,7 +22,7 @@ open class PetAbility(val name: String, val description: String) {
             }
         }
         tmp.removeIf {
-            ChatColor.stripColor(LegacyComponentSerializer.legacySection().serialize(it))!!.isBlank()
+            PlainTextComponentSerializer.plainText().serialize(it).isBlank()
         }
         return tmp
     }
