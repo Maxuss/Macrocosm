@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executor
 
 /**
- * An object that does metrics for Macrocosm
+ * Metrics class for Macrocosm.
  */
 object MacrocosmMetrics {
     private lateinit var server: HTTPServer

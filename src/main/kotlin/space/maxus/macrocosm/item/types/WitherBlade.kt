@@ -223,6 +223,7 @@ class WitherBlade(name: String, base: Material, stats: Statistics, rarity: Rarit
     }
 }
 
+/// A scroll ability that can be used on a WitherBlade.
 class WitherScrollAbility(
     name: String,
     description: String,

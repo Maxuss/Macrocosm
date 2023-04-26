@@ -7,6 +7,15 @@ import space.maxus.macrocosm.ui.UIClickData
 import space.maxus.macrocosm.ui.UIDimensions
 import space.maxus.macrocosm.util.unreachable
 
+/**
+ * CompoundComponent is a component that can be used to display a list of items.
+ *
+ * @param space The space that this component will be in.
+ * @param values The values to display.
+ * @param map The function to map a value to an itemstack.
+ * @param clickHandler The function to call when a value is clicked.
+ * @param transparent Whether this component is transparent.
+ */
 open class CompoundComponent<M>(
     space: ComponentSpace,
     var values: List<M>,
@@ -31,6 +40,9 @@ open class CompoundComponent<M>(
         recalculateSlicedContent()
     }
 
+    /**
+     * Scrolls the component by the given [amount].
+     */
     fun scroll(amount: Int) {
         val value = scrollProgress + amount
 
@@ -45,6 +57,9 @@ open class CompoundComponent<M>(
         }
     }
 
+    /**
+     * Recalculates the sliced content based on the current scroll progress.
+     */
     open fun recalculateSlicedContent() {
         if (scrollProgress > values.size)
             scrollProgress = values.size
@@ -87,6 +102,9 @@ open class CompoundComponent<M>(
     }
 }
 
+/**
+ * LazyCompoundComponent is a compound component that only calculates its content when it is rendered.
+ */
 class LazyCompoundComponent<M>(
     space: ComponentSpace,
     val valueSupplier: () -> List<M>,

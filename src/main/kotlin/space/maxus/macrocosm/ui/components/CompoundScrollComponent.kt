@@ -4,6 +4,14 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.ui.UIClickData
 
+/**
+ * CompoundScrollComponent is a component that will scroll a compound component
+ *
+ * @param space The space of the component
+ * @param compound The compound component to scroll
+ * @param amount The amount to scroll by
+ * @param item The item to display
+ */
 class CompoundScrollComponent(
     space: ComponentSpace,
     val compound: CompoundComponent<*>,

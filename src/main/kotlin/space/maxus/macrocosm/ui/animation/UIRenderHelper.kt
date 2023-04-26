@@ -11,15 +11,33 @@ import space.maxus.macrocosm.ui.UIDimensions
 import space.maxus.macrocosm.ui.components.ComponentSpace
 import space.maxus.macrocosm.util.unreachable
 
+/**
+ * A helper class for rendering UI animations.
+ */
 object UIRenderHelper {
+    /**
+     * Returns a dummy itemstack for the given material.
+     */
     fun dummy(mat: Material): ItemStack = ItemValue.placeholder(mat, "")
 
+    /**
+     * Instantly sets the given itemstacks in the given space.
+     */
     fun instant(canvas: Inventory, item: ItemStack, space: ComponentSpace) {
         for (slot in space.enumerate(UIDimensions.fromRaw(canvas.size) ?: UIDimensions.SIX_X_NINE)) {
             canvas.setItem(slot, item)
         }
     }
 
+    /**
+     * Returns a task that will draw the given itemstack in the given space.
+     *
+     * @param canvas The inventory to draw in.
+     * @param item The itemstack to draw.
+     * @param space The space to draw in.
+     * @param perTick The number of slots to draw per tick.
+     * @param frequency The number of ticks per draw.
+     */
     fun draw(
         canvas: Inventory,
         item: ItemStack,
@@ -52,6 +70,20 @@ object UIRenderHelper {
         }
     }
 
+    /**
+     * Returns a task that will slowly replace space with certain itemstack.
+     * The logic of the task is as following:
+     * 1. Replace space with [item].
+     * 2. Wait for [frequency] ticks.
+     * 3. Replace space with [replacement] slot by slot.
+     *
+     * @param canvas The inventory to draw in.
+     * @param item The itemstack to draw.
+     * @param replacement The replacement itemstack.
+     * @param space The space to draw in.
+     * @param perTick The number of slots to draw per tick.
+     * @param frequency  The number of ticks per draw.
+     */
     fun instantDissolve(
         canvas: Inventory,
         item: ItemStack,
@@ -67,6 +99,20 @@ object UIRenderHelper {
         return draw(canvas, replacement, space, perTick, frequency)
     }
 
+    /**
+     * Returns a task that will slowly replace space with certain itemstack.
+     * The logic of the task is as following:
+     * 1. Replace space with [item] slot by slot.
+     * 2. Wait for [frequency] ticks.
+     * 3. Replace space with [replacement] slot by slot.
+     *
+     * @param canvas The inventory to draw in.
+     * @param item The itemstack to draw.
+     * @param replacement The replacement itemstack.
+     * @param space The space to draw in.
+     * @param perTick The number of slots to draw per tick.
+     * @param frequency  The number of ticks per draw.
+     */
     fun drawDissolve(
         canvas: Inventory,
         item: ItemStack,
@@ -87,6 +133,13 @@ object UIRenderHelper {
         )
     }
 
+    /**
+     * Returns a task that will slowly replace space with certain itemstack.
+     *
+     * @param base The itemstack to draw as the base of the fire.
+     * @param flame The itemstack to draw as the tip of the fire.
+     * @param empty The itemstack to draw as the empty space.
+     */
     fun burn(
         canvas: Inventory,
         base: ItemStack,
@@ -106,6 +159,13 @@ object UIRenderHelper {
     }
 }
 
+/**
+ * A task that can be run to draw an itemstack in a given space.
+ *
+ * @param processor The function to run to draw the itemstack.
+ * @param isComplete The function to check if the task is complete.
+ * @param frequency The number of ticks required to draw.
+ */
 open class RenderTask(
     protected val frequency: Int,
     private val processor: () -> List<Int>,
@@ -129,15 +189,31 @@ open class RenderTask(
         processedSlots.addAll(processed)
     }
 
+    /**
+     * Adds ticks to the delay.
+     */
     fun delay(ticks: Int): RenderTask {
         delay += ticks
         return this
     }
 
+    /**
+     * Returns a task that will run this task and the other task.
+     */
     fun join(other: RenderTask): RenderTask {
         return RenderTaskPair(this, other)
     }
 
+    /**
+     * Plays a sound while rendering.
+     *
+     * @param player The player to play the sound for.
+     * @param snd The sound to play.
+     * @param volume The volume of the sound.
+     * @param pitch The pitch of the sound.
+     *
+     * @return The current render task.
+     */
     open fun sound(player: Player, snd: Sound, volume: Float = .5f, pitch: Float = 1f): RenderTask {
         this.sound = {
             sound(snd) {
@@ -150,6 +226,9 @@ open class RenderTask(
     }
 }
 
+/**
+ * A render task that runs two tasks one after the other.
+ */
 data class RenderTaskPair(
     val first: RenderTask,
     val second: RenderTask

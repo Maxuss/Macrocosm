@@ -8,6 +8,11 @@ import org.bukkit.inventory.ItemStack
 import space.maxus.macrocosm.item.ItemValue
 import space.maxus.macrocosm.ui.UIClickData
 
+/**
+ * A component that closes the inventory it is in.
+ * @param space The space this component is in.
+ * @param item The item to display.
+ */
 class CloseUIComponent(
     space: ComponentSpace,
     val item: ItemStack = ItemValue.placeholder(Material.BARRIER, "<red>Close")

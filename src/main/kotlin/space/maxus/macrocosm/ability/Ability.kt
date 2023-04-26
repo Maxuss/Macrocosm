@@ -324,7 +324,8 @@ enum class Ability(val ability: MacrocosmAbility) {
 
     REAPER_ORB(ReaperOrb),
     RESEARCH_PILE(ResearchPile),
-    OLD_BLUEPRINTS(OldBlueprints)
+    OLD_BLUEPRINTS(OldBlueprints),
+    LIARS_GIFT(LiarsGiftAbility)
 
     //#endregion
     ;

@@ -9,7 +9,7 @@ import space.maxus.macrocosm.text.str
 import java.util.*
 
 /**
- * An accessory item with a custom texture
+ * An accessory item that has a texture.
  */
 class TexturedAccessoryItem(
     id: String,
