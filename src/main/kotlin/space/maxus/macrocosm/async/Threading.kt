@@ -1,6 +1,7 @@
 package space.maxus.macrocosm.async
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
+import kotlinx.coroutines.runBlocking
 import net.minecraft.server.MinecraftServer
 import space.maxus.macrocosm.util.threadNoinline
 import java.util.concurrent.ExecutorService
@@ -49,10 +50,12 @@ object Threading {
      */
     inline fun runAsync(
         isDaemon: Boolean = false,
-        crossinline runnable: () -> Unit
+        crossinline runnable: suspend () -> Unit
     ) {
         threadNoinline(true, isDaemon = isDaemon, name = "Worker Thread #${activeThreads.incrementAndGet()}") {
-            runnable()
+            runBlocking {
+                runnable()
+            }
             activeThreads.decrementAndGet()
             interrupt()
         }

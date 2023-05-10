@@ -6,7 +6,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import space.maxus.macrocosm.Macrocosm
 import space.maxus.macrocosm.async.Threading
-import space.maxus.macrocosm.currentIp
 import space.maxus.macrocosm.logger
 import space.maxus.macrocosm.registry.Registry
 import space.maxus.macrocosm.text.text
@@ -22,16 +21,11 @@ import kotlin.io.path.*
 
 
 object PackProvider : Listener {
-    private val RESOURCE_PACK_LINK: String =
-        if (Macrocosm.config.getString("game.api-remote-url").let { it != null && it.isNotEmpty() })
-            Macrocosm.config.getString("game.api-remote-url")!!
-        else if (Macrocosm.isInDevEnvironment) "http://127.0.0.1:4343/pack" else "http://$currentIp:4343/pack"
+    private var RESOURCE_PACK_LINK: String = "null"
     private var RESOURCE_PACK_HASH: String = "null"
 
     const val PACK_NAME = "Macrocosm_Pack.zip"
     private const val BUFFER_SIZE = 4096
-
-    lateinit var packZip: File; private set
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onJoin(e: PlayerJoinEvent) {
@@ -57,8 +51,7 @@ object PackProvider : Listener {
 
             RESOURCE_PACK_HASH = hash
 
-            // hooking server
-            packZip = packFile
+            RESOURCE_PACK_LINK = PackUploader.uploadPack(packFile)
         }
     }
 

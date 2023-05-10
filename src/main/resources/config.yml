@@ -11,3 +11,5 @@ connections:
         guild-id: 0
 game:
     sandbox: false
+api:
+    enabled: false # Only enable if you *really* need this
