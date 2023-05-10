@@ -3,7 +3,7 @@ import java.net.URL
 plugins {
     kotlin("jvm") version "1.8.10"
     id("xyz.jpenilla.run-paper") version "2.0.1"
-    id("io.papermc.paperweight.userdev") version "1.5.3"
+    id("io.papermc.paperweight.userdev") version "1.5.5"
     id("org.hidetake.swagger.generator") version "2.19.2"
     id("org.jetbrains.dokka") version "1.8.10"
 
