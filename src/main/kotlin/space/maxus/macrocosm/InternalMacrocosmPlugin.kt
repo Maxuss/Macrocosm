@@ -156,9 +156,11 @@ class InternalMacrocosmPlugin : KSpigot() {
         MacrocosmConstants.API_VERSION = SemanticVersion.fromString(versionInfo.apiVersion)
         MacrocosmConstants.VERSION = SemanticVersion.fromString(versionInfo.version)
         BazaarElement.init()
-        Threading.contextBoundedRunAsync {
-            info("Starting REST API Server")
-            AsyncLauncher.launchApi()
+        if(config.getBoolean("api.enabled")) {
+            Threading.contextBoundedRunAsync {
+                info("Starting REST API Server")
+                AsyncLauncher.launchApi()
+            }
         }
         System.setProperty("mongo.user", config.getString("connections.mongo.username")!!)
         System.setProperty("mongo.pass", config.getString("connections.mongo.password")!!)

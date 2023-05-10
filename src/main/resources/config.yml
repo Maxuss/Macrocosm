@@ -10,4 +10,7 @@ connections:
         communication-webhook: ''
         guild-id: 0
 game:
+    api-remote-url: ''
     sandbox: false
+api:
+    enabled: false # Only enable if you *really* need this
