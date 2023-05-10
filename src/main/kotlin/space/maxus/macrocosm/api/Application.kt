@@ -26,7 +26,6 @@ import space.maxus.macrocosm.MacrocosmConstants
 import space.maxus.macrocosm.api.KeyManager.validateKey
 import space.maxus.macrocosm.bazaar.Bazaar
 import space.maxus.macrocosm.bazaar.BazaarElement
-import space.maxus.macrocosm.pack.PackProvider
 import space.maxus.macrocosm.players.MacrocosmPlayer
 import space.maxus.macrocosm.registry.Identifier
 import space.maxus.macrocosm.registry.Registry
@@ -45,7 +44,6 @@ import java.util.*
 /**
  * Spins up the macrocosm Rest API, basically wrapping [serverSpin] in coroutine scope
  */
-@Suppress("DeferredResultUnused")
 suspend fun spinApi() =
     coroutineScope {
         async {
@@ -86,11 +84,6 @@ fun Application.module() {
             get("/webhook_icon.png") {
                 call.respondMacrocosmResource("pack.png", "pack")
             }
-        }
-
-        // pack
-        get("/pack") {
-            call.respondFile(PackProvider.packZip)
         }
 
         // upgraded api version to V2

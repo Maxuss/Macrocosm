@@ -76,36 +76,48 @@ class CustomEntity(private val paperId: UUID) : MacrocosmEntity {
                 tag.getFloat("CurrentHealth")
             }
         } else {
-            val paper = paper!!
-            val tag = paper.readNbt().getCompound(MACROCOSM_TAG)
-            name = GsonComponentSerializer.gson().deserialize(tag.getString("BaseName"))
-            type = paper.type
+            val paper = paper
+            if(paper != null) {
+                val tag = paper.readNbt().getCompound(MACROCOSM_TAG)
+                name = GsonComponentSerializer.gson().deserialize(tag.getString("BaseName"))
+                type = paper.type
 
-            val stats = Statistics.zero()
-            val statCmp = tag.getCompound("Stats")
-            for (stat in statCmp.allKeys) {
-                val value = statCmp.getFloat(stat)
-                if (value == 0f)
-                    continue
-                stats[Statistic.valueOf(stat)] = value
-            }
-            baseStats = stats
+                val stats = Statistics.zero()
+                val statCmp = tag.getCompound("Stats")
+                for (stat in statCmp.allKeys) {
+                    val value = statCmp.getFloat(stat)
+                    if (value == 0f)
+                        continue
+                    stats[Statistic.valueOf(stat)] = value
+                }
+                baseStats = stats
 
-            val specials = SpecialStatistics()
-            val specs = tag.getCompound("Specials")
-            for (stat in specs.allKeys) {
-                val value = specs.getFloat(stat)
-                if (value == 0f)
-                    continue
-                specials[SpecialStatistic.valueOf(stat)] = value
+                val specials = SpecialStatistics()
+                val specs = tag.getCompound("Specials")
+                for (stat in specs.allKeys) {
+                    val value = specs.getFloat(stat)
+                    if (value == 0f)
+                        continue
+                    specials[SpecialStatistic.valueOf(stat)] = value
+                }
+                baseSpecials = specials
+                currentHealth = tag.getFloat("CurrentHealth")
+                lootPool = tag.getId("LootID")
+                id = tag.getId("ID")
+                rewardingSkill = SkillType.valueOf(tag.getString("Skill"))
+                experience = tag.getDouble("Experience")
+                playerFriendly = tag.getBoolean("PlayerFriendly")
+            } else {
+                baseSpecials = SpecialStatistics()
+                currentHealth = 0f
+                lootPool = Identifier.NULL
+                id = Identifier.NULL
+                rewardingSkill = SkillType.COMBAT
+                experience = 0.0
+                playerFriendly = false
+                name = Component.empty()
+                type = EntityType.ARMOR_STAND
             }
-            baseSpecials = specials
-            currentHealth = tag.getFloat("CurrentHealth")
-            lootPool = tag.getId("LootID")
-            id = tag.getId("ID")
-            rewardingSkill = SkillType.valueOf(tag.getString("Skill"))
-            experience = tag.getDouble("Experience")
-            playerFriendly = tag.getBoolean("PlayerFriendly")
         }
     }
 
