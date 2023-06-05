@@ -37,7 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:2.2.4")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.2.4")
     implementation("io.ktor:ktor-server-status-pages-jvm:2.2.4")
-    implementation("net.dv8tion:JDA:5.0.0-beta.9") {
+    implementation("net.dv8tion:JDA:5.0.0-beta.10") {
         exclude(module = "opus-java")
     }
     implementation("club.minnced:discord-webhooks:0.8.2")
