@@ -25,7 +25,7 @@ val exposedVersion: String by project
 
 dependencies {
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
-    implementation("net.axay:kspigot:1.19.2")
+    implementation("net.axay:kspigot:1.20.1")
     implementation("com.comphenix.protocol:ProtocolLib:5.0.0")
     implementation("LibsDisguises:LibsDisguises:10.0.35") {
         exclude("org.spigotmc")
