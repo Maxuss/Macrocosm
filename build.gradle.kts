@@ -5,7 +5,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.1.0"
     id("io.papermc.paperweight.userdev") version "1.5.5"
     id("org.hidetake.swagger.generator") version "2.19.2"
-    id("org.jetbrains.dokka") version "1.8.10"
+    id("org.jetbrains.dokka") version "1.8.20"
 
 }
 
