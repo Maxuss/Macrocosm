@@ -32,7 +32,7 @@ dependencies {
         exclude("com.github.dmulloy2") // that's weird
     }
     implementation("io.ktor:ktor-client-core:2.3.0")
-    implementation("io.ktor:ktor-client-java:2.3.0")
+    implementation("io.ktor:ktor-client-java:2.3.2")
     implementation("io.ktor:ktor-server-core-jvm:2.2.4")
     implementation("io.ktor:ktor-server-netty-jvm:2.2.4")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.2.4")
