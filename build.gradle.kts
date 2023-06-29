@@ -36,7 +36,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:2.2.4")
     implementation("io.ktor:ktor-server-netty-jvm:2.2.4")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.2.4")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.3.2")
     implementation("net.dv8tion:JDA:5.0.0-beta.10") {
         exclude(module = "opus-java")
     }
